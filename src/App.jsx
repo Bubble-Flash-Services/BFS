@@ -1,13 +1,14 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import HeroSection from './components/HeroSection';
-import ServiceCategories from './components/ServiceCategories';
+import Header from './components/Homepage/Header';
+import HeroSection from './components/Homepage/HeroSection';
+import ServiceCategories from './components/Homepage/services/ServiceCategories';
 import Footer from './components/Footer';
 // Placeholder imports for new pages
-import CarsPage from './components/CarsPage';
-import BikesPage from './components/BikesPage';
-import LaundryPage from './components/LaundryPage';
+import CarsPage from './components/Homepage/services/CarsPage';
+import BikesPage from './components/Homepage/services/BikesPage';
+import LaundryPage from './components/Homepage/services/LaundryPage';
+import ServicesPage from './components/ServicesPage/ServicesPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/cars" element={<CarsPage />} />
         <Route path="/bikes" element={<BikesPage />} />
         <Route path="/laundry" element={<LaundryPage />} />
+        <Route path="/services" element={<ServicesPage />} />
       </Routes>
       <Footer />
     </div>

@@ -3,15 +3,15 @@ import React from 'react';
 const carCategories = [
   {
     name: 'Hatchbacks',
-    image: '/public/car/car1.png',
+    image: '/car/car1.png',
   },
   {
     name: 'SUV',
-    image: '/public/car/car2.png',
+    image: '/car/car2.png',
   },
   {
     name: 'Sedans & Luxuries',
-    image: '/public/car/car3.png',
+    image: '/car/car3.png',
   },
 ];
 
@@ -31,4 +31,4 @@ export default function CarsPage() {
       </div>
     </section>
   );
-} 
+}

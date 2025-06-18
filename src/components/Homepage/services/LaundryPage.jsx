@@ -1,27 +1,27 @@
 import React from 'react';
 
-const bikeCategories = [
+const laundryCategories = [
   {
-    name: 'Commuter Bikes',
-    image: '/public/bike/bike1.png',
+    name: 'Shirts & Tops',
+    image: '/laundry/laundry1.png',
   },
   {
-    name: 'Sports Bikes',
-    image: '/public/bike/bike2.png',
+    name: 'Pants & Bottoms',
+    image: '/laundry/laundry2.png',
   },
   {
-    name: 'Cruiser Bikes',
-    image: '/public/bike/bike3.png',
+    name: 'Household Items',
+    image: '/laundry/laundry3.png',
   },
 ];
 
-export default function BikesPage() {
+export default function LaundryPage() {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-12">Select by bikes</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-12">Select by laundry</h2>
         <div className="grid md:grid-cols-3 gap-8">
-          {bikeCategories.map((cat) => (
+          {laundryCategories.map((cat) => (
             <div key={cat.name} className="text-center">
               <img src={cat.image} alt={cat.name} className="w-full h-48 object-contain mx-auto" />
               <h3 className="text-xl font-semibold text-gray-800 mt-4">{cat.name}</h3>
@@ -31,4 +31,4 @@ export default function BikesPage() {
       </div>
     </section>
   );
-} 
+}
