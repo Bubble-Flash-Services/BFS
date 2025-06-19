@@ -9,6 +9,7 @@ import CarsPage from './components/Homepage/services/CarsPage';
 import BikesPage from './components/Homepage/services/BikesPage';
 import LaundryPage from './components/Homepage/services/LaundryPage';
 import ServicesPage from './components/ServicesPage/ServicesPage';
+import AboutPage from './components/AboutPage';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/bikes" element={<BikesPage />} />
         <Route path="/laundry" element={<LaundryPage />} />
         <Route path="/services" element={<ServicesPage />} />
+        <Route path="/about" element={<AboutPage />} />
       </Routes>
       <Footer />
     </div>
