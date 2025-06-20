@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const FAQS = [
 	{
@@ -15,8 +15,76 @@ const FAQS = [
 	},
 ];
 
+const testimonials = [
+	{
+		name: "Michael brown",
+		img: "https://randomuser.me/api/portraits/men/32.jpg",
+		stars: 4,
+		text: "Really impressed with the car wash service at Bubble Flash Car Wash! The team was professional, friendly, and detailed in their work. My car looked spotless afterward.",
+	},
+	{
+		name: "Meera goyal",
+		img: "https://randomuser.me/api/portraits/women/44.jpg",
+		stars: 5,
+		text: "Tried Bubble Flash Laundry for the first time and was genuinely impressed! My clothes came back fresh, neatly folded, and smelled amazing. The pickup and delivery were smooth and right on time.",
+	},
+	{
+		name: "Rahul Sharma",
+		img: "https://randomuser.me/api/portraits/men/45.jpg",
+		stars: 5,
+		text: "Excellent bike cleaning! My bike looks brand new. Fast service and very convenient.",
+	},
+	{
+		name: "Priya Singh",
+		img: "https://randomuser.me/api/portraits/women/65.jpg",
+		stars: 4,
+		text: "The laundry service is top-notch. Pickup and delivery were on time, and the clothes were perfectly cleaned.",
+	},
+	{
+		name: "Amit Verma",
+		img: "https://randomuser.me/api/portraits/men/77.jpg",
+		stars: 5,
+		text: "Very happy with the car wash. Staff is polite and the process is hassle-free.",
+	},
+	{
+		name: "Sneha Patel",
+		img: "https://randomuser.me/api/portraits/women/32.jpg",
+		stars: 5,
+		text: "Affordable and reliable laundry service. Highly recommended!",
+	},
+];
+
 export default function ServicesPage() {
 	const [openIdx, setOpenIdx] = useState(0);
+	const [visibleCount, setVisibleCount] = useState(4);
+	const [carousel, setCarousel] = useState(testimonials);
+
+	// Responsive visibleCount
+	useEffect(() => {
+		function handleResize() {
+			if (window.innerWidth < 640) {
+				setVisibleCount(1);
+			} else if (window.innerWidth < 1024) {
+				setVisibleCount(2);
+			} else {
+				setVisibleCount(4);
+			}
+		}
+		handleResize();
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setCarousel((prev) => {
+				const [first, ...rest] = prev;
+				return [...rest, first];
+			});
+		}, 3000);
+		return () => clearInterval(interval);
+	}, []);
+
 	return (
 		<div className="bg-[#f7f7f7] min-h-screen pb-16">
 			<div className="max-w-6xl mx-auto pt-12 px-4 flex flex-col md:flex-row gap-8">
@@ -134,6 +202,92 @@ export default function ServicesPage() {
 								<span className="text-2xl">&gt;</span>
 							</div>
 						</div>
+					</div>
+				</div>
+			</div>
+			{/* Choose your package Section */}
+			<div className="py-16 bg-white">
+				<h2 className="text-2xl md:text-3xl font-serif font-semibold text-center mb-12">Choose your package</h2>
+				<div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+					{/* Quick shine car */}
+					<div className="bg-white rounded-xl border shadow-sm p-8 flex flex-col items-center gap-4 transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+						<div className="text-2xl font-bold mb-2">Quick shine car</div>
+						<div className="text-xl font-semibold mb-2">₹199</div>
+						<ul className="text-gray-700 text-base mb-4 list-disc list-inside">
+							<li>Exterior wash with high-pressure watergun</li>
+							<li>Soft-touch mild soap</li>
+							<li>Swirl-free clean</li>
+							<li>Deep-cleaning of car mats</li>
+						</ul>
+						<button className="bg-[#FFD600] text-black rounded-lg border border-black px-5 py-1.5 font-semibold text-base transition-colors duration-200 hover:bg-yellow-300 mx-auto">Get Services</button>
+					</div>
+					{/* Bike wash */}
+					<div className="bg-white rounded-xl border shadow-sm p-8 flex flex-col items-center gap-4 transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+						<div className="text-2xl font-bold mb-2">Bike wash</div>
+						<div className="text-xl font-semibold mb-2">₹99</div>
+						<ul className="text-gray-700 text-base mb-4 list-disc list-inside">
+							<li>Gentle exterior water wash</li>
+							<li>Wheel cleaning with specialized wheel cleaner</li>
+							<li>High-pressure tyre wash for spotless finish</li>
+						</ul>
+						<button className="bg-[#FFD600] text-black rounded-lg border border-black px-5 py-1.5 font-semibold text-base transition-colors duration-200 hover:bg-yellow-300 mx-auto">Get Services</button>
+					</div>
+					{/* Laundry wash */}
+					<div className="bg-white rounded-xl border shadow-sm p-8 flex flex-col items-center gap-4 transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+						<div className="text-2xl font-bold mb-2">Laundry wash</div>
+						<div className="text-xl font-semibold mb-2">₹99</div>
+						<ul className="text-gray-700 text-base mb-4 list-disc list-inside">
+							<li>Gentle exterior water wash</li>
+							<li>Wheel cleaning with specialized wheel cleaner</li>
+							<li>High-pressure tyre wash for spotless finish</li>
+						</ul>
+						<button className="bg-[#FFD600] text-black rounded-lg border border-black px-5 py-1.5 font-semibold text-base transition-colors duration-200 hover:bg-yellow-300 mx-auto">Get Services</button>
+					</div>
+				</div>
+			</div>
+			{/* What client says - true carousel */}
+			<div className="mt-20 mb-8">
+				<h2 className="text-2xl md:text-3xl font-serif font-semibold text-center mb-8">
+					What client says
+				</h2>
+				<div className="overflow-hidden w-full flex justify-center">
+					<div
+						className="flex gap-4 sm:gap-6 md:gap-8 transition-all duration-700"
+						style={{ width: "max-content" }}
+					>
+						{carousel.slice(0, visibleCount).map((t, idx) => (
+							<div
+								key={idx}
+								className="bg-white rounded-xl border shadow-sm p-4 sm:p-5 md:p-6 min-w-[220px] sm:min-w-[280px] md:min-w-[340px] max-w-[380px] flex flex-col"
+							>
+								<div className="flex items-center gap-3 mb-2">
+									<img
+										src={t.img}
+										alt={t.name}
+										className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border"
+									/>
+									<div>
+										<div className="font-bold">{t.name}</div>
+										<div className="text-xs text-gray-500">
+											{t.name}
+										</div>
+									</div>
+									<div className="flex ml-auto gap-1">
+										{[...Array(t.stars)].map((_, i) => (
+											<span
+												key={i}
+												className="text-yellow-400 text-lg"
+											>
+												★
+											</span>
+										))}
+									</div>
+								</div>
+								<div className="text-gray-700 text-base mt-2">
+									“{t.text}”
+								</div>
+							</div>
+						))}
 					</div>
 				</div>
 			</div>

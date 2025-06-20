@@ -1,0 +1,51 @@
+/*
+.mega-win-burst {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1.5rem;
+  / No border, no burst background /
+}
+*/
+.mega-win-heading {
+  position: relative;
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.75rem;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  /* Gradient is set via Tailwind className */
+  /* Responsive wrapping */
+  word-break: break-word;
+  white-space: normal;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  /* Stronger 3D effect: shadow, outline, glow */
+  /* text-shadow:
+    0 2px 0 #1e40af,
+    0 4px 0 #1e40af,
+    0 0 16px #ffe066,
+    0 0 40px #ffe06699,
+    2px 2px 0 #1e40af,
+    4px 4px 12px #000a,
+    0 0 2px #fff; */
+  box-shadow: none;
+  animation: mega-zoom 4s cubic-bezier(.25,1.5,.5,1.1) infinite alternate;
+  z-index: 1;
+  /* Remove border and background burst */
+}
+@keyframes mega-zoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.04) rotate(-1deg);
+  }
+}

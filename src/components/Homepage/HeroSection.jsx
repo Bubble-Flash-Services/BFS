@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Phone, MapPin, ChevronDown } from 'lucide-react';
 import { TextGenerateEffect } from '../ui/text-generate-effect';
 import { SparklesText } from '../ui/sparkles-text';
+import MegaWinHeading from '../ui/MegaWinHeading';
 
 export default function HeroSection() {
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -39,15 +40,15 @@ export default function HeroSection() {
   return (
     <section className="bg-gradient-to-br from-blue-50 to-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <MegaWinHeading className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent mb-6 leading-tight text-center">
+          Professional Cleaning Services for Cars, Bikes & More
+        </MegaWinHeading>
+        <SparklesText
+          text="Experience top-tier car wash, bike detailing, and laundry care – all under one roof in Bengaluru."
+          className="text-xl text-gray-600 mb-8 leading-relaxed text-center"
+        />
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-blue-500 mb-6 leading-tight">
-              Professional Cleaning Services for Cars, Bikes & More
-            </h1>
-            <SparklesText
-              text="Experience top-tier car wash, bike detailing, and laundry care – all under one roof in Bengaluru."
-              className="text-xl text-gray-600 mb-8 leading-relaxed"
-            />
             <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
               <h3 className="text-2xl font-semibold mb-6 text-gray-800">Book your Service</h3>
               <div className="space-y-4">
@@ -116,13 +117,13 @@ export default function HeroSection() {
                     <MapPin className="absolute right-3 top-3 text-gray-400" size={20} />
                   </div>
                 </div>
-                <button className="w-full bg-black hover:bg-gray-800 text-white py-3 px-6 rounded-lg font-medium transition-colors mt-6">
+                <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-6 rounded-lg font-medium transition-colors mt-6">
                   Book now
                 </button>
               </div>
             </div>
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center lg:mb-36 md:mb-0">
             <div className="bg-blue-50 rounded-2xl p-8 max-w-md">
               <div className="text-4xl mb-4">💙</div>
               <TextGenerateEffect
