@@ -1,0 +1,104 @@
+import React, { useState } from "react";
+
+export default function SigninModal({ open, onClose, onSignupNow }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10">
+      <div className="relative bg-white rounded-3xl shadow-lg w-full max-w-[400px]  max-h-[95vh] p-4 sm:p-6 flex flex-col items-center justify-center">
+        <button
+          className="absolute top-6 right-6 text-2xl text-gray-700 hover:text-black"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          &times;
+        </button>
+        <h2 className="text-3xl font-bold mb-2 tracking-wide text-center">
+          Sign in
+        </h2>
+        <form
+          className="w-full flex flex-col items-center gap-6"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            try {
+              const res = await fetch('http://localhost:5000/api/auth/signin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+              });
+              const data = await res.json();
+              if (data.token && data.user) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                window.location.reload();
+              } else {
+                alert(data.message || 'Sign in failed');
+              }
+            } catch (err) {
+              alert('Sign in failed');
+            }
+          }}
+        >
+          <div className="w-full">
+            <label className="block text-lg sm:text-xl mb-2 text-gray-800 font-serif">
+              Email
+            </label>
+            <input
+              type="email"
+              className="w-full rounded-2xl px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="w-full">
+            <label className="block text-lg sm:text-xl mb-2 text-gray-800 font-serif">
+              Password
+            </label>
+            <input
+              type="password"
+              className="w-full rounded-2xl px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-32 sm:w-40 bg-yellow-400 text-black font-bold text-xl sm:text-2xl rounded-full py-2 shadow-md hover:bg-yellow-500 transition mb-2"
+          >
+            Sign In
+          </button>
+        </form>
+        <div className="my-2 text-gray-500">or</div>
+        <a
+          href="http://localhost:5000/api/auth/google"
+          className="flex items-center gap-2 border border-black rounded-lg px-4 sm:px-6 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center"
+        >
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google"
+            className="w-6 h-6"
+          />
+          <span className="text-base sm:text-lg">Continue with Google</span>
+        </a>
+        <div className="text-center text-gray-600 text-sm mt-2">
+          Don't have an account?{" "}
+          <button
+            className="text-blue-500 hover:underline"
+            onClick={() => {
+              onSignupNow && onSignupNow();
+              onClose && onClose();
+            }}
+          >
+            Sign Up
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
