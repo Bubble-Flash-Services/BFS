@@ -25,17 +25,17 @@ const CameraIcon = () => (
 
 const Footer = () => {
   return (
-    <footer className="bg-[#FCFCFB] rounded-t-3xl pt-8 pb-2 px-4 md:px-16 mt-16">
+    <footer className="bg-white rounded-t-3xl pt-8 pb-2 px-4 md:px-16 mt-16">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 md:gap-0">
         {/* Left: Logo and FAQ heading */}
         <div className="flex-1 min-w-[220px]">
-          <div className="flex items-center gap-2 mb-6">
-            <img src="/logo.png" alt="BFS Logo" className="w-8 h-8 object-contain" />
+          <div className="flex items-center gap-4 mb-6">
+            <img src="/logo.jpg" alt="BFS Logo" className="w-16 h-16 object-contain" />
             <h2 className="text-3xl font-serif font-semibold tracking-tight">BFS</h2>
           </div>
-          <div className="text-gray-700 text-base mb-2">© 2025 Cal.com, Inc.<br/>support@cal.com</div>
+          <div className="text-gray-700 text-base mb-2">© 2025 BFS Bubble Flash Services.<br/>support@bubbleflash.com</div>
           <div className="flex items-center gap-2 mb-8">
-            <EmailIcon />
+            <a href="mailto:support@bubbleflash.com" aria-label="Email support@bubbleflash.com"><EmailIcon /></a>
           </div>
         </div>
         {/* Columns */}
@@ -64,8 +64,8 @@ const Footer = () => {
           <div className="min-w-[140px]">
             <h3 className="font-semibold mb-3">FOLLOW US</h3>
             <ul className="space-y-2 text-gray-800">
-              <li className="flex items-center gap-2"><a href="#" className="flex items-center gap-2 hover:underline"><CameraIcon /> Instagram</a></li>
-              <li className="flex items-center gap-2"><a href="#" className="flex items-center gap-2 hover:underline"><LinkedinIcon /> Linked in</a></li>
+              <li className="flex items-center gap-2"><a href="https://www.instagram.com/bubble_flash_service_karnataka?igsh=ZGg4dHZrYmMxeTFh" className="flex items-center gap-2 hover:underline"><CameraIcon /> Instagram</a></li>
+              <li className="flex items-center gap-2"><a href="https://www.linkedin.com/company/bubble-flash-services/" className="flex items-center gap-2 hover:underline"><LinkedinIcon /> Linked in</a></li>
               <li className="flex items-center gap-2"><a href="#" className="flex items-center gap-2 hover:underline"><YoutubeIcon /> Youtube</a></li>
               <li className="flex items-center gap-2"><a href="#" className="flex items-center gap-2 hover:underline"><TwitterIcon /> Twitter</a></li>
               <li className="flex items-center gap-2"><a href="#" className="flex items-center gap-2 hover:underline"><FacebookIcon /> Facebook</a></li>

@@ -21,7 +21,6 @@ function App() {
         <Route path="/" element={
           <>
             <HeroSection />
-            <ServiceCategories />
           </>
         } />
         <Route path="/cars" element={<CarsPage />} />

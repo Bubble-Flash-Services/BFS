@@ -3,7 +3,6 @@ import { Phone, Menu } from 'lucide-react';
 import SignupModal from '../pages/Homepage/signup/SignupModal';
 import SuccessModal from '../pages/Homepage/signup/SuccessModal';
 import SigninModal from '../pages/Homepage/signin/SigninModal';
-import AboutPage from '../pages/aboutus/AboutPage';
 
 export default function Header() {
   const [openSignup, setOpenSignup] = useState(false);
@@ -43,21 +42,21 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <img src="/logo.png" alt="BFS Logo" className="w-8 h-8 object-contain mr-2" />
+              <img src="/logo.jpg" alt="BFS Logo" className="w-16 h-16 object-contain mr-4" />
               <h1 className="text-2xl font-bold capitalize bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent">bubble flash</h1>
             </div>
 
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-700 hover:text-blue-500 font-medium transition-colors">
+              <a href="#home" className="text-gray-700 hover:text-blue-500 font-medium transition-colors">
                 Home
               </a>
-              <a href="/about" className="text-gray-700 hover:text-blue-500 font-medium transition-colors">
+              <a href="#aboutus" className="text-gray-700 hover:text-blue-500 font-medium transition-colors">
                 About us
               </a>
-              <a href="/services" className="text-gray-700 hover:text-blue-500 font-medium transition-colors">
+              <a href="#services" className="text-gray-700 hover:text-blue-500 font-medium transition-colors">
                 Services
               </a>
-              <a href="/contact" className="text-gray-700 hover:text-blue-500 font-medium transition-colors flex items-center gap-1">
+              <a href="#contact" className="text-gray-700 hover:text-blue-500 font-medium transition-colors flex items-center gap-1">
                 <Phone size={16} />
                 Contact
               </a>
@@ -117,16 +116,16 @@ export default function Header() {
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200 shadow-lg px-4 py-4 space-y-4">
-            <a href="/" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors" onClick={() => setMobileMenuOpen(false)}>
+            <a href="#home" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors" onClick={() => setMobileMenuOpen(false)}>
               Home
             </a>
-            <a href="/about" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors" onClick={() => setMobileMenuOpen(false)}>
+            <a href="#aboutus" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors" onClick={() => setMobileMenuOpen(false)}>
               About us
             </a>
-            <a href="/services" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors" onClick={() => setMobileMenuOpen(false)}>
+            <a href="#services" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors" onClick={() => setMobileMenuOpen(false)}>
               Services
             </a>
-            <a href="/contact" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors flex items-center gap-1" onClick={() => setMobileMenuOpen(false)}>
+            <a href="#contact" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors flex items-center gap-1" onClick={() => setMobileMenuOpen(false)}>
               <Phone size={16} />
               Contact
             </a>

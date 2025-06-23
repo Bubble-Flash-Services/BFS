@@ -8,7 +8,7 @@ export default function AboutPage() {
         <div className="flex flex-col md:flex-row gap-8 items-start">
           <video
             src="/car/home.mp4"
-            poster="/car/home.png"
+            
             className="rounded-xl w-full md:w-[350px] h-[260px] object-cover"
             controls
             autoPlay
@@ -21,10 +21,10 @@ export default function AboutPage() {
               At Bubble Flash, we’re passionate about making your vehicles and wardrobe shine! Based in the heart of Bengaluru, we provide top-tier car washing, bike detailing, and laundry care services, all under one roof – because we believe convenience should never compromise quality.
             </p>
             <ul className="text-base text-black mb-2 space-y-1">
-              <li>✔ Over 2,00,000 cleans</li>
-              <li>✔ Combo plans & special program plans offered</li>
-              <li>✔ 100 % Customer satisfaction</li>
-              <li>✔ Doorstep services available</li>
+              <li><img src="/aboutus/circle-check.png" alt="check" className="inline w-3 h-3 mr-2 align-middle" />Over 2,00,000 cleans</li>
+              <li><img src="/aboutus/circle-check.png" alt="check" className="inline w-3 h-3 mr-2 align-middle" />Combo plans & special program plans offered</li>
+              <li><img src="/aboutus/circle-check.png" alt="check" className="inline w-3 h-3 mr-2 align-middle" />100 % Customer satisfaction</li>
+              <li><img src="/aboutus/circle-check.png" alt="check" className="inline w-3 h-3 mr-2 align-middle" />Doorstep services available</li>
             </ul>
           </div>
         </div>
@@ -36,29 +36,29 @@ export default function AboutPage() {
         {/* Steps */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           <div className="flex flex-col items-center">
-            <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mb-3">
-              <span className="text-3xl">✔</span>
+            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mb-3">
+              <img src="/aboutus/location.png" alt="Choose location" className="w-10 h-10" />
             </div>
             <div className="font-semibold">Choose location</div>
             <div className="text-xs text-gray-500 text-center">Choose your and find your best car</div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mb-3">
-              <span className="text-3xl">📅</span>
+            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mb-3">
+              <img src="/aboutus/pickup-date.png" alt="Pick-up date" className="w-10 h-10" />
             </div>
             <div className="font-semibold">Pick-up date</div>
             <div className="text-xs text-gray-500 text-center">Select your pick up date and time to book your car</div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mb-3">
-              <span className="text-3xl">🚗</span>
+            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mb-3">
+              <img src="/aboutus/bookyourwash.png" alt="Book your wash" className="w-10 h-10" />
             </div>
             <div className="font-semibold">Book your wash</div>
             <div className="text-xs text-gray-500 text-center">Book your car for doorstep service</div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mb-3">
-              <span className="text-3xl">✔</span>
+            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mb-3">
+              <img src="/aboutus/expierencewash.png" alt="Experience wash" className="w-10 h-10" />
             </div>
             <div className="font-semibold">Experience wash</div>
             <div className="text-xs text-gray-500 text-center">Don't worry, we have many experienced professionals</div>

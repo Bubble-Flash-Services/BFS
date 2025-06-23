@@ -86,37 +86,38 @@ export default function ServicesPage() {
 	}, []);
 
 	return (
-		<div className="bg-[#f7f7f7] min-h-screen pb-16">
+		<div className="bg-white min-h-screen pb-16">
 			<div className="max-w-6xl mx-auto pt-12 px-4 flex flex-col md:flex-row gap-8">
 				{/* Left: Callback Form */}
 				<div className="bg-white rounded-xl border border-black p-8 w-full md:w-[350px] flex flex-col items-center shadow-sm">
 					<div className="flex items-center gap-2 mb-4">
+						<img src="/services/callback.svg" alt="Callback" className="w-4 h-4" />
 						<span className="text-lg font-semibold">Request a callback</span>
 					</div>
 					<form className="w-full flex flex-col gap-4">
-						<div className="flex items-center gap-2 border rounded px-3 py-2 bg-[#f7f7f7]">
-							<span className="text-lg">👤</span>
+						<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
+							<span className="text-lg"><img src="/services/name.svg" alt="Callback" className="w-4 h-4" /></span>
 							<input
 								className="bg-transparent outline-none flex-1"
 								placeholder="Enter your name"
 							/>
 						</div>
-						<div className="flex items-center gap-2 border rounded px-3 py-2 bg-[#f7f7f7]">
-							<span className="text-lg">📞</span>
+						<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
+							<span className="text-lg"><img src="/services/phoneno.svg" alt="Callback" className="w-4 h-4" /></span>
 							<input
 								className="bg-transparent outline-none flex-1"
 								placeholder="Enter your mobile no"
 							/>
 						</div>
-						<div className="flex items-center gap-2 border rounded px-3 py-2 bg-[#f7f7f7]">
-							<span className="text-lg">✉️</span>
+						<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
+							<span className="text-lg"><img src="/services/envelope.svg" alt="Callback" className="w-4 h-4" /></span>
 							<input
 								className="bg-transparent outline-none flex-1"
 								placeholder="Enter your email"
 							/>
 						</div>
 						<textarea
-							className="border rounded px-3 py-2 bg-[#f7f7f7] min-h-[60px] outline-none"
+							className="border rounded-xl px-3 py-2 bg-white min-h-[60px] outline-none"
 							placeholder="Enter your message......"
 						/>
 						<div className="text-pink-600 text-sm">
@@ -124,8 +125,7 @@ export default function ServicesPage() {
 						</div>
 						<button
 							type="submit"
-							className="bg-[#d14fff] text-white rounded px-6 py-2 font-semibold mt-2"
-						>
+							className="bg-[#d14fff] text-white rounded-xl px-2 py-2 font-semibold mt-2"						>
 							Call me
 						</button>
 					</form>
@@ -134,13 +134,13 @@ export default function ServicesPage() {
 				<div className="flex-1 flex flex-col gap-6">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div
-							className="bg-white rounded-xl p-6 flex flex-col gap-2 shadow-sm cursor-pointer"
+							className="bg-white rounded-xl p-6 flex flex-col gap-2 shadow-sm cursor-pointer border border-gray-200 transition-all duration-200 hover:shadow-2xl hover:border-gray-400 hover:-translate-y-1"
 							onClick={() => {
-								window.open('https://wa.me/919980123452', '_blank');
+								window.open('https://wa.me/919591572775', '_blank');
 							}}
 						>
 							<div className="flex items-center gap-2 font-bold text-lg">
-								📞 Ask us on Whatsapp
+								<span className="text-lg"><img src="/services/whatsapp.svg" alt="Callback" className="w-4 h-4" /></span>  Ask us on Whatsapp
 							</div>
 							<div className="text-gray-500 text-sm">
 								Get instant support and updates in whatsapp for our service
@@ -150,15 +150,14 @@ export default function ServicesPage() {
 							</div>
 						</div>
 						<div
-							className="bg-white rounded-xl p-6 flex flex-col gap-2 shadow-sm cursor-pointer"
+							className="bg-white rounded-xl p-6 flex flex-col gap-2 shadow-sm cursor-pointer border border-gray-200 transition-all duration-200 hover:shadow-2xl hover:border-gray-400 hover:-translate-y-1"
 							onClick={() => {
-								const faqSection = document.getElementById("faq-section");
-								if (faqSection)
-									faqSection.scrollIntoView({ behavior: "smooth" });
+								const faqSection = document.getElementById('faq-section');
+								if (faqSection) faqSection.scrollIntoView({ behavior: 'smooth' });
 							}}
 						>
 							<div className="flex items-center gap-2 font-bold text-lg">
-								❓ FAQ
+								<span className="text-lg"><img src="/services/faq.svg" alt="Callback" className="w-4 h-4" /></span> FAQ
 							</div>
 							<div className="text-gray-500 text-sm">
 								Get instant support for our service via our FAQ section
@@ -168,13 +167,13 @@ export default function ServicesPage() {
 							</div>
 						</div>
 						<div
-							className="bg-white rounded-xl p-6 flex flex-col gap-2 shadow-sm col-span-1 md:col-span-2 cursor-pointer"
+							className="bg-white rounded-xl p-6 flex flex-col gap-2 shadow-sm col-span-1 md:col-span-2 cursor-pointer border border-gray-200 transition-all duration-200 hover:shadow-2xl hover:border-gray-400 hover:-translate-y-1"
 							onClick={() => {
 								window.open('https://maps.app.goo.gl/mqVWff6HjLuDCcrD9', '_blank');
 							}}
 						>
 							<div className="flex items-center gap-2 font-bold text-lg">
-								📍 Contact Information
+								<span className="text-lg"><img src="/services/name.svg" alt="Callback" className="w-4 h-4" /></span> Contact Information
 							</div>
 							<div className="flex flex-wrap gap-8 text-xs text-gray-700 mt-2">
 								<div>
@@ -210,38 +209,44 @@ export default function ServicesPage() {
 				<h2 className="text-2xl md:text-3xl font-serif font-semibold text-center mb-12">Choose your package</h2>
 				<div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
 					{/* Quick shine car */}
-					<div className="bg-white rounded-xl border shadow-sm p-8 flex flex-col items-center gap-4 transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
-						<div className="text-2xl font-bold mb-2">Quick shine car</div>
-						<div className="text-xl font-semibold mb-2">₹199</div>
-						<ul className="text-gray-700 text-base mb-4 list-disc list-inside">
-							<li>Exterior wash with high-pressure watergun</li>
-							<li>Soft-touch mild soap</li>
-							<li>Swirl-free clean</li>
-							<li>Deep-cleaning of car mats</li>
-						</ul>
-						<button className="bg-[#FFD600] text-black rounded-lg border border-black px-5 py-1.5 font-semibold text-base transition-colors duration-200 hover:bg-yellow-300 mx-auto">Get Services</button>
+					<div className="bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+						<div className="w-full flex-1 flex flex-col items-center gap-6">
+							<div className="text-4xl font-serif font-bold mb-2 text-center">Quick shine car</div>
+							<div className="text-3xl font-serif font-bold mb-6 text-center">₹199</div>
+							<ul className="text-gray-700 text-xl font-serif mb-6 flex flex-col gap-2 text-center list-none p-0">
+								<li>Exterior wash with high-pressure watergun</li>
+								<li>Soft-touch mild soap</li>
+								<li>Swirl-free clean</li>
+								<li>Deep-cleaning of car mats</li>
+							</ul>
+						</div>
+						<button className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6">Get Services</button>
 					</div>
 					{/* Bike wash */}
-					<div className="bg-white rounded-xl border shadow-sm p-8 flex flex-col items-center gap-4 transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
-						<div className="text-2xl font-bold mb-2">Bike wash</div>
-						<div className="text-xl font-semibold mb-2">₹99</div>
-						<ul className="text-gray-700 text-base mb-4 list-disc list-inside">
-							<li>Gentle exterior water wash</li>
-							<li>Wheel cleaning with specialized wheel cleaner</li>
-							<li>High-pressure tyre wash for spotless finish</li>
-						</ul>
-						<button className="bg-[#FFD600] text-black rounded-lg border border-black px-5 py-1.5 font-semibold text-base transition-colors duration-200 hover:bg-yellow-300 mx-auto">Get Services</button>
+					<div className="bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+						<div className="w-full flex-1 flex flex-col items-center gap-6">
+							<div className="text-4xl font-serif font-bold mb-2 text-center">Shine Bike wash</div>
+							<div className="text-3xl font-serif font-bold mb-6 text-center">₹99</div>
+							<ul className="text-gray-700 text-xl font-serif mb-6 flex flex-col gap-2 text-center list-none p-0">
+								<li>Gentle exterior water wash</li>
+								<li>Wheel cleaning with specialized wheel cleaner</li>
+								<li>High-pressure tyre wash for spotless finish</li>
+							</ul>
+						</div>
+						<button className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6">Get Services</button>
 					</div>
 					{/* Laundry wash */}
-					<div className="bg-white rounded-xl border shadow-sm p-8 flex flex-col items-center gap-4 transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
-						<div className="text-2xl font-bold mb-2">Laundry wash</div>
-						<div className="text-xl font-semibold mb-2">₹99</div>
-						<ul className="text-gray-700 text-base mb-4 list-disc list-inside">
-							<li>Gentle exterior water wash</li>
-							<li>Wheel cleaning with specialized wheel cleaner</li>
-							<li>High-pressure tyre wash for spotless finish</li>
-						</ul>
-						<button className="bg-[#FFD600] text-black rounded-lg border border-black px-5 py-1.5 font-semibold text-base transition-colors duration-200 hover:bg-yellow-300 mx-auto">Get Services</button>
+					<div className="bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+						<div className="w-full flex-1 flex flex-col items-center gap-6">
+							<div className="text-4xl font-serif font-bold mb-2 text-center">Laundry wash</div>
+							<div className="text-3xl font-serif font-bold mb-6 text-center">₹99</div>
+							<ul className="text-gray-700 text-xl font-serif mb-6 flex flex-col gap-2 text-center list-none p-0">
+								<li>Gentle exterior water wash</li>
+								<li>Wheel cleaning with specialized wheel cleaner</li>
+								<li>High-pressure tyre wash for spotless finish</li>
+							</ul>
+						</div>
+						<button className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6">Get Services</button>
 					</div>
 				</div>
 			</div>
@@ -292,7 +297,7 @@ export default function ServicesPage() {
 				</div>
 			</div>
 			{/* FAQ Section */}
-			<div className="mt-16 bg-[#f7f7f7] py-12">
+			<div className="mt-16 bg-white py-12">
 				<h2
 					id="faq-section"
 					className="text-2xl md:text-3xl font-serif font-semibold text-center mb-8"
@@ -308,7 +313,12 @@ export default function ServicesPage() {
 							>
 								<span>{faq.question}</span>
 								<span className="text-2xl">
-									{openIdx === i ? "▲" : "▼"}
+									<img
+										src="/services/triangle-down.svg"
+										alt="Toggle"
+										className={openIdx === i ? "w-6 h-6 transform rotate-180 transition-transform duration-200 inline" : "w-6 h-6 transition-transform duration-200 inline"}
+										style={{ display: 'inline-block', verticalAlign: 'middle' }}
+									/>
 								</span>
 							</button>
 							{openIdx === i && (

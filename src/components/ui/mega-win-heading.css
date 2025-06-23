@@ -37,7 +37,7 @@
     4px 4px 12px #000a,
     0 0 2px #fff; */
   box-shadow: none;
-  animation: mega-zoom 4s cubic-bezier(.25,1.5,.5,1.1) infinite alternate;
+  /* animation: mega-zoom 4s cubic-bezier(.25,1.5,.5,1.1) infinite alternate; */
   z-index: 1;
   /* Remove border and background burst */
 }

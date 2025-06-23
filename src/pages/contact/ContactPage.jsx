@@ -2,10 +2,10 @@ import React from "react";
 
 export default function ContactPage() {
   return (
-    <div className="bg-[#FCFCFB] rounded-t-3xl pt-8 pb-2 px-4 md:px-16 mt-16">
+    <div className="bg-white rounded-t-3xl  pb-2 px-4 md:px-16 ">
       <div className="max-w-6xl mx-auto">
         <div className="font-bold text-lg mb-4 flex items-center gap-2">
-          📍 Contact Information
+          <span className="text-lg"><img src="/services/name.svg" alt="Callback" className="w-4 h-4" /></span> Contact US
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-base text-gray-800 mt-2">
           <div>

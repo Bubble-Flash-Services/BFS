@@ -26,12 +26,12 @@ export const TextGenerateEffect = ({
 
   const renderWords = () => {
     return (
-      <motion.div ref={scope}>
+      <motion.div ref={scope} className={className}>
         {wordsArray.map((word, idx) => {
           return (
             <motion.span
               key={word + idx}
-              className={"dark:text-white text-black opacity-0"}
+              className={"opacity-0"}
               style={{
                 filter: filter ? "blur(10px)" : "none",
               }}
@@ -44,13 +44,5 @@ export const TextGenerateEffect = ({
     );
   };
 
-  return (
-    <div className={"font-bold " + (className || "") }>
-      <div className="mt-4">
-        <div className=" dark:text-white text-black text-2xl leading-snug tracking-wide">
-          {renderWords()}
-        </div>
-      </div>
-    </div>
-  );
-}; 
+  return renderWords();
+};
