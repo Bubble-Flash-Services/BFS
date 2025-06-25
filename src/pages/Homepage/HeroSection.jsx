@@ -72,6 +72,7 @@ export default function HeroSection() {
 	const [openIdx, setOpenIdx] = useState(0);
 	const [visibleCount, setVisibleCount] = useState(4);
 	const [carousel, setCarousel] = useState(testimonials);
+	const [accessorySlide, setAccessorySlide] = useState(0);
 
 	useEffect(() => {
 		if (navigator.geolocation) {
@@ -153,6 +154,98 @@ export default function HeroSection() {
 
 	const categories = ['Car Wash', 'Bike Wash', 'Laundry Service'];
 	const locations = [fullAddress || 'Bengaluru, India', 'Chennai, India'];
+
+	// Car wash accessories data
+	const accessories = [
+		{
+			img: '/public/aboutus/car-spray.png',
+			title: 'Hoora car spray',
+			price: 99,
+			oldPrice: 150,
+			offer: '50%offer',
+			stars: 3,
+			tag: '₹ 99 only',
+		},
+		{
+			img: '/public/car/car2.png',
+			title: 'Microfiber Towel',
+			price: 120,
+			oldPrice: 200,
+			offer: '40%offer',
+			stars: 3,
+			tag: '₹ 120 only',
+		},
+		{
+			img: '/public/car/car3.png',
+			title: 'Car Shampoo',
+			price: 80,
+			oldPrice: 160,
+			offer: '50%offer',
+			stars: 3,
+			tag: '₹ 80 only',
+		},
+		{
+			img: '/public/car/car1.png',
+			title: 'Tyre Cleaner',
+			price: 110,
+			oldPrice: 220,
+			offer: '50%offer',
+			stars: 3,
+			tag: '₹ 110 only',
+		},
+		{
+			img: '/public/car/car2.png',
+			title: 'Glass Cleaner',
+			price: 90,
+			oldPrice: 180,
+			offer: '50%offer',
+			stars: 3,
+			tag: '₹ 90 only',
+		},
+		{
+			img: '/public/car/car3.png',
+			title: 'Dashboard Polish',
+			price: 150,
+			oldPrice: 300,
+			offer: '50%offer',
+			stars: 3,
+			tag: '₹ 150 only',
+		},
+		{
+			img: '/public/car/car1.png',
+			title: 'Foam Sprayer',
+			price: 180,
+			oldPrice: 360,
+			offer: '50%offer',
+			stars: 3,
+			tag: '₹ 180 only',
+		},
+		{
+			img: '/public/car/car2.png',
+			title: 'Wheel Brush',
+			price: 70,
+			oldPrice: 140,
+			offer: '50%offer',
+			stars: 3,
+			tag: '₹ 70 only',
+		},
+		{
+			img: '/public/car/car3.png',
+			title: 'Leather Cleaner',
+			price: 200,
+			oldPrice: 400,
+			offer: '50%offer',
+			stars: 3,
+			tag: '₹ 200 only',
+		},
+	];
+
+	const cardsPerSlide = 3;
+	const totalSlides = Math.ceil(accessories.length / cardsPerSlide);
+	const handleDotClick = idx => setAccessorySlide(idx);
+	const handlePrev = () =>
+		setAccessorySlide(s => (s - 1 + totalSlides) % totalSlides);
+	const handleNext = () => setAccessorySlide(s => (s + 1) % totalSlides);
 
 	return (
 		<>
@@ -331,58 +424,38 @@ export default function HeroSection() {
 						<h3 className="text-2xl font-semibold text-center mb-8">
 							Book with following 3 working steps
 						</h3>
-						<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-							<div className="flex flex-col items-center">
-								<div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mb-3">
-									<img
-										src="/aboutus/location.png"
-										alt="Choose location"
-										className="w-10 h-10"
-									/>
+						<div className="flex flex-row w-full mb-12">
+							{/* Step 1 */}
+							<div className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1">
+								<div className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3">
+									<img src="/aboutus/location.png" alt="Choose location" className="w-7 h-7 md:w-10 md:h-10" />
 								</div>
-								<div className="font-semibold">Choose location</div>
-								<div className="text-xs text-gray-500 text-center">
-									Choose your and find your best car
-								</div>
+								<div className="font-semibold text-xs md:text-base text-center">Choose location</div>
+								<div className="text-[10px] md:text-xs text-gray-500 text-center">Choose your and find your best car</div>
 							</div>
-							<div className="flex flex-col items-center">
-								<div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mb-3">
-									<img
-										src="/aboutus/pickup-date.png"
-										alt="Pick-up date"
-										className="w-10 h-10"
-									/>
+							{/* Step 2 */}
+							<div className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1">
+								<div className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3">
+									<img src="/aboutus/pickup-date.png" alt="Pick-up date" className="w-7 h-7 md:w-10 md:h-10" />
 								</div>
-								<div className="font-semibold">Pick-up date</div>
-								<div className="text-xs text-gray-500 text-center">
-									Select your pick up date and time to book your car
-								</div>
+								<div className="font-semibold text-xs md:text-base text-center">Pick-up date</div>
+								<div className="text-[10px] md:text-xs text-gray-500 text-center">Select your pick up date and time to book your car</div>
 							</div>
-							<div className="flex flex-col items-center">
-								<div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mb-3">
-									<img
-										src="/aboutus/bookyourwash.png"
-										alt="Book your wash"
-										className="w-10 h-10"
-									/>
+							{/* Step 3 */}
+							<div className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1">
+								<div className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3">
+									<img src="/aboutus/bookyourwash.png" alt="Book your wash" className="w-7 h-7 md:w-10 md:h-10" />
 								</div>
-								<div className="font-semibold">Book your wash</div>
-								<div className="text-xs text-gray-500 text-center">
-									Book your car for doorstep service
-								</div>
+								<div className="font-semibold text-xs md:text-base text-center">Book your wash</div>
+								<div className="text-[10px] md:text-xs text-gray-500 text-center">Book your car for doorstep service</div>
 							</div>
-							<div className="flex flex-col items-center">
-								<div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mb-3">
-									<img
-										src="/aboutus/expierencewash.png"
-										alt="Experience wash"
-										className="w-10 h-10"
-									/>
+							{/* Step 4 */}
+							<div className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1">
+								<div className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3">
+									<img src="/aboutus/expierencewash.png" alt="Experience wash" className="w-7 h-7 md:w-10 md:h-10" />
 								</div>
-								<div className="font-semibold">Experience wash</div>
-								<div className="text-xs text-gray-500 text-center">
-									Don't worry, we have many experienced professionals
-								</div>
+								<div className="font-semibold text-xs md:text-base text-center">Experience wash</div>
+								<div className="text-[10px] md:text-xs text-gray-500 text-center">Don't worry, we have many experienced professionals</div>
 							</div>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
@@ -417,8 +490,102 @@ export default function HeroSection() {
 						</div>
 					</div>
 				</div>
+
+				
 				{/* AboutPage content end */}
 			</section>
+			{/* Car wash Accessories Slider */}
+			<div className="py-12 bg-white">
+				<h2 className="text-3xl font-bold text-center mb-8">
+					Car wash Accessories
+				</h2>
+				<div className="flex items-center justify-center gap-4 max-w-7xl mx-auto">
+					{/* Left arrow */}
+					<button
+						onClick={handlePrev}
+						className="rounded-full bg-black text-white w-12 h-12 flex items-center justify-center shadow hover:bg-gray-800 focus:outline-none"
+						aria-label="Previous"
+					>
+						<img src="/services/triangle-down.svg" alt="left" style={{ transform: 'rotate(90deg)', width: 28, height: 28 }} />
+					</button>
+					{/* Cards */}
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 flex-1 max-w-4xl">
+						{accessories
+							.slice(
+								accessorySlide * cardsPerSlide,
+								accessorySlide * cardsPerSlide + cardsPerSlide
+							)
+							.map((item, idx) => (
+								<div
+									key={idx}
+									className="bg-white rounded-3xl shadow p-6 flex flex-col items-center min-h-[370px] max-w-xs mx-auto"
+								>
+									<div className="flex items-center w-full mb-2">
+										<img
+											src={item.img}
+											alt={item.title}
+											className="w-24 h-24 rounded-lg object-cover mr-4"
+										/>
+										<div className="flex-1">
+											<div className="text-2xl font-serif font-semibold">
+												{item.title}
+											</div>
+											<div className="flex items-center mt-2">
+												{[...Array(item.stars)].map((_, i) => (
+													<span
+														key={i}
+														className="text-yellow-400 text-2xl"
+													>
+														★
+													</span>
+												))}
+											</div>
+											<div className="text-gray-400 line-through text-lg">
+												MRP : ₹{item.oldPrice}
+											</div>
+										</div>
+									</div>
+									<div className="flex items-center gap-2 w-full mb-4">
+										<span className="text-red-600 text-lg font-bold">
+											{item.tag}
+										</span>
+										<span className="bg-red-400 text-white px-3 py-1 rounded shadow text-sm font-semibold">
+											{item.offer}
+										</span>
+									</div>
+									<button className="mt-auto bg-green-500 text-white px-8 py-2 rounded-lg font-bold text-lg shadow hover:bg-green-600 transition-all">
+										Add to cart
+									</button>
+								</div>
+							))}
+					</div>
+					{/* Right arrow */}
+					<button
+						onClick={handleNext}
+						className="rounded-full bg-black text-white w-12 h-12 flex items-center justify-center shadow hover:bg-gray-800 focus:outline-none"
+						aria-label="Next"
+					>
+						<img src="/services/triangle-down.svg" alt="right" style={{ transform: 'rotate(-90deg)', width: 28, height: 28 }} />
+					</button>
+				</div>
+				{/* Dots */}
+				<div className="flex justify-center gap-6 mt-8">
+					{Array.from({ length: totalSlides }).map((_, idx) => (
+						<button
+							key={idx}
+							onClick={() => handleDotClick(idx)}
+							className={`w-8 h-8 rounded-full border-2 border-black flex items-center justify-center transition-all ${
+								accessorySlide === idx
+									? 'bg-black text-white'
+									: 'bg-white text-black'
+							}`}
+							aria-label={`Go to slide ${idx + 1}`}
+						>
+							<span className="text-2xl">•</span>
+						</button>
+					))}
+				</div>
+			</div>
 			<section id="services">
 				{/* ServicesPage content start */}
 				<div className="max-w-6xl mx-auto pt-12 px-4 flex flex-col md:flex-row gap-8">
