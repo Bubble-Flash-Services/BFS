@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './components/AuthContext';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import HeroSection from './pages/Homepage/HeroSection';
@@ -12,10 +13,18 @@ import ServicesPage from './pages/ServicesPage/ServicesPage';
 import AboutPage from './pages/aboutus/AboutPage';
 import GoogleSuccess from './pages/GoogleSuccess';
 import ContactPage from './pages/contact/ContactPage';
+import SignupModal from './pages/Homepage/signup/SignupModal';
+import SigninModal from './pages/Homepage/signin/SigninModal';
+import ProfileModal from './components/ProfileModal';
 
-function App() {
+function AppContent() {
+  const { user, setUser, logout } = useAuth();
+  const [showSignup, setShowSignup] = useState(false);
+  const [showSignin, setShowSignin] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+
   return (
-    <div className="min-h-screen bg-white">
+    <div>
       <Header />
       <Routes>
         <Route path="/" element={
@@ -32,8 +41,38 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
       </Routes>
       <Footer />
+      <header className="flex justify-end gap-4 p-4">
+        {user ? (
+          <>
+            <span className="font-bold">Hello, {user.name || user.email || user.phone}</span>
+            <button className="bg-blue-500 text-white px-3 py-1 rounded" onClick={()=>setShowProfile(true)}>Profile</button>
+            <button className="bg-gray-300 px-3 py-1 rounded" onClick={logout}>Logout</button>
+          </>
+        ) : (
+          <>
+            <button className="bg-yellow-400 px-3 py-1 rounded" onClick={()=>setShowSignin(true)}>Login</button>
+            <button className="bg-green-400 px-3 py-1 rounded" onClick={()=>setShowSignup(true)}>Sign Up</button>
+          </>
+        )}
+      </header>
+      {/* Main content here */}
+      {showSignup && <SignupModal open={showSignup} onClose={()=>setShowSignup(false)} onSignup={setUser} onLoginNow={()=>{setShowSignup(false);setShowSignin(true);}} />}
+      {showSignin && <SigninModal open={showSignin} onClose={()=>setShowSignin(false)} onSignupNow={()=>{setShowSignin(false);setShowSignup(true);}} onLogin={setUser} />}
+      {showProfile && <ProfileModal user={user} onSave={async (data)=>{
+        // Call updateProfile API
+        const token = localStorage.getItem('token');
+        const res = await import('./api/auth').then(api => api.updateProfile(token, data));
+        if (res && !res.error) setUser(res);
+        setShowProfile(false);
+      }} onClose={()=>setShowProfile(false)} />}
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}

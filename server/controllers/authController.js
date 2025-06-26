@@ -1,0 +1,169 @@
+import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import twilio from 'twilio';
+
+// Configure nodemailer (replace with your SMTP credentials)
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// Configure Twilio (replace with your Twilio credentials)
+const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+const TWILIO_FROM = process.env.TWILIO_FROM;
+
+// Helper: generate JWT
+export function genToken(user) {
+  return jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+}
+
+export const signup = async (req, res) => {
+  try {
+    // Accept both 'name' and 'username' as aliases
+    let { name, username, email, phone, password } = req.body;
+    name = name || username;
+    if (!name || (!email && !phone)) return res.status(400).json({ error: 'Name and email or phone required' });
+    if (email && await User.findOne({ email })) return res.status(400).json({ error: 'Email already exists' });
+    if (phone && await User.findOne({ phone })) return res.status(400).json({ error: 'Phone already exists' });
+    const user = await User.create({ name, email, phone, password });
+    const token = genToken(user);
+    res.json({ token, user });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+export const login = async (req, res) => {
+  try {
+    const { email, phone, password } = req.body;
+    const user = email ? await User.findOne({ email }) : await User.findOne({ phone });
+    if (!user) return res.status(400).json({ error: 'User not found' });
+    if (!await user.comparePassword(password)) return res.status(400).json({ error: 'Invalid credentials' });
+    const token = genToken(user);
+    res.json({ token, user });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+export const sendOtp = async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ error: 'Phone required' });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = Date.now() + 10 * 60 * 1000;
+    let user = await User.findOne({ phone });
+    if (!user) user = await User.create({ phone, name: 'User' });
+    user.otp = otp;
+    user.otpExpires = otpExpires;
+    await user.save();
+    // Send OTP via SMS
+    await twilioClient.messages.create({
+      body: `Your OTP is ${otp}`,
+      from: TWILIO_FROM,
+      to: phone,
+    });
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+export const signinOtp = async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ error: 'Phone required' });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = Date.now() + 10 * 60 * 1000;
+    let user = await User.findOne({ phone });
+    if (!user) return res.status(400).json({ error: 'User not found' });
+    user.otp = otp;
+    user.otpExpires = otpExpires;
+    await user.save();
+    // Send OTP via SMS
+    await twilioClient.messages.create({
+      body: `Your OTP for login is ${otp}`,
+      from: TWILIO_FROM,
+      to: phone,
+    });
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+export const verifyOtp = async (req, res) => {
+  try {
+    const { phone, otp } = req.body;
+    const user = await User.findOne({ phone, otp, otpExpires: { $gt: Date.now() } });
+    if (!user) return res.status(400).json({ error: 'Invalid or expired OTP' });
+    user.otp = undefined; user.otpExpires = undefined;
+    await user.save();
+    const token = genToken(user);
+    res.json({ token, user });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email, phone } = req.body;
+    if (email) {
+      const user = await User.findOne({ email });
+      if (!user) return res.status(400).json({ error: 'User not found' });
+      const resetToken = crypto.randomBytes(20).toString('hex');
+      user.resetToken = resetToken;
+      user.resetTokenExpires = Date.now() + 60 * 60 * 1000;
+      await user.save();
+      // Send resetToken via email (plain token, not a link)
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Password Reset',
+        html: `<p>Your password reset token is: <b>${resetToken}</b><br/>This token expires in 1 hour.</p>`
+      });
+      res.json({ success: true });
+    } else if (phone) {
+      const user = await User.findOne({ phone });
+      if (!user) return res.status(400).json({ error: 'User not found' });
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      user.otp = otp;
+      user.otpExpires = Date.now() + 10 * 60 * 1000;
+      await user.save();
+      // Send OTP via SMS
+      await twilioClient.messages.create({
+        body: `Your OTP for password reset is ${otp}`,
+        from: TWILIO_FROM,
+        to: phone,
+      });
+      res.json({ success: true });
+    } else {
+      return res.status(400).json({ error: 'Email or phone required' });
+    }
+  } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, resetToken, password } = req.body;
+    const user = await User.findOne({ email, resetToken, resetTokenExpires: { $gt: Date.now() } });
+    if (!user) return res.status(400).json({ error: 'Invalid or expired token' });
+    user.password = password; // assign plain password, let pre-save hook hash it
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
+    await user.save();
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    const user = await User.findByIdAndUpdate(req.user.id, { name, phone }, { new: true }).select('-password');
+    res.json(user);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+};
