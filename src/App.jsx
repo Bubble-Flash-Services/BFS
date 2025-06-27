@@ -9,6 +9,9 @@ import Footer from './components/Footer';
 import CarsPage from './pages/Homepage/services/CarsPage';
 import BikesPage from './pages/Homepage/services/BikesPage';
 import LaundryPage from './pages/Homepage/services/LaundryPage';
+import CarWashDeals from './pages/Homepage/services/CarWashDeals';
+import BikeWashDeals from './pages/Homepage/services/BikeWashDeals';
+import LaundryDeals from './pages/Homepage/services/LaundryDeals';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
 import AboutPage from './pages/aboutus/AboutPage';
 import GoogleSuccess from './pages/GoogleSuccess';
@@ -35,6 +38,9 @@ function AppContent() {
         <Route path="/cars" element={<CarsPage />} />
         <Route path="/bikes" element={<BikesPage />} />
         <Route path="/laundry" element={<LaundryPage />} />
+        <Route path="/car-wash-deals/:category" element={<CarWashDeals />} />
+        <Route path="/bike-wash-deals/:category" element={<BikeWashDeals />} />
+        <Route path="/laundry-deals/:category" element={<LaundryDeals />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/google-success" element={<GoogleSuccess />} />

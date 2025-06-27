@@ -129,7 +129,9 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
             >
               {loading ? 'Logging in...' : 'Log In'}
             </button>
-            <button type="button" className="text-blue-500 hover:underline text-xs sm:text-sm" onClick={()=>setShowForgot(true)}>Forgot password?</button>
+            <button type="button" className="text-blue-500 hover:underline text-xs mt-2" onClick={() => setShowForgot(true)}>
+              Forgot password?
+            </button>
           </form>
         )}
         {mode === 'mobile' && !otpSent && (
@@ -193,15 +195,7 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
           }}>Sign up now</button>
         </div>
       </div>
-      {showForgot && <ForgotPasswordModal onSubmit={async (data) => {
-        if (data.email && !data.resetToken) {
-          // send reset link
-          return await import('../../../api/auth').then(api => api.forgotPassword(data));
-        } else if (data.email && data.resetToken && data.password) {
-          // reset password
-          return await import('../../../api/auth').then(api => api.resetPassword(data));
-        }
-      }} onClose={()=>setShowForgot(false)} />}
+      {showForgot && <ForgotPasswordModal onClose={()=>setShowForgot(false)} />}
     </div>
   );
 }

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, Menu } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import SignupModal from '../pages/Homepage/signup/SignupModal';
 import SuccessModal from '../pages/Homepage/signup/SuccessModal';
 import SigninModal from '../pages/Homepage/signin/SigninModal';
 
 export default function Header() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [openSignup, setOpenSignup] = useState(false);
   const [openSignin, setOpenSignin] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -17,9 +20,39 @@ export default function Header() {
     if (userData) setUser(JSON.parse(userData));
   }, []);
 
+  // Handle navigation from other pages
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const timer = setTimeout(() => {
+        const element = document.getElementById(location.state.scrollTo);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+        // Clear the state after scrolling
+        window.history.replaceState(null, '');
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
+
   const handleSuccessFromSignup = () => {
     setOpenSignup(false);
     setOpenSuccess(true);
+  };
+
+  const handleNavigation = (section) => {
+    // If we're not on the homepage, navigate to homepage first, then scroll to section
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: section } });
+    } else {
+      // If we're on homepage, just scroll to the section
+      const element = document.getElementById(section);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    setMobileMenuOpen(false);
   };
 
   const getAvatar = () => {
@@ -47,19 +80,31 @@ export default function Header() {
             </div>
 
             <nav className="hidden md:flex space-x-8">
-              <a href="#home" className="text-gray-700 hover:text-blue-500 font-medium transition-colors">
+              <button 
+                onClick={() => handleNavigation('home')} 
+                className="text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
+              >
                 Home
-              </a>
-              <a href="#aboutus" className="text-gray-700 hover:text-blue-500 font-medium transition-colors">
+              </button>
+              <button 
+                onClick={() => handleNavigation('aboutus')} 
+                className="text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
+              >
                 About us
-              </a>
-              <a href="#services" className="text-gray-700 hover:text-blue-500 font-medium transition-colors">
+              </button>
+              <button 
+                onClick={() => handleNavigation('services')} 
+                className="text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
+              >
                 Services
-              </a>
-              <a href="#contact" className="text-gray-700 hover:text-blue-500 font-medium transition-colors flex items-center gap-1">
+              </button>
+              <button 
+                onClick={() => handleNavigation('contact')} 
+                className="text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
+              >
                 <Phone size={16} />
                 Contact
-              </a>
+              </button>
             </nav>
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -116,19 +161,31 @@ export default function Header() {
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200 shadow-lg px-4 py-4 space-y-4">
-            <a href="#home" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors" onClick={() => setMobileMenuOpen(false)}>
+            <button 
+              onClick={() => handleNavigation('home')} 
+              className="block w-full text-left text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
+            >
               Home
-            </a>
-            <a href="#aboutus" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors" onClick={() => setMobileMenuOpen(false)}>
+            </button>
+            <button 
+              onClick={() => handleNavigation('aboutus')} 
+              className="block w-full text-left text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
+            >
               About us
-            </a>
-            <a href="#services" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors" onClick={() => setMobileMenuOpen(false)}>
+            </button>
+            <button 
+              onClick={() => handleNavigation('services')} 
+              className="block w-full text-left text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
+            >
               Services
-            </a>
-            <a href="#contact" className="block text-gray-700 hover:text-blue-500 font-medium transition-colors flex items-center gap-1" onClick={() => setMobileMenuOpen(false)}>
+            </button>
+            <button 
+              onClick={() => handleNavigation('contact')} 
+              className="w-full text-left text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
+            >
               <Phone size={16} />
               Contact
-            </a>
+            </button>
           </div>
         )}
       </header>

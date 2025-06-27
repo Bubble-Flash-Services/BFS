@@ -41,8 +41,12 @@ export const login = async (req, res) => {
   try {
     const { email, phone, password } = req.body;
     const user = email ? await User.findOne({ email }) : await User.findOne({ phone });
+    console.log('Login attempt:', { email, phone, password });
+    console.log('User found:', user);
     if (!user) return res.status(400).json({ error: 'User not found' });
-    if (!await user.comparePassword(password)) return res.status(400).json({ error: 'Invalid credentials' });
+    const isMatch = await user.comparePassword(password);
+    console.log('Password match:', isMatch);
+    if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
     const token = genToken(user);
     res.json({ token, user });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -102,57 +106,6 @@ export const verifyOtp = async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 };
 
-export const forgotPassword = async (req, res) => {
-  try {
-    const { email, phone } = req.body;
-    if (email) {
-      const user = await User.findOne({ email });
-      if (!user) return res.status(400).json({ error: 'User not found' });
-      const resetToken = crypto.randomBytes(20).toString('hex');
-      user.resetToken = resetToken;
-      user.resetTokenExpires = Date.now() + 60 * 60 * 1000;
-      await user.save();
-      // Send resetToken via email (plain token, not a link)
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Password Reset',
-        html: `<p>Your password reset token is: <b>${resetToken}</b><br/>This token expires in 1 hour.</p>`
-      });
-      res.json({ success: true });
-    } else if (phone) {
-      const user = await User.findOne({ phone });
-      if (!user) return res.status(400).json({ error: 'User not found' });
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      user.otp = otp;
-      user.otpExpires = Date.now() + 10 * 60 * 1000;
-      await user.save();
-      // Send OTP via SMS
-      await twilioClient.messages.create({
-        body: `Your OTP for password reset is ${otp}`,
-        from: TWILIO_FROM,
-        to: phone,
-      });
-      res.json({ success: true });
-    } else {
-      return res.status(400).json({ error: 'Email or phone required' });
-    }
-  } catch (e) { res.status(500).json({ error: e.message }); }
-};
-
-export const resetPassword = async (req, res) => {
-  try {
-    const { email, resetToken, password } = req.body;
-    const user = await User.findOne({ email, resetToken, resetTokenExpires: { $gt: Date.now() } });
-    if (!user) return res.status(400).json({ error: 'Invalid or expired token' });
-    user.password = password; // assign plain password, let pre-save hook hash it
-    user.resetToken = undefined;
-    user.resetTokenExpires = undefined;
-    await user.save();
-    res.json({ success: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-};
-
 export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -166,4 +119,45 @@ export const updateProfile = async (req, res) => {
     const user = await User.findByIdAndUpdate(req.user.id, { name, phone }, { new: true }).select('-password');
     res.json(user);
   } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+// Forgot Password: Request reset
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email required' });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(200).json({ message: 'If that email is registered, a reset code has been sent.' });
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    user.resetToken = resetToken;
+    user.resetTokenExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+    await user.save();
+    // Send email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Password Reset',
+      html: `<p>Your password reset code is: <b>${resetToken}</b><br/>This code expires in 1 hour.</p>`
+    });
+    res.status(200).json({ message: 'If that email is registered, a reset code has been sent.' });
+  } catch (e) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Forgot Password: Reset
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, resetToken, password } = req.body;
+    if (!email || !resetToken || !password) return res.status(400).json({ message: 'All fields required' });
+    const user = await User.findOne({ email, resetToken, resetTokenExpires: { $gt: Date.now() } });
+    if (!user) return res.status(400).json({ message: 'Invalid or expired reset code' });
+    user.password = password;
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
+    await user.save();
+    res.status(200).json({ message: 'Password reset successful' });
+  } catch (e) {
+    res.status(500).json({ message: 'Server error' });
+  }
 };

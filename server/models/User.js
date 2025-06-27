@@ -9,6 +9,9 @@ const UserSchema = new mongoose.Schema({
   image: { type: String }, // Google image or null
   provider: { type: String, default: 'local' }, // 'local' or 'google'
   googleId: { type: String },
+  // Forgot password fields
+  resetToken: { type: String },
+  resetTokenExpires: { type: Date }
 });
 
 // Hash password before save if modified

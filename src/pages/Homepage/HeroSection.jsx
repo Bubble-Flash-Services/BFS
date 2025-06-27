@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Phone, MapPin, ChevronDown } from 'lucide-react';
 import { TextGenerateEffect } from '../../components/ui/text-generate-effect';
 import { SparklesText } from '../../components/ui/sparkles-text';
@@ -73,6 +73,10 @@ export default function HeroSection() {
 	const [visibleCount, setVisibleCount] = useState(4);
 	const [carousel, setCarousel] = useState(testimonials);
 	const [accessorySlide, setAccessorySlide] = useState(0);
+	const [isMobile, setIsMobile] = useState(false);
+	const accessorySliderRef = useRef(null);
+	const startX = useRef(0);
+	const isDragging = useRef(false);
 
 	useEffect(() => {
 		if (navigator.geolocation) {
@@ -129,6 +133,9 @@ export default function HeroSection() {
 	// Responsive visibleCount for testimonials
 	useEffect(() => {
 		function handleResize() {
+			const isMobileView = window.innerWidth < 768;
+			setIsMobile(isMobileView);
+			
 			if (window.innerWidth < 640) {
 				setVisibleCount(1);
 			} else if (window.innerWidth < 1024) {
@@ -141,6 +148,20 @@ export default function HeroSection() {
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
+
+	// Auto-slide functionality for accessories slider
+	useEffect(() => {
+		if (!isMobile) return;
+		
+		const autoSlide = setInterval(() => {
+			setAccessorySlide((prev) => {
+				const nextSlide = prev + 1;
+				return nextSlide >= totalSlides ? 0 : nextSlide;
+			});
+		}, 2000);
+
+		return () => clearInterval(autoSlide);
+	}, [isMobile]);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -242,10 +263,40 @@ export default function HeroSection() {
 
 	const cardsPerSlide = 3;
 	const totalSlides = Math.ceil(accessories.length / cardsPerSlide);
+	
 	const handleDotClick = idx => setAccessorySlide(idx);
 	const handlePrev = () =>
 		setAccessorySlide(s => (s - 1 + totalSlides) % totalSlides);
 	const handleNext = () => setAccessorySlide(s => (s + 1) % totalSlides);
+
+	// Touch handlers for mobile
+	const handleTouchStart = (e) => {
+		if (!isMobile) return;
+		isDragging.current = true;
+		startX.current = e.touches[0].pageX;
+	};
+
+	const handleTouchMove = (e) => {
+		if (!isMobile || !isDragging.current) return;
+		e.preventDefault();
+	};
+
+	const handleTouchEnd = (e) => {
+		if (!isMobile || !isDragging.current) return;
+		isDragging.current = false;
+		
+		const endX = e.changedTouches[0].pageX;
+		const diffX = startX.current - endX;
+		const threshold = 50;
+		
+		if (Math.abs(diffX) > threshold) {
+			if (diffX > 0 && accessorySlide < totalSlides - 1) {
+				setAccessorySlide(accessorySlide + 1);
+			} else if (diffX < 0 && accessorySlide > 0) {
+				setAccessorySlide(accessorySlide - 1);
+			}
+		}
+	};
 
 	return (
 		<>
@@ -499,7 +550,9 @@ export default function HeroSection() {
 				<h2 className="text-3xl font-bold text-center mb-8">
 					Car wash Accessories
 				</h2>
-				<div className="flex items-center justify-center gap-4 max-w-7xl mx-auto">
+				
+				{/* Desktop Layout */}
+				<div className="hidden md:flex items-center justify-center gap-4 max-w-7xl mx-auto">
 					{/* Left arrow */}
 					<button
 						onClick={handlePrev}
@@ -568,8 +621,82 @@ export default function HeroSection() {
 						<img src="/services/triangle-down.svg" alt="right" style={{ transform: 'rotate(-90deg)', width: 28, height: 28 }} />
 					</button>
 				</div>
-				{/* Dots */}
-				<div className="flex justify-center gap-6 mt-8">
+
+				{/* Mobile Slider Layout */}
+				<div className="md:hidden relative overflow-hidden max-w-sm mx-auto">
+					<div
+						ref={accessorySliderRef}
+						className="flex transition-transform duration-300 ease-in-out"
+						style={{
+							transform: `translateX(-${accessorySlide * 100}%)`,
+						}}
+						onTouchStart={handleTouchStart}
+						onTouchMove={handleTouchMove}
+						onTouchEnd={handleTouchEnd}
+					>
+						{accessories.map((item, idx) => (
+							<div
+								key={idx}
+								className="flex-shrink-0 w-full px-4"
+							>
+								<div className="bg-white rounded-3xl shadow-lg p-6 flex flex-col items-center min-h-[370px] max-w-xs mx-auto">
+									<div className="flex items-center w-full mb-2">
+										<img
+											src={item.img}
+											alt={item.title}
+											className="w-24 h-24 rounded-lg object-cover mr-4"
+										/>
+										<div className="flex-1">
+											<div className="text-xl font-serif font-semibold">
+												{item.title}
+											</div>
+											<div className="flex items-center mt-2">
+												{[...Array(item.stars)].map((_, i) => (
+													<span
+														key={i}
+														className="text-yellow-400 text-xl"
+													>
+														★
+													</span>
+												))}
+											</div>
+											<div className="text-gray-400 line-through text-sm">
+												MRP : ₹{item.oldPrice}
+											</div>
+										</div>
+									</div>
+									<div className="flex items-center gap-2 w-full mb-4">
+										<span className="text-red-600 text-lg font-bold">
+											{item.tag}
+										</span>
+										<span className="bg-red-400 text-white px-3 py-1 rounded shadow text-sm font-semibold">
+											{item.offer}
+										</span>
+									</div>
+									<button className="mt-auto bg-green-500 text-white px-6 py-2 rounded-lg font-bold text-lg shadow hover:bg-green-600 transition-all">
+										Add to cart
+									</button>
+								</div>
+							</div>
+						))}
+					</div>
+
+					{/* Mobile Slide Indicators */}
+					<div className="flex justify-center mt-6 space-x-2">
+						{accessories.map((_, index) => (
+							<button
+								key={index}
+								className={`w-3 h-3 rounded-full transition-colors ${
+									index === accessorySlide ? 'bg-black' : 'bg-gray-300'
+								}`}
+								onClick={() => setAccessorySlide(index)}
+							/>
+						))}
+					</div>
+				</div>
+
+				{/* Desktop Dots */}
+				<div className="hidden md:flex justify-center gap-6 mt-8">
 					{Array.from({ length: totalSlides }).map((_, idx) => (
 						<button
 							key={idx}

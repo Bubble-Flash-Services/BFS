@@ -37,23 +37,7 @@ export async function verifyOtp(data) {
   return res.json();
 }
 
-export async function forgotPassword(data) {
-  const res = await fetch(`${API}/api/auth/forgot-password`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function resetPassword(data) {
-  const res = await fetch(`${API}/api/auth/reset-password`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
+// Forgot password and reset password API helpers removed for fresh implementation.
 
 export async function getProfile(token) {
   const res = await fetch(`${API}/api/auth/me`, {

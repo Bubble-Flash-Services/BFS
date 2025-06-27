@@ -1,10 +1,10 @@
 import express from 'express';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import crypto from 'crypto';
 import User from '../models/User.js';
-import { signinOtp, forgotPassword, sendOtp } from '../controllers/authController.js';
+import { signinOtp, sendOtp, forgotPassword, resetPassword } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -20,8 +20,8 @@ router.post('/signup', async (req, res) => {
     if (!name || !email || !password) return res.status(400).json({ message: 'All fields required' });
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ message: 'User already exists' });
-    const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hash, provider: 'local' });
+    // Remove manual hash, let pre-save hook hash the password
+    const user = await User.create({ name, email, password, provider: 'local' });
     const token = generateToken(user);
     res.json({ token, user: { name: user.name, email: user.email, image: null } });
   } catch (e) {
@@ -46,6 +46,7 @@ router.post('/signin', async (req, res) => {
 
 // Alias for /signin (for frontend compatibility)
 router.post('/login', async (req, res) => {
+  console.log('Login route hit');
   // Reuse /signin logic
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -70,26 +71,19 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
 // OTP-based signin (mobile)
 router.post('/signin-otp', signinOtp);
 
-// POST /forgot-password (email or phone)
-router.post('/forgot-password', forgotPassword);
-
-// POST /reset-password
-router.post('/reset-password', async (req, res) => {
-  try {
-    const { email, resetToken, password } = req.body;
-    const user = await User.findOne({ email, resetToken, resetTokenExpires: { $gt: Date.now() } });
-    if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
-    user.password = await bcrypt.hash(password, 10);
-    user.resetToken = undefined;
-    user.resetTokenExpires = undefined;
-    await user.save();
-    res.json({ success: true });
-  } catch (e) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
 // Send OTP for signup (mobile)
 router.post('/send-otp', sendOtp);
+
+// Forgot password
+router.post('/forgot-password', forgotPassword);
+
+// Reset password
+router.post('/reset-password', resetPassword);
+
+// Test route for debugging router connection
+router.get('/test', (req, res) => {
+  console.log('Test route hit');
+  res.send('ok');
+});
 
 export default router;
