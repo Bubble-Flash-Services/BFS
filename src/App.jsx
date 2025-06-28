@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './components/AuthContext';
+import { CartProvider } from './components/CartContext';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import HeroSection from './pages/Homepage/HeroSection';
@@ -12,6 +13,7 @@ import LaundryPage from './pages/Homepage/services/LaundryPage';
 import CarWashDeals from './pages/Homepage/services/CarWashDeals';
 import BikeWashDeals from './pages/Homepage/services/BikeWashDeals';
 import LaundryDeals from './pages/Homepage/services/LaundryDeals';
+import CartPage from './pages/CartPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
 import AboutPage from './pages/aboutus/AboutPage';
 import GoogleSuccess from './pages/GoogleSuccess';
@@ -41,6 +43,7 @@ function AppContent() {
         <Route path="/car-wash-deals/:category" element={<CarWashDeals />} />
         <Route path="/bike-wash-deals/:category" element={<BikeWashDeals />} />
         <Route path="/laundry-deals/:category" element={<LaundryDeals />} />
+        <Route path="/cart" element={<CartPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/google-success" element={<GoogleSuccess />} />
@@ -78,7 +81,9 @@ function AppContent() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
     </AuthProvider>
   );
 }
