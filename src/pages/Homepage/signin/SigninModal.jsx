@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { login, sendOtp, verifyOtp, signinOtp } from '../../../api/auth';
+import { useAuth } from '../../../components/AuthContext';
 import ForgotPasswordModal from '../../../components/ForgotPasswordModal';
 
 export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
+  const { setUser, setToken } = useAuth();
   const [mode, setMode] = useState('email'); // 'email' or 'mobile'
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,8 +25,10 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
       if (res.token && res.user) {
         localStorage.setItem('token', res.token);
         localStorage.setItem('user', JSON.stringify(res.user));
+        setToken(res.token);
+        setUser(res.user);
         onLogin && onLogin(res.user);
-        window.location.reload();
+        onClose();
       } else {
         setError(res.error || 'Login failed');
       }
@@ -63,8 +67,10 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
       if (res.token && res.user) {
         localStorage.setItem('token', res.token);
         localStorage.setItem('user', JSON.stringify(res.user));
+        setToken(res.token);
+        setUser(res.user);
         onLogin && onLogin(res.user);
-        window.location.reload();
+        onClose();
       } else {
         setError(res.error || 'Invalid OTP');
       }

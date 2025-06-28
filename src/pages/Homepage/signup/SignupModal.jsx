@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { signup, sendOtp, verifyOtp } from '../../../api/auth';
+import { useAuth } from '../../../components/AuthContext';
 
 export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
+  const { setUser, setToken } = useAuth();
   const [mode, setMode] = useState('email'); // 'email' or 'mobile'
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +34,9 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
             setShowSuccess(false);
             localStorage.setItem('token', res.token);
             localStorage.setItem('user', JSON.stringify(res.user));
-            window.location.reload();
+            setToken(res.token);
+            setUser(res.user);
+            onClose();
           }, 2000);
         } else {
           setError(res.error || res.message || 'Sign up failed');
@@ -75,7 +79,9 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
           setShowSuccess(false);
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.user));
-          window.location.reload();
+          setToken(res.token);
+          setUser(res.user);
+          onClose();
         }, 2000);
       } else {
         setError(res.error || 'Invalid OTP');

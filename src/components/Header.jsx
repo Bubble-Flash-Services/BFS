@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, Menu } from 'lucide-react';
+import { Phone, Menu, ShoppingCart } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useCart } from './CartContext';
+import { useAuth } from './AuthContext';
 import SignupModal from '../pages/Homepage/signup/SignupModal';
 import SuccessModal from '../pages/Homepage/signup/SuccessModal';
 import SigninModal from '../pages/Homepage/signin/SigninModal';
@@ -8,17 +10,13 @@ import SigninModal from '../pages/Homepage/signin/SigninModal';
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { getCartItemsCount } = useCart();
+  const { user, loading, logout } = useAuth();
   const [openSignup, setOpenSignup] = useState(false);
   const [openSignin, setOpenSignin] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) setUser(JSON.parse(userData));
-  }, []);
 
   // Handle navigation from other pages
   useEffect(() => {
@@ -106,7 +104,22 @@ export default function Header() {
                 Contact
               </button>
             </nav>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
+              {/* Cart Icon - only show if user is logged in */}
+              {user && (
+                <button
+                  onClick={() => navigate('/cart')}
+                  className="relative p-2 text-gray-700 hover:text-blue-500 transition-colors"
+                >
+                  <ShoppingCart size={24} />
+                  {getCartItemsCount() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {getCartItemsCount()}
+                    </span>
+                  )}
+                </button>
+              )}
+              
               <div className="relative">
                 {user ? (
                   <div onClick={() => setDropdownOpen((v) => !v)}>{getAvatar()}</div>
@@ -124,11 +137,9 @@ export default function Header() {
                       <button
                         className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
                         onClick={() => {
-                          localStorage.removeItem('token');
-                          localStorage.removeItem('user');
-                          setUser(null);
+                          logout();
                           setDropdownOpen(false);
-                          window.location.reload();
+                          navigate('/');
                         }}
                       >
                         Logout

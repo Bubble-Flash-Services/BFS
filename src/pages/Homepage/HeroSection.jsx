@@ -4,6 +4,8 @@ import { TextGenerateEffect } from '../../components/ui/text-generate-effect';
 import { SparklesText } from '../../components/ui/sparkles-text';
 import MegaWinHeading from '../../components/ui/MegaWinHeading';
 import ServiceCategories from './services/ServiceCategories';
+import { useAuth } from '../../components/AuthContext';
+import { useCart } from '../../components/CartContext';
 
 const FAQS = [
 	{
@@ -63,6 +65,8 @@ const testimonials = [
 ];
 
 export default function HeroSection() {
+	const { user } = useAuth();
+	const { addToCart } = useCart();
 	const [selectedCategory, setSelectedCategory] = useState('');
 	const [selectedLocation, setSelectedLocation] = useState('');
 	const [pickupDate, setPickupDate] = useState('');
@@ -296,6 +300,26 @@ export default function HeroSection() {
 				setAccessorySlide(accessorySlide - 1);
 			}
 		}
+	};
+
+	const handleAddToCart = (item) => {
+		if (!user) {
+			alert('Please login to add items to cart');
+			return;
+		}
+		
+		const cartItem = {
+			id: `accessory-${item.title}-${Date.now()}`,
+			title: item.title,
+			price: item.price,
+			oldPrice: item.oldPrice,
+			offer: item.offer,
+			stars: item.stars,
+			img: item.img
+		};
+		
+		addToCart(cartItem);
+		alert(`${item.title} added to cart!`);
 	};
 
 	return (
@@ -606,7 +630,10 @@ export default function HeroSection() {
 											{item.offer}
 										</span>
 									</div>
-									<button className="mt-auto bg-green-500 text-white px-8 py-2 rounded-lg font-bold text-lg shadow hover:bg-green-600 transition-all">
+									<button 
+										className="mt-auto bg-green-500 text-white px-8 py-2 rounded-lg font-bold text-lg shadow hover:bg-green-600 transition-all"
+										onClick={() => handleAddToCart(item)}
+									>
 										Add to cart
 									</button>
 								</div>
@@ -673,7 +700,10 @@ export default function HeroSection() {
 											{item.offer}
 										</span>
 									</div>
-									<button className="mt-auto bg-green-500 text-white px-6 py-2 rounded-lg font-bold text-lg shadow hover:bg-green-600 transition-all">
+									<button 
+										className="mt-auto bg-green-500 text-white px-6 py-2 rounded-lg font-bold text-lg shadow hover:bg-green-600 transition-all"
+										onClick={() => handleAddToCart(item)}
+									>
 										Add to cart
 									</button>
 								</div>
