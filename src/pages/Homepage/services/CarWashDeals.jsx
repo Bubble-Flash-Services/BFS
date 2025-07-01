@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 const carWashPackages = {
   hatchbacks: {
@@ -141,13 +142,199 @@ export default function CarWashDeals() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [adSlide, setAdSlide] = useState(0);
-  const [pricingType, setPricingType] = useState('basic'); // Add pricing toggle state
+  const [pricingType, setPricingType] = useState('basic');
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [modalCurrentSlide, setModalCurrentSlide] = useState(0);
+  const [selectedAddons, setSelectedAddons] = useState([]);
+  const [modalStartX, setModalStartX] = useState(0);
+  const [modalIsDragging, setModalIsDragging] = useState(false);
   const sliderRef = useRef(null);
   const startX = useRef(0);
   const isDragging = useRef(false);
 
   const categoryKey = category?.toLowerCase().replace(/\s+/g, '-').replace('&', '');
   const dealData = carWashPackages[categoryKey] || carWashPackages.hatchbacks;
+
+  // Car wash details for booking modal
+  const carWashDetails = {
+    slides: [
+      {
+        id: 0,
+        title: "Exterior Wash",
+        image: "/car/exterior-wash.png",
+        description: "Complete exterior cleaning with high-pressure water and premium soap"
+      },
+      {
+        id: 1,
+        title: "Interior Wash", 
+        image: "/car/interior-wash.png",
+        description: "Deep cleaning of seats, dashboard, and interior surfaces"
+      },
+      {
+        id: 2,
+        title: "Features",
+        image: "/car/features.png", 
+        description: "Advanced cleaning techniques and premium equipment"
+      },
+      {
+        id: 3,
+        title: "Highlights",
+        image: "/car/highlights.png",
+        description: "Special attention to detail and finishing touches"
+      },
+      {
+        id: 4,
+        title: "Tyre Wash",
+        image: "/car/tyre-wash.png",
+        description: "Professional tyre cleaning and shine treatment"
+      }
+    ]
+  };
+
+  const addons = [
+    {
+      id: 1,
+      name: "High Quality Foam",
+      price: 199,
+      description: "Premium foam wash for superior cleaning",
+      icon: "🧽"
+    },
+    {
+      id: 2,
+      name: "Complete dashboard polishing",
+      price: 399,
+      description: "Professional dashboard cleaning and polishing",
+      icon: "🔧"
+    },
+    {
+      id: 3,
+      name: "Remove stains from leather and fibre",
+      price: 1499,
+      description: "Deep stain removal from all surfaces",
+      icon: "🧽"
+    },
+    {
+      id: 4,
+      name: "Car fibre restoration & interior cleaning",
+      price: 799,
+      description: "Complete interior restoration service",
+      icon: "🧽"
+    },
+    {
+      id: 5,
+      name: "Super wax coating",
+      price: 199,
+      description: "Premium wax protection coating",
+      icon: "🚗"
+    },
+    {
+      id: 6,
+      name: "Car roof cleaning",
+      price: 699,
+      description: "Specialized roof cleaning service",
+      icon: "🧽"
+    }
+  ];
+
+  const handleAddonToggle = (addon) => {
+    setSelectedAddons(prev => {
+      const isSelected = prev.find(item => item.id === addon.id);
+      if (isSelected) {
+        return prev.filter(item => item.id !== addon.id);
+      } else {
+        return [...prev, addon];
+      }
+    });
+  };
+
+  const calculateTotal = () => {
+    const packagePrice = selectedPackage?.price ? parseInt(selectedPackage.price.replace('₹', '')) : 199;
+    const addonsTotal = selectedAddons.reduce((total, addon) => total + addon.price, 0);
+    return packagePrice + addonsTotal;
+  };
+
+  const getAddonsTotal = () => {
+    return selectedAddons.reduce((total, addon) => total + addon.price, 0);
+  };
+
+  const getCategoryDisplayName = () => {
+    switch(categoryKey) {
+      case 'hatchbacks': return 'Hatchbacks';
+      case 'suv': return 'SUV';
+      case 'sedans-luxuries': return 'Sedans & Luxuries';
+      default: return 'Hatchbacks';
+    }
+  };
+
+  const handleBookNow = (pkg) => {
+    setSelectedPackage({
+      ...pkg,
+      price: getPrice(pkg.price)
+    });
+    setSelectedAddons([]);
+    setModalCurrentSlide(0);
+    setShowBookingModal(true);
+  };
+
+  // Touch/swipe handlers for modal image slider
+  const handleModalTouchStart = (e) => {
+    const startX = e.touches[0].pageX;
+    setModalStartX(startX);
+    setModalIsDragging(true);
+  };
+
+  const handleModalTouchMove = (e) => {
+    if (!modalIsDragging) return;
+    e.preventDefault();
+  };
+
+  const handleModalTouchEnd = (e) => {
+    if (!modalIsDragging) return;
+    setModalIsDragging(false);
+    
+    const endX = e.changedTouches[0].pageX;
+    const diffX = modalStartX - endX;
+    const threshold = 50;
+    
+    if (Math.abs(diffX) > threshold) {
+      if (diffX > 0 && modalCurrentSlide < carWashDetails.slides.length - 1) {
+        setModalCurrentSlide(modalCurrentSlide + 1);
+      } else if (diffX < 0 && modalCurrentSlide > 0) {
+        setModalCurrentSlide(modalCurrentSlide - 1);
+      }
+    }
+  };
+
+  // Mouse event handlers for desktop interaction
+  const handleModalMouseDown = (e) => {
+    e.preventDefault();
+    const startX = e.pageX;
+    setModalStartX(startX);
+    setModalIsDragging(true);
+  };
+
+  const handleModalMouseMove = (e) => {
+    if (!modalIsDragging) return;
+    e.preventDefault();
+  };
+
+  const handleModalMouseUp = (e) => {
+    if (!modalIsDragging) return;
+    setModalIsDragging(false);
+    
+    const endX = e.pageX;
+    const diffX = modalStartX - endX;
+    const threshold = 50;
+    
+    if (Math.abs(diffX) > threshold) {
+      if (diffX > 0 && modalCurrentSlide < carWashDetails.slides.length - 1) {
+        setModalCurrentSlide(modalCurrentSlide + 1);
+      } else if (diffX < 0 && modalCurrentSlide > 0) {
+        setModalCurrentSlide(modalCurrentSlide - 1);
+      }
+    }
+  };
 
   // Function to get adjusted price based on pricing type
   const getPrice = (basePrice) => {
@@ -250,37 +437,32 @@ export default function CarWashDeals() {
     }
   };
 
-  const goToSlide = (index) => {
-    if (!isMobile) return;
-    setCurrentSlide(index);
-  };
-
   return (
-    <section className="py-16 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+    <section className="py-16 bg-gradient-to-b from-gray-50 to-white min-h-screen">
+      <div className="container mx-auto px-4">
         {/* Advertisement Banner */}
-        <div className="mb-12">
-          <div className="relative overflow-hidden rounded-2xl shadow-lg">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{
-                transform: `translateX(-${adSlide * 100}%)`,
-              }}
-            >
-              {adBanners.map((ad) => (
-                <div
-                  key={ad.id}
-                  className={`flex-shrink-0 w-full bg-gradient-to-r ${ad.bgColor} text-white p-8 md:p-12 text-center`}
-                >
-                  <h2 className="text-2xl md:text-4xl font-bold mb-2">
+        <div className="relative mb-12 h-48 rounded-2xl overflow-hidden">
+          <div 
+            className="flex h-full transition-transform duration-500 ease-in-out"
+            style={{
+              transform: `translateX(-${adSlide * 100}%)`,
+            }}
+          >
+            {adBanners.map((ad) => (
+              <div
+                key={ad.id}
+                className={`flex-shrink-0 w-full h-full bg-gradient-to-r ${ad.bgColor} flex items-center justify-center text-white relative`}
+              >
+                <div className="text-center px-6">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">
                     {ad.title}
                   </h2>
                   <p className="text-lg md:text-xl opacity-90">
                     {ad.subtitle}
                   </p>
                 </div>
-              ))}
+              </div>
+            ))}
             </div>
             
             {/* Ad Dots Indicator */}
@@ -386,7 +568,10 @@ export default function CarWashDeals() {
                   <div className="text-2xl font-bold text-blue-500 mb-4">
                     {getPrice(pkg.price)}
                   </div>
-                  <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                  <button 
+                    onClick={() => handleBookNow(pkg)}
+                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                  >
                     Book Now
                   </button>
                 </div>
@@ -465,7 +650,10 @@ export default function CarWashDeals() {
                         <div className="text-2xl font-bold text-blue-500 mb-4">
                           {getPrice(pkg.price)}
                         </div>
-                        <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                        <button 
+                          onClick={() => handleBookNow(pkg)}
+                          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                        >
                           Book Now
                         </button>
                       </div>
@@ -476,7 +664,192 @@ export default function CarWashDeals() {
             </div>
           </div>
         </div>
-      </div>
+
+      {/* Booking Modal */}
+      {showBookingModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center rounded-t-2xl">
+              <h2 className="text-lg font-semibold">{getCategoryDisplayName()}</h2>
+              <button
+                onClick={() => setShowBookingModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Car Image Slider */}
+            <div className="relative bg-gray-100 h-80 overflow-hidden">
+              {/* Left Arrow */}
+              <button
+                onClick={() => modalCurrentSlide > 0 && setModalCurrentSlide(modalCurrentSlide - 1)}
+                disabled={modalCurrentSlide === 0}
+                className={`absolute left-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
+                  modalCurrentSlide === 0 
+                    ? 'opacity-50 cursor-not-allowed' 
+                    : 'hover:bg-gray-50 hover:shadow-xl'
+                }`}
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              {/* Right Arrow */}
+              <button
+                onClick={() => modalCurrentSlide < carWashDetails.slides.length - 1 && setModalCurrentSlide(modalCurrentSlide + 1)}
+                disabled={modalCurrentSlide === carWashDetails.slides.length - 1}
+                className={`absolute right-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
+                  modalCurrentSlide === carWashDetails.slides.length - 1 
+                    ? 'opacity-50 cursor-not-allowed' 
+                    : 'hover:bg-gray-50 hover:shadow-xl'
+                }`}
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              <div 
+                className="flex h-full transition-transform duration-300 ease-in-out cursor-grab active:cursor-grabbing"
+                style={{
+                  transform: `translateX(-${modalCurrentSlide * 100}%)`,
+                }}
+                onTouchStart={handleModalTouchStart}
+                onTouchMove={handleModalTouchMove}
+                onTouchEnd={handleModalTouchEnd}
+                onMouseDown={handleModalMouseDown}
+                onMouseMove={handleModalMouseMove}
+                onMouseUp={handleModalMouseUp}
+                onMouseLeave={handleModalMouseUp}
+              >
+                {carWashDetails.slides.map((slide, index) => (
+                  <div key={slide.id} className="flex-shrink-0 w-full h-full flex items-center justify-center p-8">
+                    <img 
+                      src={selectedPackage?.image || "/car/car1.png"} 
+                      alt={slide.title}
+                      className="w-full h-full object-contain pointer-events-none"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Navigation Dots */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3">
+                {carWashDetails.slides.map((slide, index) => (
+                  <button
+                    key={slide.id}
+                    onClick={() => setModalCurrentSlide(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                      index === modalCurrentSlide 
+                        ? 'bg-blue-600 scale-125' 
+                        : 'bg-gray-400 hover:bg-gray-500'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Service Types Display */}
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex justify-between text-sm text-gray-600">
+                {carWashDetails.slides.map((slide, index) => (
+                  <button
+                    key={slide.id}
+                    onClick={() => setModalCurrentSlide(index)}
+                    className={`transition-colors duration-200 hover:text-blue-500 cursor-pointer ${
+                      index === modalCurrentSlide ? 'text-blue-600 font-semibold' : ''
+                    }`}
+                  >
+                    {slide.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="px-6 py-6">
+              <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                Great Cars Deserve Great Care
+              </h1>
+              
+              <div className="flex space-x-3 mb-6">
+                <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                  100% Stain removal
+                </span>
+                <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                  Efficient
+                </span>
+              </div>
+
+              {/* Car Overview */}
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-gray-800 mb-3">Car Overview</h2>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-gray-600 text-sm">
+                    Kindly note that water will be provided by owner.
+                  </p>
+                </div>
+              </div>
+
+              {/* Add-ons Section */}
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">Explore Add-ons</h2>
+                <div className="space-y-3">
+                  {addons.map((addon) => (
+                    <div key={addon.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={`addon-${addon.id}`}
+                          checked={selectedAddons.find(item => item.id === addon.id)}
+                          onChange={() => handleAddonToggle(addon)}
+                          className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <label htmlFor={`addon-${addon.id}`} className="ml-3 text-gray-800 font-medium">
+                          {addon.name}
+                        </label>
+                      </div>
+                      <span className="font-semibold text-gray-800">₹{addon.price}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-600">Package</span>
+                  <span className="text-gray-800">{selectedPackage?.price || '₹199'}</span>
+                </div>
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-gray-600">Add-ons</span>
+                  <span className="text-gray-800">₹{getAddonsTotal()}</span>
+                </div>
+                <div className="border-t pt-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold text-blue-600">Total</span>
+                    <span className="text-xl font-bold text-blue-600">₹{calculateTotal()}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-4">
+                <button className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                  Add to Cart
+                </button>
+                <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                  Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
