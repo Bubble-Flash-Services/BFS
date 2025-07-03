@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
+import { useCart } from '../../../components/CartContext';
+import { useAuth } from '../../../components/AuthContext';
+import SigninModal from '../signin/SigninModal';
 
 const bikeWashPackages = {
   commuter: {
@@ -139,6 +142,9 @@ const bikeWashPackages = {
 
 export default function BikeWashDeals() {
   const { category } = useParams();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { user } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [adSlide, setAdSlide] = useState(0);
@@ -149,6 +155,7 @@ export default function BikeWashDeals() {
   const [selectedAddons, setSelectedAddons] = useState([]);
   const [modalStartX, setModalStartX] = useState(0);
   const [modalIsDragging, setModalIsDragging] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const sliderRef = useRef(null);
   const startX = useRef(0);
   const isDragging = useRef(false);
@@ -377,6 +384,75 @@ export default function BikeWashDeals() {
     setSelectedAddons([]);
     setModalCurrentSlide(0);
     setShowBookingModal(true);
+  };
+
+  // Authentication check functions
+  const checkAuthAndExecute = (callback) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    callback();
+  };
+
+  const handleAddToCart = () => {
+    checkAuthAndExecute(() => {
+      const packagePrice = parseInt(selectedPackage.price.replace('₹', ''));
+      const addonsTotal = getAddonsTotal();
+      const totalPrice = packagePrice + addonsTotal;
+      
+      const cartItem = {
+        id: `bikewash-${selectedPackage.id}-${Date.now()}`,
+        name: selectedPackage.name,
+        image: selectedPackage.image,
+        price: totalPrice,
+        category: getCategoryDisplayName(),
+        type: 'bike-wash',
+        packageDetails: {
+          basePrice: packagePrice,
+          addons: selectedAddons,
+          addonsTotal: addonsTotal,
+          features: selectedPackage.features
+        },
+        quantity: 1
+      };
+      
+      addToCart(cartItem);
+      setShowBookingModal(false);
+      alert('Item added to cart successfully!');
+    });
+  };
+
+  const handleBuyNow = () => {
+    checkAuthAndExecute(() => {
+      const packagePrice = parseInt(selectedPackage.price.replace('₹', ''));
+      const addonsTotal = getAddonsTotal();
+      const totalPrice = packagePrice + addonsTotal;
+      
+      const cartItem = {
+        id: `bikewash-${selectedPackage.id}-${Date.now()}`,
+        name: selectedPackage.name,
+        image: selectedPackage.image,
+        price: totalPrice,
+        category: getCategoryDisplayName(),
+        type: 'bike-wash',
+        packageDetails: {
+          basePrice: packagePrice,
+          addons: selectedAddons,
+          addonsTotal: addonsTotal,
+          features: selectedPackage.features
+        },
+        quantity: 1
+      };
+      
+      addToCart(cartItem);
+      setShowBookingModal(false);
+      navigate('/cart');
+    });
+  };
+
+  const handleLoginSuccess = (userData) => {
+    setShowLoginModal(false);
   };
 
   // Touch/swipe handlers for modal image slider
@@ -816,10 +892,16 @@ export default function BikeWashDeals() {
 
                 {/* Action Buttons */}
                 <div className="flex space-x-4">
-                  <button className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                  <button 
+                    onClick={handleAddToCart}
+                    className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                  >
                     Add to Cart
                   </button>
-                  <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                  <button 
+                    onClick={handleBuyNow}
+                    className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                  >
                     Buy Now
                   </button>
                 </div>
@@ -828,6 +910,15 @@ export default function BikeWashDeals() {
           </div>
         )}
       </div>
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <SigninModal 
+          open={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          onLogin={handleLoginSuccess}
+        />
+      )}
     </section>
   );
 }

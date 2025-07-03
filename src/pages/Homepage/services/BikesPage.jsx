@@ -22,10 +22,28 @@ const bikeCategories = [
 export default function BikesPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [bookingData, setBookingData] = useState(null);
   const navigate = useNavigate();
   const sliderRef = useRef(null);
   const startX = useRef(0);
   const isDragging = useRef(false);
+
+  // Check for booking data from HeroSection
+  useEffect(() => {
+    const storedBooking = localStorage.getItem('pendingBooking');
+    if (storedBooking) {
+      const data = JSON.parse(storedBooking);
+      // Only show booking data if it's for bike wash and within 10 minutes
+      if (data.category === 'Bike Wash' && (Date.now() - data.timestamp) < 600000) {
+        setBookingData(data);
+      }
+    }
+  }, []);
+
+  const clearBookingData = () => {
+    setBookingData(null);
+    localStorage.removeItem('pendingBooking');
+  };
 
   const handleCategoryClick = (category) => {
     navigate(`/bike-wash-deals/${category}`);
@@ -94,6 +112,43 @@ export default function BikesPage() {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Booking Data Banner */}
+        {bookingData && (
+          <div className="mb-8 bg-green-50 border border-green-200 rounded-lg p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-lg font-semibold text-green-800 mb-2">
+                  🏍️ Your Bike Wash Booking Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="font-medium text-green-700">Service:</span> {bookingData.category}
+                  </div>
+                  <div>
+                    <span className="font-medium text-green-700">Pickup Date:</span> {new Date(bookingData.pickupDate).toLocaleDateString()}
+                  </div>
+                  <div>
+                    <span className="font-medium text-green-700">Phone:</span> {bookingData.phoneNumber}
+                  </div>
+                  <div>
+                    <span className="font-medium text-green-700">Location:</span> {bookingData.address.substring(0, 50)}...
+                  </div>
+                </div>
+                <p className="text-green-600 text-sm mt-2">
+                  Please select your bike category below to complete your booking.
+                </p>
+              </div>
+              <button
+                onClick={clearBookingData}
+                className="text-green-500 hover:text-green-700 text-xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+        
         <h2 className="text-3xl font-bold text-gray-800 mb-12">Select by bikes</h2>
         
         {/* Desktop Grid Layout */}

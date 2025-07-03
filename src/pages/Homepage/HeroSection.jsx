@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Phone, MapPin, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { TextGenerateEffect } from '../../components/ui/text-generate-effect';
 import { SparklesText } from '../../components/ui/sparkles-text';
 import MegaWinHeading from '../../components/ui/MegaWinHeading';
@@ -67,6 +68,7 @@ const testimonials = [
 export default function HeroSection() {
 	const { user } = useAuth();
 	const { addToCart } = useCart();
+	const navigate = useNavigate();
 	const [selectedCategory, setSelectedCategory] = useState('');
 	const [selectedLocation, setSelectedLocation] = useState('');
 	const [pickupDate, setPickupDate] = useState('');
@@ -322,6 +324,52 @@ export default function HeroSection() {
 		alert(`${item.title} added to cart!`);
 	};
 
+	const handleBookService = () => {
+		// Validate all required fields
+		if (!selectedCategory) {
+			alert('Please select a service category');
+			return;
+		}
+		if (!pickupDate) {
+			alert('Please select a pickup date');
+			return;
+		}
+		if (!phoneNumber) {
+			alert('Please enter your phone number');
+			return;
+		}
+		if (!fullAddress || !selectedLocation) {
+			alert('Please enter your location');
+			return;
+		}
+
+		// Store booking data in localStorage for the service page to use
+		const bookingData = {
+			category: selectedCategory,
+			pickupDate,
+			phoneNumber,
+			address: fullAddress,
+			location: selectedLocation,
+			timestamp: Date.now()
+		};
+		localStorage.setItem('pendingBooking', JSON.stringify(bookingData));
+
+		// Navigate based on selected category
+		switch (selectedCategory) {
+			case 'Car Wash':
+				navigate('/cars');
+				break;
+			case 'Bike Wash':
+				navigate('/bikes');
+				break;
+			case 'Laundry Service':
+				navigate('/laundry');
+				break;
+			default:
+				alert('Please select a valid service category');
+		}
+	};
+
 	return (
 		<>
 			<section id="home" className="bg-gradient-to-br from-blue-50 to-white py-16">
@@ -410,7 +458,10 @@ export default function HeroSection() {
 											<MapPin className="absolute right-3 top-3 text-gray-400" size={20} />
 										</div>
 									</div>
-									<button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-6 rounded-lg font-medium transition-colors mt-6">
+									<button 
+										onClick={handleBookService}
+										className="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-6 rounded-lg font-medium transition-colors mt-6"
+									>
 										Book now
 									</button>
 								</div>
@@ -929,7 +980,10 @@ export default function HeroSection() {
 									<li>Deep-cleaning of car mats</li>
 								</ul>
 							</div>
-							<button className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6">
+							<button 
+								onClick={() => navigate('/cars')}
+								className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6"
+							>
 								Get Services
 							</button>
 						</div>
@@ -948,7 +1002,10 @@ export default function HeroSection() {
 									<li>High-pressure tyre wash for spotless finish</li>
 								</ul>
 							</div>
-							<button className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6">
+							<button 
+								onClick={() => navigate('/bikes')}
+								className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6"
+							>
 								Get Services
 							</button>
 						</div>
@@ -967,7 +1024,10 @@ export default function HeroSection() {
 									<li>High-pressure tyre wash for spotless finish</li>
 								</ul>
 							</div>
-							<button className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6">
+							<button 
+								onClick={() => navigate('/laundry')}
+								className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6"
+							>
 								Get Services
 							</button>
 						</div>

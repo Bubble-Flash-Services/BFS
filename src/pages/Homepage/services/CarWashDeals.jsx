@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
+import { useCart } from '../../../components/CartContext';
+import { useAuth } from '../../../components/AuthContext';
+import SigninModal from '../signin/SigninModal';
 
 const carWashPackages = {
   hatchbacks: {
@@ -139,6 +142,9 @@ const carWashPackages = {
 
 export default function CarWashDeals() {
   const { category } = useParams();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { user } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [adSlide, setAdSlide] = useState(0);
@@ -149,6 +155,7 @@ export default function CarWashDeals() {
   const [selectedAddons, setSelectedAddons] = useState([]);
   const [modalStartX, setModalStartX] = useState(0);
   const [modalIsDragging, setModalIsDragging] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const sliderRef = useRef(null);
   const startX = useRef(0);
   const isDragging = useRef(false);
@@ -265,6 +272,60 @@ export default function CarWashDeals() {
       case 'sedans-luxuries': return 'Sedans & Luxuries';
       default: return 'Hatchbacks';
     }
+  };
+
+  const checkAuthAndExecute = (callback) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    callback();
+  };
+
+  const createCartItem = () => {
+    const packagePrice = selectedPackage?.price ? parseInt(selectedPackage.price.replace('₹', '')) : 199;
+    const addonsTotal = selectedAddons.reduce((total, addon) => total + addon.price, 0);
+    const totalPrice = packagePrice + addonsTotal;
+
+    return {
+      id: `carwash-${selectedPackage.id}-${Date.now()}`,
+      name: selectedPackage.name,
+      image: selectedPackage.image,
+      price: totalPrice,
+      category: getCategoryDisplayName(),
+      type: 'car-wash',
+      packageDetails: {
+        basePrice: packagePrice,
+        addons: selectedAddons,
+        addonsTotal: addonsTotal,
+        features: selectedPackage.features
+      },
+      quantity: 1
+    };
+  };
+
+  const handleAddToCart = () => {
+    checkAuthAndExecute(() => {
+      const cartItem = createCartItem();
+      addToCart(cartItem);
+      setShowBookingModal(false);
+      // You can add a toast notification here if needed
+      alert('Item added to cart successfully!');
+    });
+  };
+
+  const handleBuyNow = () => {
+    checkAuthAndExecute(() => {
+      const cartItem = createCartItem();
+      addToCart(cartItem);
+      setShowBookingModal(false);
+      navigate('/cart');
+    });
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false);
+    // You can optionally auto-execute the pending action here
   };
 
   const handleBookNow = (pkg) => {
@@ -839,16 +900,31 @@ export default function CarWashDeals() {
 
               {/* Action Buttons */}
               <div className="flex space-x-4">
-                <button className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                <button 
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                >
                   Add to Cart
                 </button>
-                <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                <button 
+                  onClick={handleBuyNow}
+                  className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                >
                   Buy Now
                 </button>
               </div>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <SigninModal
+          open={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          onLogin={handleLoginSuccess}
+        />
       )}
     </section>
   );
