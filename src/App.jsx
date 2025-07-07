@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { AuthProvider, useAuth } from './components/AuthContext';
+import React from 'react';
+import { AuthProvider } from './components/AuthContext';
 import { CartProvider } from './components/CartContext';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import HeroSection from './pages/Homepage/HeroSection';
-import ServiceCategories from './pages/Homepage/services/ServiceCategories';
 import Footer from './components/Footer';
 // Placeholder imports for new pages
 import CarsPage from './pages/Homepage/services/CarsPage';
@@ -15,19 +14,22 @@ import BikeWashDeals from './pages/Homepage/services/BikeWashDeals';
 import LaundryDeals from './pages/Homepage/services/LaundryDeals';
 import CartPage from './pages/CartPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
+import ServicesBrowser from './pages/ServicesBrowser';
 import AboutPage from './pages/aboutus/AboutPage';
 import GoogleSuccess from './pages/GoogleSuccess';
 import ContactPage from './pages/contact/ContactPage';
-import SignupModal from './pages/Homepage/signup/SignupModal';
-import SigninModal from './pages/Homepage/signin/SigninModal';
-import ProfileModal from './components/ProfileModal';
+import ProfilePage from './pages/ProfilePage';
+import OrdersPage from './pages/OrdersPage';
+import AddressesPage from './pages/AddressesPage';
+// Admin imports
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminServices from './pages/admin/AdminServices';
+import AdminPackages from './pages/admin/AdminPackages';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminCoupons from './pages/admin/AdminCoupons';
 
 function AppContent() {
-  const { user, setUser, logout } = useAuth();
-  const [showSignup, setShowSignup] = useState(false);
-  const [showSignin, setShowSignin] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
-
   return (
     <div>
       <Header />
@@ -45,35 +47,23 @@ function AppContent() {
         <Route path="/laundry-deals/:category" element={<LaundryDeals />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/services" element={<ServicesPage />} />
+        <Route path="/services-browser" element={<ServicesBrowser />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/addresses" element={<AddressesPage />} />
         <Route path="/google-success" element={<GoogleSuccess />} />
         <Route path="/contact" element={<ContactPage />} />
+        {/* Admin Routes */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/categories" element={<AdminCategories />} />
+        <Route path="/admin/services" element={<AdminServices />} />
+        <Route path="/admin/packages" element={<AdminPackages />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/coupons" element={<AdminCoupons />} />
+        <Route path="/admin/coupons" element={<AdminCoupons />} />
       </Routes>
       <Footer />
-      <header className="flex justify-end gap-4 p-4">
-        {user ? (
-          <>
-            <span className="font-bold">Hello, {user.name || user.email || user.phone}</span>
-            <button className="bg-blue-500 text-white px-3 py-1 rounded" onClick={()=>setShowProfile(true)}>Profile</button>
-            <button className="bg-gray-300 px-3 py-1 rounded" onClick={logout}>Logout</button>
-          </>
-        ) : (
-          <>
-            <button className="bg-yellow-400 px-3 py-1 rounded" onClick={()=>setShowSignin(true)}>Login</button>
-            <button className="bg-green-400 px-3 py-1 rounded" onClick={()=>setShowSignup(true)}>Sign Up</button>
-          </>
-        )}
-      </header>
-      {/* Main content here */}
-      {showSignup && <SignupModal open={showSignup} onClose={()=>setShowSignup(false)} onSignup={setUser} onLoginNow={()=>{setShowSignup(false);setShowSignin(true);}} />}
-      {showSignin && <SigninModal open={showSignin} onClose={()=>setShowSignin(false)} onSignupNow={()=>{setShowSignin(false);setShowSignup(true);}} onLogin={setUser} />}
-      {showProfile && <ProfileModal user={user} onSave={async (data)=>{
-        // Call updateProfile API
-        const token = localStorage.getItem('token');
-        const res = await import('./api/auth').then(api => api.updateProfile(token, data));
-        if (res && !res.error) setUser(res);
-        setShowProfile(false);
-      }} onClose={()=>setShowProfile(false)} />}
     </div>
   );
 }

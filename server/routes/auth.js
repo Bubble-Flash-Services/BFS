@@ -4,7 +4,8 @@ import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import crypto from 'crypto';
 import User from '../models/User.js';
-import { signinOtp, sendOtp, forgotPassword, resetPassword } from '../controllers/authController.js';
+import { authenticateToken } from '../middleware/auth.js';
+import { signinOtp, sendOtp, forgotPassword, resetPassword, getProfile, updateProfile } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -79,6 +80,10 @@ router.post('/forgot-password', forgotPassword);
 
 // Reset password
 router.post('/reset-password', resetPassword);
+
+// Profile endpoints (for frontend compatibility)
+router.get('/me', authenticateToken, getProfile);
+router.put('/me', authenticateToken, updateProfile);
 
 // Test route for debugging router connection
 router.get('/test', (req, res) => {

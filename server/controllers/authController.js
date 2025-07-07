@@ -115,10 +115,24 @@ export const getProfile = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { name, phone } = req.body;
-    const user = await User.findByIdAndUpdate(req.user.id, { name, phone }, { new: true }).select('-password');
+    const { name, email, phone, address } = req.body;
+    const updateData = {};
+    
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (phone) updateData.phone = phone;
+    if (address) updateData.address = address;
+    
+    const user = await User.findByIdAndUpdate(
+      req.user.id, 
+      updateData, 
+      { new: true, runValidators: true }
+    ).select('-password');
+    
     res.json(user);
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) { 
+    res.status(500).json({ error: e.message }); 
+  }
 };
 
 // Forgot Password: Request reset

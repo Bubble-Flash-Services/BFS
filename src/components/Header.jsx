@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, Menu, ShoppingCart } from 'lucide-react';
+import { Phone, Menu, ShoppingCart, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from './CartContext';
 import { useAuth } from './AuthContext';
 import SignupModal from '../pages/Homepage/signup/SignupModal';
 import SuccessModal from '../pages/Homepage/signup/SuccessModal';
 import SigninModal from '../pages/Homepage/signin/SigninModal';
+import ProfileModal from './ProfileModal';
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const { getCartItemsCount } = useCart();
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, setUser } = useAuth();
   const [openSignup, setOpenSignup] = useState(false);
   const [openSignin, setOpenSignin] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -134,16 +136,38 @@ export default function Header() {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     {user ? (
-                      <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
-                        onClick={() => {
-                          logout();
-                          setDropdownOpen(false);
-                          navigate('/');
-                        }}
-                      >
-                        Logout
-                      </button>
+                      <>
+                        <button
+                          className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                          onClick={() => {
+                            navigate('/profile');
+                            setDropdownOpen(false);
+                          }}
+                        >
+                          <User size={16} />
+                          View Profile
+                        </button>
+                        <button
+                          className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                          onClick={() => {
+                            setOpenProfile(true);
+                            setDropdownOpen(false);
+                          }}
+                        >
+                          <User size={16} />
+                          Edit Profile
+                        </button>
+                        <button
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                          onClick={() => {
+                            logout();
+                            setDropdownOpen(false);
+                            navigate('/');
+                          }}
+                        >
+                          Logout
+                        </button>
+                      </>
                     ) : (
                       <>
                         <button
@@ -218,6 +242,27 @@ export default function Header() {
         }}
       />
       <SuccessModal open={openSuccess} onClose={() => setOpenSuccess(false)} />
+      {openProfile && (
+        <ProfileModal 
+          user={user} 
+          onSave={async (data) => {
+            try {
+              const token = localStorage.getItem('token');
+              const { updateProfile } = await import('../api/auth');
+              const res = await updateProfile(token, data);
+              if (res && !res.error) {
+                setUser(res);
+                setOpenProfile(false);
+              } else {
+                console.error('Profile update failed:', res.error);
+              }
+            } catch (error) {
+              console.error('Profile update error:', error);
+            }
+          }} 
+          onClose={() => setOpenProfile(false)} 
+        />
+      )}
     </>
   );
 }
