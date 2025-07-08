@@ -116,12 +116,7 @@ const orderSchema = new mongoose.Schema({
     enum: ['pending', 'confirmed', 'assigned', 'in_progress', 'completed', 'cancelled'],
     default: 'pending'
   },
-  assignedEmployee: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Employee'
-  },
   customerNotes: String,
-  employeeNotes: String,
   estimatedDuration: {
     type: Number, // in minutes
     default: 60

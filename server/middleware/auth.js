@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-import Employee from '../models/Employee.js';
 
 // Standard authentication middleware
 export const authenticateToken = async (req, res, next) => {
@@ -47,61 +46,20 @@ export const authenticateToken = async (req, res, next) => {
 // Admin authentication middleware
 export const requireAdmin = async (req, res, next) => {
   try {
-    // Check if user is an employee with admin role
-    const employee = await Employee.findOne({ 
-      email: req.user.email,
-      isActive: true 
-    });
-
-    if (!employee || !['admin', 'manager'].includes(employee.role)) {
+    // Check if user has admin role
+    if (!req.user || req.user.role !== 'admin') {
       return res.status(403).json({ 
         success: false,
         message: 'Admin access required' 
       });
     }
 
-    req.employee = employee;
     next();
   } catch (error) {
     console.error('Admin authorization error:', error);
     return res.status(403).json({ 
       success: false,
       message: 'Admin access verification failed' 
-    });
-  }
-};
-
-// Employee authentication middleware
-export const authenticateEmployee = async (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) {
-      return res.status(401).json({ 
-        success: false,
-        message: 'Access token required' 
-      });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Check if employee exists and is active
-    const employee = await Employee.findById(decoded.id);
-    if (!employee || !employee.isActive) {
-      return res.status(401).json({ 
-        success: false,
-        message: 'Employee not found or inactive' 
-      });
-    }
-
-    req.employee = employee;
-    next();
-  } catch (error) {
-    console.error('Employee authentication error:', error);
-    return res.status(401).json({ 
-      success: false,
-      message: 'Invalid or expired token' 
     });
   }
 };

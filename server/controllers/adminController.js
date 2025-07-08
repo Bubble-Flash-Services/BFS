@@ -5,7 +5,6 @@ import ServiceCategory from '../models/ServiceCategory.js';
 import Package from '../models/Package.js';
 import AddOn from '../models/AddOn.js';
 import Coupon from '../models/Coupon.js';
-import Employee from '../models/Employee.js';
 
 // Dashboard Statistics
 export const getDashboardStats = async (req, res) => {
@@ -672,109 +671,6 @@ export const deleteCoupon = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to delete coupon'
-    });
-  }
-};
-
-// Employee Management
-export const getAllEmployees = async (req, res) => {
-  try {
-    const employees = await Employee.find()
-      .select('-password')
-      .sort({ createdAt: -1 });
-
-    res.json({
-      success: true,
-      data: employees
-    });
-  } catch (error) {
-    console.error('Get employees error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch employees'
-    });
-  }
-};
-
-export const createEmployee = async (req, res) => {
-  try {
-    const employee = new Employee(req.body);
-    await employee.save();
-
-    // Remove password from response
-    const employeeResponse = employee.toObject();
-    delete employeeResponse.password;
-
-    res.status(201).json({
-      success: true,
-      data: employeeResponse
-    });
-  } catch (error) {
-    console.error('Create employee error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create employee'
-    });
-  }
-};
-
-export const updateEmployee = async (req, res) => {
-  try {
-    const { employeeId } = req.params;
-    const updateData = req.body;
-
-    // Remove password from update data if it's empty
-    if (updateData.password === '') {
-      delete updateData.password;
-    }
-
-    const employee = await Employee.findByIdAndUpdate(
-      employeeId,
-      updateData,
-      { new: true, runValidators: true }
-    ).select('-password');
-
-    if (!employee) {
-      return res.status(404).json({
-        success: false,
-        message: 'Employee not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: employee
-    });
-  } catch (error) {
-    console.error('Update employee error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update employee'
-    });
-  }
-};
-
-export const deleteEmployee = async (req, res) => {
-  try {
-    const { employeeId } = req.params;
-
-    const employee = await Employee.findByIdAndDelete(employeeId);
-    if (!employee) {
-      return res.status(404).json({
-        success: false,
-        message: 'Employee not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      message: 'Employee deleted successfully'
-    });
-  } catch (error) {
-    console.error('Delete employee error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to delete employee'
     });
   }
 };

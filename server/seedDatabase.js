@@ -4,7 +4,7 @@ import Service from './models/Service.js';
 import Package from './models/Package.js';
 import AddOn from './models/AddOn.js';
 import Coupon from './models/Coupon.js';
-import Employee from './models/Employee.js';
+import User from './models/User.js';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
@@ -21,7 +21,6 @@ const seedDatabase = async () => {
     await Package.deleteMany({});
     await AddOn.deleteMany({});
     await Coupon.deleteMany({});
-    await Employee.deleteMany({});
 
     console.log('Cleared existing data');
 
@@ -360,81 +359,20 @@ const seedDatabase = async () => {
 
     console.log('Created coupons');
 
-    // Create Admin Employee
+    // Create Admin User
     const hashedPassword = await bcrypt.hash('admin123', 10);
-    const employees = await Employee.insertMany([
-      {
-        employeeId: 'EMP001',
-        name: 'Admin User',
-        email: 'admin@bubbleflash.in',
-        phone: '+919980123452',
-        password: hashedPassword,
-        role: 'admin',
-        specializations: [categories[0]._id, categories[1]._id, categories[2]._id],
-        address: {
-          fullAddress: 'Bubble Flash Services, Bangalore, India',
-          city: 'Bangalore',
-          state: 'Karnataka',
-          pincode: '560001'
-        },
-        workingHours: {
-          startTime: '09:00',
-          endTime: '18:00',
-          workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-        },
-        isAvailable: true,
-        isActive: true,
-        rating: 5.0
-      },
-      {
-        employeeId: 'EMP002',
-        name: 'Rahul Sharma',
-        email: 'rahul@bubbleflash.in',
-        phone: '+919876543210',
-        password: hashedPassword,
-        role: 'technician',
-        specializations: [categories[0]._id, categories[1]._id],
-        address: {
-          fullAddress: 'BTM Layout, Bangalore, India',
-          city: 'Bangalore',
-          state: 'Karnataka',
-          pincode: '560076'
-        },
-        workingHours: {
-          startTime: '09:00',
-          endTime: '18:00',
-          workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-        },
-        isAvailable: true,
-        isActive: true,
-        rating: 4.8
-      },
-      {
-        employeeId: 'EMP003',
-        name: 'Priya Singh',
-        email: 'priya@bubbleflash.in',
-        phone: '+919123456789',
-        password: hashedPassword,
-        role: 'technician',
-        specializations: [categories[2]._id],
-        address: {
-          fullAddress: 'Koramangala, Bangalore, India',
-          city: 'Bangalore',
-          state: 'Karnataka',
-          pincode: '560034'
-        },
-        workingHours: {
-          startTime: '10:00',
-          endTime: '19:00',
-          workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-        },
-        isAvailable: true,
-        isActive: true,
-        rating: 4.9
-      }
-    ]);
-
-    console.log('Created employees');
+    const adminUser = new User({
+      name: 'Admin User',
+      email: 'admin@bubbleflash.in',
+      phone: '+919980123452',
+      password: hashedPassword,
+      role: 'admin',
+      emailVerified: true,
+      phoneVerified: true,
+      status: 'active'
+    });
+    await adminUser.save();
+    console.log('Created admin user');
 
     console.log('✅ Database seeded successfully!');
     console.log('\n📊 Created:');
@@ -443,7 +381,7 @@ const seedDatabase = async () => {
     console.log(`   - ${packages.length} packages`);
     console.log(`   - ${addOns.length} add-ons`);
     console.log(`   - ${coupons.length} coupons`);
-    console.log(`   - ${employees.length} employees`);
+    console.log(`   - 1 admin user`);
     
     console.log('\n🔑 Admin Credentials:');
     console.log('   Email: admin@bubbleflash.in');

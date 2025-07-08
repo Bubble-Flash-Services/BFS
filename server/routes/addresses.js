@@ -6,12 +6,20 @@ import {
   updateAddress,
   deleteAddress,
   setDefaultAddress,
-  getAddressById
+  getAddressById,
+  reverseGeocode,
+  searchAddresses,
+  getAddressSuggestions
 } from '../controllers/addressController.js';
 
 const router = express.Router();
 
-// All address routes require authentication
+// Public routes (no authentication required)
+router.post('/reverse-geocode', reverseGeocode);
+router.get('/search', searchAddresses);
+router.get('/suggestions', getAddressSuggestions);
+
+// All other address routes require authentication
 router.use(authenticateToken);
 
 // GET /api/addresses - Get user addresses

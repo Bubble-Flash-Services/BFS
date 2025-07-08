@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../components/CartContext';
 import { useAuth } from '../components/AuthContext';
-import { Trash2, Plus, Minus, ShoppingBag, X, MapPin, Phone, Calendar, CreditCard, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
-import AddressAutocomplete from '../components/AddressAutocomplete';
+import { Trash2, Plus, Minus, ShoppingBag, X, MapPin, Phone, Calendar, CreditCard, Star, Clock, Sparkles, ArrowRight, CheckCircle, Heart } from 'lucide-react';
 
 export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal } = useCart();
@@ -14,17 +13,18 @@ export default function CartPage() {
   const [pickupDate, setPickupDate] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedPayment, setSelectedPayment] = useState('');
-  const [addressData, setAddressData] = useState(null); // Store complete address data
 
-  // Calculate final total (no discount)
-  const getFinalTotal = () => {
-    return getCartTotal();
+  // Calculate discount (example: 10% for orders above ₹500)
+  const calculateDiscount = () => {
+    const total = getCartTotal();
+    if (total > 500) {
+      return Math.floor(total * 0.1); // 10% discount
+    }
+    return 0;
   };
 
-  // Handle address selection from autocomplete
-  const handleAddressSelect = (selectedAddress) => {
-    setSelectedLocation(selectedAddress.fullAddress);
-    setAddressData(selectedAddress);
+  const getFinalTotal = () => {
+    return getCartTotal() - calculateDiscount();
   };
 
   const handleProceedToCheckout = () => {
@@ -47,35 +47,56 @@ export default function CartPage() {
 
   const handlePlaceOrder = () => {
     // Validate required fields
-    if (!pickupDate || !phoneNumber || !selectedLocation || !selectedPayment) {
-      alert('Please fill in all required fields');
+    if (!pickupDate) {
+      alert('Please select a pickup date');
+      return;
+    }
+    if (!phoneNumber) {
+      alert('Please enter your phone number');
+      return;
+    }
+    if (!useAlternateLocation && !selectedLocation) {
+      alert('Please enter your location');
+      return;
+    }
+    if (useAlternateLocation && !alternateLocation) {
+      alert('Please enter alternate location');
+      return;
+    }
+    if (!selectedPayment) {
+      alert('Please select a payment method');
       return;
     }
 
-    // Create order data
+    // Process order
     const orderData = {
       items: cartItems,
       total: getFinalTotal(),
-      address: selectedLocation,
-      addressData: addressData, // Include complete address data
-      alternateAddress: useAlternateLocation ? alternateLocation : null,
+      discount: calculateDiscount(),
+      location: useAlternateLocation ? alternateLocation : selectedLocation,
       pickupDate,
-      phone: phoneNumber,
+      phoneNumber,
       paymentMethod: selectedPayment,
-      userId: user?.id
+      userId: user?.id,
+      timestamp: Date.now()
     };
 
-    // Store order data and navigate
-    localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+    // Here you would typically send the order to your backend
+    console.log('Order placed:', orderData);
     
-    // Simulate order placement
-    alert(`Order placed successfully! Total: ₹${getFinalTotal()}`);
+    // Clear cart and close modal
     clearCart();
     setShowCheckoutModal(false);
+    localStorage.removeItem('pendingBooking');
+    
+    alert('Order placed successfully! You will receive a confirmation shortly.');
   };
 
-  const paymentOptions = [
-    { id: 'upi', name: 'UPI (PhonePe/GooglePay)', icon: '📱' },
+  const paymentMethods = [
+    { id: 'gpay', name: 'Google Pay', icon: '💳' },
+    { id: 'phonepe', name: 'PhonePe', icon: '📱' },
+    { id: 'paytm', name: 'Paytm', icon: '💰' },
+    { id: 'upi', name: 'UPI', icon: '🏦' },
     { id: 'card', name: 'Credit/Debit Card', icon: '💳' },
     { id: 'cod', name: 'Cash on Delivery', icon: '💵' }
   ];
@@ -83,7 +104,7 @@ export default function CartPage() {
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -94,25 +115,11 @@ export default function CartPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
-        <div className="text-center max-w-md mx-auto">
-          <div className="relative mb-8">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-red-100 to-orange-100 rounded-full flex items-center justify-center">
-              <ShoppingBag className="h-16 w-16 text-gray-400" />
-            </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-              <X className="text-red-500 h-5 w-5" />
-            </div>
-          </div>
-          
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">Please login to view your cart</h2>
-          <p className="text-gray-600 mb-8 leading-relaxed">
-            You need to be logged in to add items to cart
-          </p>
-          
-          <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-            Login Now
-          </button>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <ShoppingBag className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Please login to view your cart</h2>
+          <p className="text-gray-600">You need to be logged in to add items to cart</p>
         </div>
       </div>
     );
@@ -226,7 +233,16 @@ export default function CartPage() {
                         />
                       )}
                       <div className="flex flex-col space-y-2">
-                        {/* Removed rating and duration display */}
+                        <div className="flex items-center space-x-2 text-yellow-500">
+                          <Star className="h-4 w-4 fill-current" />
+                          <span className="text-sm font-medium">
+                            {item.stars ? item.stars + '.0' : '4.8'}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-gray-500">
+                          <Clock className="h-4 w-4" />
+                          <span className="text-sm">45 mins</span>
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
@@ -307,6 +323,11 @@ export default function CartPage() {
                         <Plus className="h-4 w-4 text-white" />
                       </button>
                     </div>
+                    
+                    <button className="flex items-center space-x-2 text-gray-500 hover:text-red-500 transition-colors duration-200">
+                      <Heart className="h-4 w-4" />
+                      <span className="text-sm">Save for later</span>
+                    </button>
                   </div>
 
                   {/* Offer Badge */}
@@ -342,6 +363,13 @@ export default function CartPage() {
                     <span>₹{getCartTotal()}</span>
                   </div>
                   
+                  {calculateDiscount() > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount (10%)</span>
+                      <span>-₹{calculateDiscount()}</span>
+                    </div>
+                  )}
+                  
                   <div className="flex justify-between text-gray-600">
                     <span>Service charge</span>
                     <span className="text-green-600">FREE</span>
@@ -353,6 +381,15 @@ export default function CartPage() {
                     <span>Total</span>
                     <span>₹{getFinalTotal()}</span>
                   </div>
+
+                  {/* Savings Badge */}
+                  {calculateDiscount() > 0 && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <p className="text-green-700 text-sm font-medium">
+                        🎉 You're saving ₹{calculateDiscount()} on this order!
+                      </p>
+                    </div>
+                  )}
 
                   {/* Checkout Button */}
                   <button
@@ -373,9 +410,9 @@ export default function CartPage() {
                     </div>
                     <div className="text-center">
                       <div className="w-8 h-8 bg-blue-100 rounded-full mx-auto mb-2 flex items-center justify-center">
-                        <Sparkles className="h-4 w-4 text-blue-600" />
+                        <Clock className="h-4 w-4 text-blue-600" />
                       </div>
-                      <p className="text-xs text-gray-600">Quality Service</p>
+                      <p className="text-xs text-gray-600">On-time Service</p>
                     </div>
                   </div>
                 </div>
@@ -384,129 +421,193 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+                  <span className="text-sm">Discount (10% on orders above ₹500):</span>
+                  <span className="text-sm font-medium">-₹{calculateDiscount()}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center border-t pt-2">
+                <span className="text-xl font-bold text-gray-900">Total:</span>
+                <span className="text-2xl font-bold text-green-600">
+                  ₹{getFinalTotal()}
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex justify-end">
+              <button 
+                onClick={handleProceedToCheckout}
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              >
+                Proceed to Checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Checkout Modal */}
       {showCheckoutModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/20">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 p-6 flex justify-between items-center rounded-t-3xl">
-              <h2 className="text-2xl font-bold text-white">Complete Your Order</h2>
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center rounded-t-2xl">
+              <h2 className="text-2xl font-bold text-gray-800">Order Summary</h2>
               <button
                 onClick={() => setShowCheckoutModal(false)}
-                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
-                <X className="w-6 h-6 text-white" />
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            {/* Modal Content */}
             <div className="p-6 space-y-6">
+              
               {/* Order Items Summary */}
-              <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4">
-                <h3 className="font-semibold text-gray-800 mb-3">Order Items</h3>
-                <div className="space-y-2">
-                  {cartItems.map((item, index) => (
-                    <div key={index} className="flex justify-between text-sm">
-                      <span className="text-gray-600">
-                        {item.title || item.name || item.serviceName} × {item.quantity}
-                      </span>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h3 className="font-semibold text-gray-800 mb-3">Items in your order ({cartItems.length})</h3>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {cartItems.map((item) => (
+                    <div key={item.id} className="flex justify-between text-sm">
+                      <span className="flex-1">{item.title || item.name} × {item.quantity}</span>
                       <span className="font-medium">₹{item.price * item.quantity}</span>
                     </div>
                   ))}
                 </div>
-                <hr className="my-3 border-gray-300" />
-                <div className="flex justify-between font-bold text-lg">
-                  <span>Total</span>
-                  <span className="text-green-600">₹{getFinalTotal()}</span>
+              </div>
+
+              {/* Location Selection */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-lg font-semibold text-gray-800">Service Location</label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="useAlternate"
+                      checked={useAlternateLocation}
+                      onChange={(e) => setUseAlternateLocation(e.target.checked)}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="useAlternate" className="text-sm text-gray-600">
+                      Use alternate location
+                    </label>
+                  </div>
+                </div>
+                
+                {!useAlternateLocation ? (
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                      placeholder="Enter your address"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-10"
+                    />
+                    <MapPin className="absolute left-3 top-3 text-gray-400" size={20} />
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={alternateLocation}
+                      onChange={(e) => setAlternateLocation(e.target.value)}
+                      placeholder="Enter alternate address"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-10"
+                    />
+                    <MapPin className="absolute left-3 top-3 text-gray-400" size={20} />
+                  </div>
+                )}
+              </div>
+
+              {/* Pickup Date and Phone */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Pickup Date
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      value={pickupDate}
+                      onChange={(e) => setPickupDate(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-10"
+                    />
+                    <Calendar className="absolute left-3 top-3 text-gray-400 pointer-events-none" size={20} />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="Enter phone number"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-10"
+                    />
+                    <Phone className="absolute left-3 top-3 text-gray-400 pointer-events-none" size={20} />
+                  </div>
                 </div>
               </div>
 
-              {/* Service Details Form */}
+              {/* Payment Methods */}
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <MapPin className="inline w-4 h-4 mr-1" />
-                    Service Address
-                  </label>
-                  <AddressAutocomplete
-                    value={selectedLocation}
-                    onChange={setSelectedLocation}
-                    onSelect={handleAddressSelect}
-                    placeholder="Enter your service address"
-                    className="w-full"
-                    showCurrentLocation={true}
-                  />
+                <h3 className="text-lg font-semibold text-gray-800">Select Payment Method</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {paymentMethods.map((method) => (
+                    <button
+                      key={method.id}
+                      onClick={() => setSelectedPayment(method.id)}
+                      className={`p-3 border rounded-lg text-sm font-medium transition-all ${
+                        selectedPayment === method.id
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center space-y-1">
+                        <span className="text-2xl">{method.icon}</span>
+                        <span>{method.name}</span>
+                      </div>
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Calendar className="inline w-4 h-4 mr-1" />
-                    Pickup Date
-                  </label>
-                  <input
-                    type="date"
-                    value={pickupDate}
-                    onChange={(e) => setPickupDate(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Phone className="inline w-4 h-4 mr-1" />
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter your phone number"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <CreditCard className="inline w-4 h-4 mr-1" />
-                    Payment Method
-                  </label>
-                  <div className="space-y-2">
-                    {paymentOptions.map((option) => (
-                      <label key={option.id} className="flex items-center p-3 border border-gray-300 rounded-xl hover:bg-gray-50 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="payment"
-                          value={option.id}
-                          checked={selectedPayment === option.id}
-                          onChange={(e) => setSelectedPayment(e.target.value)}
-                          className="mr-3"
-                        />
-                        <span className="mr-2">{option.icon}</span>
-                        <span>{option.name}</span>
-                      </label>
-                    ))}
+              {/* Price Breakdown */}
+              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                <h3 className="font-semibold text-gray-800">Price Breakdown</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>₹{getCartTotal()}</span>
+                  </div>
+                  {calculateDiscount() > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount (10% on orders above ₹500):</span>
+                      <span>-₹{calculateDiscount()}</span>
+                    </div>
+                  )}
+                  <div className="border-t pt-2 flex justify-between font-bold text-lg">
+                    <span>Total Amount:</span>
+                    <span className="text-green-600">₹{getFinalTotal()}</span>
                   </div>
                 </div>
               </div>
 
               {/* Place Order Button */}
-              <div className="space-y-3">
-                <button
-                  onClick={handlePlaceOrder}
-                  className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
-                >
-                  <CreditCard className="w-5 h-5" />
-                  <span>Place Order - ₹{getFinalTotal()}</span>
-                </button>
-                
-                <p className="text-xs text-gray-500 text-center">
-                  By placing this order, you agree to our Terms of Service and Privacy Policy.
-                </p>
-              </div>
+              <button
+                onClick={handlePlaceOrder}
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2"
+              >
+                <CreditCard className="w-5 h-5" />
+                <span>Place Order - ₹{getFinalTotal()}</span>
+              </button>
+              
+              <p className="text-xs text-gray-500 text-center">
+                By placing this order, you agree to our Terms of Service and Privacy Policy.
+              </p>
             </div>
           </div>
         </div>

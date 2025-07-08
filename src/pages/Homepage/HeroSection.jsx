@@ -5,8 +5,10 @@ import { TextGenerateEffect } from '../../components/ui/text-generate-effect';
 import { SparklesText } from '../../components/ui/sparkles-text';
 import MegaWinHeading from '../../components/ui/MegaWinHeading';
 import ServiceCategories from './services/ServiceCategories';
+import AddressAutocomplete from '../../components/AddressAutocomplete';
 import { useAuth } from '../../components/AuthContext';
 import { useCart } from '../../components/CartContext';
+import { addressAPI } from '../../api/address';
 
 const FAQS = [
 	{
@@ -74,6 +76,7 @@ export default function HeroSection() {
 	const [pickupDate, setPickupDate] = useState('');
 	const [phoneNumber, setPhoneNumber] = useState('');
 	const [fullAddress, setFullAddress] = useState('');
+	const [addressData, setAddressData] = useState(null); // Store complete address data
 	// Add state for FAQ and testimonials carousel
 	const [openIdx, setOpenIdx] = useState(0);
 	const [visibleCount, setVisibleCount] = useState(4);
@@ -85,55 +88,29 @@ export default function HeroSection() {
 	const isDragging = useRef(false);
 
 	useEffect(() => {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(
-				async position => {
-					const { latitude, longitude } = position.coords;
-					try {
-						const res = await fetch(
-							`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-						);
-						const data = await res.json();
-						if (data.display_name) {
-							setFullAddress(data.display_name);
-							setSelectedLocation(data.display_name);
-						} else if (data.address) {
-							const {
-								house_number,
-								road,
-								suburb,
-								city,
-								town,
-								village,
-								state,
-								postcode,
-								country,
-							} = data.address;
-							const address = [
-								house_number,
-								road,
-								suburb,
-								city || town || village,
-								state,
-								postcode,
-								country,
-							]
-								.filter(Boolean)
-								.join(', ');
-							setFullAddress(address);
-							setSelectedLocation(address);
-						}
-					} catch (e) {
-						// fallback or ignore
-					}
-				},
-				error => {
-					// Optionally handle geolocation error
-					// Example: setFullAddress('Bengaluru, India');
-				},
-				{ enableHighAccuracy: true }
-			);
-		}
+		// Get current location using the new address API
+		const getCurrentLocation = async () => {
+			try {
+				const result = await addressAPI.getCurrentAddress();
+				if (result.success) {
+					setFullAddress(result.data.fullAddress);
+					setSelectedLocation(result.data.fullAddress);
+					setAddressData(result.data);
+				} else {
+					console.log('Failed to get current location:', result.message);
+					// Fallback to default location
+					setFullAddress('Bengaluru, India');
+					setSelectedLocation('Bengaluru, India');
+				}
+			} catch (error) {
+				console.error('Error getting current location:', error);
+				// Fallback to default location
+				setFullAddress('Bengaluru, India');
+				setSelectedLocation('Bengaluru, India');
+			}
+		};
+
+		getCurrentLocation();
 	}, []);
 
 	// Responsive visibleCount for testimonials
@@ -324,6 +301,13 @@ export default function HeroSection() {
 		alert(`${item.title} added to cart!`);
 	};
 
+	// Handle address selection from autocomplete
+	const handleAddressSelect = (selectedAddress) => {
+		setFullAddress(selectedAddress.fullAddress);
+		setSelectedLocation(selectedAddress.fullAddress);
+		setAddressData(selectedAddress);
+	};
+
 	const handleBookService = () => {
 		// Validate all required fields
 		if (!selectedCategory) {
@@ -350,6 +334,7 @@ export default function HeroSection() {
 			phoneNumber,
 			address: fullAddress,
 			location: selectedLocation,
+			addressData: addressData, // Include complete address data
 			timestamp: Date.now()
 		};
 		localStorage.setItem('pendingBooking', JSON.stringify(bookingData));
@@ -444,19 +429,14 @@ export default function HeroSection() {
 										<label className="block text-sm font-medium text-gray-700 mb-2">
 											Location
 										</label>
-										<div className="relative">
-											<input
-												type="text"
-												value={fullAddress}
-												onChange={e => {
-													setFullAddress(e.target.value);
-													setSelectedLocation(e.target.value);
-												}}
-												className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-												placeholder="Detecting your address..."
-											/>
-											<MapPin className="absolute right-3 top-3 text-gray-400" size={20} />
-										</div>
+										<AddressAutocomplete
+											value={fullAddress}
+											onChange={setFullAddress}
+											onSelect={handleAddressSelect}
+											placeholder="Enter your address or use current location"
+											className="bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+											showCurrentLocation={true}
+										/>
 									</div>
 									<button 
 										onClick={handleBookService}

@@ -19,15 +19,14 @@ This document provides a comprehensive overview of the Bubble Flash application 
 │ provider        │    │ state            │    │ totalAmount     │  │
 │ googleId        │    │ pincode          │    │ paymentStatus   │  │
 │ emailVerified   │    │ landmark         │    │ orderStatus     │  │
-│ phoneVerified   │    │ isDefault        │    │ assignedEmployee│──┼─┐
-│ status          │    │ createdAt        │    │ rating          │  │ │
-│ preferences     │    │ updatedAt        │    │ review          │  │ │
-│ totalOrders     │    └──────────────────┘    │ createdAt       │  │ │
-│ totalSpent      │                            │ updatedAt       │  │ │
-│ loyaltyPoints   │                            └─────────────────┘  │ │
-│ createdAt       │                                                 │ │
-│ updatedAt       │                                                 │ │
-└─────────────────┘                                                 │ │
+│ phoneVerified   │    │ isDefault        │    │ orderStatus     │  │
+│ status          │    │ createdAt        │    │ rating          │  │
+│ preferences     │    │ updatedAt        │    │ review          │  │
+│ totalOrders     │    └──────────────────┘    │ createdAt       │  │
+│ totalSpent      │                            │ updatedAt       │  │
+│ createdAt       │                            └─────────────────┘  │
+│ updatedAt       │                                                 │
+└─────────────────┘                                                 │
          │                                                          │ │
          │                                                          │ │
          ▼                                                          │ │
@@ -103,31 +102,6 @@ This document provides a comprehensive overview of the Bubble Flash application 
                        │ applicableCategs │                        │
                        │ applicableServs  │                        │
                        │ isActive         │                        │
-                       │ createdAt        │                        │
-                       │ updatedAt        │                        │
-                       └──────────────────┘                        │
-                                                                    │
-                       ┌──────────────────┐                        │
-                       │    Employees     │                        │
-                       ├──────────────────┤                        │
-                       │ _id (ObjectId)   │◄───────────────────────┘
-                       │ employeeId       │
-                       │ name             │
-                       │ email            │
-                       │ phone            │
-                       │ password         │
-                       │ role             │
-                       │ specializations[]│
-                       │ profileImage     │
-                       │ address          │
-                       │ emergencyContact │
-                       │ workingHours     │
-                       │ isAvailable      │
-                       │ isActive         │
-                       │ rating           │
-                       │ totalOrders      │
-                       │ completedOrders  │
-                       │ joinDate         │
                        │ createdAt        │
                        │ updatedAt        │
                        └──────────────────┘
@@ -143,7 +117,6 @@ This document provides a comprehensive overview of the Bubble Flash application 
 - `email`, `phone`: Login credentials (unique)
 - `provider`: Authentication method ('local' or 'google')
 - `preferences`: User settings and default address
-- `loyaltyPoints`: Reward points system
 
 **Relationships**:
 - One-to-Many with Addresses
@@ -222,13 +195,11 @@ This document provides a comprehensive overview of the Bubble Flash application 
 - `scheduledDate`, `scheduledTimeSlot`: When service will occur
 - `paymentStatus`: pending, processing, completed, failed, refunded
 - `orderStatus`: pending, confirmed, assigned, in_progress, completed, cancelled
-- `assignedEmployee`: Worker assigned to this order
 
 **Business Features**:
 - Order number auto-generation
 - Payment and order status tracking
 - Review and rating system
-- Employee assignment
 
 ### 9. Coupons Collection
 **Purpose**: Discount codes and promotional offers
@@ -245,16 +216,6 @@ This document provides a comprehensive overview of the Bubble Flash application 
 - Automatic discount calculation
 - Category/service specific coupons
 
-### 10. Employees Collection
-**Purpose**: Staff management and service assignment
-
-**Key Fields**:
-- `employeeId`: Employee number
-- `role`: admin, manager, technician, support
-- `specializations[]`: Which service categories they handle
-- `workingHours`: Schedule and availability
-- `rating`: Performance rating from customers
-
 ## Data Relationships
 
 ### Primary Relationships
@@ -263,13 +224,11 @@ This document provides a comprehensive overview of the Bubble Flash application 
 3. **Users → Cart**: One-to-One
 4. **ServiceCategory → Services**: One-to-Many
 5. **Services → Packages**: One-to-Many
-6. **Orders → Employees**: Many-to-One (assignment)
 
 ### Complex Relationships
 1. **Cart Items**: References Services, Packages, and AddOns
 2. **Order Items**: Denormalized data for historical accuracy
 3. **Coupons**: Can be category or service specific
-4. **Employee Specializations**: Many-to-Many with ServiceCategories
 
 ## Indexes and Performance
 
@@ -284,7 +243,6 @@ db.users.createIndex({ "googleId": 1 }, { unique: true, sparse: true })
 db.orders.createIndex({ "userId": 1, "createdAt": -1 })
 db.orders.createIndex({ "orderNumber": 1 }, { unique: true })
 db.orders.createIndex({ "orderStatus": 1 })
-db.orders.createIndex({ "assignedEmployee": 1 })
 
 // Services
 db.services.createIndex({ "categoryId": 1, "isActive": 1 })
@@ -309,12 +267,10 @@ db.coupons.createIndex({ "isActive": 1, "validFrom": 1, "validUntil": 1 })
 - Order number generation
 - Status workflow management
 - Payment integration hooks
-- Employee assignment logic
 
 ### 3. Pricing and Discounts
 - Dynamic pricing based on packages
 - Coupon validation and application
-- Loyalty points system
 
 ### 4. Service Management
 - Category-based organization

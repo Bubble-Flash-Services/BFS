@@ -16,11 +16,7 @@ import {
   createCoupon,
   updateCoupon,
   deleteCoupon,
-  getAllCoupons,
-  getAllEmployees,
-  createEmployee,
-  updateEmployee,
-  deleteEmployee
+  getAllCoupons
 } from '../controllers/adminController.js';
 
 const router = express.Router();
@@ -56,11 +52,5 @@ router.get('/coupons', getAllCoupons);
 router.post('/coupons', createCoupon);
 router.put('/coupons/:couponId', updateCoupon);
 router.delete('/coupons/:couponId', deleteCoupon);
-
-// Employee Management
-router.get('/employees', getAllEmployees);
-router.post('/employees', createEmployee);
-router.put('/employees/:employeeId', updateEmployee);
-router.delete('/employees/:employeeId', deleteEmployee);
 
 export default router;

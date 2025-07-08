@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../components/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, MapPin, Edit, Camera, Save, X, Calendar, DollarSign, Award } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Edit, Camera, Save, X, Calendar, DollarSign } from 'lucide-react';
 import { updateProfile } from '../api/auth';
 
 export default function ProfilePage() {
@@ -277,15 +277,6 @@ export default function ProfilePage() {
                   <div>
                     <p className="text-sm text-gray-600">Total Spent</p>
                     <p className="font-semibold text-gray-800">₹{user.totalSpent || 0}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <Award size={16} className="text-purple-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Loyalty Points</p>
-                    <p className="font-semibold text-gray-800">{user.loyaltyPoints || 0}</p>
                   </div>
                 </div>
               </div>

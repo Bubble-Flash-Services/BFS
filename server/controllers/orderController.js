@@ -176,8 +176,7 @@ export const createOrder = async (req, res) => {
     await User.findByIdAndUpdate(req.user.id, {
       $inc: { 
         totalOrders: 1,
-        totalSpent: totalAmount,
-        loyaltyPoints: Math.floor(totalAmount / 10) // 1 point per ₹10
+        totalSpent: totalAmount
       }
     });
 
@@ -210,7 +209,6 @@ export const getUserOrders = async (req, res) => {
     const orders = await Order.find(filter)
       .populate('items.serviceId', 'name')
       .populate('items.packageId', 'name')
-      .populate('assignedEmployee', 'name phone')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
@@ -252,8 +250,7 @@ export const getOrderById = async (req, res) => {
     })
       .populate('items.serviceId', 'name description')
       .populate('items.packageId', 'name description features')
-      .populate('items.addOns.addOnId', 'name description')
-      .populate('assignedEmployee', 'name phone profileImage rating');
+      .populate('items.addOns.addOnId', 'name description');
 
     if (!order) {
       return res.status(404).json({
@@ -367,27 +364,6 @@ export const submitOrderReview = async (req, res) => {
     order.review = review;
     order.isReviewSubmitted = true;
     await order.save();
-
-    // Update employee rating if assigned
-    if (order.assignedEmployee) {
-      const Employee = (await import('../models/Employee.js')).default;
-      const employee = await Employee.findById(order.assignedEmployee);
-      if (employee) {
-        const totalRatedOrders = await Order.countDocuments({
-          assignedEmployee: employee._id,
-          isReviewSubmitted: true
-        });
-        
-        const totalRatingSum = await Order.aggregate([
-          { $match: { assignedEmployee: employee._id, isReviewSubmitted: true } },
-          { $group: { _id: null, totalRating: { $sum: '$rating' } } }
-        ]);
-
-        const newRating = totalRatingSum[0]?.totalRating / totalRatedOrders || 0;
-        employee.rating = Math.round(newRating * 10) / 10; // Round to 1 decimal
-        await employee.save();
-      }
-    }
 
     res.json({
       success: true,

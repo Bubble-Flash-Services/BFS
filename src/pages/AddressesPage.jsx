@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../components/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Plus, Edit, Trash2, Home, Building, X, Save } from 'lucide-react';
+import AddressAutocomplete from '../components/AddressAutocomplete';
+import { addressAPI } from '../api/address';
 
 export default function AddressesPage() {
   const { user, loading } = useAuth();
@@ -11,13 +13,14 @@ export default function AddressesPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    street: '',
+    type: 'home',
+    fullAddress: '',
+    latitude: null,
+    longitude: null,
     city: '',
     state: '',
     pincode: '',
-    type: 'home',
+    landmark: '',
     isDefault: false
   });
   const [saving, setSaving] = useState(false);
@@ -37,18 +40,17 @@ export default function AddressesPage() {
   const fetchAddresses = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/addresses', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await addressAPI.getUserAddresses(token);
       
-      if (response.ok) {
-        const data = await response.json();
-        setAddresses(data.addresses || []);
+      if (response.success && Array.isArray(response.data)) {
+        setAddresses(response.data);
+      } else {
+        console.error('Invalid response format:', response);
+        setAddresses([]);
       }
     } catch (error) {
       console.error('Error fetching addresses:', error);
+      setAddresses([]);
     } finally {
       setLoadingAddresses(false);
     }
@@ -56,10 +58,7 @@ export default function AddressesPage() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.phone.trim()) newErrors.phone = 'Phone is required';
-    else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) newErrors.phone = 'Phone number is invalid';
-    if (!formData.street.trim()) newErrors.street = 'Street address is required';
+    if (!formData.fullAddress.trim()) newErrors.fullAddress = 'Address is required';
     if (!formData.city.trim()) newErrors.city = 'City is required';
     if (!formData.state.trim()) newErrors.state = 'State is required';
     if (!formData.pincode.trim()) newErrors.pincode = 'Pincode is required';
@@ -76,21 +75,18 @@ export default function AddressesPage() {
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const url = editingAddress ? `/api/addresses/${editingAddress._id}` : '/api/addresses';
-      const method = editingAddress ? 'PUT' : 'POST';
+      let response;
+      if (editingAddress) {
+        response = await addressAPI.updateAddress(editingAddress._id, formData);
+      } else {
+        response = await addressAPI.addAddress(formData);
+      }
       
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-      
-      if (response.ok) {
+      if (response.success) {
         await fetchAddresses();
         handleCancel();
+      } else {
+        console.error('Error saving address:', response.message);
       }
     } catch (error) {
       console.error('Error saving address:', error);
@@ -102,13 +98,14 @@ export default function AddressesPage() {
   const handleEdit = (address) => {
     setEditingAddress(address);
     setFormData({
-      name: address.name || '',
-      phone: address.phone || '',
-      street: address.street || '',
+      type: address.type || 'home',
+      fullAddress: address.fullAddress || '',
+      latitude: address.latitude || null,
+      longitude: address.longitude || null,
       city: address.city || '',
       state: address.state || '',
       pincode: address.pincode || '',
-      type: address.type || 'home',
+      landmark: address.landmark || '',
       isDefault: address.isDefault || false
     });
     setShowAddForm(true);
@@ -118,16 +115,11 @@ export default function AddressesPage() {
     if (!window.confirm('Are you sure you want to delete this address?')) return;
     
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/addresses/${addressId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (response.ok) {
+      const response = await addressAPI.deleteAddress(addressId);
+      if (response.success) {
         await fetchAddresses();
+      } else {
+        console.error('Error deleting address:', response.message);
       }
     } catch (error) {
       console.error('Error deleting address:', error);
@@ -138,13 +130,14 @@ export default function AddressesPage() {
     setShowAddForm(false);
     setEditingAddress(null);
     setFormData({
-      name: '',
-      phone: '',
-      street: '',
+      type: 'home',
+      fullAddress: '',
+      latitude: null,
+      longitude: null,
       city: '',
       state: '',
       pincode: '',
-      type: 'home',
+      landmark: '',
       isDefault: false
     });
     setErrors({});
@@ -153,8 +146,33 @@ export default function AddressesPage() {
   const getTypeIcon = (type) => {
     switch (type) {
       case 'home': return <Home size={16} className="text-green-600" />;
-      case 'office': return <Building size={16} className="text-blue-600" />;
+      case 'work': return <Building size={16} className="text-blue-600" />;
       default: return <MapPin size={16} className="text-gray-600" />;
+    }
+  };
+
+  const handleAddressSelect = (selectedAddress) => {
+    setFormData(prev => ({
+      ...prev,
+      fullAddress: selectedAddress.formatted_address || selectedAddress.display_name || '',
+      city: selectedAddress.city || selectedAddress.town || selectedAddress.village || '',
+      state: selectedAddress.state || selectedAddress.state_district || '',
+      pincode: selectedAddress.postcode || '',
+      latitude: selectedAddress.lat || selectedAddress.latitude || null,
+      longitude: selectedAddress.lon || selectedAddress.longitude || null
+    }));
+  };
+
+  const handleSetDefault = async (addressId) => {
+    try {
+      const response = await addressAPI.setDefaultAddress(addressId);
+      if (response.success) {
+        await fetchAddresses();
+      } else {
+        console.error('Error setting default address:', response.message);
+      }
+    } catch (error) {
+      console.error('Error setting default address:', error);
     }
   };
 
@@ -205,48 +223,17 @@ export default function AddressesPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                        errors.name ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="Enter full name"
-                    />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                        errors.phone ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="Enter phone number"
-                    />
-                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-                  </div>
-                </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
-                  <textarea
-                    value={formData.street}
-                    onChange={e => setFormData(prev => ({ ...prev, street: e.target.value }))}
-                    rows={2}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${
-                      errors.street ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="House/Flat no., Building name, Street name"
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Search Address</label>
+                  <AddressAutocomplete
+                    value={formData.fullAddress}
+                    onChange={(value) => setFormData(prev => ({ ...prev, fullAddress: value }))}
+                    onSelect={handleAddressSelect}
+                    placeholder="Search for your address..."
+                    showCurrentLocation={true}
+                    className="w-full"
                   />
-                  {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
+                  {errors.fullAddress && <p className="text-red-500 text-sm mt-1">{errors.fullAddress}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -294,6 +281,17 @@ export default function AddressesPage() {
                 </div>
 
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Landmark (Optional)</label>
+                  <input
+                    type="text"
+                    value={formData.landmark}
+                    onChange={e => setFormData(prev => ({ ...prev, landmark: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    placeholder="Nearby landmark"
+                  />
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Address Type</label>
                   <div className="flex gap-4">
                     <label className="flex items-center">
@@ -309,12 +307,12 @@ export default function AddressesPage() {
                     <label className="flex items-center">
                       <input
                         type="radio"
-                        value="office"
-                        checked={formData.type === 'office'}
+                        value="work"
+                        checked={formData.type === 'work'}
                         onChange={e => setFormData(prev => ({ ...prev, type: e.target.value }))}
                         className="mr-2"
                       />
-                      Office
+                      Work
                     </label>
                     <label className="flex items-center">
                       <input
@@ -389,6 +387,14 @@ export default function AddressesPage() {
                     )}
                   </div>
                   <div className="flex gap-2">
+                    {!address.isDefault && (
+                      <button
+                        onClick={() => handleSetDefault(address._id)}
+                        className="px-3 py-1 text-xs bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors"
+                      >
+                        Set Default
+                      </button>
+                    )}
                     <button
                       onClick={() => handleEdit(address)}
                       className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
@@ -405,10 +411,16 @@ export default function AddressesPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <p className="font-medium text-gray-800">{address.name}</p>
-                  <p className="text-gray-600">{address.phone}</p>
-                  <p className="text-gray-700">{address.street}</p>
-                  <p className="text-gray-700">{address.city}, {address.state} - {address.pincode}</p>
+                  <p className="text-gray-700">{address.fullAddress}</p>
+                  {address.landmark && (
+                    <p className="text-gray-600 text-sm">📍 {address.landmark}</p>
+                  )}
+                  <p className="text-gray-600 text-sm">{address.city}, {address.state} - {address.pincode}</p>
+                  {address.latitude && address.longitude && (
+                    <p className="text-xs text-gray-500">
+                      📍 {address.latitude.toFixed(4)}, {address.longitude.toFixed(4)}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}

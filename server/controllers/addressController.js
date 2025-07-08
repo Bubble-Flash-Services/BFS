@@ -1,4 +1,5 @@
 import Address from '../models/Address.js';
+import addressService from '../services/addressService.js';
 
 // Get user addresses
 export const getUserAddresses = async (req, res) => {
@@ -20,6 +21,111 @@ export const getUserAddresses = async (req, res) => {
   }
 };
 
+// Reverse geocode coordinates to address
+export const reverseGeocode = async (req, res) => {
+  try {
+    const { latitude, longitude } = req.body;
+
+    if (!latitude || !longitude) {
+      return res.status(400).json({
+        success: false,
+        message: 'Latitude and longitude are required'
+      });
+    }
+
+    const result = await addressService.reverseGeocode(latitude, longitude);
+    
+    if (result.success) {
+      res.json({
+        success: true,
+        data: result.data
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message
+      });
+    }
+  } catch (error) {
+    console.error('Reverse geocode error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to reverse geocode',
+      error: error.message
+    });
+  }
+};
+
+// Search addresses by query
+export const searchAddresses = async (req, res) => {
+  try {
+    const { query, limit } = req.query;
+
+    if (!query || query.trim().length < 3) {
+      return res.status(400).json({
+        success: false,
+        message: 'Search query must be at least 3 characters long'
+      });
+    }
+
+    const result = await addressService.searchAddresses(query, limit);
+    
+    if (result.success) {
+      res.json({
+        success: true,
+        data: result.data
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message
+      });
+    }
+  } catch (error) {
+    console.error('Search addresses error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to search addresses',
+      error: error.message
+    });
+  }
+};
+
+// Get address suggestions for autocomplete
+export const getAddressSuggestions = async (req, res) => {
+  try {
+    const { query, limit } = req.query;
+
+    if (!query || query.trim().length < 3) {
+      return res.status(400).json({
+        success: false,
+        message: 'Search query must be at least 3 characters long'
+      });
+    }
+
+    const result = await addressService.getAddressSuggestions(query, limit);
+    
+    if (result.success) {
+      res.json({
+        success: true,
+        data: result.data
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message
+      });
+    }
+  } catch (error) {
+    console.error('Address suggestions error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get address suggestions',
+      error: error.message
+    });
+  }
+};
+
 // Add new address
 export const addAddress = async (req, res) => {
   try {
@@ -35,12 +141,28 @@ export const addAddress = async (req, res) => {
       isDefault
     } = req.body;
 
-    // Validate required fields
-    if (!fullAddress) {
+    // Validate address
+    const validation = addressService.validateAddress({
+      fullAddress,
+      latitude,
+      longitude,
+      pincode
+    });
+
+    if (!validation.isValid) {
       return res.status(400).json({
         success: false,
-        message: 'Full address is required'
+        message: 'Invalid address data',
+        errors: validation.errors
       });
+    }
+
+    // If setting as default, update other addresses
+    if (isDefault) {
+      await Address.updateMany(
+        { userId: req.user.id },
+        { isDefault: false }
+      );
     }
 
     const address = new Address({
