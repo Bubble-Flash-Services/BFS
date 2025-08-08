@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, Eye, EyeOff, Shield } from 'lucide-react';
+import { LogIn, Eye, EyeOff, UserCheck } from 'lucide-react';
 
-const AdminLogin = () => {
+const EmployeeLogin = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -26,7 +26,7 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/admin/auth/login', {
+      const response = await fetch('http://localhost:5000/api/admin/auth/employee/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -37,12 +37,12 @@ const AdminLogin = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Store admin token
-        localStorage.setItem('adminToken', data.token);
-        localStorage.setItem('adminUser', JSON.stringify(data.admin));
+        // Store employee token
+        localStorage.setItem('employeeToken', data.token);
+        localStorage.setItem('employeeUser', JSON.stringify(data.employee));
         
-        // Redirect to admin dashboard
-        navigate('/admin/dashboard');
+        // Redirect to employee dashboard
+        navigate('/employee/dashboard');
       } else {
         setError(data.message || 'Login failed');
       }
@@ -55,22 +55,22 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
-            <Shield className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-full mb-4">
+            <UserCheck className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Bubble Flash</h1>
-          <p className="text-gray-600 mt-2">Admin Portal</p>
+          <p className="text-gray-600 mt-2">Employee Portal</p>
         </div>
 
         {/* Login Form */}
         <div className="bg-white rounded-lg shadow-xl p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 text-center">Admin Login</h2>
-            <p className="text-gray-600 text-center mt-2">Access your admin dashboard</p>
+            <h2 className="text-2xl font-bold text-gray-900 text-center">Employee Login</h2>
+            <p className="text-gray-600 text-center mt-2">Access your work dashboard</p>
           </div>
 
           {error && (
@@ -90,8 +90,8 @@ const AdminLogin = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                placeholder="admin@bubbleflash.com"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                placeholder="your.email@bubbleflash.com"
                 required
               />
             </div>
@@ -107,7 +107,7 @@ const AdminLogin = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 pr-12"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 pr-12"
                   placeholder="Enter your password"
                   required
                 />
@@ -124,7 +124,7 @@ const AdminLogin = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2"
+              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-medium py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
@@ -143,8 +143,9 @@ const AdminLogin = () => {
           {/* Demo Credentials */}
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Demo Credentials:</h3>
-            <p className="text-sm text-gray-600">Email: admin@bubbleflash.com</p>
-            <p className="text-sm text-gray-600">Password: admin123</p>
+            <p className="text-sm text-gray-600">Email: ravi.kumar@bubbleflash.com</p>
+            <p className="text-sm text-gray-600">Password: employee123</p>
+            <p className="text-xs text-gray-500 mt-2">More employee accounts available in seed data</p>
           </div>
         </div>
       </div>
@@ -152,4 +153,4 @@ const AdminLogin = () => {
   );
 };
 
-export default AdminLogin;
+export default EmployeeLogin;

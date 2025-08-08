@@ -5,6 +5,7 @@ import session from 'express-session';
 import passport from 'passport';
 import './passport.js';
 import authRoutes from './routes/auth.js';
+import authAdminRoutes from './routes/authAdmin.js';
 import userRoutes from './routes/user.js';
 import serviceRoutes from './routes/services.js';
 import cartRoutes from './routes/cart.js';
@@ -12,6 +13,8 @@ import orderRoutes from './routes/orders.js';
 import addressRoutes from './routes/addresses.js';
 import couponRoutes from './routes/coupons.js';
 import adminRoutes from './routes/admin.js';
+import adminNewRoutes from './routes/adminNew.js';
+import employeeRoutes from './routes/employee.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -34,6 +37,7 @@ app.use(passport.session());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/admin/auth', authAdminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/cart', cartRoutes);
@@ -41,6 +45,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/addresses', addressRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/adminNew', adminNewRoutes);
+app.use('/api/employee', employeeRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -71,15 +77,11 @@ app.use('*', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
-})
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected successfully');
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📊 Admin dashboard: http://localhost:${PORT}/api/admin/dashboard/stats`);
       console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
     });
   })

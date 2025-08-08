@@ -359,21 +359,6 @@ const seedDatabase = async () => {
 
     console.log('Created coupons');
 
-    // Create Admin User
-    const hashedPassword = await bcrypt.hash('admin123', 10);
-    const adminUser = new User({
-      name: 'Admin User',
-      email: 'admin@bubbleflash.in',
-      phone: '+919980123452',
-      password: hashedPassword,
-      role: 'admin',
-      emailVerified: true,
-      phoneVerified: true,
-      status: 'active'
-    });
-    await adminUser.save();
-    console.log('Created admin user');
-
     console.log('✅ Database seeded successfully!');
     console.log('\n📊 Created:');
     console.log(`   - ${categories.length} service categories`);
@@ -381,11 +366,6 @@ const seedDatabase = async () => {
     console.log(`   - ${packages.length} packages`);
     console.log(`   - ${addOns.length} add-ons`);
     console.log(`   - ${coupons.length} coupons`);
-    console.log(`   - 1 admin user`);
-    
-    console.log('\n🔑 Admin Credentials:');
-    console.log('   Email: admin@bubbleflash.in');
-    console.log('   Password: admin123');
     
     console.log('\n🎟️ Sample Coupons:');
     coupons.forEach(coupon => {

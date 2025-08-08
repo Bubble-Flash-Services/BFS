@@ -2,63 +2,63 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  Users, 
-  History, 
-  Megaphone, 
-  Ticket, 
-  UserCheck,
+  ClipboardList,
+  CheckCircle,
+  Calendar,
+  User,
   Menu, 
   X,
   LogOut
 } from 'lucide-react';
 
-const AdminLayout = ({ children }) => {
+const EmployeeLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
   const menuItems = [
     {
       name: 'Dashboard',
-      href: '/admin/dashboard',
+      href: '/employee/dashboard',
       icon: LayoutDashboard,
-      active: location.pathname === '/admin/dashboard'
+      active: location.pathname === '/employee/dashboard'
     },
     {
-      name: 'User Management',
-      href: '/admin/users',
-      icon: Users,
-      active: location.pathname === '/admin/users'
+      name: 'My Assignments',
+      href: '/employee/assignments',
+      icon: ClipboardList,
+      active: location.pathname === '/employee/assignments'
     },
     {
-      name: 'Booking History',
-      href: '/admin/bookings',
-      icon: History,
-      active: location.pathname === '/admin/bookings'
+      name: 'Completed Tasks',
+      href: '/employee/completed',
+      icon: CheckCircle,
+      active: location.pathname === '/employee/completed'
     },
     {
-      name: 'Employee Management',
-      href: '/admin/employees',
-      icon: UserCheck,
-      active: location.pathname === '/admin/employees'
+      name: 'Schedule',
+      href: '/employee/schedule',
+      icon: Calendar,
+      active: location.pathname === '/employee/schedule'
     },
     {
-      name: 'Advertisement',
-      href: '/admin/ads',
-      icon: Megaphone,
-      active: location.pathname === '/admin/ads'
-    },
-    {
-      name: 'Coupons',
-      href: '/admin/coupons',
-      icon: Ticket,
-      active: location.pathname === '/admin/coupons'
+      name: 'Profile',
+      href: '/employee/profile',
+      icon: User,
+      active: location.pathname === '/employee/profile'
     }
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminUser');
-    window.location.href = '/admin/login';
+    localStorage.removeItem('employeeToken');
+    localStorage.removeItem('employeeUser');
+    window.location.href = '/employee/login';
+  };
+
+  // Mock employee data - in real app, this would come from authentication context
+  const employee = {
+    name: 'Ravi Kumar',
+    specialization: 'Car Wash Specialist',
+    profileImage: null
   };
 
   return (
@@ -86,7 +86,24 @@ const AdminLayout = ({ children }) => {
           </button>
         </div>
 
-        <nav className="mt-8 px-4">
+        {/* Employee Info */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+              {employee.profileImage ? (
+                <img src={employee.profileImage} alt={employee.name} className="w-10 h-10 rounded-full object-cover" />
+              ) : (
+                <User className="h-5 w-5 text-gray-600" />
+              )}
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-900">{employee.name}</p>
+              <p className="text-xs text-gray-500">{employee.specialization}</p>
+            </div>
+          </div>
+        </div>
+
+        <nav className="mt-4 px-4">
           <div className="space-y-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -133,7 +150,7 @@ const AdminLayout = ({ children }) => {
             >
               <Menu className="h-6 w-6" />
             </button>
-            <h1 className="text-lg font-semibold text-gray-900">Admin Panel</h1>
+            <h1 className="text-lg font-semibold text-gray-900">Employee Portal</h1>
             <div className="w-10"></div>
           </div>
         </div>
@@ -147,4 +164,4 @@ const AdminLayout = ({ children }) => {
   );
 };
 
-export default AdminLayout;
+export default EmployeeLayout;

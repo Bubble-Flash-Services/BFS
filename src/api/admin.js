@@ -1,169 +1,70 @@
-// API helpers for admin operations
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE_URL = 'http://localhost:5000/api/admin';
 
-// Dashboard
-export async function getDashboardStats(token) {
-  const res = await fetch(`${API}/api/admin/dashboard/stats`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.json();
-}
+// Get dashboard statistics
+export const getDashboardStats = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to fetch dashboard stats');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    throw error;
+  }
+};
 
-// Service Categories Management
-export async function createServiceCategory(token, data) {
-  const res = await fetch(`${API}/api/admin/categories`, {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
+// Get current customers
+export const getCurrentCustomers = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/dashboard/current-customers`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to fetch current customers');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error fetching current customers:', error);
+    throw error;
+  }
+};
 
-export async function updateServiceCategory(token, categoryId, data) {
-  const res = await fetch(`${API}/api/admin/categories/${categoryId}`, {
-    method: 'PUT',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function deleteServiceCategory(token, categoryId) {
-  const res = await fetch(`${API}/api/admin/categories/${categoryId}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.json();
-}
-
-// Services Management
-export async function createService(token, data) {
-  const res = await fetch(`${API}/api/admin/services`, {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function updateService(token, serviceId, data) {
-  const res = await fetch(`${API}/api/admin/services/${serviceId}`, {
-    method: 'PUT',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function deleteService(token, serviceId) {
-  const res = await fetch(`${API}/api/admin/services/${serviceId}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.json();
-}
-
-// Packages Management
-export async function createPackage(token, data) {
-  const res = await fetch(`${API}/api/admin/packages`, {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function updatePackage(token, packageId, data) {
-  const res = await fetch(`${API}/api/admin/packages/${packageId}`, {
-    method: 'PUT',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function deletePackage(token, packageId) {
-  const res = await fetch(`${API}/api/admin/packages/${packageId}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.json();
-}
-
-// Orders Management
-export async function getAllOrders(token) {
-  const res = await fetch(`${API}/api/admin/orders`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.json();
-}
-
-export async function updateOrderStatus(token, orderId, status) {
-  const res = await fetch(`${API}/api/admin/orders/${orderId}/status`, {
-    method: 'PUT',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
-    },
-    body: JSON.stringify({ status }),
-  });
-  return res.json();
-}
-
-// Coupons Management
-export async function getAllCoupons(token) {
-  const res = await fetch(`${API}/api/admin/coupons`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.json();
-}
-
-export async function createCoupon(token, data) {
-  const res = await fetch(`${API}/api/admin/coupons`, {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function updateCoupon(token, couponId, data) {
-  const res = await fetch(`${API}/api/admin/coupons/${couponId}`, {
-    method: 'PUT',
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function deleteCoupon(token, couponId) {
-  const res = await fetch(`${API}/api/admin/coupons/${couponId}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.json();
-}
+// Get monthly sales and revenue data
+export const getMonthlyData = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/dashboard/monthly-data`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to fetch monthly data');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error fetching monthly data:', error);
+    throw error;
+  }
+};

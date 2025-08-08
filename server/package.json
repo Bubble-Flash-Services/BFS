@@ -7,7 +7,9 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "seed": "node seedDatabase.js",
-    "seed:dev": "nodemon seedDatabase.js"
+    "seed:dev": "nodemon seedDatabase.js",
+    "seed:admin": "node seedAdminEmployee.js",
+    "test:routes": "node test-routes.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

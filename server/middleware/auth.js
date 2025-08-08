@@ -14,6 +14,14 @@ export const authenticateToken = async (req, res, next) => {
       });
     }
 
+    // Add better token validation
+    if (!token || token === 'undefined' || token === 'null' || token.length < 10) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid token format' 
+      });
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
     // Check if user still exists and is active
@@ -35,31 +43,13 @@ export const authenticateToken = async (req, res, next) => {
     
     next();
   } catch (error) {
-    console.error('Authentication error:', error);
+    // Don't log JWT malformed errors for invalid tokens to reduce noise
+    if (error.name !== 'JsonWebTokenError') {
+      console.error('Authentication error:', error);
+    }
     return res.status(401).json({ 
       success: false,
       message: 'Invalid or expired token' 
-    });
-  }
-};
-
-// Admin authentication middleware
-export const requireAdmin = async (req, res, next) => {
-  try {
-    // Check if user has admin role
-    if (!req.user || req.user.role !== 'admin') {
-      return res.status(403).json({ 
-        success: false,
-        message: 'Admin access required' 
-      });
-    }
-
-    next();
-  } catch (error) {
-    console.error('Admin authorization error:', error);
-    return res.status(403).json({ 
-      success: false,
-      message: 'Admin access verification failed' 
     });
   }
 };

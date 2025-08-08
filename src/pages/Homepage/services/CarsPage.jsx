@@ -13,9 +13,14 @@ const carCategories = [
     route: '/car-wash-deals/suv'
   },
   {
-    name: 'Sedans & Luxuries',
+    name: 'Sedans',
     image: '/car/car3.png',
-    route: '/car-wash-deals/sedans-luxuries'
+    route: '/car-wash-deals/sedans'
+  },
+  {
+    name: 'Luxuries',
+    image: '/car/car1.png',
+    route: '/car-wash-deals/luxuries'
   },
 ];
 
@@ -148,7 +153,7 @@ export default function CarsPage() {
         <h2 className="text-3xl font-bold text-gray-800 mb-12">Select by cars</h2>
         
         {/* Desktop Grid Layout */}
-        <div className="hidden md:grid md:grid-cols-3 gap-8">
+        <div className="hidden md:grid md:grid-cols-4 gap-8">
           {carCategories.map((cat) => (
             <div 
               key={cat.name} 

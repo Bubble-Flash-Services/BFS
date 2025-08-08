@@ -1,7 +1,7 @@
 import React from 'react';
 import { AuthProvider } from './components/AuthContext';
 import { CartProvider } from './components/CartContext';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import HeroSection from './pages/Homepage/HeroSection';
 import Footer from './components/Footer';
@@ -21,18 +21,30 @@ import ContactPage from './pages/contact/ContactPage';
 import ProfilePage from './pages/ProfilePage';
 import OrdersPage from './pages/OrdersPage';
 import AddressesPage from './pages/AddressesPage';
-// Admin imports
 import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminCategories from './pages/admin/AdminCategories';
-import AdminServices from './pages/admin/AdminServices';
-import AdminPackages from './pages/admin/AdminPackages';
-import AdminOrders from './pages/admin/AdminOrders';
-import AdminCoupons from './pages/admin/AdminCoupons';
+import UserManagement from './pages/admin/UserManagement';
+import BookingHistory from './pages/admin/BookingHistory';
+import AdvertisementManagement from './pages/admin/AdvertisementManagement';
+import CouponManagement from './pages/admin/CouponManagement';
+import EmployeeManagement from './pages/admin/EmployeeManagement';
+import EmployeeDashboard from './pages/employee/EmployeeDashboard';
+import EmployeeAssignments from './pages/employee/EmployeeAssignments';
+import EmployeeCompleted from './pages/employee/EmployeeCompleted';
+import EmployeeSchedule from './pages/employee/EmployeeSchedule';
+import EmployeeProfile from './pages/employee/EmployeeProfile';
+import AdminLogin from './pages/admin/AdminLogin';
+import EmployeeLogin from './pages/employee/EmployeeLogin';
+import ProtectedAdminRoute from './components/ProtectedAdminRoute';
+import ProtectedEmployeeRoute from './components/ProtectedEmployeeRoute';
 
 function AppContent() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  const isEmployeeRoute = location.pathname.startsWith('/employee');
+
   return (
     <div>
-      <Header />
+      {!isAdminRoute && !isEmployeeRoute && <Header />}
       <Routes>
         <Route path="/" element={
           <>
@@ -54,16 +66,67 @@ function AppContent() {
         <Route path="/addresses" element={<AddressesPage />} />
         <Route path="/google-success" element={<GoogleSuccess />} />
         <Route path="/contact" element={<ContactPage />} />
-        {/* Admin Routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/categories" element={<AdminCategories />} />
-        <Route path="/admin/services" element={<AdminServices />} />
-        <Route path="/admin/packages" element={<AdminPackages />} />
-        <Route path="/admin/orders" element={<AdminOrders />} />
-        <Route path="/admin/coupons" element={<AdminCoupons />} />
-        <Route path="/admin/coupons" element={<AdminCoupons />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="/admin/dashboard" element={
+          <ProtectedAdminRoute>
+            <AdminDashboard />
+          </ProtectedAdminRoute>
+        } />
+        <Route path="/admin/users" element={
+          <ProtectedAdminRoute>
+            <UserManagement />
+          </ProtectedAdminRoute>
+        } />
+        <Route path="/admin/bookings" element={
+          <ProtectedAdminRoute>
+            <BookingHistory />
+          </ProtectedAdminRoute>
+        } />
+        <Route path="/admin/employees" element={
+          <ProtectedAdminRoute>
+            <EmployeeManagement />
+          </ProtectedAdminRoute>
+        } />
+        <Route path="/admin/ads" element={
+          <ProtectedAdminRoute>
+            <AdvertisementManagement />
+          </ProtectedAdminRoute>
+        } />
+        <Route path="/admin/coupons" element={
+          <ProtectedAdminRoute>
+            <CouponManagement />
+          </ProtectedAdminRoute>
+        } />
+        <Route path="/employee/login" element={<EmployeeLogin />} />
+        <Route path="/employee" element={<Navigate to="/employee/dashboard" replace />} />
+        <Route path="/employee/dashboard" element={
+          <ProtectedEmployeeRoute>
+            <EmployeeDashboard />
+          </ProtectedEmployeeRoute>
+        } />
+        <Route path="/employee/assignments" element={
+          <ProtectedEmployeeRoute>
+            <EmployeeAssignments />
+          </ProtectedEmployeeRoute>
+        } />
+        <Route path="/employee/completed" element={
+          <ProtectedEmployeeRoute>
+            <EmployeeCompleted />
+          </ProtectedEmployeeRoute>
+        } />
+        <Route path="/employee/schedule" element={
+          <ProtectedEmployeeRoute>
+            <EmployeeSchedule />
+          </ProtectedEmployeeRoute>
+        } />
+        <Route path="/employee/profile" element={
+          <ProtectedEmployeeRoute>
+            <EmployeeProfile />
+          </ProtectedEmployeeRoute>
+        } />
       </Routes>
-      <Footer />
+      {!isAdminRoute && !isEmployeeRoute && <Footer />}
     </div>
   );
 }

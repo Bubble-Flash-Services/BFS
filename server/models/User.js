@@ -49,11 +49,6 @@ const UserSchema = new mongoose.Schema({
     enum: ['active', 'inactive', 'suspended'],
     default: 'active'
   },
-  role: {
-    type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
-  },
   // Forgot password fields
   resetToken: { type: String },
   resetTokenExpires: { type: Date },

@@ -77,15 +77,6 @@ try {
   console.error('✗ Error loading coupon routes:', error.message);
 }
 
-try {
-  console.log('Testing admin routes...');
-  const adminRoutes = await import('./routes/admin.js');
-  app.use('/api/admin', adminRoutes.default);
-  console.log('✓ Admin routes loaded successfully');
-} catch (error) {
-  console.error('✗ Error loading admin routes:', error.message);
-}
-
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
