@@ -9,6 +9,7 @@ import AddressAutocomplete from '../../components/AddressAutocomplete';
 import { useAuth } from '../../components/AuthContext';
 import { useCart } from '../../components/CartContext';
 import { addressAPI } from '../../api/address';
+import Spline from '@splinetool/react-spline';
 
 const FAQS = [
 	{
@@ -91,6 +92,22 @@ export default function HeroSection() {
 		// Get current location using the new address API
 		const getCurrentLocation = async () => {
 			try {
+				// Check if geolocation is available
+				if (!navigator.geolocation) {
+					console.warn('Geolocation is not supported by this browser');
+					setFullAddress('Bengaluru, India');
+					setSelectedLocation('Bengaluru, India');
+					return;
+				}
+
+				// Check if we're on HTTPS (required for geolocation in production)
+				if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+					console.warn('Geolocation requires HTTPS');
+					setFullAddress('Bengaluru, India');
+					setSelectedLocation('Bengaluru, India');
+					return;
+				}
+
 				const result = await addressAPI.getCurrentAddress();
 				if (result.success) {
 					setFullAddress(result.data.fullAddress);
@@ -98,6 +115,10 @@ export default function HeroSection() {
 					setAddressData(result.data);
 				} else {
 					console.log('Failed to get current location:', result.message);
+					// Show user-friendly message for permission issues
+					if (result.message && result.message.includes('denied')) {
+						console.info('Location permission denied. Using default location.');
+					}
 					// Fallback to default location
 					setFullAddress('Bengaluru, India');
 					setSelectedLocation('Bengaluru, India');
@@ -162,7 +183,7 @@ export default function HeroSection() {
 	// Car wash accessories data
 	const accessories = [
 		{
-			img: '/public/aboutus/car-spray.png',
+			img: '/aboutus/car-spray.png',
 			title: 'Hoora car spray',
 			price: 99,
 			oldPrice: 150,
@@ -171,7 +192,7 @@ export default function HeroSection() {
 			tag: '₹ 99 only',
 		},
 		{
-			img: '/public/car/car2.png',
+			img: '/car/car2.png',
 			title: 'Microfiber Towel',
 			price: 120,
 			oldPrice: 200,
@@ -180,7 +201,7 @@ export default function HeroSection() {
 			tag: '₹ 120 only',
 		},
 		{
-			img: '/public/car/car3.png',
+			img: '/car/car3.png',
 			title: 'Car Shampoo',
 			price: 80,
 			oldPrice: 160,
@@ -189,7 +210,7 @@ export default function HeroSection() {
 			tag: '₹ 80 only',
 		},
 		{
-			img: '/public/car/car1.png',
+			img: '/car/car1.png',
 			title: 'Tyre Cleaner',
 			price: 110,
 			oldPrice: 220,
@@ -198,7 +219,7 @@ export default function HeroSection() {
 			tag: '₹ 110 only',
 		},
 		{
-			img: '/public/car/car2.png',
+			img: '/car/car2.png',
 			title: 'Glass Cleaner',
 			price: 90,
 			oldPrice: 180,
@@ -207,7 +228,7 @@ export default function HeroSection() {
 			tag: '₹ 90 only',
 		},
 		{
-			img: '/public/car/car3.png',
+			img: '/car/car3.png',
 			title: 'Dashboard Polish',
 			price: 150,
 			oldPrice: 300,
@@ -216,7 +237,7 @@ export default function HeroSection() {
 			tag: '₹ 150 only',
 		},
 		{
-			img: '/public/car/car1.png',
+			img: '/car/car1.png',
 			title: 'Foam Sprayer',
 			price: 180,
 			oldPrice: 360,
@@ -225,7 +246,7 @@ export default function HeroSection() {
 			tag: '₹ 180 only',
 		},
 		{
-			img: '/public/car/car2.png',
+			img: '/car/car2.png',
 			title: 'Wheel Brush',
 			price: 70,
 			oldPrice: 140,
@@ -234,7 +255,7 @@ export default function HeroSection() {
 			tag: '₹ 70 only',
 		},
 		{
-			img: '/public/car/car3.png',
+			img: '/car/car3.png',
 			title: 'Leather Cleaner',
 			price: 200,
 			oldPrice: 400,
@@ -357,93 +378,33 @@ export default function HeroSection() {
 
 	return (
 		<>
-			<section id="home" className="bg-gradient-to-br from-blue-50 to-white py-16">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<section id="home" className=" py-16 relative" style={{
+				backgroundImage: "url('/home-bg.jpg')",
+				backgroundSize: 'cover',
+				backgroundPosition: 'center',
+				backgroundRepeat: 'no-repeat'
+			}}>
+				<div className="absolute inset-0 "></div>
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 					<MegaWinHeading className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent mb-6 leading-tight text-center">
 						Professional Cleaning Services for Cars, Bikes & More
 					</MegaWinHeading>
 					<SparklesText
 						text="Experience top-tier car wash, bike detailing, and laundry care – all under one roof in Bengaluru."
-						className="text-xl text-gray-600 mb-8 leading-relaxed text-center"
+						className="text-xl font-serif text-yellow-500 mb-8 leading-relaxed text-center"
 					/>
 					<div className="grid lg:grid-cols-2 gap-12 items-center">
 						<div>
-							<div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
-								<h3 className="text-2xl font-semibold mb-6 text-gray-800">
-									Book your Service
-								</h3>
-								<div className="space-y-4">
-									<div className="relative">
-										<label className="block text-sm font-medium text-gray-700 mb-2">
-											Select category
-										</label>
-										<div className="relative">
-											<select
-												value={selectedCategory}
-												onChange={e =>
-													setSelectedCategory(e.target.value)
-												}
-												className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-											>
-												<option value="">Choose a service</option>
-												{categories.map(category => (
-													<option key={category} value={category}>
-														{category}
-													</option>
-												))}
-											</select>
-											<ChevronDown className="absolute right-3 top-3 text-gray-400" size={20} />
-										</div>
-									</div>
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-2">
-												Pickup date
-											</label>
-											<div className="relative">
-												<input
-													type="date"
-													value={pickupDate}
-													onChange={e => setPickupDate(e.target.value)}
-													className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-												/>
-											</div>
-										</div>
-										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-2">
-												Phone number
-											</label>
-											<div className="relative">
-												<input
-													type="tel"
-													value={phoneNumber}
-													onChange={e => setPhoneNumber(e.target.value)}
-													placeholder="Enter phone number"
-													className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-												/>
-												<Phone className="absolute right-3 top-3 text-gray-400 pointer-events-none" size={20} />
-											</div>
-										</div>
-									</div>
-									<div className="relative">
-										<label className="block text-sm font-medium text-gray-700 mb-2">
-											Location
-										</label>
-										<AddressAutocomplete
-											value={fullAddress}
-											onChange={setFullAddress}
-											onSelect={handleAddressSelect}
-											placeholder="Enter your address or use current location"
-											className="bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-											showCurrentLocation={true}
-										/>
-									</div>
-									<button 
-										onClick={handleBookService}
-										className="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-6 rounded-lg font-medium transition-colors mt-6"
-									>
-										Book now
-									</button>
+							<div className=" rounded-2xl p-8 shadow-xl min-h-[500px] overflow-hidden">
+								<div className="relative" style={{ width: '100%', height: '450px', overflow: 'hidden' }}>
+									<Spline
+										scene="https://prod.spline.design/HoTtOyRYdsq7LRFy/scene.splinecode"
+										style={{ 
+											width: '100%', 
+											height: '580px',
+											marginBottom: '-30px'
+										}}
+									/>
 								</div>
 							</div>
 						</div>
@@ -451,8 +412,8 @@ export default function HeroSection() {
 							<div className="bg-blue-50 rounded-2xl p-8 max-w-md">
 								<div className="text-4xl mb-4">💙</div>
 								<TextGenerateEffect
-									words={`Really impressed with the car wash service at Bubble Flash Car Wash! The team was professional, friendly, and detailed in their work. My car looked spotless afterward.`}
-									className="text-gray-600 italic leading-relaxed"
+									words={`Transform your vehicle with our professional car wash service at Bubble Flash! Our expert team delivers meticulous care and attention to detail, ensuring your car achieves a spotless, showroom-quality finish every time.`}
+									className="text-gray-600 font-serif italic leading-relaxed"
 									duration={2}
 									filter={false}
 								/>
@@ -461,11 +422,12 @@ export default function HeroSection() {
 					</div>
 				</div>
 			</section>
-			<ServiceCategories />
-			<section id="aboutus">
-				{/* AboutPage content start */}
-				<div className="bg-white min-h-screen pb-16">
-					<div className="max-w-6xl mx-auto pt-12 px-4">
+			<div className="bg-gradient-to-br from-[#f7d02a] via-[#faffad] to-[#a0bae7]">
+				<ServiceCategories />
+				<section id="aboutus">
+					{/* AboutPage content start */}
+					<div className="min-h-screen pb-8 md:pb-4 lg:pb-8 xl:pb-16">
+						<div className="max-w-6xl mx-auto pt-12 px-4">
 						<div className="flex flex-col md:flex-row gap-8 items-start">
 							<video
 								src="/car/home.mp4"
@@ -476,17 +438,17 @@ export default function HeroSection() {
 								muted
 							/>
 							<div className="flex-1">
-								<h2 className="text-2xl font-bold text-blue-500 mb-2">
+								<h2 className="text-2xl font-serif font-bold text-blue-500 mb-2">
 									About us
 								</h2>
-								<p className="text-lg text-gray-800 mb-4">
+								<p className="text-lg font-serif text-gray-800 mb-4">
 									At Bubble Flash, we’re passionate about making your vehicles
 									and wardrobe shine! Based in the heart of Bengaluru, we provide
 									top-tier car washing, bike detailing, and laundry care services,
 									all under one roof – because we believe convenience should
 									never compromise quality.
 								</p>
-								<ul className="text-base text-black mb-2 space-y-1">
+								<ul className="text-base font-serif text-black mb-2 space-y-1">
 									<li>
 										<img
 											src="/aboutus/circle-check.png"
@@ -523,11 +485,11 @@ export default function HeroSection() {
 							</div>
 						</div>
 						<div className="flex justify-center mt-2 mb-6">
-							<button className="bg-[#e6eafc] text-xs text-blue-500 px-4 py-1 rounded-full font-semibold tracking-wide">
+							<button className="bg-[#e6eafc] text-xs font-serif text-blue-500 px-4 py-1 rounded-full font-semibold tracking-wide">
 								HOW IT WORK
 							</button>
 						</div>
-						<h3 className="text-2xl font-semibold text-center mb-8">
+						<h3 className="text-2xl font-serif font-semibold text-center mb-8">
 							Book with following 3 working steps
 						</h3>
 						<div className="flex flex-row w-full mb-12">
@@ -536,32 +498,32 @@ export default function HeroSection() {
 								<div className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3">
 									<img src="/aboutus/location.png" alt="Choose location" className="w-7 h-7 md:w-10 md:h-10" />
 								</div>
-								<div className="font-semibold text-xs md:text-base text-center">Choose location</div>
-								<div className="text-[10px] md:text-xs text-gray-500 text-center">Choose your and find your best car</div>
+								<div className="font-serif font-semibold text-xs md:text-base text-center">Choose location</div>
+								<div className="font-serif text-[10px] md:text-xs text-gray-500 text-center">Choose your and find your best car</div>
 							</div>
 							{/* Step 2 */}
 							<div className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1">
 								<div className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3">
 									<img src="/aboutus/pickup-date.png" alt="Pick-up date" className="w-7 h-7 md:w-10 md:h-10" />
 								</div>
-								<div className="font-semibold text-xs md:text-base text-center">Pick-up date</div>
-								<div className="text-[10px] md:text-xs text-gray-500 text-center">Select your pick up date and time to book your car</div>
+								<div className="font-serif font-semibold text-xs md:text-base text-center">Pick-up date</div>
+								<div className="font-serif text-[10px] md:text-xs text-gray-500 text-center">Select your pick up date and time to book your car</div>
 							</div>
 							{/* Step 3 */}
 							<div className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1">
 								<div className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3">
 									<img src="/aboutus/bookyourwash.png" alt="Book your wash" className="w-7 h-7 md:w-10 md:h-10" />
 								</div>
-								<div className="font-semibold text-xs md:text-base text-center">Book your wash</div>
-								<div className="text-[10px] md:text-xs text-gray-500 text-center">Book your car for doorstep service</div>
+								<div className="font-serif font-semibold text-xs md:text-base text-center">Book your wash</div>
+								<div className="font-serif text-[10px] md:text-xs text-gray-500 text-center">Book your car for doorstep service</div>
 							</div>
 							{/* Step 4 */}
 							<div className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1">
 								<div className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3">
 									<img src="/aboutus/expierencewash.png" alt="Experience wash" className="w-7 h-7 md:w-10 md:h-10" />
 								</div>
-								<div className="font-semibold text-xs md:text-base text-center">Experience wash</div>
-								<div className="text-[10px] md:text-xs text-gray-500 text-center">Don't worry, we have many experienced professionals</div>
+								<div className="font-serif font-semibold text-xs md:text-base text-center">Experience wash</div>
+								<div className="font-serif text-[10px] md:text-xs text-gray-500 text-center">Don't worry, we have many experienced professionals</div>
 							</div>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
@@ -571,7 +533,7 @@ export default function HeroSection() {
 									alt="Laundry"
 									className="rounded-xl w-full h-[170px] object-cover mb-4"
 								/>
-								<div className="text-xl font-bold text-center">
+								<div className="text-xl font-serif font-bold text-center">
 									Wash & Fold
 								</div>
 							</div>
@@ -581,7 +543,7 @@ export default function HeroSection() {
 									alt="Bike"
 									className="rounded-xl w-full h-[170px] object-cover mb-4"
 								/>
-								<div className="text-xl font-bold text-center">
+								<div className="text-xl font-serif font-bold text-center">
 									Bring Back the Shine
 								</div>
 							</div>
@@ -591,23 +553,22 @@ export default function HeroSection() {
 									alt="Car"
 									className="rounded-xl w-full h-[170px] object-cover mb-4"
 								/>
-								<div className="text-xl font-bold text-center">Car Clean</div>
+								<div className="text-xl font-serif font-bold text-center">Car Clean</div>
 							</div>
 						</div>
 					</div>
 				</div>
-
-				
 				{/* AboutPage content end */}
 			</section>
 			{/* Car wash Accessories Slider */}
-			<div className="py-12 bg-white">
-				<h2 className="text-3xl font-bold text-center mb-8">
-					Car wash Accessories
+			<div className="py-6 md:py-2 lg:py-4 xl:py-12 px-4">
+				<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-serif font-bold text-center mb-8 break-words leading-tight">
+					<span className="block sm:inline">Car wash</span>
+					<span className="block sm:inline sm:ml-2">Accessories</span>
 				</h2>
 				
-				{/* Desktop Layout */}
-				<div className="hidden md:flex items-center justify-center gap-4 max-w-7xl mx-auto">
+				{/* Desktop Layout - Only for large screens */}
+				<div className="hidden xl:flex items-center justify-center gap-4 max-w-7xl mx-auto">
 					{/* Left arrow */}
 					<button
 						onClick={handlePrev}
@@ -680,8 +641,8 @@ export default function HeroSection() {
 					</button>
 				</div>
 
-				{/* Mobile Slider Layout */}
-				<div className="md:hidden relative overflow-hidden max-w-sm mx-auto">
+				{/* Mobile & Tablet Slider Layout */}
+				<div className="xl:hidden relative overflow-hidden max-w-sm mx-auto">
 					<div
 						ref={accessorySliderRef}
 						className="flex transition-transform duration-300 ease-in-out"
@@ -695,44 +656,42 @@ export default function HeroSection() {
 						{accessories.map((item, idx) => (
 							<div
 								key={idx}
-								className="flex-shrink-0 w-full px-4"
+								className="flex-shrink-0 w-full px-2"
 							>
-								<div className="bg-white rounded-3xl shadow-lg p-6 flex flex-col items-center min-h-[370px] max-w-xs mx-auto">
-									<div className="flex items-center w-full mb-2">
+								<div className="bg-white rounded-2xl shadow-lg p-4 flex flex-col items-center min-h-[320px] max-w-xs mx-auto">
+									<div className="w-full text-center mb-3">
 										<img
 											src={item.img}
 											alt={item.title}
-											className="w-24 h-24 rounded-lg object-cover mr-4"
+											className="w-20 h-20 rounded-lg object-cover mx-auto mb-2"
 										/>
-										<div className="flex-1">
-											<div className="text-xl font-serif font-semibold">
-												{item.title}
-											</div>
-											<div className="flex items-center mt-2">
-												{[...Array(item.stars)].map((_, i) => (
-													<span
-														key={i}
-														className="text-yellow-400 text-xl"
-													>
-														★
-													</span>
-												))}
-											</div>
-											<div className="text-gray-400 line-through text-sm">
-												MRP : ₹{item.oldPrice}
-											</div>
+										<div className="text-lg font-serif font-semibold mb-1">
+											{item.title}
+										</div>
+										<div className="flex justify-center items-center mb-2">
+											{[...Array(item.stars)].map((_, i) => (
+												<span
+													key={i}
+													className="text-yellow-400 text-lg"
+												>
+													★
+												</span>
+											))}
+										</div>
+										<div className="text-gray-400 line-through text-sm mb-2">
+											MRP : ₹{item.oldPrice}
 										</div>
 									</div>
-									<div className="flex items-center gap-2 w-full mb-4">
-										<span className="text-red-600 text-lg font-bold">
+									<div className="flex items-center justify-center gap-2 w-full mb-4">
+										<span className="text-red-600 text-base font-bold">
 											{item.tag}
 										</span>
-										<span className="bg-red-400 text-white px-3 py-1 rounded shadow text-sm font-semibold">
+										<span className="bg-red-400 text-white px-2 py-1 rounded shadow text-xs font-semibold">
 											{item.offer}
 										</span>
 									</div>
 									<button 
-										className="mt-auto bg-green-500 text-white px-6 py-2 rounded-lg font-bold text-lg shadow hover:bg-green-600 transition-all"
+										className="mt-auto bg-green-500 text-white px-6 py-2 rounded-lg font-bold text-base shadow hover:bg-green-600 transition-all w-full"
 										onClick={() => handleAddToCart(item)}
 									>
 										Add to cart
@@ -742,12 +701,12 @@ export default function HeroSection() {
 						))}
 					</div>
 
-					{/* Mobile Slide Indicators */}
-					<div className="flex justify-center mt-6 space-x-2">
+					{/* Mobile & Tablet Slide Indicators */}
+					<div className="xl:hidden flex justify-center mt-4 space-x-1">
 						{accessories.map((_, index) => (
 							<button
 								key={index}
-								className={`w-3 h-3 rounded-full transition-colors ${
+								className={`w-2 h-2 rounded-full transition-colors ${
 									index === accessorySlide ? 'bg-black' : 'bg-gray-300'
 								}`}
 								onClick={() => setAccessorySlide(index)}
@@ -756,8 +715,8 @@ export default function HeroSection() {
 					</div>
 				</div>
 
-				{/* Desktop Dots */}
-				<div className="hidden md:flex justify-center gap-6 mt-8">
+				{/* Desktop Dots - Only for large screens */}
+				<div className="hidden xl:flex justify-center gap-6 mt-8">
 					{Array.from({ length: totalSlides }).map((_, idx) => (
 						<button
 							key={idx}
@@ -776,7 +735,7 @@ export default function HeroSection() {
 			</div>
 			<section id="services">
 				{/* ServicesPage content start */}
-				<div className="max-w-6xl mx-auto pt-12 px-4 flex flex-col md:flex-row gap-8">
+				<div className="mx-auto pt-12 px-4 flex flex-col md:flex-row gap-8">
 					{/* Left: Callback Form */}
 					<div className="bg-white rounded-xl border border-black p-8 w-full md:w-[350px] flex flex-col items-center shadow-sm">
 						<div className="flex items-center gap-2 mb-4">
@@ -785,7 +744,7 @@ export default function HeroSection() {
 								alt="Callback"
 								className="w-4 h-4"
 							/>
-							<span className="text-lg font-semibold">Request a callback</span>
+							<span className="text-lg font-serif font-semibold">Request a callback</span>
 						</div>
 						<form className="w-full flex flex-col gap-4">
 							<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
@@ -797,7 +756,7 @@ export default function HeroSection() {
 									/>
 								</span>
 								<input
-									className="bg-transparent outline-none flex-1"
+									className="bg-transparent font-serif outline-none flex-1"
 									placeholder="Enter your name"
 								/>
 							</div>
@@ -810,7 +769,7 @@ export default function HeroSection() {
 									/>
 								</span>
 								<input
-									className="bg-transparent outline-none flex-1"
+									className="bg-transparent font-serif outline-none flex-1"
 									placeholder="Enter your mobile no"
 								/>
 							</div>
@@ -823,20 +782,20 @@ export default function HeroSection() {
 									/>
 								</span>
 								<input
-									className="bg-transparent outline-none flex-1"
+									className="bg-transparent font-serif outline-none flex-1"
 									placeholder="Enter your email"
 								/>
 							</div>
 							<textarea
-								className="border rounded-xl px-3 py-2 bg-white min-h-[60px] outline-none"
+								className="border rounded-xl px-3 py-2 bg-white min-h-[60px] font-serif outline-none"
 								placeholder="Enter your message......"
 							/>
-							<div className="text-pink-600 text-sm">
+							<div className="text-pink-600 font-serif text-sm">
 								We are operating between 9 AM - 8 PM
 							</div>
 							<button
 								type="submit"
-								className="bg-[#d14fff] text-white rounded-xl px-2 py-2 font-semibold mt-2"
+								className="bg-[#d14fff] text-white rounded-xl px-2 py-2 font-serif font-semibold mt-2"
 							>
 								Call me
 							</button>
@@ -850,7 +809,7 @@ export default function HeroSection() {
 									window.open('https://wa.me/919591572775', '_blank');
 								}}
 							>
-								<div className="flex items-center gap-2 font-bold text-lg">
+								<div className="flex items-center gap-2 font-serif font-bold text-lg">
 									<span className="text-lg">
 										<img
 											src="/services/whatsapp.svg"
@@ -860,7 +819,7 @@ export default function HeroSection() {
 									</span>{' '}
 									Ask us on Whatsapp
 								</div>
-								<div className="text-gray-500 text-sm">
+								<div className="text-gray-500 font-serif text-sm">
 									Get instant support and updates in whatsapp for our service
 								</div>
 								<div className="flex justify-end">
@@ -874,7 +833,7 @@ export default function HeroSection() {
 										faqSection.scrollIntoView({ behavior: 'smooth' });
 								}}
 							>
-								<div className="flex items-center gap-2 font-bold text-lg">
+								<div className="flex items-center gap-2 font-serif font-bold text-lg">
 									<span className="text-lg">
 										<img
 											src="/services/faq.svg"
@@ -884,7 +843,7 @@ export default function HeroSection() {
 									</span>{' '}
 									FAQ
 								</div>
-								<div className="text-gray-500 text-sm">
+								<div className="text-gray-500 font-serif text-sm">
 									Get instant support for our service via our FAQ section
 								</div>
 								<div className="flex justify-end">
@@ -899,7 +858,7 @@ export default function HeroSection() {
 									);
 								}}
 							>
-								<div className="flex items-center gap-2 font-bold text-lg">
+								<div className="flex items-center gap-2 font-serif font-bold text-lg">
 									<span className="text-lg">
 										<img
 											src="/services/name.svg"
@@ -909,22 +868,22 @@ export default function HeroSection() {
 									</span>{' '}
 									Contact Information
 								</div>
-								<div className="flex flex-wrap gap-8 text-xs text-gray-700 mt-2">
+								<div className="flex flex-wrap gap-8 text-xs font-serif text-gray-700 mt-2">
 									<div>
-										<div className="font-semibold">Address</div>
-										<div>Bangalore, India</div>
+										<div className="font-serif font-semibold">Address</div>
+										<div className="font-serif">Bangalore, India</div>
 									</div>
 									<div>
-										<div className="font-semibold">Phone</div>
-										<div>+91 9980123452</div>
+										<div className="font-serif font-semibold">Phone</div>
+										<div className="font-serif">+91 9980123452</div>
 									</div>
 									<div>
-										<div className="font-semibold">Email</div>
-										<div>hello@bubbleflash.in</div>
+										<div className="font-serif font-semibold">Email</div>
+										<div className="font-serif">hello@bubbleflash.in</div>
 									</div>
 									<div>
-										<div className="font-semibold">Business Hours</div>
-										<div>
+										<div className="font-serif font-semibold">Business Hours</div>
+										<div className="font-serif">
 											Monday - Saturday: 9:00 AM - 8:00 PM
 											<br />
 											Sunday: 10:00 AM - 6:00 PM
@@ -939,13 +898,13 @@ export default function HeroSection() {
 					</div>
 				</div>
 				{/* Choose your package Section */}
-				<div className="py-16 bg-white">
+				<div className="py-16">
 					<h2 className="text-2xl md:text-3xl font-serif font-semibold text-center mb-12">
 						Choose your package
 					</h2>
 					<div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
 						{/* Quick shine car */}
-						<div className="bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+						<div className="bg-gradient-to-br from-[#f7d02a] via-[#faffad] to-[#a0bae7] rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
 							<div className="w-full flex-1 flex flex-col items-center gap-6">
 								<div className="text-4xl font-serif font-bold mb-2 text-center">
 									Quick shine car
@@ -962,13 +921,13 @@ export default function HeroSection() {
 							</div>
 							<button 
 								onClick={() => navigate('/cars')}
-								className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6"
+								className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-serif font-semibold text-lg shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6"
 							>
 								Get Services
 							</button>
 						</div>
 						{/* Bike wash */}
-						<div className="bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+						<div className="bg-gradient-to-br from-[#f7d02a] via-[#faffad] to-[#a0bae7] bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
 							<div className="w-full flex-1 flex flex-col items-center gap-6">
 								<div className="text-4xl font-serif font-bold mb-2 text-center">
 									Shine Bike wash
@@ -984,13 +943,13 @@ export default function HeroSection() {
 							</div>
 							<button 
 								onClick={() => navigate('/bikes')}
-								className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6"
+								className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-serif font-semibold text-lg shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6"
 							>
 								Get Services
 							</button>
 						</div>
 						{/* Laundry wash */}
-						<div className="bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+						<div className="bg-gradient-to-br from-[#f7d02a] via-[#faffad] to-[#a0bae7] rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
 							<div className="w-full flex-1 flex flex-col items-center gap-6">
 								<div className="text-4xl font-serif font-bold mb-2 text-center">
 									Laundry wash
@@ -1006,7 +965,7 @@ export default function HeroSection() {
 							</div>
 							<button 
 								onClick={() => navigate('/laundry')}
-								className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6"
+								className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-serif font-semibold text-lg shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6"
 							>
 								Get Services
 							</button>
@@ -1014,7 +973,7 @@ export default function HeroSection() {
 					</div>
 				</div>
 				{/* What client says - true carousel */}
-				<div className="mt-20 mb-8">
+				<div className="mt-20 mb-8 py-12">
 					<h2 className="text-2xl md:text-3xl font-serif font-semibold text-center mb-8">
 						What client says
 					</h2>
@@ -1037,8 +996,8 @@ export default function HeroSection() {
 												className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border"
 											/>
 											<div>
-												<div className="font-bold">{t.name}</div>
-												<div className="text-xs text-gray-500">
+												<div className="font-serif font-bold">{t.name}</div>
+												<div className="text-xs font-serif text-gray-500">
 													{t.name}
 												</div>
 											</div>
@@ -1062,7 +1021,7 @@ export default function HeroSection() {
 					</div>
 				</div>
 				{/* FAQ Section */}
-				<div className="mt-16 bg-white py-12">
+				<div className="mt-16 py-12">
 					<h2
 						id="faq-section"
 						className="text-2xl md:text-3xl font-serif font-semibold text-center mb-8"
@@ -1076,12 +1035,12 @@ export default function HeroSection() {
 								className="bg-white border rounded-xl shadow-sm"
 							>
 								<button
-									className="w-full flex justify-between items-center px-6 py-6 text-lg font-medium focus:outline-none"
+									className="w-full flex justify-between items-center px-6 py-6 text-lg font-serif font-medium focus:outline-none"
 									onClick={() =>
 										setOpenIdx(openIdx === i ? -1 : i)
 									}
 								>
-									<span>{faq.question}</span>
+									<span className="font-serif">{faq.question}</span>
 									<span className="text-2xl">
 										<img
 											src="/services/triangle-down.svg"
@@ -1099,7 +1058,7 @@ export default function HeroSection() {
 									</span>
 								</button>
 								{openIdx === i && (
-									<div className="px-6 pb-6 text-gray-600 text-base animate-fade-in">
+									<div className="px-6 pb-6 text-gray-600 font-serif text-base animate-fade-in">
 										{faq.answer}
 									</div>
 								)}
@@ -1111,9 +1070,9 @@ export default function HeroSection() {
 			</section>
 			<section id="contact">
 				{/* ContactPage content start */}
-				<div className="bg-white rounded-t-3xl pb-2 px-4 md:px-16 ">
+				<div className="rounded-t-3xl pb-10 px-4 md:px-16 ">
 					<div className="max-w-6xl mx-auto">
-						<div className="font-bold text-lg mb-4 flex items-center gap-2">
+						<div className="font-serif font-bold text-lg mb-4 flex items-center gap-2">
 							<span className="text-lg">
 								<img
 									src="/services/name.svg"
@@ -1123,22 +1082,22 @@ export default function HeroSection() {
 							</span>{' '}
 							Contact US
 						</div>
-						<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-base text-gray-800 mt-2">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-base font-serif text-gray-800 mt-2">
 							<div>
-								<div className="font-semibold">Address</div>
-								<div>Bangalore, India</div>
+								<div className="font-serif font-semibold">Address</div>
+								<div className="font-serif">Bangalore, India</div>
 							</div>
 							<div>
-								<div className="font-semibold">Phone</div>
-								<div>+91 9980123452</div>
+								<div className="font-serif font-semibold">Phone</div>
+								<div className="font-serif">+91 9980123452</div>
 							</div>
 							<div>
-								<div className="font-semibold">Email</div>
-								<div>hello@bubbleflash.in</div>
+								<div className="font-serif font-semibold">Email</div>
+								<div className="font-serif">hello@bubbleflash.in</div>
 							</div>
 							<div>
-								<div className="font-semibold">Business Hours</div>
-								<div>
+								<div className="font-serif font-semibold">Business Hours</div>
+								<div className="font-serif">
 									Monday - Saturday: 9:00 AM - 8:00 PM
 									<br />
 									Sunday: 10:00 AM - 6:00 PM
@@ -1150,7 +1109,7 @@ export default function HeroSection() {
 								href="https://maps.app.goo.gl/mqVWff6HjLuDCcrD9"
 								target="_blank"
 								rel="noopener noreferrer"
-								className="inline-flex items-center text-blue-600 hover:underline text-base font-semibold"
+								className="inline-flex items-center text-blue-600 hover:underline text-base font-serif font-semibold"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -1190,6 +1149,7 @@ export default function HeroSection() {
 				</div>
 				{/* ContactPage content end */}
 			</section>
+			</div>
 		</>
 	);
 }

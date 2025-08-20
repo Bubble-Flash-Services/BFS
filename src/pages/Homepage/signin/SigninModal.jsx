@@ -1,16 +1,12 @@
 import React, { useState } from "react";
-import { login, sendOtp, verifyOtp, signinOtp } from '../../../api/auth';
+import { login, getProfile } from '../../../api/auth';
 import { useAuth } from '../../../components/AuthContext';
 import ForgotPasswordModal from '../../../components/ForgotPasswordModal';
 
 export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
-  const { setUser, setToken } = useAuth();
-  const [mode, setMode] = useState('email'); // 'email' or 'mobile'
+  const { updateAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showForgot, setShowForgot] = useState(false);
@@ -21,62 +17,35 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
     setLoading(true);
     try {
       const res = await login({ email, password });
-      setLoading(false);
       if (res.token && res.user) {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
-        setToken(res.token);
-        setUser(res.user);
+        console.log('✅ Email login successful, fetching complete profile...');
+        
+        try {
+          // Fetch complete profile data to ensure we have phone, address, etc.
+          const fullProfile = await getProfile(res.token);
+          if (fullProfile && !fullProfile.error) {
+            console.log('✅ Complete profile data fetched:', fullProfile);
+            updateAuth(res.token, fullProfile);
+          } else {
+            console.log('⚠️ Using login response data as fallback');
+            updateAuth(res.token, res.user);
+          }
+        } catch (profileError) {
+          console.error('❌ Error fetching profile after login:', profileError);
+          // Fallback to login response data
+          updateAuth(res.token, res.user);
+        }
+        
+        setLoading(false);
         onLogin && onLogin(res.user);
         onClose();
       } else {
+        setLoading(false);
         setError(res.error || 'Login failed');
       }
     } catch (err) {
       setLoading(false);
       setError('Login failed');
-    }
-  };
-
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      // Use signinOtp for login OTP
-      const res = await signinOtp({ phone });
-      setLoading(false);
-      if (res.success) {
-        setOtpSent(true);
-      } else {
-        setError(res.error || 'Failed to send OTP');
-      }
-    } catch (err) {
-      setLoading(false);
-      setError('Failed to send OTP');
-    }
-  };
-
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      const res = await verifyOtp({ phone, otp });
-      setLoading(false);
-      if (res.token && res.user) {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
-        setToken(res.token);
-        setUser(res.user);
-        onLogin && onLogin(res.user);
-        onClose();
-      } else {
-        setError(res.error || 'Invalid OTP');
-      }
-    } catch (err) {
-      setLoading(false);
-      setError('Invalid OTP');
     }
   };
 
@@ -97,14 +66,8 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
           <span className="inline-block align-middle w-full overflow-visible">Log in</span>
         </h2>
         <div className="w-2/3 sm:w-3/4 border-t border-black mb-4 sm:mb-6 md:mb-8" />
-        {/* Toggle */}
-        <div className="flex w-full justify-center gap-2 mb-4">
-          <button className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-bold ${mode==='email' ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-700'}`} onClick={()=>{setMode('email');setError('')}}>Email</button>
-          <button className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-bold ${mode==='mobile' ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-700'}`} onClick={()=>{setMode('mobile');setError('')}}>Mobile</button>
-        </div>
         {/* Form */}
-        {mode === 'email' && (
-          <form className="w-full flex flex-col items-center gap-3 sm:gap-4 md:gap-8" onSubmit={handleLogin}>
+        <form className="w-full flex flex-col items-center gap-3 sm:gap-4 md:gap-8" onSubmit={handleLogin}>
             <div className="w-full">
               <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Email</label>
               <input
@@ -139,53 +102,6 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
               Forgot password?
             </button>
           </form>
-        )}
-        {mode === 'mobile' && !otpSent && (
-          <form className="w-full flex flex-col items-center gap-3 sm:gap-4 md:gap-8" onSubmit={handleSendOtp}>
-            <div className="w-full">
-              <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Mobile Number</label>
-              <input
-                type="tel"
-                className="w-full rounded-2xl px-3 sm:px-4 py-2 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                placeholder="Enter your mobile number"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                required
-              />
-            </div>
-            {error && <div className="text-red-500 text-xs sm:text-sm">{error}</div>}
-            <button
-              type="submit"
-              className="w-24 sm:w-32 md:w-40 bg-yellow-400 text-black font-bold text-base sm:text-xl md:text-2xl rounded-full py-2 shadow-md hover:bg-yellow-500 transition mb-2"
-              disabled={loading}
-            >
-              {loading ? 'Sending OTP...' : 'Send OTP'}
-            </button>
-          </form>
-        )}
-        {mode === 'mobile' && otpSent && (
-          <form className="w-full flex flex-col items-center gap-3 sm:gap-4 md:gap-8" onSubmit={handleVerifyOtp}>
-            <div className="w-full">
-              <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Enter OTP</label>
-              <input
-                type="text"
-                className="w-full rounded-2xl px-3 sm:px-4 py-2 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                placeholder="Enter the OTP sent to your mobile"
-                value={otp}
-                onChange={e => setOtp(e.target.value)}
-                required
-              />
-            </div>
-            {error && <div className="text-red-500 text-xs sm:text-sm">{error}</div>}
-            <button
-              type="submit"
-              className="w-24 sm:w-32 md:w-40 bg-yellow-400 text-black font-bold text-base sm:text-xl md:text-2xl rounded-full py-2 shadow-md hover:bg-yellow-500 transition mb-2"
-              disabled={loading}
-            >
-              {loading ? 'Verifying...' : 'Verify OTP'}
-            </button>
-          </form>
-        )}
         <a
           href="http://localhost:5000/api/auth/google"
           className="flex items-center gap-2 border border-black rounded-lg px-3 sm:px-4 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center"

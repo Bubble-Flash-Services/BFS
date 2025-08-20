@@ -7,133 +7,152 @@ import SigninModal from '../signin/SigninModal';
 
 const bikeWashPackages = {
   commuter: {
-    title: "Commuter Bikes wash deals",
+    title: "Scooter Wash Packages",
+    subtitle: "Tailored for all scooters: Activa, Jupiter, Dio, Access, Ntorq, etc.",
     packages: [
       {
         id: 1,
-        name: "Quick Bike wash Package",
+        name: "Basic Shine",
         image: "/bike/bike1.png",
         price: "₹99",
+        description: "Quick Refresh for Daily Riders",
         features: [
-          "Exterior wash with mild soap",
-          "Chain cleaning",
-          "Basic polish",
-          "Tire cleaning",
-          "Quick dry"
+          "High-pressure water wash",
+          "Normal foam wash",
+          "Tyre cleaning",
+          "Seat wipe & number plate clean"
         ]
       },
       {
         id: 2,
-        name: "Essential Bike Care Package", 
+        name: "Urban Shine",
         image: "/bike/bike2.png",
         price: "₹149",
+        description: "Weekly Clean for Better Look & Feel",
         features: [
-          "Exterior wash with mild soap",
-          "Chain cleaning & lubrication",
-          "Seat cleaning",
-          "Handle cleaning",
-          "Basic maintenance check"
+          "High-pressure water wash",
+          "Tyre cleaning",
+          "Seat wipe & number plate clean",
+          "Red foam wash",
+          "Mat cleaning"
         ]
       },
       {
         id: 3,
-        name: "Premium Bike Wash Package",
-        image: "/bike/bike3.png", 
-        price: "₹249",
+        name: "Supreme Spa",
+        image: "/bike/bike3.png",
+        price: "₹199",
+        description: "Deep Clean & Shine – Like New Again",
         features: [
-          "Complete exterior wash",
-          "Chain cleaning & lubrication",
-          "Seat deep cleaning",
-          "Engine bay cleaning",
-          "Premium polish & wax"
+          "High-pressure water wash",
+          "Tyre cleaning",
+          "Seat wipe & number plate clean",
+          "Diamond foam wash",
+          "Mat cleaning",
+          "Tyre polish"
         ]
       }
     ]
   },
   sports: {
-    title: "Sports Bikes wash deals",
+    title: "Motorbike Wash Packages",
+    subtitle: "For bikes like Splendor, Pulsar, Apache, FZ, Shine, Xtreme, Unicorn, etc.",
     packages: [
       {
         id: 1,
-        name: "Quick Sports Bike wash Package",
+        name: "Basic Ride",
         image: "/bike/bike1.png",
-        price: "₹129",
+        price: "₹119",
+        description: "Perfect for daily-use bikes needing a quick clean",
         features: [
-          "Exterior wash with mild soap",
-          "Chain cleaning",
-          "Basic polish",
-          "Tire cleaning",
-          "Quick dry"
+          "High-pressure water wash",
+          "Normal foam wash",
+          "Tyre cleaning",
+          "Seat wipe",
+          "Number plate wipe"
         ]
       },
       {
         id: 2,
-        name: "Essential Sports Bike Care Package", 
+        name: "Street Pro",
         image: "/bike/bike2.png",
-        price: "₹199",
+        price: "₹179",
+        description: "Ideal for weekly city riders wanting a fresh look",
         features: [
-          "Exterior wash with mild soap",
-          "Chain cleaning & lubrication",
-          "Seat cleaning",
-          "Handle cleaning",
-          "Performance check"
+          "All services from Basic Ride",
+          "Red foam wash",
+          "High-pressure water wash",
+          "Tyre cleaning",
+          "Seat wipe",
+          "Number plate wipe"
         ]
       },
       {
         id: 3,
-        name: "Premium Sports Bike Wash Package",
-        image: "/bike/bike3.png", 
-        price: "₹349",
+        name: "Xtreme Spa",
+        image: "/bike/bike3.png",
+        price: "₹249",
+        description: "For mid-segment or polished riders who want their bike to shine like new",
         features: [
-          "Complete exterior wash",
-          "Chain cleaning & lubrication",
-          "Seat deep cleaning",
-          "Engine bay detailing",
-          "Premium polish & ceramic coating"
+          "All services from Street Pro",
+          "Diamond foam wash",
+          "Alloy & tyre polish",
+          "Mirror & headlight polish",
+          "High-pressure water wash",
+          "Tyre cleaning",
+          "Seat wipe",
+          "Number plate wipe"
         ]
       }
     ]
   },
   cruiser: {
-    title: "Cruiser Bikes wash deals",
+    title: "Sports / Premium Bike Wash Packages",
+    subtitle: "For: Royal Enfield, KTM, Jawa, R15, Interceptor, Dominar, Ninja, Harley & more",
     packages: [
       {
         id: 1,
-        name: "Quick Cruiser wash Package",
+        name: "Torque Wash",
         image: "/bike/bike1.png",
-        price: "₹119",
+        price: "₹199",
+        description: "Quick & effective clean for regular maintenance",
         features: [
-          "Exterior wash with mild soap",
-          "Chain cleaning",
-          "Basic polish",
-          "Tire cleaning",
-          "Quick dry"
+          "High-pressure water wash",
+          "Red foam wash",
+          "Tyre cleaning",
+          "Seat wipe",
+          "Dashboard/speedo wipe"
         ]
       },
       {
         id: 2,
-        name: "Essential Cruiser Care Package", 
+        name: "Nitro Detail",
         image: "/bike/bike2.png",
-        price: "₹179",
+        price: "₹249",
+        description: "Detailed cleaning + engine & chain care",
         features: [
-          "Exterior wash with mild soap",
+          "All services from Torque Wash",
+          "Red foam wash",
           "Chain cleaning & lubrication",
-          "Seat cleaning",
-          "Chrome polishing",
-          "Basic maintenance check"
+          "Dashboard/speedo wipe",
+          "Tyre polish",
+          "Perfume spray",
+          "Helmet wipe included"
         ]
       },
       {
         id: 3,
-        name: "Premium Cruiser Wash Package",
-        image: "/bike/bike3.png", 
-        price: "₹299",
+        name: "HyperCare Spa",
+        image: "/bike/bike3.png",
+        price: "₹349",
+        description: "Full-body spa for your beast – shine, polish & protect",
         features: [
-          "Complete exterior wash",
-          "Chain cleaning & lubrication",
-          "Leather seat conditioning",
-          "Chrome detailing",
-          "Premium polish & protection"
+          "All services from Nitro Detail",
+          "Diamond foam wash",
+          "Full-body wax polish (UV-protect, scratch safe)",
+          "Chrome polish (silencer, mirrors, frame)",
+          "Helmet foam cleaning",
+          "Headlight, indicator & mirror shine"
         ]
       }
     ]
@@ -148,7 +167,6 @@ export default function BikeWashDeals() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [adSlide, setAdSlide] = useState(0);
-  const [pricingType, setPricingType] = useState('basic');
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [modalCurrentSlide, setModalCurrentSlide] = useState(0);
@@ -162,15 +180,6 @@ export default function BikeWashDeals() {
 
   const categoryKey = category?.toLowerCase().replace(/\s+/g, '-').replace('&', '');
   const dealData = bikeWashPackages[categoryKey] || bikeWashPackages.commuter;
-
-  // Function to get adjusted price based on pricing type
-  const getPrice = (basePrice) => {
-    if (pricingType === 'monthly') {
-      const numericPrice = parseInt(basePrice.replace('₹', ''));
-      return `₹${numericPrice - 50}`;
-    }
-    return basePrice;
-  };
 
   // Advertisement data
   const adBanners = [
@@ -239,46 +248,55 @@ export default function BikeWashDeals() {
   const addons = [
     {
       id: 1,
-      name: "Chain Lubrication",
-      price: 49,
-      description: "Premium chain lubrication for smooth riding",
-      icon: "🔗"
+      name: "Tyre Polishing",
+      price: 69,
+      description: "Restores black shine to tyres",
+      icon: ""
     },
     {
       id: 2,
-      name: "Engine Detailing",
+      name: "Body Polish",
       price: 99,
-      description: "Complete engine bay cleaning and detailing",
-      icon: "🛠️"
+      description: "Surface polish for plastic/paint (UV safe)",
+      icon: ""
     },
     {
       id: 3,
-      name: "Premium Wax Coating",
-      price: 149,
-      description: "Advanced wax protection for bike",
-      icon: "🏍️"
+      name: categoryKey === 'commuter' ? "Mat Cleaning" : "Chain Cleaning & Lubrication",
+      price: categoryKey === 'commuter' ? 29 : 120,
+      description: categoryKey === 'commuter' ? "Scrub & dry rubber floor mats" : "Chain Cleaning & Lubrication",
+      icon: ""
     },
     {
       id: 4,
-      name: "Seat Deep Cleaning",
-      price: 79,
-      description: "Deep cleaning and conditioning of bike seat",
-      icon: "🪑"
+      name: "Air Filling (Both Tyres)",
+      price: 50,
+      description: "Tyre pressure check & refill",
+      icon: ""
     },
-    {
-      id: 5,
-      name: "Chrome Polishing",
-      price: 129,
-      description: "Professional chrome parts polishing",
-      icon: "✨"
-    },
-    {
-      id: 6,
-      name: "Tire Shine Treatment",
-      price: 59,
-      description: "Premium tire cleaning and shine service",
-      icon: "🛞"
-    }
+    ...(categoryKey === 'cruiser' ? [
+      {
+        id: 5,
+        name: "Chrome Polish",
+        price: 149,
+        description: "Chrome polish for silencer, mirrors, frame",
+        icon: ""
+      },
+      {
+        id: 6,
+        name: "Helmet Foam Cleaning",
+        price: 79,
+        description: "Complete helmet foam cleaning service",
+        icon: ""
+      },
+      {
+        id: 7,
+        name: "Full-body Wax Polish",
+        price: 199,
+        description: "UV-protect, scratch safe wax polish",
+        icon: ""
+      }
+    ] : [])
   ];
 
   useEffect(() => {
@@ -369,18 +387,15 @@ export default function BikeWashDeals() {
 
   const getCategoryDisplayName = () => {
     switch(categoryKey) {
-      case 'commuter': return 'Commuter Bikes';
-      case 'sports': return 'Sports Bikes';
-      case 'cruiser': return 'Cruiser Bikes';
-      default: return 'Commuter Bikes';
+      case 'commuter': return 'Scooter Wash';
+      case 'sports': return 'Motorbike Wash';
+      case 'cruiser': return 'Sports/Premium Bike Wash';
+      default: return 'Scooter Wash';
     }
   };
 
   const handleBookNow = (pkg) => {
-    setSelectedPackage({
-      ...pkg,
-      price: getPrice(pkg.price)
-    });
+    setSelectedPackage(pkg);
     setSelectedAddons([]);
     setModalCurrentSlide(0);
     setShowBookingModal(true);
@@ -565,35 +580,15 @@ export default function BikeWashDeals() {
             BIKE WASH COMBOS
           </div>
           
-          {/* Pricing Toggle */}
-          <div className="flex justify-center mb-6">
-            <div className="bg-gray-200 rounded-full p-1 flex">
-              <button
-                onClick={() => setPricingType('basic')}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                  pricingType === 'basic'
-                    ? 'bg-teal-500 text-white shadow-md'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                Basic
-              </button>
-              <button
-                onClick={() => setPricingType('monthly')}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                  pricingType === 'monthly'
-                    ? 'bg-teal-500 text-white shadow-md'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                Monthly
-              </button>
-            </div>
-          </div>
-          
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
             {dealData.title}
           </h1>
+          
+          {dealData.subtitle && (
+            <p className="text-lg text-gray-600 mb-6">
+              {dealData.subtitle}
+            </p>
+          )}
         </div>
 
         {/* Desktop Grid Layout */}
@@ -606,20 +601,28 @@ export default function BikeWashDeals() {
                   alt={pkg.name} 
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
-                <h3 className="text-xl font-bold text-gray-800 mb-4 min-h-[3rem]">
+                <h3 className="text-xl font-bold text-gray-800 mb-3 min-h-[3rem]">
                   {pkg.name}
                 </h3>
-                <ul className="space-y-2 mb-6 flex-grow">
-                  {pkg.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <span className="text-green-500 mr-2 text-lg leading-none">•</span>
-                      <span className="text-gray-600 text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                {pkg.description && (
+                  <p className="text-gray-600 text-sm mb-4 italic">
+                    {pkg.description}
+                  </p>
+                )}
+                <div className="mb-4">
+                  <h4 className="font-semibold text-gray-700 mb-2">Included Services:</h4>
+                  <ul className="space-y-2 mb-4 flex-grow">
+                    {pkg.features.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-green-500 mr-2 text-lg leading-none mt-1">•</span>
+                        <span className="text-gray-600 text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
                 <div className="text-center mt-auto">
                   <div className="text-2xl font-bold text-green-500 mb-4">
-                    {getPrice(pkg.price)}
+                    {pkg.price}
                   </div>
                   <button 
                     className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
@@ -688,12 +691,17 @@ export default function BikeWashDeals() {
                         alt={pkg.name} 
                         className="w-full h-48 object-cover rounded-lg mb-4"
                       />
-                      <h3 className="text-xl font-bold text-gray-800 mb-4 min-h-[3rem]">
+                      <h3 className="text-xl font-bold text-gray-800 mb-3 min-h-[3rem]">
                         {pkg.name}
                       </h3>
+                      {pkg.description && (
+                        <p className="text-gray-600 text-sm mb-4 italic">
+                          {pkg.description}
+                        </p>
+                      )}
                       <ul className="space-y-2 mb-6 flex-grow">
                         {pkg.features.map((feature, index) => (
-                          <li key={index} className="flex items-center">
+                          <li key={index} className="flex items-start">
                             <span className="text-green-500 mr-2 text-lg leading-none">•</span>
                             <span className="text-gray-600 text-sm">{feature}</span>
                           </li>
@@ -701,7 +709,7 @@ export default function BikeWashDeals() {
                       </ul>
                       <div className="text-center mt-auto">
                         <div className="text-2xl font-bold text-green-500 mb-4">
-                          {getPrice(pkg.price)}
+                          {pkg.price}
                         </div>
                         <button 
                           className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"

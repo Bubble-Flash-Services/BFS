@@ -91,20 +91,20 @@ export default function ServiceCategories() {
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-12">Select by category</h2>
         
         {/* Desktop Grid Layout */}
-        <div className="hidden md:grid md:grid-cols-3 gap-8">
+        <div className=" hidden md:grid md:grid-cols-3 gap-8">
           {categories.map((category) => {
             return (
               <div
                 key={category.name}
-                className="group cursor-pointer transition-transform hover:scale-105"
+                className=" group cursor-pointer transition-transform hover:scale-105"
                 onClick={() => navigate(category.route)}
               >
-                <div className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                <div className=" bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
                   <div className="aspect-w-16 aspect-h-12">
                     <img
                       src={category.image}
@@ -127,7 +127,7 @@ export default function ServiceCategories() {
         </div>
 
         {/* Mobile Slider Layout */}
-        <div className="md:hidden relative overflow-hidden">
+        <div className=" md:hidden relative overflow-hidden">
           <div
             ref={sliderRef}
             className="flex transition-transform duration-300 ease-in-out"
@@ -147,7 +147,7 @@ export default function ServiceCategories() {
                   className="group cursor-pointer transition-transform active:scale-95"
                   onClick={() => navigate(category.route)}
                 >
-                  <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                  <div className=" bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                     <div className="aspect-w-16 aspect-h-12">
                       <img
                         src={category.image}

@@ -49,8 +49,7 @@ const AdminSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for better performance
-AdminSchema.index({ email: 1 });
+// Index for better performance (only for fields without unique: true)
 AdminSchema.index({ isActive: 1 });
 
 // Virtual for checking if account is locked

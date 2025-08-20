@@ -25,7 +25,7 @@ const CameraIcon = () => (
 
 const Footer = () => {
   return (
-    <footer className="bg-white rounded-t-3xl pt-8 pb-2 px-4 md:px-16 mt-16">
+    <footer className="bg-gradient-to-br from-[#f7d02a] via-[#faffad] to-[#a0bae7] rounded-t-3xl pt-8 pb-2 px-4 md:px-16 ">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 md:gap-0">
         {/* Left: Logo and FAQ heading */}
         <div className="flex-1 min-w-[220px]">

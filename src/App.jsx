@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuthProvider } from './components/AuthContext';
+import { AuthProvider, useAuth } from './components/AuthContext';
 import { CartProvider } from './components/CartContext';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
@@ -134,9 +134,23 @@ function AppContent() {
 export default function App() {
   return (
     <AuthProvider>
-      <CartProvider>
+      <CartProviderWrapper>
         <AppContent />
-      </CartProvider>
+      </CartProviderWrapper>
     </AuthProvider>
+  );
+}
+
+function CartProviderWrapper({ children }) {
+  const { user } = useAuth();
+  
+  // Force CartProvider to remount when user changes by using user email as key
+  // This ensures complete cart state isolation between users
+  const cartKey = user?.email || 'guest';
+  
+  return (
+    <CartProvider key={cartKey}>
+      {children}
+    </CartProvider>
   );
 }

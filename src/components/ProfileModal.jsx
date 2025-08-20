@@ -8,6 +8,7 @@ export default function ProfileModal({ user, onSave, onClose }) {
   const [address, setAddress] = useState(user?.address || '');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     setName(user?.name || '');
@@ -32,10 +33,20 @@ export default function ProfileModal({ user, onSave, onClose }) {
     if (!validateForm()) return;
     
     setLoading(true);
+    setMessage('');
+    setErrors({});
+    
     try {
-      await onSave({ name, email, phone, address });
+      const result = await onSave({ name, email, phone, address });
+      if (result.success) {
+        setMessage('Profile updated successfully!');
+        setTimeout(() => setMessage(''), 3000); // Clear message after 3 seconds
+      } else {
+        setMessage(result.error || 'Failed to update profile. Please try again.');
+      }
     } catch (error) {
       console.error('Profile save error:', error);
+      setMessage('Failed to update profile. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -80,6 +91,15 @@ export default function ProfileModal({ user, onSave, onClose }) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Status Message */}
+          {message && (
+            <div className={`p-3 rounded-lg text-sm ${message.includes('success') 
+              ? 'bg-green-100 text-green-700 border border-green-200' 
+              : 'bg-red-100 text-red-700 border border-red-200'
+            }`}>
+              {message}
+            </div>
+          )}
           {/* Name Field */}
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">

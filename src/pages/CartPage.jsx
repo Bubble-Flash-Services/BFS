@@ -5,7 +5,7 @@ import { Trash2, Plus, Minus, ShoppingBag, X, MapPin, Phone, Calendar, CreditCar
 import AddressAutocomplete from '../components/AddressAutocomplete';
 
 export default function CartPage() {
-  const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal, loading: cartLoading } = useCart();
   const { user, loading } = useAuth();
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -113,6 +113,21 @@ export default function CartPage() {
           <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
             Login Now
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state while cart is being loaded
+  if (cartLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md mx-auto">
+          <div className="w-32 h-32 mx-auto bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center animate-spin">
+            <ShoppingBag className="h-16 w-16 text-gray-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3 mt-4">Loading your cart...</h2>
+          <p className="text-gray-600">Please wait while we fetch your items</p>
         </div>
       </div>
     );
@@ -387,11 +402,11 @@ export default function CartPage() {
 
       {/* Checkout Modal */}
       {showCheckoutModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/20">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/20 relative">
             
             {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 p-6 flex justify-between items-center rounded-t-3xl">
+            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 p-6 flex justify-between items-center rounded-t-3xl z-[110]">
               <h2 className="text-2xl font-bold text-white">Complete Your Order</h2>
               <button
                 onClick={() => setShowCheckoutModal(false)}

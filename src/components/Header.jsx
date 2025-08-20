@@ -12,7 +12,7 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const { getCartItemsCount } = useCart();
-  const { user, loading, logout, setUser } = useAuth();
+  const { user, loading, logout, setUser, updateAuth, refreshUserData } = useAuth();
   const [openSignup, setOpenSignup] = useState(false);
   const [openSignin, setOpenSignin] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -251,13 +251,18 @@ export default function Header() {
               const { updateProfile } = await import('../api/auth');
               const res = await updateProfile(token, data);
               if (res && !res.error) {
-                setUser(res);
+                updateAuth(token, res);
+                // Also refresh user data to ensure consistency
+                await refreshUserData();
                 setOpenProfile(false);
+                return { success: true };
               } else {
                 console.error('Profile update failed:', res.error);
+                return { success: false, error: res.error || 'Update failed' };
               }
             } catch (error) {
               console.error('Profile update error:', error);
+              return { success: false, error: 'Network error. Please try again.' };
             }
           }} 
           onClose={() => setOpenProfile(false)} 

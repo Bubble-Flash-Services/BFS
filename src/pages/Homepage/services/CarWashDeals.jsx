@@ -11,7 +11,7 @@ const carWashPackages = {
     packages: [
       {
         id: 1,
-        name: "🚗 Quick Shine",
+        name: "Quick Shine",
         image: "/car/car1.png",
         price: "₹199",
         originalPrice: null,
@@ -29,7 +29,7 @@ const carWashPackages = {
       },
       {
         id: 2,
-        name: "🚗 Deluxe Car Wash",
+        name: "Deluxe Car Wash",
         image: "/car/car2.png",
         price: "₹399",
         originalPrice: null,
@@ -50,7 +50,7 @@ const carWashPackages = {
       },
       {
         id: 3,
-        name: "🚗 Premium Car Wash",
+        name: "Premium Car Wash",
         image: "/car/car3.png",
         price: "₹599",
         originalPrice: null,
@@ -146,7 +146,7 @@ const carWashPackages = {
     packages: [
       {
         id: 1,
-        name: "🚙 Quick Shine",
+        name: "Quick Shine",
         image: "/car/car1.png",
         price: "₹399",
         originalPrice: null,
@@ -160,7 +160,7 @@ const carWashPackages = {
       },
       {
         id: 2,
-        name: "🚙 Deluxe SUV Wash",
+        name: "Deluxe SUV Wash",
         image: "/car/car2.png",
         price: "₹599",
         originalPrice: null,
@@ -176,7 +176,7 @@ const carWashPackages = {
       },
       {
         id: 3,
-        name: "🚙 Premium SUV Wash",
+        name: "Premium SUV Wash",
         image: "/car/car3.png",
         price: "₹799",
         originalPrice: null,
@@ -267,7 +267,7 @@ const carWashPackages = {
     packages: [
       {
         id: 1,
-        name: "🚗 Quick Shine",
+        name: "Quick Shine",
         image: "/car/car1.png",
         price: "₹299",
         originalPrice: null,
@@ -280,7 +280,7 @@ const carWashPackages = {
       },
       {
         id: 2,
-        name: "🚗 Deluxe Car Wash",
+        name: "Deluxe Car Wash",
         image: "/car/car2.png",
         price: "₹499",
         originalPrice: null,
@@ -295,7 +295,7 @@ const carWashPackages = {
       },
       {
         id: 3,
-        name: "🚗 Premium Car Wash",
+        name: "Premium Car Wash",
         image: "/car/car3.png",
         price: "₹699",
         originalPrice: null,
@@ -389,7 +389,7 @@ const carWashPackages = {
     packages: [
       {
         id: 1,
-        name: "🏆 Quick Shine",
+        name: "Quick Shine",
         image: "/car/car1.png",
         price: "₹599",
         originalPrice: null,
@@ -405,7 +405,7 @@ const carWashPackages = {
       },
       {
         id: 2,
-        name: "🏆 Deluxe Luxury Wash",
+        name: "Deluxe Luxury Wash",
         image: "/car/car2.png",
         price: "₹899",
         originalPrice: null,
@@ -422,7 +422,7 @@ const carWashPackages = {
       },
       {
         id: 3,
-        name: "🏆 Luxury Premium Spa",
+        name: "Luxury Premium Spa",
         image: "/car/car3.png",
         price: "₹1,299",
         originalPrice: null,
@@ -520,7 +520,9 @@ export default function CarWashDeals() {
   const [modalStartX, setModalStartX] = useState(0);
   const [modalIsDragging, setModalIsDragging] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [monthlyPlansSlide, setMonthlyPlansSlide] = useState(0);
   const sliderRef = useRef(null);
+  const monthlyPlansRef = useRef(null);
   const startX = useRef(0);
   const isDragging = useRef(false);
 
@@ -569,84 +571,84 @@ export default function CarWashDeals() {
       name: "Green Foam Upgrade",
       price: 69,
       description: "Mild, eco-friendly cleaning foam upgrade",
-      icon: "🌿"
+      icon: ""
     },
     {
       id: 2,
       name: "Royal Red Foam Upgrade", 
       price: 129,
       description: "Deep cleaning + color-enhanced shine foam",
-      icon: "�"
+      icon: ""
     },
     {
       id: 3,
       name: "Diamond Foam Upgrade",
       price: categoryKey === 'suv' ? 299 : categoryKey === 'sedans' ? 229 : 199,
       description: "Glossy shine with wax-based formula foam",
-      icon: "💎"
+      icon: ""
     },
     {
       id: 4,
       name: "Dashboard Polishing",
       price: categoryKey === 'suv' ? 199 : categoryKey === 'sedans' ? 149 : 99,
       description: "Professional dashboard cleaning and polishing",
-      icon: "🔧"
+      icon: ""
     },
     {
       id: 5,
       name: "Tyre Cleaning & Polishing",
       price: categoryKey === 'suv' ? 199 : categoryKey === 'sedans' ? 249 : 189,
       description: "Complete tyre cleaning and polishing service",
-      icon: "�"
+      icon: ""
     },
     {
       id: 6,
       name: "Windshield Cleaning + Water Spot Removal",
       price: categoryKey === 'sedans' ? 239 : 129,
       description: "Crystal clear windshield with water spot removal",
-      icon: "�"
+      icon: ""
     },
     {
       id: 7,
       name: "Vacuum Interior Cleaning",
       price: categoryKey === 'sedans' ? 179 : 229,
       description: "Deep vacuum cleaning of interior surfaces",
-      icon: "🧽"
+      icon: ""
     },
     {
       id: 8,
       name: "Car Roof/Ceiling Cleaning",
       price: categoryKey === 'suv' ? 399 : categoryKey === 'sedans' ? 249 : 149,
       description: "Specialized roof and ceiling cleaning service",
-      icon: "�"
+      icon: ""
     },
     {
       id: 9,
       name: "Leather Seat Polishing (Per Seat)",
       price: categoryKey === 'suv' ? 119 : categoryKey === 'sedans' ? 99 : 69,
       description: `Professional leather seat polishing (₹${categoryKey === 'suv' ? 119 : categoryKey === 'sedans' ? 99 : 69} per seat)`,
-      icon: "🪑"
+      icon: ""
     },
     {
       id: 10,
       name: "Wax Body Polishing",
       price: categoryKey === 'suv' ? 249 : categoryKey === 'sedans' ? 199 : 149,
       description: "Premium wax coating for body protection",
-      icon: "✨"
+      icon: ""
     },
     {
       id: 11,
       name: "Leather Dashboard/Interior Polishing",
       price: categoryKey === 'sedans' ? 249 : 199,
       description: "Complete leather dashboard and interior polishing",
-      icon: "🔧"
+      icon: ""
     },
     {
       id: 12,
       name: "Car Welcome Mats Cover (Set)",
       price: 50,
       description: "Set of welcome mats for your car",
-      icon: "🏠"
+      icon: ""
     },
     ...(categoryKey === 'suv' ? [
       {
@@ -654,21 +656,21 @@ export default function CarWashDeals() {
         name: "Red Foam Upgrade",
         price: 199,
         description: "Red foam upgrade for enhanced cleaning",
-        icon: "🔴"
+        icon: ""
       },
       {
         id: 14,
         name: "Perfume Spray (Premium)",
         price: 349,
         description: "Premium perfume spray application",
-        icon: "🌸"
+        icon: ""
       },
       {
         id: 15,
         name: "Car Cover (SUV size)",
         price: 1999,
         description: "Premium car cover designed for SUVs",
-        icon: "🛡️"
+        icon: ""
       }
     ] : []),
     ...(categoryKey === 'sedans' ? [
@@ -677,35 +679,35 @@ export default function CarWashDeals() {
         name: "Red Foam Wash",
         price: 199,
         description: "Premium red foam wash upgrade",
-        icon: "🔴"
+        icon: ""
       },
       {
         id: 17,
         name: "Premium Perfume Spray",
         price: 349,
         description: "Premium perfume spray application",
-        icon: "🌸"
+        icon: ""
       },
       {
         id: 18,
         name: "Tissue Box (Premium)",
         price: 200,
         description: "Premium tissue box for your car",
-        icon: "📦"
+        icon: ""
       },
       {
         id: 19,
         name: "Car Air Freshener (Clip/Can Type)",
         price: 99,
         description: "Premium car air freshener",
-        icon: "🌬️"
+        icon: ""
       },
       {
         id: 20,
         name: "Car Cover (Standard Size – Sedan)",
         price: 1449,
         description: "Premium car cover designed for sedans",
-        icon: "🛡️"
+        icon: ""
       }
     ] : []),
     ...(categoryKey === 'luxuries' ? [
@@ -714,56 +716,56 @@ export default function CarWashDeals() {
         name: "Red Foam Upgrade",
         price: 249,
         description: "Premium red foam upgrade for luxury cars",
-        icon: "🔴"
+        icon: ""
       },
       {
         id: 22,
         name: "Diamond Foam Upgrade",
         price: 349,
         description: "Premium diamond foam upgrade for luxury cars",
-        icon: "💎"
+        icon: ""
       },
       {
         id: 23,
         name: "Wax Body Polishing",
         price: 399,
         description: "Premium wax body polishing for luxury cars",
-        icon: "✨"
+        icon: ""
       },
       {
         id: 24,
         name: "Leather Seat Polishing (Per Seat)",
         price: 199,
         description: "Premium leather seat polishing for luxury cars",
-        icon: "🪑"
+        icon: ""
       },
       {
         id: 25,
         name: "Dashboard Leather Conditioning",
         price: 199,
         description: "Premium dashboard leather conditioning",
-        icon: "🔧"
+        icon: ""
       },
       {
         id: 26,
         name: "Tyre & Rim Polishing",
         price: 299,
         description: "Premium tyre and rim polishing service",
-        icon: "🛞"
+        icon: ""
       },
       {
         id: 27,
         name: "Windshield Polish & Protection",
         price: 249,
         description: "Premium windshield polish and protection",
-        icon: "🪟"
+        icon: ""
       },
       {
         id: 28,
         name: "Car Cover Wash (Large)",
         price: 3999,
         description: "Premium car cover wash for luxury vehicles",
-        icon: "🛡️"
+        icon: ""
       }
     ] : [])
   ];
@@ -1020,6 +1022,19 @@ export default function CarWashDeals() {
     }
   };
 
+  // Navigation functions for monthly plans slider
+  const goToPreviousMonthlyPlan = () => {
+    if (monthlyPlansSlide > 0) {
+      setMonthlyPlansSlide(monthlyPlansSlide - 1);
+    }
+  };
+
+  const goToNextMonthlyPlan = () => {
+    if (dealData.monthlyPlans && monthlyPlansSlide < dealData.monthlyPlans.length - 1) {
+      setMonthlyPlansSlide(monthlyPlansSlide + 1);
+    }
+  };
+
   // Auto-slide functionality for advertisements
   useEffect(() => {
     const adAutoSlide = setInterval(() => {
@@ -1056,6 +1071,35 @@ export default function CarWashDeals() {
         setCurrentSlide(currentSlide + 1);
       } else if (diffX < 0 && currentSlide > 0) {
         setCurrentSlide(currentSlide - 1);
+      }
+    }
+  };
+
+  // Touch handlers for monthly plans slider
+  const handleMonthlyPlansTouch = {
+    start: (e) => {
+      if (!isMobile) return;
+      isDragging.current = true;
+      startX.current = e.touches[0].pageX;
+    },
+    move: (e) => {
+      if (!isMobile || !isDragging.current) return;
+      e.preventDefault();
+    },
+    end: (e) => {
+      if (!isMobile || !isDragging.current) return;
+      isDragging.current = false;
+      
+      const endX = e.changedTouches[0].pageX;
+      const diffX = startX.current - endX;
+      const threshold = 50;
+      
+      if (Math.abs(diffX) > threshold && dealData.monthlyPlans) {
+        if (diffX > 0 && monthlyPlansSlide < dealData.monthlyPlans.length - 1) {
+          setMonthlyPlansSlide(monthlyPlansSlide + 1);
+        } else if (diffX < 0 && monthlyPlansSlide > 0) {
+          setMonthlyPlansSlide(monthlyPlansSlide - 1);
+        }
       }
     }
   };
@@ -1295,7 +1339,8 @@ export default function CarWashDeals() {
               Maintain Your Car's Shine – All Month Long! Affordable and convenient subscription packages with premium service quality.
             </p>
             
-            <div className="grid md:grid-cols-3 gap-8">
+            {/* Desktop Grid Layout */}
+            <div className="hidden md:grid md:grid-cols-3 gap-8">
               {dealData.monthlyPlans.map((plan) => (
                 <div key={plan.id} className={`bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow relative h-full flex flex-col ${
                   plan.id === 'gold' ? 'ring-2 ring-yellow-400' : ''
@@ -1320,7 +1365,7 @@ export default function CarWashDeals() {
                         <ul className="space-y-1">
                           {plan.features.map((feature, index) => (
                             <li key={index} className="flex items-start">
-                              <span className="text-green-500 mr-2 text-sm">✅</span>
+                              <span className="text-green-500 mr-2 text-sm">•</span>
                               <span className="text-gray-600 text-sm">{feature}</span>
                             </li>
                           ))}
@@ -1356,12 +1401,12 @@ export default function CarWashDeals() {
                         <ul className="space-y-1">
                           {plan.biWeeklyIncludes ? plan.biWeeklyIncludes.map((item, index) => (
                             <li key={index} className="flex items-start">
-                              <span className="text-purple-500 mr-2 text-sm">✨</span>
+                              <span className="text-purple-500 mr-2 text-sm">•</span>
                               <span className="text-gray-600 text-sm">{item}</span>
                             </li>
                           )) : (
                             <li className="flex items-start">
-                              <span className="text-gray-400 mr-2 text-sm">✨</span>
+                              <span className="text-gray-400 mr-2 text-sm">•</span>
                               <span className="text-gray-400 text-sm">Not included in this plan</span>
                             </li>
                           )}
@@ -1374,12 +1419,12 @@ export default function CarWashDeals() {
                         <ul className="space-y-1">
                           {plan.monthlyBonuses ? plan.monthlyBonuses.map((bonus, index) => (
                             <li key={index} className="flex items-start">
-                              <span className="text-yellow-500 mr-2 text-sm">🎁</span>
+                              <span className="text-yellow-500 mr-2 text-sm">•</span>
                               <span className="text-gray-600 text-sm">{bonus}</span>
                             </li>
                           )) : (
                             <li className="flex items-start">
-                              <span className="text-gray-400 mr-2 text-sm">🎁</span>
+                              <span className="text-gray-400 mr-2 text-sm">•</span>
                               <span className="text-gray-400 text-sm">No monthly bonuses included</span>
                             </li>
                           )}
@@ -1392,12 +1437,12 @@ export default function CarWashDeals() {
                         <ul className="space-y-1">
                           {plan.platinumExtras ? plan.platinumExtras.map((extra, index) => (
                             <li key={index} className="flex items-start">
-                              <span className="text-purple-500 mr-2 text-sm">👑</span>
+                              <span className="text-purple-500 mr-2 text-sm">•</span>
                               <span className="text-gray-600 text-sm">{extra}</span>
                             </li>
                           )) : (
                             <li className="flex items-start">
-                              <span className="text-gray-400 mr-2 text-sm">👑</span>
+                              <span className="text-gray-400 mr-2 text-sm">•</span>
                               <span className="text-gray-400 text-sm">Premium extras not included</span>
                             </li>
                           )}
@@ -1440,6 +1485,183 @@ export default function CarWashDeals() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Mobile Slider Layout */}
+            <div className="md:hidden relative">
+              {/* Left Arrow */}
+              <button
+                onClick={goToPreviousMonthlyPlan}
+                disabled={monthlyPlansSlide === 0}
+                className={`absolute left-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
+                  monthlyPlansSlide === 0 
+                    ? 'opacity-50 cursor-not-allowed' 
+                    : 'hover:bg-gray-50 hover:shadow-xl'
+                }`}
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              {/* Right Arrow */}
+              <button
+                onClick={goToNextMonthlyPlan}
+                disabled={monthlyPlansSlide === dealData.monthlyPlans.length - 1}
+                className={`absolute right-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
+                  monthlyPlansSlide === dealData.monthlyPlans.length - 1 
+                    ? 'opacity-50 cursor-not-allowed' 
+                    : 'hover:bg-gray-50 hover:shadow-xl'
+                }`}
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              <div className="overflow-hidden px-12">
+                <div
+                  ref={monthlyPlansRef}
+                  className="flex transition-transform duration-300 ease-in-out"
+                  style={{
+                    transform: `translateX(-${monthlyPlansSlide * 100}%)`,
+                  }}
+                  onTouchStart={handleMonthlyPlansTouch.start}
+                  onTouchMove={handleMonthlyPlansTouch.move}
+                  onTouchEnd={handleMonthlyPlansTouch.end}
+                >
+                  {dealData.monthlyPlans.map((plan, index) => (
+                    <div
+                      key={plan.id}
+                      className="flex-shrink-0 w-full px-4"
+                    >
+                      <div className={`bg-white rounded-2xl overflow-hidden shadow-lg max-w-sm mx-auto h-full relative ${
+                        plan.id === 'gold' ? 'ring-2 ring-yellow-400' : ''
+                      }`}>
+                        {plan.id === 'gold' && (
+                          <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold">
+                            POPULAR
+                          </div>
+                        )}
+                        
+                        <div className="p-6 h-full flex flex-col">
+                          <div className="text-center mb-6">
+                            <h4 className="text-xl font-bold text-gray-800 mb-2">{plan.name}</h4>
+                            <div className="text-3xl font-bold text-blue-500 mb-2">{plan.price}</div>
+                            <p className="text-gray-600 text-sm">{plan.description}</p>
+                          </div>
+
+                          <div className="space-y-4 flex-1">
+                            {/* Plan Features */}
+                            <div>
+                              <h5 className="font-semibold text-gray-700 mb-2">Plan Features:</h5>
+                              <ul className="space-y-1">
+                                {plan.features.slice(0, 2).map((feature, index) => (
+                                  <li key={index} className="flex items-start">
+                                    <span className="text-green-500 mr-2 text-sm">•</span>
+                                    <span className="text-gray-600 text-sm">{feature}</span>
+                                  </li>
+                                ))}
+                                {plan.features.length > 2 && (
+                                  <li className="text-gray-500 text-xs">
+                                    +{plan.features.length - 2} more features
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+
+                            {/* Each Wash Includes */}
+                            <div>
+                              <h5 className="font-semibold text-gray-700 mb-2">Each Wash Includes:</h5>
+                              <ul className="space-y-1">
+                                {(plan.washIncludes || plan.weeklyIncludes || []).slice(0, 3).map((item, index) => (
+                                  <li key={index} className="flex items-start">
+                                    <span className="text-blue-500 mr-2 text-sm">•</span>
+                                    <span className="text-gray-600 text-sm">{item}</span>
+                                  </li>
+                                ))}
+                                {(plan.washIncludes || plan.weeklyIncludes || []).length > 3 && (
+                                  <li className="text-gray-500 text-xs">
+                                    +{(plan.washIncludes || plan.weeklyIncludes || []).length - 3} more services
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+
+                            {/* Show bonuses if available */}
+                            {plan.monthlyBonuses && (
+                              <div>
+                                <h5 className="font-semibold text-gray-700 mb-2">Monthly Bonuses:</h5>
+                                <ul className="space-y-1">
+                                  {plan.monthlyBonuses.slice(0, 2).map((bonus, index) => (
+                                    <li key={index} className="flex items-start">
+                                      <span className="text-yellow-500 mr-2 text-sm">•</span>
+                                      <span className="text-gray-600 text-sm">{bonus}</span>
+                                    </li>
+                                  ))}
+                                  {plan.monthlyBonuses.length > 2 && (
+                                    <li className="text-gray-500 text-xs">
+                                      +{plan.monthlyBonuses.length - 2} more bonuses
+                                    </li>
+                                  )}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Button and Terms - Fixed at bottom */}
+                          <div className="mt-6">
+                            <button 
+                              onClick={() => {
+                                // Handle monthly plan booking
+                                const planPackage = {
+                                  id: plan.id,
+                                  name: plan.name,
+                                  price: plan.price,
+                                  features: plan.features,
+                                  type: 'monthly_plan',
+                                  image: "/car/car1.png" // Default image for monthly plans
+                                };
+                                handleBookNow(planPackage);
+                              }}
+                              className={`w-full font-bold py-3 px-6 rounded-lg transition-colors ${
+                                plan.id === 'gold' 
+                                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
+                                  : plan.id === 'platinum'
+                                  ? 'bg-purple-500 hover:bg-purple-600 text-white'
+                                  : 'bg-gray-500 hover:bg-gray-600 text-white'
+                              }`}
+                            >
+                              Subscribe to {plan.name}
+                            </button>
+                          </div>
+
+                          <div className="mt-3 text-center">
+                            <p className="text-xs text-gray-500">
+                              Valid for 30 days from date of first wash
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dots Indicator for Mobile */}
+              <div className="flex justify-center mt-6 space-x-2">
+                {dealData.monthlyPlans.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setMonthlyPlansSlide(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                      index === monthlyPlansSlide 
+                        ? 'bg-blue-600 scale-125' 
+                        : 'bg-gray-400 hover:bg-gray-500'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
 
             <div className="mt-8 text-center">

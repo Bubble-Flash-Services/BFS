@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
+import * as cartApi from '../api/cart';
 
 const CartContext = createContext();
 
@@ -12,26 +14,335 @@ export function useCart() {
 
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { user, token } = useAuth();
 
-  // Load cart from localStorage on component mount
+  console.log('🚀 CartProvider mounted for user:', user?.email || 'guest');
+  
+  // Add cleanup logging
   useEffect(() => {
+    return () => {
+      console.log('🗑️ CartProvider unmounting for user:', user?.email || 'guest');
+      console.log('🛒 Cart items at unmount:', cartItems.map(item => ({id: item.id, name: item.name})));
+    };
+  }, [user?.email, cartItems]);
+
+  // Load cart when user logs in or on component mount
+  useEffect(() => {
+    console.log('=== CART LOADING FOR USER ===');
+    console.log('User:', user?.name, user?.email);
+    
+    if (user && token) {
+      console.log('Loading cart for authenticated user');
+      loadUserCart();
+    } else {
+      console.log('Loading guest cart');
+      loadCartFromLocalStorage();
+    }
+    console.log('=== CART LOADING COMPLETE ===');
+  }, [user, token]);
+
+  const loadUserCart = async () => {
+    if (!token || !user) return;
+    
+    setLoading(true);
+    try {
+      // Try to load from server first
+      const response = await cartApi.getCart(token);
+      if (response.success && response.data && response.data.items && response.data.items.length > 0) {
+        // Convert backend cart format to frontend format
+        const items = response.data.items || [];
+        setCartItems(items.map(item => ({
+          id: item._id || item.serviceId,
+          serviceId: item.serviceId,
+          packageId: item.packageId,
+          name: item.serviceId?.name || item.name,
+          price: item.price,
+          quantity: item.quantity,
+          addOns: item.addOns || [],
+          vehicleType: item.vehicleType,
+          specialInstructions: item.specialInstructions
+        })));
+      } else {
+        // If no server cart, try to load user-specific localStorage
+        loadUserSpecificCart();
+      }
+    } catch (error) {
+      console.error('Error loading cart from server:', error);
+      // Fallback to user-specific localStorage
+      loadUserSpecificCart();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const debugCartStorage = () => {
+    console.log('🔍 === CART STORAGE DEBUG ===');
+    console.log('👤 Current user:', user?.name, user?.email, user?._id);
+    console.log('🛒 Current cartItems:', cartItems);
+    
+    // List all cart-related localStorage keys
+    const allKeys = Object.keys(localStorage);
+    const cartKeys = allKeys.filter(key => key.startsWith('bubbleFlashCart'));
+    console.log('🗃️ All cart keys in localStorage:', cartKeys);
+    
+    cartKeys.forEach(key => {
+      const data = localStorage.getItem(key);
+      try {
+        const parsed = JSON.parse(data);
+        console.log(`📦 ${key}:`, parsed.length, 'items:', parsed.map(item => item.name));
+      } catch {
+        console.log(`📦 ${key}:`, data);
+      }
+    });
+    console.log('🔍 === END DEBUG ===');
+  };
+
+  // Expose debug functions globally for testing
+  useEffect(() => {
+    window.debugCartStorage = debugCartStorage;
+    window.clearAllCartData = clearAllCartData;
+    window.clearSpecificUserCart = clearSpecificUserCart;
+    window.forceResetCartState = forceResetCartState;
+  }, [cartItems, user]);
+
+  const getUserCartKey = (userData) => {
+    if (!userData) return 'bubbleFlashCart';
+    
+    // Use email if available, otherwise use _id
+    const identifier = userData.email || userData._id;
+    const cartKey = `bubbleFlashCart_${identifier}`;
+    
+    // Enhanced debugging for cart key generation
+    console.log('🔑 Cart key for user:', userData.name || 'Unknown', 'Email:', userData.email, 'Key:', cartKey);
+    
+    return cartKey;
+  };
+
+  const loadUserSpecificCart = () => {
+    if (!user) {
+      console.log('❌ No user, setting empty cart');
+      setCartItems([]);
+      return;
+    }
+    
+    const userCartKey = getUserCartKey(user);
+    const savedCart = localStorage.getItem(userCartKey);
+    
+    console.log('📥 Loading cart for user:', user.name, 'from key:', userCartKey);
+    console.log('📦 Raw saved cart data:', savedCart);
+    
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        console.log('✅ Found saved cart for user:', user.name, 'Items count:', parsedCart.length);
+        console.log('📋 Cart items:', parsedCart.map(item => ({id: item.id, name: item.name, quantity: item.quantity})));
+        setCartItems(parsedCart);
+      } catch (error) {
+        console.error('❌ Error parsing user cart:', error);
+        setCartItems([]);
+      }
+    } else {
+      console.log('🚫 No saved cart found for user:', user.name);
+      // Check for guest cart to migrate only if user has no cart
+      migrateGuestCart();
+    }
+  };
+
+  const migrateGuestCart = () => {
+    const guestCart = localStorage.getItem('bubbleFlashCart');
+    if (guestCart && user) {
+      try {
+        const guestItems = JSON.parse(guestCart);
+        if (guestItems.length > 0) {
+          console.log('Migrating guest cart to user:', user.name, 'Items:', guestItems);
+          setCartItems(guestItems);
+          // Save to user-specific cart
+          const userCartKey = getUserCartKey(user);
+          localStorage.setItem(userCartKey, guestCart);
+          console.log('Guest cart migrated to:', userCartKey);
+          // Clear guest cart after migration
+          localStorage.removeItem('bubbleFlashCart');
+        } else {
+          // No guest cart items, start with empty cart
+          console.log('No guest cart items to migrate, starting with empty cart');
+          setCartItems([]);
+        }
+      } catch (error) {
+        console.error('Error migrating guest cart:', error);
+        setCartItems([]);
+      }
+    } else {
+      // No guest cart to migrate, start with empty cart
+      console.log('No guest cart to migrate for user:', user.name);
+      setCartItems([]);
+    }
+  };
+
+  const loadCartFromServer = async () => {
+    if (!token) return;
+    
+    setLoading(true);
+    try {
+      const response = await cartApi.getCart(token);
+      if (response.success && response.data) {
+        // Convert backend cart format to frontend format
+        const items = response.data.items || [];
+        setCartItems(items.map(item => ({
+          id: item._id || item.serviceId,
+          serviceId: item.serviceId,
+          packageId: item.packageId,
+          name: item.serviceId?.name || item.name,
+          price: item.price,
+          quantity: item.quantity,
+          addOns: item.addOns || [],
+          vehicleType: item.vehicleType,
+          specialInstructions: item.specialInstructions
+        })));
+      }
+    } catch (error) {
+      console.error('Error loading cart from server:', error);
+      // Fallback to localStorage
+      loadCartFromLocalStorage();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadCartFromLocalStorage = () => {
     const savedCart = localStorage.getItem('bubbleFlashCart');
     if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
+      try {
+        setCartItems(JSON.parse(savedCart));
+      } catch (error) {
+        console.error('Error parsing cart from localStorage:', error);
+        setCartItems([]);
+      }
     }
-  }, []);
+  };
 
-  // Save cart to localStorage whenever cartItems changes
+  const clearSpecificUserCart = (email) => {
+    const cartKey = `bubbleFlashCart_${email}`;
+    console.log('Clearing cart for specific user:', email, 'Key:', cartKey);
+    localStorage.removeItem(cartKey);
+    
+    // If it's the current user, also clear the state
+    if (user && user.email === email) {
+      console.log('Clearing state for current user');
+      setCartItems([]);
+    }
+  };
+
+  const forceResetCartState = () => {
+    console.log('FORCE RESETTING CART STATE');
+    setCartItems([]);
+    // Reload cart after reset
+    setTimeout(() => {
+      if (user && token) {
+        loadUserSpecificCart();
+      } else {
+        loadCartFromLocalStorage();
+      }
+    }, 100);
+  };
+
+  const clearAllCartData = () => {
+    console.log('Clearing ALL cart data from localStorage');
+    const allKeys = Object.keys(localStorage);
+    const cartKeys = allKeys.filter(key => key.startsWith('bubbleFlashCart'));
+    cartKeys.forEach(key => {
+      console.log('Removing:', key);
+      localStorage.removeItem(key);
+    });
+    setCartItems([]);
+    console.log('All cart data cleared');
+  };
+
+  // Save cart to localStorage (user-specific for logged-in users, general for guests)
   useEffect(() => {
-    localStorage.setItem('bubbleFlashCart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    console.log('💾 === SAVE EFFECT TRIGGERED ===');
+    console.log('👤 User:', user?.name, user?.email);
+    console.log('🛒 CartItems length:', cartItems.length);
+    console.log('📋 CartItems:', cartItems.map(item => ({id: item.id, name: item.name, quantity: item.quantity})));
+    
+    if (cartItems.length > 0) {
+      if (user) {
+        // Save to user-specific cart using email-based key
+        const userCartKey = getUserCartKey(user);
+        console.log('💾 SAVING cart for user:', user.name, 'to key:', userCartKey);
+        const cartData = JSON.stringify(cartItems);
+        localStorage.setItem(userCartKey, cartData);
+        console.log('✅ Cart saved to:', userCartKey);
+        console.log('💾 Saved data:', cartData);
+        
+        // Verify save worked
+        const verification = localStorage.getItem(userCartKey);
+        console.log('🔍 Verification - saved data retrieved:', verification ? 'SUCCESS' : 'FAILED');
+      } else {
+        // Save to general cart for guests
+        console.log('💾 Saving guest cart');
+        localStorage.setItem('bubbleFlashCart', JSON.stringify(cartItems));
+      }
+    } else if (cartItems.length === 0 && user) {
+      // Don't clear storage if cart is empty - user might want to keep their items
+      console.log('ℹ️ Cart is empty for user:', user.name, '- keeping existing storage');
+    }
+    console.log('💾 === SAVE EFFECT COMPLETE ===');
+  }, [cartItems, user]);
 
-  const addToCart = (product) => {
+  const addToCart = async (product) => {
+    // For now, always use local cart until we have proper services in database
+    // TODO: Re-enable server cart when services are properly seeded
+    addToLocalCart(product);
+    
+    // Uncomment below when services are properly seeded in database
+    /*
+    if (user && token) {
+      // Add to server for logged-in users
+      setLoading(true);
+      try {
+        const cartData = {
+          serviceId: product.serviceId || product.id,
+          packageId: product.packageId,
+          quantity: 1,
+          addOns: product.addOns || [],
+          vehicleType: product.vehicleType,
+          specialInstructions: product.specialInstructions
+        };
+        
+        const response = await cartApi.addToCart(token, cartData);
+        if (response.success) {
+          // Reload cart from server to get updated data
+          await loadCartFromServer();
+        } else {
+          throw new Error(response.message || 'Failed to add to cart');
+        }
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        // Fallback to local cart
+        addToLocalCart(product);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Add to local cart for guest users
+      addToLocalCart(product);
+    }
+    */
+  };
+
+  const addToLocalCart = (product) => {
+    console.log('=== ADD TO LOCAL CART ===');
+    console.log('Current user:', user?.name, user?.email);
+    console.log('Product being added:', {id: product.id, name: product.name});
+    console.log('Current cart before adding:', cartItems.map(item => ({id: item.id, name: item.name})));
+    
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.id === product.id);
       
       if (existingItem) {
         // If item already exists, increase quantity
+        console.log('Item exists, increasing quantity');
         return prevItems.map(item =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
@@ -39,21 +350,79 @@ export function CartProvider({ children }) {
         );
       } else {
         // If new item, add to cart with quantity 1
+        console.log('New item, adding to cart');
         return [...prevItems, { ...product, quantity: 1, id: product.id || Date.now() }];
       }
     });
+    console.log('=== ADD TO LOCAL CART COMPLETE ===');
   };
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = async (productId) => {
+    // For now, always use local cart
     setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+    
+    // TODO: Re-enable server operations when services are seeded
+    /*
+    if (user && token) {
+      // Remove from server for logged-in users
+      setLoading(true);
+      try {
+        const response = await cartApi.removeFromCart(token, productId);
+        if (response.success) {
+          await loadCartFromServer();
+        } else {
+          throw new Error(response.message || 'Failed to remove from cart');
+        }
+      } catch (error) {
+        console.error('Error removing from cart:', error);
+        // Fallback to local removal
+        setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Remove from local cart for guest users
+      setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+    }
+    */
   };
 
-  const updateQuantity = (productId, newQuantity) => {
+  const updateQuantity = async (productId, newQuantity) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
       return;
     }
     
+    // For now, always use local cart
+    updateLocalQuantity(productId, newQuantity);
+    
+    // TODO: Re-enable server operations when services are seeded
+    /*
+    if (user && token) {
+      // Update on server for logged-in users
+      setLoading(true);
+      try {
+        const response = await cartApi.updateCartItem(token, productId, { quantity: newQuantity });
+        if (response.success) {
+          await loadCartFromServer();
+        } else {
+          throw new Error(response.message || 'Failed to update cart');
+        }
+      } catch (error) {
+        console.error('Error updating cart:', error);
+        // Fallback to local update
+        updateLocalQuantity(productId, newQuantity);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Update local cart for guest users
+      updateLocalQuantity(productId, newQuantity);
+    }
+    */
+  };
+
+  const updateLocalQuantity = (productId, newQuantity) => {
     setCartItems(prevItems =>
       prevItems.map(item =>
         item.id === productId
@@ -63,8 +432,37 @@ export function CartProvider({ children }) {
     );
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
+    // Clear local cart
     setCartItems([]);
+    
+    // Clear from localStorage
+    if (user) {
+      const userCartKey = getUserCartKey(user);
+      console.log('Clearing cart for user:', user.name, 'key:', userCartKey);
+      localStorage.removeItem(userCartKey);
+    } else {
+      console.log('Clearing guest cart');
+      localStorage.removeItem('bubbleFlashCart');
+    }
+    
+    // TODO: Re-enable server operations when services are seeded
+    /*
+    if (user && token) {
+      // Clear server cart for logged-in users
+      setLoading(true);
+      try {
+        const response = await cartApi.clearCart(token);
+        if (!response.success) {
+          console.error('Failed to clear server cart:', response.message);
+        }
+      } catch (error) {
+        console.error('Error clearing cart:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    */
   };
 
   const getCartTotal = () => {
@@ -79,6 +477,7 @@ export function CartProvider({ children }) {
 
   const value = {
     cartItems,
+    loading,
     addToCart,
     removeFromCart,
     updateQuantity,

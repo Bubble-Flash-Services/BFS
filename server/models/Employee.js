@@ -110,10 +110,7 @@ const EmployeeSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes for better performance
-EmployeeSchema.index({ employeeId: 1 });
-EmployeeSchema.index({ email: 1 });
-EmployeeSchema.index({ phone: 1 });
+// Indexes for better performance (only for fields without unique: true)
 EmployeeSchema.index({ specialization: 1 });
 EmployeeSchema.index({ isActive: 1 });
 
