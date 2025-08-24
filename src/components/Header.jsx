@@ -76,7 +76,7 @@ export default function Header() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <img src="/logo.jpg" alt="BFS Logo" className="w-16 h-16 object-contain mr-4" />
-              <h1 className="text-2xl font-bold capitalize bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent">bubble flash</h1>
+              <h1 className="text-2xl font-bold capitalize bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent">bubble flash services</h1>
             </div>
 
             <nav className="hidden md:flex space-x-8">
@@ -102,7 +102,7 @@ export default function Header() {
                 onClick={() => handleNavigation('contact')} 
                 className="text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
               >
-                <Phone size={16} />
+                
                 Contact
               </button>
             </nav>

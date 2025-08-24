@@ -9,9 +9,11 @@ import Footer from './components/Footer';
 import CarsPage from './pages/Homepage/services/CarsPage';
 import BikesPage from './pages/Homepage/services/BikesPage';
 import LaundryPage from './pages/Homepage/services/LaundryPage';
+import HelmetPage from './pages/Homepage/services/HelmetPage';
 import CarWashDeals from './pages/Homepage/services/CarWashDeals';
 import BikeWashDeals from './pages/Homepage/services/BikeWashDeals';
 import LaundryDeals from './pages/Homepage/services/LaundryDeals';
+import HelmetWashDeals from './pages/Homepage/services/HelmetWashDeals';
 import CartPage from './pages/CartPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
 import ServicesBrowser from './pages/ServicesBrowser';
@@ -54,9 +56,11 @@ function AppContent() {
         <Route path="/cars" element={<CarsPage />} />
         <Route path="/bikes" element={<BikesPage />} />
         <Route path="/laundry" element={<LaundryPage />} />
+        <Route path="/helmets" element={<HelmetPage />} />
         <Route path="/car-wash-deals/:category" element={<CarWashDeals />} />
         <Route path="/bike-wash-deals/:category" element={<BikeWashDeals />} />
         <Route path="/laundry-deals/:category" element={<LaundryDeals />} />
+        <Route path="/helmet-wash-deals/:category" element={<HelmetWashDeals />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services-browser" element={<ServicesBrowser />} />
