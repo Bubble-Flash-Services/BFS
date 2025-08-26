@@ -13,7 +13,7 @@ const helmetWashPackages = {
       {
         id: 1,
         name: "Basic Clean",
-        image: "/helmet/helmethome.png",
+        image: "/helmet/commuter & midsize/aiease_1755850674727.jpg",
         price: "₹79",
         description: "Essential Cleaning for Daily Use",
         features: [
@@ -26,7 +26,7 @@ const helmetWashPackages = {
       {
         id: 2,
         name: "Fresh Shield",
-        image: "/helmet/helmethome.png",
+        image: "/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg",
         price: "₹119",
         description: "Complete Hygiene Package",
         features: [
@@ -40,7 +40,7 @@ const helmetWashPackages = {
       {
         id: 3,
         name: "Premium Care",
-        image: "/helmet/helmethome.png",
+        image: "/helmet/commuter & midsize/DeWatermark.ai_1755851413119.jpeg",
         price: "₹159",
         description: "Professional Deep Clean & Protection",
         features: [
@@ -61,7 +61,7 @@ const helmetWashPackages = {
       {
         id: 4,
         name: "Sport Clean",
-        image: "/helmet/helmethome.png",
+        image: "/helmet/commuter & midsize/aiease_1755850674727.jpg",
         price: "₹99",
         description: "Performance Helmet Care",
         features: [
@@ -74,7 +74,7 @@ const helmetWashPackages = {
       {
         id: 5,
         name: "Race Ready",
-        image: "/helmet/helmethome.png",
+        image: "/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg",
         price: "₹149",
         description: "Competition Grade Cleaning",
         features: [
@@ -88,7 +88,7 @@ const helmetWashPackages = {
       {
         id: 6,
         name: "Champion Shield",
-        image: "/helmet/helmethome.png",
+        image: "/helmet/commuter & midsize/DeWatermark.ai_1755851413119.jpeg",
         price: "₹199",
         description: "Ultimate Racing Protection",
         features: [
@@ -109,7 +109,7 @@ const helmetWashPackages = {
       {
         id: 7,
         name: "Luxury Clean",
-        image: "/helmet/helmethome.png",
+        image: "/helmet/sports/aiease_1755850623823.jpg",
         price: "₹129",
         description: "Premium Helmet Maintenance",
         features: [
@@ -122,7 +122,7 @@ const helmetWashPackages = {
       {
         id: 8,
         name: "Elite Care",
-        image: "/helmet/helmethome.png",
+        image: "/helmet/sports/DeWatermark.ai_1755851442324.jpeg",
         price: "₹179",
         description: "Exclusive Premium Service",
         features: [

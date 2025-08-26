@@ -25,67 +25,100 @@ const CameraIcon = () => (
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-[#f7d02a] via-[#faffad] to-[#a0bae7] rounded-t-3xl pt-8 pb-2 px-4 md:px-16 ">
+    <footer className="bg-white pt-16 pb-8 px-4 md:px-16 text-gray-800 border-t border-gray-200">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 md:gap-0">
         {/* Left: Logo and FAQ heading */}
         <div className="flex-1 min-w-[220px]">
           <div className="flex items-center gap-4 mb-6">
-            <img src="/logo.jpg" alt="BFS Logo" className="w-16 h-16 object-contain" />
-            <h2 className="text-3xl font-serif font-semibold tracking-tight">BFS</h2>
+            <img src="/logo.jpg" alt="BFS Logo" className="w-16 h-16 object-contain rounded-full border-2 border-[#1F3C88]" />
+            <h2 className="text-3xl font-serif font-semibold tracking-tight text-[#1F3C88]">BFS</h2>
           </div>
-          <div className="text-gray-700 text-base mb-2">© 2025 BFS Bubble Flash Services.<br/>support@bubbleflash.com</div>
-          <div className="flex items-center gap-2 mb-8">
-            <a href="mailto:support@bubbleflash.com" aria-label="Email support@bubbleflash.com"><EmailIcon /></a>
+          <div className="text-gray-600 text-base mb-4">
+            Premium car care services you can trust.<br/>
+            Making your vehicle shine since 2020.
+          </div>
+          <div className="text-gray-500 text-sm mb-6">
+            © 2025 BFS Bubble Flash Services.<br/>
+            support@bubbleflash.com
+          </div>
+          <div className="flex items-center gap-3">
+            <a 
+              href="mailto:support@bubbleflash.com" 
+              aria-label="Email support@bubbleflash.com"
+              className="bg-[#1F3C88] p-2 rounded-full hover:bg-[#2D5AA0] transition-colors duration-300 text-white"
+            >
+              <EmailIcon />
+            </a>
           </div>
         </div>
         {/* Columns */}
         <div className="flex flex-1 flex-wrap justify-between gap-8 md:gap-0">
           {/* Solutions */}
           <div className="min-w-[140px]">
-            <h3 className="font-semibold mb-3">SOLUTIONS</h3>
-            <ul className="space-y-2 text-gray-800">
-              <li><a href="#" className="hover:underline">Home</a></li>
-              <li><a href="#" className="hover:underline">About us</a></li>
-              <li><a href="#" className="hover:underline">Contact us</a></li>
-              <li><a href="#" className="hover:underline">Customer reviews</a></li>
+            <h3 className="font-semibold mb-4 text-[#1F3C88] text-lg">SOLUTIONS</h3>
+            <ul className="space-y-3 text-gray-600">
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Home</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">About us</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Contact us</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Customer reviews</a></li>
             </ul>
           </div>
           {/* Services */}
           <div className="min-w-[140px]">
-            <h3 className="font-semibold mb-3">SERVICES</h3>
-            <ul className="space-y-2 text-gray-800">
-              <li><a href="#" className="hover:underline">Car wash</a></li>
-              <li><a href="#" className="hover:underline">Bike wash</a></li>
-              <li><a href="#" className="hover:underline">Laundry</a></li>
-              <li><a href="#" className="hover:underline">Packages</a></li>
+            <h3 className="font-semibold mb-4 text-[#1F3C88] text-lg">SERVICES</h3>
+            <ul className="space-y-3 text-gray-600">
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Car wash</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Bike wash</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Laundry</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Packages</a></li>
             </ul>
           </div>
           {/* Follow Us */}
           <div className="min-w-[140px]">
-            <h3 className="font-semibold mb-3">FOLLOW US</h3>
-            <ul className="space-y-2 text-gray-800">
-              <li className="flex items-center gap-2"><a href="https://www.instagram.com/bubble_flash_service_karnataka?igsh=ZGg4dHZrYmMxeTFh" className="flex items-center gap-2 hover:underline"><CameraIcon /> Instagram</a></li>
-              <li className="flex items-center gap-2"><a href="https://www.linkedin.com/company/bubble-flash-services/" className="flex items-center gap-2 hover:underline"><LinkedinIcon /> Linked in</a></li>
-              <li className="flex items-center gap-2"><a href="#" className="flex items-center gap-2 hover:underline"><YoutubeIcon /> Youtube</a></li>
-              <li className="flex items-center gap-2"><a href="#" className="flex items-center gap-2 hover:underline"><TwitterIcon /> Twitter</a></li>
-              <li className="flex items-center gap-2"><a href="#" className="flex items-center gap-2 hover:underline"><FacebookIcon /> Facebook</a></li>
+            <h3 className="font-semibold mb-4 text-[#1F3C88] text-lg">FOLLOW US</h3>
+            <ul className="space-y-3 text-gray-600">
+              <li className="flex items-center gap-2">
+                <a href="https://www.instagram.com/bubble_flash_service_karnataka?igsh=ZGg4dHZrYmMxeTFh" className="flex items-center gap-2 hover:text-[#1F3C88] transition-colors duration-300">
+                  <CameraIcon /> Instagram
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <a href="https://www.linkedin.com/company/bubble-flash-services/" className="flex items-center gap-2 hover:text-[#1F3C88] transition-colors duration-300">
+                  <LinkedinIcon /> LinkedIn
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <a href="#" className="flex items-center gap-2 hover:text-[#1F3C88] transition-colors duration-300">
+                  <YoutubeIcon /> Youtube
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <a href="#" className="flex items-center gap-2 hover:text-[#1F3C88] transition-colors duration-300">
+                  <TwitterIcon /> Twitter
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <a href="#" className="flex items-center gap-2 hover:text-[#1F3C88] transition-colors duration-300">
+                  <FacebookIcon /> Facebook
+                </a>
+              </li>
             </ul>
           </div>
           {/* Company */}
           <div className="min-w-[140px]">
-            <h3 className="font-semibold mb-3">COMPANY</h3>
-            <ul className="space-y-2 text-gray-800">
-              <li><a href="#" className="hover:underline">About</a></li>
-              <li><a href="#" className="hover:underline">Privacy</a></li>
-              <li><a href="#" className="hover:underline">Terms</a></li>
-              <li><a href="#" className="hover:underline">License</a></li>
-              <li><a href="#" className="hover:underline">Security</a></li>
+            <h3 className="font-semibold mb-4 text-[#1F3C88] text-lg">COMPANY</h3>
+            <ul className="space-y-3 text-gray-600">
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">About</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Privacy</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Terms</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">License</a></li>
+              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Security</a></li>
             </ul>
           </div>
         </div>
       </div>
-      <div className="mt-10 text-center text-gray-400 text-sm">
-        © 2025 BFS Bubble Flash Services. All rights reserved.
+      <div className="mt-12 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
+        © 2025 BFS Bubble Flash Services. All rights reserved. | Proudly serving premium car care in Bangalore
       </div>
     </footer>
   );

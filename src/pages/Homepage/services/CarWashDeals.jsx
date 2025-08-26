@@ -12,7 +12,7 @@ const carWashPackages = {
       {
         id: 1,
         name: "Quick Shine",
-        image: "/car/car1.png",
+        image: "/car/hatchback/car1.png",
         price: "₹199",
         originalPrice: null,
         description: "Get a professional-grade car wash with high-quality cleaning solutions — ideal for everyday shine and instant freshness.",
@@ -30,7 +30,7 @@ const carWashPackages = {
       {
         id: 2,
         name: "Deluxe Car Wash",
-        image: "/car/car2.png",
+        image: "/car/hatchback/aiease_1755725602539.png",
         price: "₹399",
         originalPrice: null,
         description: "A fast and efficient wash that gives your car a clean look and a fresh feel — all at a pocket-friendly price.",
@@ -51,7 +51,7 @@ const carWashPackages = {
       {
         id: 3,
         name: "Premium Car Wash",
-        image: "/car/car3.png",
+        image: "/car/hatchback/aiease_1755725753769.png",
         price: "₹599",
         originalPrice: null,
         description: "Perfect for daily drivers — a quick professional wash using premium foam and detailing essentials to refresh your ride in no time. A full-service cleaning designed for those who want a clean, fresh, and polished car — inside and out — without spending too much time or money.",
@@ -147,7 +147,7 @@ const carWashPackages = {
       {
         id: 1,
         name: "Quick Shine",
-        image: "/car/car1.png",
+        image: "/car/suv/car3.png",
         price: "₹399",
         originalPrice: null,
         description: "Fast Exterior Refresh - Ideal for a quick shine after travel or city driving.",
@@ -161,7 +161,7 @@ const carWashPackages = {
       {
         id: 2,
         name: "Deluxe SUV Wash",
-        image: "/car/car2.png",
+        image: "/car/suv/pexels-eng_hk-2153621871-33018219.png",
         price: "₹599",
         originalPrice: null,
         description: "Complete Regular Cleaning – Inside + Outside. All Quick Shine services plus enhanced interior care.",
@@ -177,7 +177,7 @@ const carWashPackages = {
       {
         id: 3,
         name: "Premium SUV Wash",
-        image: "/car/car3.png",
+        image: "/car/suv/luxury_suv.png",
         price: "₹799",
         originalPrice: null,
         description: "Showroom-Style Deep Clean & Shine. Best before long drives, resale, or monthly detailing.",
@@ -268,7 +268,7 @@ const carWashPackages = {
       {
         id: 1,
         name: "Quick Shine",
-        image: "/car/car1.png",
+        image: "/car/sedan/car2.png",
         price: "₹299",
         originalPrice: null,
         description: "Clean Look. Fresh Feel. Fast and efficient exterior wash using premium products for a fresh look.",
@@ -281,7 +281,7 @@ const carWashPackages = {
       {
         id: 2,
         name: "Deluxe Car Wash",
-        image: "/car/car2.png",
+        image: "/car/sedan/luxury_sedan.png",
         price: "₹499",
         originalPrice: null,
         description: "More Than Just a Wash. Interior + exterior care for regular weekly maintenance.",
@@ -296,7 +296,7 @@ const carWashPackages = {
       {
         id: 3,
         name: "Premium Car Wash",
-        image: "/car/car3.png",
+        image: "/car/sedan/luxury_sedan2.png",
         price: "₹699",
         originalPrice: null,
         description: "Showroom Finish. Deep clean and polish for both body and interior — perfect for travel, events, or gifting.",
@@ -390,7 +390,7 @@ const carWashPackages = {
       {
         id: 1,
         name: "Quick Shine",
-        image: "/car/car1.png",
+        image: "/car/sedan/luxury_sedan.png",
         price: "₹599",
         originalPrice: null,
         description: "Fast Premium Exterior Wash",
@@ -406,7 +406,7 @@ const carWashPackages = {
       {
         id: 2,
         name: "Deluxe Luxury Wash",
-        image: "/car/car2.png",
+        image: "/car/suv/luxury_suv.png",
         price: "₹899",
         originalPrice: null,
         description: "Premium Clean with Interior Refresh",
@@ -423,7 +423,7 @@ const carWashPackages = {
       {
         id: 3,
         name: "Luxury Premium Spa",
-        image: "/car/car3.png",
+        image: "/car/suv/luxury_suv2.png",
         price: "₹1,299",
         originalPrice: null,
         description: "Detailing-Focused Deep Clean & Shine",

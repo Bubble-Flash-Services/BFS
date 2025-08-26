@@ -7,13 +7,13 @@ import SigninModal from '../signin/SigninModal';
 
 const bikeWashPackages = {
   commuter: {
-    title: "Scooter Wash Packages",
+    title: "Commuter Wash Packages",
     subtitle: "Tailored for all scooters: Activa, Jupiter, Dio, Access, Ntorq, etc.",
     packages: [
       {
         id: 1,
         name: "Basic Shine",
-        image: "/bike/bike1.png",
+        image: "/bike/commuter/bike1.png",
         price: "₹99",
         description: "Quick Refresh for Daily Riders",
         features: [
@@ -26,7 +26,7 @@ const bikeWashPackages = {
       {
         id: 2,
         name: "Urban Shine",
-        image: "/bike/bike2.png",
+        image: "/bike/commuter/pexels-pixabay-159192.png",
         price: "₹149",
         description: "Weekly Clean for Better Look & Feel",
         features: [
@@ -40,7 +40,7 @@ const bikeWashPackages = {
       {
         id: 3,
         name: "Supreme Spa",
-        image: "/bike/bike3.png",
+        image: "/bike/commuter/tvs-ntorq-125-race-edition-matte-white-175501476-vc4uk (1).png",
         price: "₹199",
         description: "Deep Clean & Shine – Like New Again",
         features: [
@@ -55,13 +55,13 @@ const bikeWashPackages = {
     ]
   },
   sports: {
-    title: "Motorbike Wash Packages",
+    title: "Sports Bike Wash Packages",
     subtitle: "For bikes like Splendor, Pulsar, Apache, FZ, Shine, Xtreme, Unicorn, etc.",
     packages: [
       {
         id: 1,
         name: "Basic Ride",
-        image: "/bike/bike1.png",
+        image: "/bike/sports/bike2.png",
         price: "₹119",
         description: "Perfect for daily-use bikes needing a quick clean",
         features: [
@@ -75,7 +75,7 @@ const bikeWashPackages = {
       {
         id: 2,
         name: "Street Pro",
-        image: "/bike/bike2.png",
+        image: "/bike/sports/pexels-shrinidhi-holla-30444780.png",
         price: "₹179",
         description: "Ideal for weekly city riders wanting a fresh look",
         features: [
@@ -90,7 +90,7 @@ const bikeWashPackages = {
       {
         id: 3,
         name: "Xtreme Spa",
-        image: "/bike/bike3.png",
+        image: "/bike/sports/pexels-thenoctishouse-10659911.png",
         price: "₹249",
         description: "For mid-segment or polished riders who want their bike to shine like new",
         features: [
@@ -107,13 +107,13 @@ const bikeWashPackages = {
     ]
   },
   cruiser: {
-    title: "Sports / Premium Bike Wash Packages",
+    title: "Cruiser Bike Wash Packages",
     subtitle: "For: Royal Enfield, KTM, Jawa, R15, Interceptor, Dominar, Ninja, Harley & more",
     packages: [
       {
         id: 1,
         name: "Torque Wash",
-        image: "/bike/bike1.png",
+        image: "/bike/cruiser/bike3.png",
         price: "₹199",
         description: "Quick & effective clean for regular maintenance",
         features: [
@@ -127,7 +127,7 @@ const bikeWashPackages = {
       {
         id: 2,
         name: "Nitro Detail",
-        image: "/bike/bike2.png",
+        image: "/bike/cruiser/pexels-sahil-dethe-590388386-17266142.png",
         price: "₹249",
         description: "Detailed cleaning + engine & chain care",
         features: [
@@ -143,7 +143,7 @@ const bikeWashPackages = {
       {
         id: 3,
         name: "HyperCare Spa",
-        image: "/bike/bike3.png",
+        image: "/bike/cruiser/pexels-sai-krishna-179319646-14674649.png",
         price: "₹349",
         description: "Full-body spa for your beast – shine, polish & protect",
         features: [
@@ -596,11 +596,13 @@ export default function BikeWashDeals() {
           {dealData.packages.map((pkg) => (
             <div key={pkg.id} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow h-full">
               <div className="p-6 h-full flex flex-col">
-                <img 
-                  src={pkg.image} 
-                  alt={pkg.name} 
-                  className="w-full h-48 object-cover rounded-lg mb-4"
-                />
+                <div className="w-full h-48 bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={pkg.image} 
+                    alt={pkg.name} 
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3 min-h-[3rem]">
                   {pkg.name}
                 </h3>
@@ -686,11 +688,13 @@ export default function BikeWashDeals() {
                 >
                   <div className="bg-white rounded-2xl overflow-hidden shadow-lg max-w-sm mx-auto h-full">
                     <div className="p-6 h-full flex flex-col">
-                      <img 
-                        src={pkg.image} 
-                        alt={pkg.name} 
-                        className="w-full h-48 object-cover rounded-lg mb-4"
-                      />
+                      <div className="w-full h-48 bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                        <img 
+                          src={pkg.image} 
+                          alt={pkg.name} 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
                       <h3 className="text-xl font-bold text-gray-800 mb-3 min-h-[3rem]">
                         {pkg.name}
                       </h3>

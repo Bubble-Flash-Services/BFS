@@ -19,7 +19,7 @@ const carCategories = [
   },
   {
     name: 'Luxuries',
-    image: '/car/car1.png',
+    image: '/car/suv/luxury_suv.png',
     route: '/car-wash-deals/luxuries'
   },
 ];
