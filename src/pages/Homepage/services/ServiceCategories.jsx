@@ -443,29 +443,6 @@ export default function ServiceCategories() {
             ))}
           </div>
         </div>
-
-        {/* Bottom CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="text-center mt-16"
-        >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-3 bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 rounded-2xl px-8 py-4 text-white hover:bg-opacity-20 transition-all duration-300 cursor-pointer"
-          >
-            <span className="text-lg font-semibold">Need help choosing?</span>
-            <motion.div
-              animate={{ x: [0, 5, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              <ArrowRight className="w-5 h-5 text-[#FFB400]" />
-            </motion.div>
-          </motion.div>
-        </motion.div>
       </div>
     </section>
   );

@@ -5,7 +5,8 @@ import {
   addToCart,
   updateCartItem,
   removeFromCart,
-  clearCart
+  clearCart,
+  syncCartToDatabase
 } from '../controllers/cartController.js';
 
 const router = express.Router();
@@ -18,6 +19,9 @@ router.get('/', getCart);
 
 // POST /api/cart - Add item to cart
 router.post('/', addToCart);
+
+// POST /api/cart/sync - Sync localStorage cart to database
+router.post('/sync', syncCartToDatabase);
 
 // PUT /api/cart/:itemId - Update cart item
 router.put('/:itemId', updateCartItem);

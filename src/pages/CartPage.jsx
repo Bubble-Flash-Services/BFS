@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../components/CartContext';
 import { useAuth } from '../components/AuthContext';
 import { Trash2, Plus, Minus, ShoppingBag, X, MapPin, Phone, Calendar, CreditCard, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
 import AddressAutocomplete from '../components/AddressAutocomplete';
+import RazorpayPayment from '../components/RazorpayPayment';
+import { createOrder } from '../api/orders';
 
 export default function CartPage() {
+  const navigate = useNavigate();
   const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal, loading: cartLoading } = useCart();
   const { user, loading } = useAuth();
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
@@ -15,10 +19,197 @@ export default function CartPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedPayment, setSelectedPayment] = useState('');
   const [addressData, setAddressData] = useState(null); // Store complete address data
+  
+  // Coupon state
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [showCouponSection, setShowCouponSection] = useState(false);
 
-  // Calculate final total (no discount)
+  // Auto-populate user data when component mounts
+  useEffect(() => {
+    if (user && !loading) {
+      if (user.phone && !phoneNumber) {
+        setPhoneNumber(user.phone);
+      }
+      if (user.address && !selectedLocation) {
+        setSelectedLocation(user.address);
+      }
+    }
+  }, [user, loading]);
+
+  // Fetch available coupons
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      fetchAvailableCoupons();
+    }
+  }, [cartItems]);
+
+  const fetchAvailableCoupons = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const cartTotal = getCartTotal();
+      
+      const response = await fetch(`/api/coupons?orderAmount=${cartTotal}&userId=${user?.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setAvailableCoupons(result.data);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching coupons:', error);
+    }
+  };
+
+  const applyCoupon = async (coupon) => {
+    try {
+      setCouponLoading(true);
+      const token = localStorage.getItem('token');
+      const cartTotal = getCartTotal();
+
+      console.log('🎫 Applying coupon:', {
+        code: coupon.code,
+        orderAmount: cartTotal,
+        userId: user?.id
+      });
+
+      const response = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          code: coupon.code,
+          orderAmount: cartTotal,
+          userId: user?.id
+        })
+      });
+
+      const result = await response.json();
+      console.log('🎫 Coupon validation response:', result);
+
+      if (result.success && result.data.isValid) {
+        setAppliedCoupon({
+          ...coupon,
+          discountAmount: result.data.discountAmount
+        });
+        setCouponCode(coupon.code);
+        setShowCouponSection(false);
+        console.log('✅ Coupon applied successfully:', {
+          code: coupon.code,
+          discountAmount: result.data.discountAmount
+        });
+        alert(`Coupon ${coupon.code} applied successfully! You saved ₹${result.data.discountAmount}`);
+      } else {
+        console.error('❌ Coupon validation failed:', result);
+        alert(result.message || 'Invalid coupon');
+      }
+    } catch (error) {
+      console.error('💥 Error applying coupon:', error);
+      alert('Failed to apply coupon');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const applyCouponByCode = async () => {
+    if (!couponCode.trim()) {
+      alert('Please enter a coupon code');
+      return;
+    }
+
+    try {
+      setCouponLoading(true);
+      const token = localStorage.getItem('token');
+      const cartTotal = getCartTotal();
+
+      console.log('🎫 Applying coupon by code:', {
+        code: couponCode.toUpperCase(),
+        orderAmount: cartTotal,
+        userId: user?.id
+      });
+
+      const response = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          code: couponCode.toUpperCase(),
+          orderAmount: cartTotal,
+          userId: user?.id
+        })
+      });
+
+      const result = await response.json();
+      console.log('🎫 Coupon by code validation response:', result);
+
+      if (result.success && result.data.isValid) {
+        setAppliedCoupon({
+          code: couponCode.toUpperCase(),
+          name: result.data.coupon?.name || 'Coupon',
+          discountAmount: result.data.discountAmount,
+          discountType: result.data.coupon?.discountType || 'fixed'
+        });
+        setShowCouponSection(false);
+        console.log('✅ Coupon by code applied successfully:', {
+          code: couponCode.toUpperCase(),
+          discountAmount: result.data.discountAmount
+        });
+        alert(`Coupon ${couponCode.toUpperCase()} applied successfully! You saved ₹${result.data.discountAmount}`);
+      } else {
+        console.error('❌ Coupon by code validation failed:', result);
+        alert(result.message || 'Invalid coupon code');
+      }
+    } catch (error) {
+      console.error('💥 Error applying coupon by code:', error);
+      alert('Failed to apply coupon');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    alert('Coupon removed successfully');
+  };
+
+  // Handle start shopping - navigate to home and scroll to service categories
+  const handleStartShopping = () => {
+    navigate('/', { state: { scrollTo: 'service-categories' } });
+  };
+
+  // Calculate final total with coupon discount
   const getFinalTotal = () => {
-    return getCartTotal();
+    const subtotal = getCartTotal();
+    const discount = appliedCoupon ? appliedCoupon.discountAmount : 0;
+    const finalTotal = Math.max(subtotal - discount, 0);
+    
+    console.log('💰 Final total calculation:', {
+      subtotal,
+      appliedCoupon: appliedCoupon ? {
+        code: appliedCoupon.code,
+        discountAmount: appliedCoupon.discountAmount
+      } : null,
+      discount,
+      finalTotal
+    });
+    
+    return finalTotal;
+  };
+
+  const getDiscountAmount = () => {
+    return appliedCoupon ? appliedCoupon.discountAmount : 0;
   };
 
   // Handle address selection from autocomplete
@@ -31,13 +222,17 @@ export default function CartPage() {
     // Pre-fill with user data if available
     if (user) {
       setPhoneNumber(user.phone || '');
+      // Auto-populate address from user profile if available
+      if (user.address && !selectedLocation) {
+        setSelectedLocation(user.address);
+      }
     }
     
     // Check for pending booking data
     const storedBooking = localStorage.getItem('pendingBooking');
     if (storedBooking) {
       const data = JSON.parse(storedBooking);
-      setSelectedLocation(data.address || '');
+      setSelectedLocation(data.address || user?.address || '');
       setPickupDate(data.pickupDate || '');
       setPhoneNumber(data.phoneNumber || user?.phone || '');
     }
@@ -45,38 +240,111 @@ export default function CartPage() {
     setShowCheckoutModal(true);
   };
 
-  const handlePlaceOrder = () => {
+  // State for order placement
+  const [placingOrder, setPlacingOrder] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState(null);
+
+  const handlePlaceOrder = async () => {
     // Validate required fields
     if (!pickupDate || !phoneNumber || !selectedLocation || !selectedPayment) {
       alert('Please fill in all required fields');
       return;
     }
 
-    // Create order data
-    const orderData = {
-      items: cartItems,
-      total: getFinalTotal(),
-      address: selectedLocation,
-      addressData: addressData, // Include complete address data
-      alternateAddress: useAlternateLocation ? alternateLocation : null,
-      pickupDate,
-      phone: phoneNumber,
-      paymentMethod: selectedPayment,
-      userId: user?.id
-    };
+    setPlacingOrder(true);
 
-    // Store order data and navigate
-    localStorage.setItem('pendingOrder', JSON.stringify(orderData));
-    
-    // Simulate order placement
-    alert(`Order placed successfully! Total: ₹${getFinalTotal()}`);
+    try {
+      // Prepare order data for backend
+      const orderData = {
+        items: cartItems.map(item => ({
+          serviceId: item.serviceId || item.id,
+          packageId: item.packageId,
+          serviceName: item.serviceName || item.title || item.name,
+          packageName: item.packageName || item.plan,
+          quantity: item.quantity || 1,
+          price: item.packageDetails?.basePrice || item.basePrice || item.price,
+          addOns: (item.addOns || item.packageDetails?.addons || []).map(addon => ({
+            ...addon,
+            quantity: addon.quantity || 1
+          })),
+          laundryItems: item.laundryItems || [],
+          vehicleType: item.vehicleType || item.category,
+          specialInstructions: item.specialInstructions || item.notes
+        })),
+        serviceAddress: {
+          fullAddress: selectedLocation,
+          latitude: addressData?.latitude,
+          longitude: addressData?.longitude,
+          city: addressData?.city,
+          state: addressData?.state,
+          pincode: addressData?.pincode,
+          landmark: addressData?.landmark
+        },
+        scheduledDate: pickupDate,
+        scheduledTimeSlot: "10:00 AM - 12:00 PM", // Default time slot
+        paymentMethod: selectedPayment === 'cod' ? 'cash' : selectedPayment,
+        customerNotes: `Phone: ${phoneNumber}`,
+        subtotal: getCartTotal(),
+        discountAmount: getDiscountAmount(),
+        couponCode: appliedCoupon?.code || null,
+        totalAmount: getFinalTotal()
+      };
+
+      // Get auth token
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login to place order');
+        return;
+      }
+
+      // Make API call to create order
+      const result = await createOrder(token, orderData);
+
+      if (result.success) {
+        setCreatedOrder(result.data);
+        
+        // If payment method is UPI, don't close modal yet - show payment component
+        if (selectedPayment === 'upi') {
+          // Order created, now show payment component
+          console.log('Order created, showing payment options:', result.data);
+        } else {
+          // COD order - complete immediately
+          alert(`Order placed successfully! Order Number: ${result.data.orderNumber}`);
+          clearCart();
+          setShowCheckoutModal(false);
+          setPlacingOrder(false);
+        }
+      } else {
+        alert(`Order failed: ${result.message}`);
+        setPlacingOrder(false);
+      }
+    } catch (error) {
+      console.error('Order placement error:', error);
+      alert('Failed to place order. Please try again.');
+      setPlacingOrder(false);
+    }
+  };
+
+  const handlePaymentSuccess = (paymentData) => {
+    console.log('Payment successful:', paymentData);
+    alert(`Payment successful! Order Number: ${createdOrder.orderNumber}`);
     clearCart();
     setShowCheckoutModal(false);
+    setPlacingOrder(false);
+    setCreatedOrder(null);
+    // Navigate to order confirmation page
+    // navigate('/orders');
+  };
+
+  const handlePaymentFailure = (error) => {
+    console.error('Payment failed:', error);
+    alert('Payment failed. Please try again or contact support.');
+    setPlacingOrder(false);
+    // Order is created but payment failed - user can retry payment
   };
 
   const paymentOptions = [
     { id: 'upi', name: 'UPI (PhonePe/GooglePay)', icon: '📱' },
-    { id: 'card', name: 'Credit/Debit Card', icon: '💳' },
     { id: 'cod', name: 'Cash on Delivery', icon: '💵' }
   ];
 
@@ -152,7 +420,10 @@ export default function CartPage() {
             Add some amazing services to make it happy! ✨
           </p>
           
-          <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+          <button 
+            onClick={handleStartShopping}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+          >
             Start Shopping
           </button>
         </div>
@@ -179,7 +450,20 @@ export default function CartPage() {
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                   Your Cart
                 </h1>
-                <p className="text-gray-500 text-sm">{cartItems.length} items • ₹{getCartTotal()}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-gray-500 text-sm">{cartItems.length} items • ₹{getCartTotal()}</p>
+                  {appliedCoupon && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                      <Sparkles className="h-3 w-3" />
+                      <span>Coupon: {appliedCoupon.code}</span>
+                    </div>
+                  )}
+                  {availableCoupons.length > 0 && !appliedCoupon && (
+                    <div className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                      {availableCoupons.length} coupons available
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <button
@@ -361,6 +645,120 @@ export default function CartPage() {
                     <span>Service charge</span>
                     <span className="text-green-600">FREE</span>
                   </div>
+
+                  {/* Coupon Section */}
+                  <div className="space-y-3">
+                    {!appliedCoupon ? (
+                      <div>
+                        <button
+                          onClick={() => setShowCouponSection(!showCouponSection)}
+                          className="w-full flex items-center justify-between p-3 border border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Sparkles className="h-5 w-5 text-blue-600" />
+                            <span className="text-gray-700 font-medium">Apply Coupon Code</span>
+                          </div>
+                          <span className="text-blue-600 text-sm">
+                            {availableCoupons.length} available
+                          </span>
+                        </button>
+
+                        {showCouponSection && (
+                          <div className="mt-3 space-y-3">
+                            {/* Manual Coupon Code Entry */}
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                placeholder="Enter coupon code"
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                value={couponCode}
+                                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                              />
+                              <button
+                                onClick={applyCouponByCode}
+                                disabled={couponLoading}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                              >
+                                {couponLoading ? 'Applying...' : 'Apply'}
+                              </button>
+                            </div>
+
+                            {/* Available Coupons */}
+                            {availableCoupons.length > 0 && (
+                              <div className="space-y-2">
+                                <p className="text-sm font-medium text-gray-700">Available Coupons:</p>
+                                <div className="max-h-40 overflow-y-auto space-y-2">
+                                  {availableCoupons.map((coupon) => (
+                                    <div
+                                      key={coupon._id}
+                                      className="p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors"
+                                      onClick={() => applyCoupon(coupon)}
+                                    >
+                                      <div className="flex justify-between items-start">
+                                        <div className="flex-1">
+                                          <div className="flex items-center gap-2">
+                                            <span className="font-bold text-blue-600">{coupon.code}</span>
+                                            <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                                              {coupon.couponTypeLabel || 'Special Offer'}
+                                            </span>
+                                          </div>
+                                          <p className="text-sm text-gray-600 mt-1">{coupon.description}</p>
+                                          <p className="text-xs text-gray-500 mt-1">
+                                            Min order: ₹{coupon.minimumOrderAmount}
+                                          </p>
+                                        </div>
+                                        <div className="text-right">
+                                          <div className="font-bold text-green-600">
+                                            {coupon.discountType === 'percentage' 
+                                              ? `${coupon.discountValue}% OFF` 
+                                              : `₹${coupon.discountValue} OFF`}
+                                          </div>
+                                          {coupon.potentialDiscount > 0 && (
+                                            <div className="text-xs text-gray-600">
+                                              Save ₹{coupon.potentialDiscount}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-2">
+                            <Sparkles className="h-5 w-5 text-green-600" />
+                            <div>
+                              <span className="font-bold text-green-800">{appliedCoupon.code}</span>
+                              <p className="text-sm text-green-600">{appliedCoupon.name}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="font-bold text-green-700">-₹{appliedCoupon.discountAmount}</span>
+                            <button
+                              onClick={removeCoupon}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Show discount in summary */}
+                  {appliedCoupon && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Coupon discount ({appliedCoupon.code})</span>
+                      <span>-₹{appliedCoupon.discountAmount}</span>
+                    </div>
+                  )}
                   
                   <hr className="border-gray-200" />
                   
@@ -510,13 +908,45 @@ export default function CartPage() {
 
               {/* Place Order Button */}
               <div className="space-y-3">
-                <button
-                  onClick={handlePlaceOrder}
-                  className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
-                >
-                  <CreditCard className="w-5 h-5" />
-                  <span>Place Order - ₹{getFinalTotal()}</span>
-                </button>
+                {!createdOrder ? (
+                  // Show place order button if no order created yet
+                  <button
+                    onClick={handlePlaceOrder}
+                    disabled={placingOrder}
+                    className={`w-full font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 ${
+                      placingOrder 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white'
+                    }`}
+                  >
+                    <CreditCard className="w-5 h-5" />
+                    <span>{placingOrder ? 'Creating Order...' : `Place Order - ₹${getFinalTotal()}`}</span>
+                  </button>
+                ) : selectedPayment === 'upi' ? (
+                  // Show Razorpay payment component for UPI payments
+                  <div className="space-y-4">
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <h3 className="font-semibold text-blue-900 mb-2">Order Created Successfully!</h3>
+                      <p className="text-blue-700 text-sm">Order Number: {createdOrder.orderNumber}</p>
+                      <p className="text-blue-600 text-sm">Please complete the payment to confirm your order.</p>
+                    </div>
+                    
+                    <RazorpayPayment
+                      amount={getFinalTotal()}
+                      orderId={createdOrder._id}
+                      onSuccess={handlePaymentSuccess}
+                      onFailure={handlePaymentFailure}
+                      buttonText={`Pay ₹${getFinalTotal()} with UPI`}
+                    />
+                  </div>
+                ) : (
+                  // COD order completed
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+                    <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                    <h3 className="font-semibold text-green-900">Order Placed Successfully!</h3>
+                    <p className="text-green-700 text-sm">Order Number: {createdOrder.orderNumber}</p>
+                  </div>
+                )}
                 
                 <p className="text-xs text-gray-500 text-center">
                   By placing this order, you agree to our Terms of Service and Privacy Policy.

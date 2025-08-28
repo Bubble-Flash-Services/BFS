@@ -36,6 +36,38 @@ const couponSchema = new mongoose.Schema({
     type: Number,
     min: 0
   },
+  couponType: {
+    type: String,
+    enum: [
+      'welcome',
+      'festival_seasonal', 
+      'referral',
+      'loyalty',
+      'minimum_order',
+      'limited_time',
+      'service_specific'
+    ],
+    required: true
+  },
+  targetAudience: {
+    type: String,
+    enum: ['new_customers', 'existing_customers', 'all_customers'],
+    default: 'all_customers'
+  },
+  autoApply: {
+    type: Boolean,
+    default: false
+  },
+  showOnHomepage: {
+    type: Boolean,
+    default: false
+  },
+  priority: {
+    type: Number,
+    default: 1,
+    min: 1,
+    max: 10
+  },
   validFrom: {
     type: Date,
     required: true

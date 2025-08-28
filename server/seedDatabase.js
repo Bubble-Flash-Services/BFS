@@ -163,7 +163,7 @@ const seedDatabase = async () => {
     const packages = await Package.insertMany([
       // Car Packages
       {
-        serviceId: services[0]._id, // Basic Car Wash
+        service: services[0]._id, // Basic Car Wash
         name: 'Quick Shine',
         description: 'Quick exterior wash for busy schedules',
         price: 199,
@@ -182,7 +182,7 @@ const seedDatabase = async () => {
         sortOrder: 1
       },
       {
-        serviceId: services[1]._id, // Premium Car Wash
+        service: services[1]._id, // Premium Car Wash
         name: 'Complete Care',
         description: 'Comprehensive car cleaning inside and out',
         price: 399,
@@ -204,7 +204,7 @@ const seedDatabase = async () => {
       },
       // Bike Packages
       {
-        serviceId: services[2]._id, // Basic Bike Wash
+        service: services[2]._id, // Basic Bike Wash
         name: 'Shine Bike',
         description: 'Quick and effective bike cleaning',
         price: 99,
@@ -222,7 +222,7 @@ const seedDatabase = async () => {
         sortOrder: 1
       },
       {
-        serviceId: services[3]._id, // Premium Bike Detailing
+        service: services[3]._id, // Premium Bike Detailing
         name: 'Pro Detailing',
         description: 'Complete bike detailing service',
         price: 199,

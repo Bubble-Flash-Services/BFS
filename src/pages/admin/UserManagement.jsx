@@ -8,92 +8,210 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 0
+  });
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeUsers: 0,
+    googleUsers: 0,
+    localUsers: 0
+  });
 
-  // Mock user data - replace with API call
+  // Modal states
+  const [viewModal, setViewModal] = useState({ open: false, user: null });
+  const [editModal, setEditModal] = useState({ open: false, user: null });
+  const [deleteModal, setDeleteModal] = useState({ open: false, user: null });
+
+  // Fetch users from API
   useEffect(() => {
-    const mockUsers = [
-      {
-        id: 1,
-        name: 'Darvin Kumar',
-        email: 'darvin@example.com',
-        phone: '9566751053',
-        location: 'HSR Layout, Bangalore',
-        joinedDate: '2025-01-15',
-        totalBookings: 12,
-        totalSpent: 2400,
-        status: 'active'
-      },
-      {
-        id: 2,
-        name: 'Priya Sharma',
-        email: 'priya.sharma@example.com',
-        phone: '9876543210',
-        location: 'Koramangala, Bangalore',
-        joinedDate: '2025-02-20',
-        totalBookings: 8,
-        totalSpent: 1600,
-        status: 'active'
-      },
-      {
-        id: 3,
-        name: 'Rajesh Kumar',
-        email: 'rajesh.k@example.com',
-        phone: '9123456789',
-        location: 'Whitefield, Bangalore',
-        joinedDate: '2025-01-08',
-        totalBookings: 15,
-        totalSpent: 3200,
-        status: 'active'
-      },
-      {
-        id: 4,
-        name: 'Anita Singh',
-        email: 'anita.singh@example.com',
-        phone: '9555666777',
-        location: 'Indiranagar, Bangalore',
-        joinedDate: '2025-03-10',
-        totalBookings: 5,
-        totalSpent: 800,
-        status: 'inactive'
-      },
-      {
-        id: 5,
-        name: 'Vikram Patel',
-        email: 'vikram.patel@example.com',
-        phone: '9444555666',
-        location: 'Electronic City, Bangalore',
-        joinedDate: '2025-02-05',
-        totalBookings: 20,
-        totalSpent: 4500,
-        status: 'active'
+    fetchUsers();
+  }, [pagination.page, statusFilter]);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('adminToken');
+      
+      if (!token) {
+        console.error('Admin token not found');
+        setLoading(false);
+        return;
       }
-    ];
 
-    setTimeout(() => {
-      setUsers(mockUsers);
-      setFilteredUsers(mockUsers);
+      const params = new URLSearchParams({
+        page: pagination.page,
+        limit: pagination.limit,
+        status: statusFilter
+      });
+
+      if (searchTerm) {
+        params.append('search', searchTerm);
+      }
+
+      const response = await fetch(`/api/adminNew/users?${params}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        console.log('Admin token expired, redirecting to login...');
+        localStorage.removeItem('adminToken');
+        window.location.href = '/admin/login';
+        return;
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        // Helper function to safely format dates
+        const formatDate = (dateValue) => {
+          if (!dateValue) return 'N/A';
+          try {
+            const date = new Date(dateValue);
+            if (isNaN(date.getTime())) return 'N/A';
+            return date.toISOString().split('T')[0];
+          } catch (error) {
+            return 'N/A';
+          }
+        };
+
+        // Transform API data to match frontend format
+        const transformedUsers = result.data.users.map(user => ({
+          id: user._id,
+          name: user.name || 'N/A',
+          email: user.email || 'N/A',
+          phone: user.phone || 'N/A',
+          location: user.address || 'N/A',
+          joinedDate: formatDate(user.createdAt),
+          totalBookings: user.totalBookings || user.totalOrders || 0,
+          totalSpent: user.totalSpent || 0,
+          status: user.status || 'active', // Use the actual status field from schema
+          provider: user.provider || 'local',
+          lastLogin: formatDate(user.lastLogin)
+        }));
+
+        setUsers(transformedUsers);
+        setFilteredUsers(transformedUsers);
+        setPagination(result.data.pagination);
+        setStats(result.data.stats);
+      } else {
+        console.error('Failed to fetch users:', result.message);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
       setLoading(false);
-    }, 1000);
-  }, []);
+    }
+  };
 
-  // Filter users based on search term and status
+  // Fetch users when component mounts or filters change
   useEffect(() => {
-    let filtered = users;
+    fetchUsers();
+  }, [pagination.page, statusFilter]);
 
+  // Search functionality
+  useEffect(() => {
     if (searchTerm) {
-      filtered = filtered.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.phone.includes(searchTerm)
-      );
+      // Debounce search
+      const timeoutId = setTimeout(() => {
+        fetchUsers();
+      }, 500);
+      
+      return () => clearTimeout(timeoutId);
+    } else {
+      fetchUsers();
     }
+  }, [searchTerm]);
 
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(user => user.status === statusFilter);
+  // Handle page changes
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+  };
+
+  // Handle status filter change
+  const handleStatusFilterChange = (newStatus) => {
+    setStatusFilter(newStatus);
+    setPagination(prev => ({ ...prev, page: 1 })); // Reset to first page
+  };
+
+  // Action handlers
+  const handleViewUser = (userId) => {
+    const user = users.find(u => u.id === userId);
+    setViewModal({ open: true, user });
+  };
+
+  const handleEditUser = (userId) => {
+    const user = users.find(u => u.id === userId);
+    setEditModal({ open: true, user });
+  };
+
+  const handleDeleteUser = (userId) => {
+    const user = users.find(u => u.id === userId);
+    setDeleteModal({ open: true, user });
+  };
+
+  // Update user status
+  const updateUserStatus = async (userId, newStatus) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`/api/adminNew/users/${userId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (response.ok) {
+        // Update local state
+        setUsers(prev => prev.map(user => 
+          user.id === userId ? { ...user, status: newStatus } : user
+        ));
+        setFilteredUsers(prev => prev.map(user => 
+          user.id === userId ? { ...user, status: newStatus } : user
+        ));
+        setEditModal({ open: false, user: null });
+        fetchUsers(); // Refresh data
+      } else {
+        console.error('Failed to update user status');
+      }
+    } catch (error) {
+      console.error('Error updating user status:', error);
     }
+  };
 
-    setFilteredUsers(filtered);
-  }, [users, searchTerm, statusFilter]);
+  // Delete user
+  const deleteUser = async (userId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`/api/adminNew/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        // Remove from local state
+        setUsers(prev => prev.filter(user => user.id !== userId));
+        setFilteredUsers(prev => prev.filter(user => user.id !== userId));
+        setDeleteModal({ open: false, user: null });
+        fetchUsers(); // Refresh data
+      } else {
+        console.error('Failed to delete user');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -101,25 +219,10 @@ const UserManagement = () => {
         return 'bg-green-100 text-green-800';
       case 'inactive':
         return 'bg-red-100 text-red-800';
+      case 'suspended':
+        return 'bg-yellow-100 text-yellow-800';
       default:
         return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const handleViewUser = (userId) => {
-    // Implement view user details
-    console.log('View user:', userId);
-  };
-
-  const handleEditUser = (userId) => {
-    // Implement edit user
-    console.log('Edit user:', userId);
-  };
-
-  const handleDeleteUser = (userId) => {
-    // Implement delete user
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      console.log('Delete user:', userId);
     }
   };
 
@@ -242,6 +345,7 @@ const UserManagement = () => {
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
+                  <option value="suspended">Suspended</option>
                 </select>
               </div>
             </div>
@@ -354,6 +458,148 @@ const UserManagement = () => {
           )}
         </div>
       </div>
+
+      {/* View User Modal */}
+      {viewModal.open && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">User Details</h3>
+              <button
+                onClick={() => setViewModal({ open: false, user: null })}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            {viewModal.user && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Name</label>
+                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.name}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.email}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Phone</label>
+                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.phone}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Location</label>
+                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.location}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Join Date</label>
+                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.joinedDate}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Status</label>
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(viewModal.user.status)}`}>
+                    {viewModal.user.status}
+                  </span>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Total Bookings</label>
+                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.totalBookings}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Total Spent</label>
+                  <p className="mt-1 text-sm text-gray-900">₹{viewModal.user.totalSpent.toLocaleString()}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Provider</label>
+                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.provider}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Last Login</label>
+                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.lastLogin}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {editModal.open && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Edit User Status</h3>
+              <button
+                onClick={() => setEditModal({ open: false, user: null })}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            {editModal.user && (
+              <div>
+                <p className="mb-4">Change status for <strong>{editModal.user.name}</strong></p>
+                <div className="space-y-2">
+                  {['active', 'inactive', 'suspended'].map(status => (
+                    <button
+                      key={status}
+                      onClick={() => updateUserStatus(editModal.user.id, status)}
+                      className={`w-full text-left px-3 py-2 rounded-md ${
+                        editModal.user.status === status
+                          ? 'bg-blue-100 text-blue-800 border border-blue-300'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(status)}`}>
+                        {status}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Delete User Modal */}
+      {deleteModal.open && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-red-600">Delete User</h3>
+              <button
+                onClick={() => setDeleteModal({ open: false, user: null })}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            {deleteModal.user && (
+              <div>
+                <p className="mb-6">
+                  Are you sure you want to delete <strong>{deleteModal.user.name}</strong>? 
+                  This action cannot be undone.
+                </p>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => deleteUser(deleteModal.user.id)}
+                    className="flex-1 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => setDeleteModal({ open: false, user: null })}
+                    className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </AdminLayout>
   );
 };

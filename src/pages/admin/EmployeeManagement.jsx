@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Eye, Save, X, User, Phone, MapPin, Calendar } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Save, X, User, Phone, MapPin, Calendar, RefreshCw } from 'lucide-react';
 import AdminLayout from '../../components/AdminLayout';
 
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
-  const [bookings, setBookings] = useState([]);
+  const [unassignedBookings, setUnassignedBookings] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [assigning, setAssigning] = useState(false);
+  const [stats, setStats] = useState({
+    totalEmployees: 0,
+    activeEmployees: 0,
+    carSpecialists: 0,
+    bikeSpecialists: 0,
+    laundrySpecialists: 0
+  });
 
   // Form state for employee
   const [formData, setFormData] = useState({
@@ -18,131 +27,74 @@ const EmployeeManagement = () => {
     phone: '',
     address: '',
     specialization: 'car',
-    experience: '',
     salary: '',
-    joinDate: '',
-    status: 'active',
     emergencyContact: '',
-    aadharNumber: '',
-    profileImage: ''
+    bankDetails: {
+      accountNumber: '',
+      ifsc: '',
+      bankName: ''
+    }
   });
 
-  // Mock employee data
+  // Fetch employees from API
   useEffect(() => {
-    const mockEmployees = [
-      {
-        id: 1,
-        name: 'Ravi Kumar',
-        email: 'ravi.kumar@bubbleflash.com',
-        phone: '9876543210',
-        address: 'HSR Layout, Bangalore',
-        specialization: 'car',
-        experience: '3 years',
-        salary: 25000,
-        joinDate: '2024-01-15',
-        status: 'active',
-        emergencyContact: '9876543211',
-        aadharNumber: '1234-5678-9012',
-        assignedBookings: 8,
-        completedToday: 3,
-        profileImage: ''
-      },
-      {
-        id: 2,
-        name: 'Priya Sharma',
-        email: 'priya.sharma@bubbleflash.com',
-        phone: '9876543220',
-        address: 'Koramangala, Bangalore',
-        specialization: 'bike',
-        experience: '2 years',
-        salary: 22000,
-        joinDate: '2024-03-10',
-        status: 'active',
-        emergencyContact: '9876543221',
-        aadharNumber: '2345-6789-0123',
-        assignedBookings: 5,
-        completedToday: 2,
-        profileImage: ''
-      },
-      {
-        id: 3,
-        name: 'Amit Singh',
-        email: 'amit.singh@bubbleflash.com',
-        phone: '9876543230',
-        address: 'Whitefield, Bangalore',
-        specialization: 'laundry',
-        experience: '4 years',
-        salary: 28000,
-        joinDate: '2023-11-20',
-        status: 'active',
-        emergencyContact: '9876543231',
-        aadharNumber: '3456-7890-1234',
-        assignedBookings: 12,
-        completedToday: 5,
-        profileImage: ''
-      },
-      {
-        id: 4,
-        name: 'Sunita Devi',
-        email: 'sunita.devi@bubbleflash.com',
-        phone: '9876543240',
-        address: 'Indiranagar, Bangalore',
-        specialization: 'laundry',
-        experience: '1 year',
-        salary: 20000,
-        joinDate: '2024-06-01',
-        status: 'inactive',
-        emergencyContact: '9876543241',
-        aadharNumber: '4567-8901-2345',
-        assignedBookings: 0,
-        completedToday: 0,
-        profileImage: ''
-      }
-    ];
-
-    const mockBookings = [
-      {
-        id: 'BF001',
-        customerName: 'Darvin Kumar',
-        phone: '9566751053',
-        serviceMode: 'car',
-        plan: 'Premium Wash',
-        location: 'HSR Layout',
-        bookingDate: '2025-07-23',
-        status: 'pending',
-        assignedTo: null
-      },
-      {
-        id: 'BF002',
-        customerName: 'Anita Singh',
-        phone: '9555666777',
-        serviceMode: 'bike',
-        plan: 'Basic Wash',
-        location: 'Indiranagar',
-        bookingDate: '2025-07-23',
-        status: 'pending',
-        assignedTo: null
-      },
-      {
-        id: 'BF003',
-        customerName: 'Rajesh Kumar',
-        phone: '9123456789',
-        serviceMode: 'laundry',
-        plan: 'Dry Clean',
-        location: 'Whitefield',
-        bookingDate: '2025-07-23',
-        status: 'assigned',
-        assignedTo: 3
-      }
-    ];
-
-    setTimeout(() => {
-      setEmployees(mockEmployees);
-      setBookings(mockBookings);
-      setLoading(false);
-    }, 1000);
+    fetchEmployees();
+    fetchUnassignedBookings();
   }, []);
 
+  const fetchEmployees = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch('/api/adminNew/employees', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        localStorage.removeItem('adminToken');
+        window.location.href = '/admin/login';
+        return;
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        setEmployees(result.data.employees);
+        setStats(result.data.stats);
+      } else {
+        setError(result.message);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      setError('Failed to fetch employees');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUnassignedBookings = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch('/api/adminNew/bookings/unassigned', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setUnassignedBookings(result.data.bookings);
+      }
+    } catch (error) {
+      console.error('Error fetching unassigned bookings:', error);
+    }
+  };
+
+  // Handle create employee
   const handleCreateEmployee = () => {
     setFormData({
       name: '',
@@ -150,18 +102,19 @@ const EmployeeManagement = () => {
       phone: '',
       address: '',
       specialization: 'car',
-      experience: '',
       salary: '',
-      joinDate: '',
-      status: 'active',
       emergencyContact: '',
-      aadharNumber: '',
-      profileImage: ''
+      bankDetails: {
+        accountNumber: '',
+        ifsc: '',
+        bankName: ''
+      }
     });
     setEditingEmployee(null);
     setShowCreateModal(true);
   };
 
+  // Handle edit employee
   const handleEditEmployee = (employee) => {
     setFormData({
       name: employee.name,
@@ -169,130 +122,187 @@ const EmployeeManagement = () => {
       phone: employee.phone,
       address: employee.address,
       specialization: employee.specialization,
-      experience: employee.experience,
-      salary: employee.salary.toString(),
-      joinDate: employee.joinDate,
-      status: employee.status,
-      emergencyContact: employee.emergencyContact,
-      aadharNumber: employee.aadharNumber,
-      profileImage: employee.profileImage || ''
+      salary: employee.salary || '',
+      emergencyContact: employee.emergencyContact || '',
+      bankDetails: employee.bankDetails || {
+        accountNumber: '',
+        ifsc: '',
+        bankName: ''
+      }
     });
     setEditingEmployee(employee);
     setShowCreateModal(true);
   };
 
-  const handleDeleteEmployee = (employeeId) => {
-    if (window.confirm('Are you sure you want to delete this employee?')) {
-      setEmployees(employees.filter(emp => emp.id !== employeeId));
+  // Save employee (create or update)
+  const saveEmployee = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const url = editingEmployee 
+        ? `/api/adminNew/employees/${editingEmployee._id}`
+        : '/api/adminNew/employees';
+      
+      const method = editingEmployee ? 'PUT' : 'POST';
+      
+      const payload = {
+        ...formData,
+        password: editingEmployee ? undefined : 'defaultPassword123' // Default password for new employees
+      };
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setShowCreateModal(false);
+        fetchEmployees(); // Refresh employee list
+        alert(editingEmployee ? 'Employee updated successfully!' : 'Employee created successfully!');
+      } else {
+        alert(result.message || 'Failed to save employee');
+      }
+    } catch (error) {
+      console.error('Error saving employee:', error);
+      alert('Failed to save employee');
     }
   };
 
-  const handleSaveEmployee = () => {
-    if (!formData.name || !formData.email || !formData.phone) {
-      alert('Please fill in all required fields');
+  // Delete employee
+  const deleteEmployee = async (employeeId) => {
+    if (!window.confirm('Are you sure you want to delete this employee?')) {
       return;
     }
 
-    if (editingEmployee) {
-      // Update existing employee
-      setEmployees(employees.map(emp => 
-        emp.id === editingEmployee.id ? { 
-          ...editingEmployee, 
-          ...formData,
-          salary: parseFloat(formData.salary),
-          assignedBookings: editingEmployee.assignedBookings,
-          completedToday: editingEmployee.completedToday
-        } : emp
-      ));
-    } else {
-      // Create new employee
-      const newEmployee = {
-        id: Date.now(),
-        ...formData,
-        salary: parseFloat(formData.salary),
-        assignedBookings: 0,
-        completedToday: 0
-      };
-      setEmployees([...employees, newEmployee]);
-    }
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`/api/adminNew/employees/${employeeId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
-    setShowCreateModal(false);
-    setEditingEmployee(null);
+      const result = await response.json();
+      
+      if (result.success) {
+        fetchEmployees(); // Refresh employee list
+        alert('Employee deleted successfully!');
+      } else {
+        alert(result.message || 'Failed to delete employee');
+      }
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+      alert('Failed to delete employee');
+    }
   };
 
+  // Assign booking to employee
+  const assignBooking = async () => {
+    if (!selectedBooking || !formData.assignedEmployee) {
+      alert('Please select an employee');
+      return;
+    }
+
+    try {
+      const selectedEmployee = employees.find(emp => emp._id === formData.assignedEmployee);
+      const confirmMessage = `Are you sure you want to assign this booking to ${selectedEmployee?.name}?`;
+      
+      if (!window.confirm(confirmMessage)) {
+        return;
+      }
+
+      setAssigning(true);
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`/api/adminNew/bookings/${selectedBooking._id}/assign`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          employeeId: formData.assignedEmployee
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        // Reset form and close modal
+        setFormData({
+          ...formData,
+          assignedEmployee: ''
+        });
+        handleCloseAssignModal();
+        
+        // Refresh data
+        fetchUnassignedBookings();
+        fetchEmployees(); // Refresh to update employee stats
+        
+        alert(`Booking successfully assigned to ${selectedEmployee?.name}!`);
+      } else {
+        alert(result.message || 'Failed to assign booking');
+      }
+    } catch (error) {
+      console.error('Error assigning booking:', error);
+      alert('Failed to assign booking. Please try again.');
+    } finally {
+      setAssigning(false);
+    }
+  };
+
+  // Handle opening assign modal
   const handleAssignBooking = (booking) => {
     setSelectedBooking(booking);
+    setFormData({
+      ...formData,
+      assignedEmployee: '' // Reset selected employee
+    });
     setShowAssignModal(true);
   };
 
-  const assignBookingToEmployee = (employeeId) => {
-    setBookings(bookings.map(booking => 
-      booking.id === selectedBooking.id 
-        ? { ...booking, assignedTo: employeeId, status: 'assigned' }
-        : booking
-    ));
-
-    // Update employee's assigned bookings count
-    setEmployees(employees.map(emp => 
-      emp.id === employeeId 
-        ? { ...emp, assignedBookings: emp.assignedBookings + 1 }
-        : emp
-    ));
-
+  // Handle closing assign modal
+  const handleCloseAssignModal = () => {
     setShowAssignModal(false);
     setSelectedBooking(null);
+    setFormData({
+      ...formData,
+      assignedEmployee: '' // Reset selected employee
+    });
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'inactive':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  // Format date helper
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-IN');
   };
 
+  // Get specialization badge color
   const getSpecializationColor = (specialization) => {
     switch (specialization) {
-      case 'car':
-        return 'bg-blue-100 text-blue-800';
-      case 'bike':
-        return 'bg-green-100 text-green-800';
-      case 'laundry':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+      case 'car': return 'bg-blue-100 text-blue-800';
+      case 'bike': return 'bg-green-100 text-green-800';
+      case 'laundry': return 'bg-purple-100 text-purple-800';
+      case 'all': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
-
-  const getEmployeeStats = () => {
-    const totalEmployees = employees.length;
-    const activeEmployees = employees.filter(emp => emp.status === 'active').length;
-    const totalAssigned = employees.reduce((sum, emp) => sum + emp.assignedBookings, 0);
-    const completedToday = employees.reduce((sum, emp) => sum + emp.completedToday, 0);
-
-    return { totalEmployees, activeEmployees, totalAssigned, completedToday };
-  };
-
-  const getUnassignedBookings = () => {
-    return bookings.filter(booking => booking.status === 'pending');
-  };
-
-  const stats = getEmployeeStats();
-  const unassignedBookings = getUnassignedBookings();
 
   if (loading) {
     return (
       <AdminLayout>
         <div className="p-6">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/3 mb-8"></div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-24 bg-gray-200 rounded"></div>
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-20 bg-gray-200 rounded"></div>
               ))}
             </div>
           </div>
@@ -305,390 +315,320 @@ const EmployeeManagement = () => {
     <AdminLayout>
       <div className="p-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Employee Management</h1>
-          <p className="text-gray-600">Manage your workforce and assign bookings</p>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">Employee Management</h1>
+            <p className="text-gray-600">Manage your team and assign bookings</p>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={fetchEmployees}
+              disabled={loading}
+              className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+              Refresh
+            </button>
+            <button
+              onClick={handleCreateEmployee}
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus size={16} />
+              Add Employee
+            </button>
+          </div>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
+
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">👥</span>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Employees</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalEmployees}</p>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h3 className="text-sm font-medium text-gray-500">Total Employees</h3>
+            <p className="text-2xl font-bold text-gray-900">{stats.totalEmployees}</p>
           </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">✅</span>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Active Employees</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.activeEmployees}</p>
-              </div>
-            </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h3 className="text-sm font-medium text-gray-500">Active</h3>
+            <p className="text-2xl font-bold text-green-600">{stats.activeEmployees}</p>
           </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">📋</span>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Assigned Today</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalAssigned}</p>
-              </div>
-            </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h3 className="text-sm font-medium text-gray-500">Car Specialists</h3>
+            <p className="text-2xl font-bold text-blue-600">{stats.carSpecialists}</p>
           </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">✨</span>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Completed Today</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.completedToday}</p>
-              </div>
-            </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h3 className="text-sm font-medium text-gray-500">Bike Specialists</h3>
+            <p className="text-2xl font-bold text-green-600">{stats.bikeSpecialists}</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h3 className="text-sm font-medium text-gray-500">Laundry Specialists</h3>
+            <p className="text-2xl font-bold text-purple-600">{stats.laundrySpecialists}</p>
           </div>
         </div>
 
         {/* Unassigned Bookings Section */}
         {unassignedBookings.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Unassigned Bookings ({unassignedBookings.length})</h2>
-              <p className="text-sm text-gray-600">Bookings waiting to be assigned to employees</p>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-yellow-800">
+                Unassigned Bookings ({unassignedBookings.length})
+              </h2>
+              <button
+                onClick={fetchUnassignedBookings}
+                className="text-yellow-600 hover:text-yellow-800"
+              >
+                <RefreshCw size={16} />
+              </button>
             </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {unassignedBookings.map((booking) => (
-                  <div key={booking.id} className="border border-gray-200 rounded-lg p-4 bg-yellow-50">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-semibold text-gray-900">{booking.id}</h3>
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getSpecializationColor(booking.serviceMode)}`}>
-                        {booking.serviceMode}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-1">Customer: {booking.customerName}</p>
-                    <p className="text-sm text-gray-600 mb-1">Plan: {booking.plan}</p>
-                    <p className="text-sm text-gray-600 mb-3">Location: {booking.location}</p>
-                    <button
-                      onClick={() => handleAssignBooking(booking)}
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-                    >
-                      Assign Employee
-                    </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {unassignedBookings.slice(0, 6).map((booking) => (
+                <div key={booking._id} className="bg-white p-4 rounded-lg border">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-medium">{booking.userId?.name || 'Unknown Customer'}</h3>
+                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                      {booking.orderStatus}
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Order: #{booking.orderNumber || booking._id.slice(-6)}
+                  </p>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Total: ₹{booking.totalAmount}
+                  </p>
+                  <button
+                    onClick={() => handleAssignBooking(booking)}
+                    className="w-full bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700"
+                  >
+                    Assign Employee
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Action Bar */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">All Employees</h2>
-          <button
-            onClick={handleCreateEmployee}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Employee
-          </button>
-        </div>
-
-        {/* Employees Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {employees.map((employee) => (
-            <div key={employee.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              {/* Employee Header */}
-              <div className="p-6 pb-4">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                    {employee.profileImage ? (
-                      <img src={employee.profileImage} alt={employee.name} className="w-12 h-12 rounded-full object-cover" />
-                    ) : (
-                      <User className="h-6 w-6 text-gray-600" />
-                    )}
-                  </div>
-                  <div className="ml-4 flex-1">
-                    <h3 className="font-semibold text-gray-900">{employee.name}</h3>
-                    <p className="text-sm text-gray-600">{employee.email}</p>
-                  </div>
-                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(employee.status)}`}>
-                    {employee.status}
-                  </span>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Phone className="h-4 w-4 mr-2" />
-                    {employee.phone}
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    {employee.address}
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Joined: {employee.joinDate}
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getSpecializationColor(employee.specialization)} capitalize`}>
-                    {employee.specialization} Specialist
-                  </span>
-                </div>
-
-                {/* Stats */}
-                <div className="mt-4 grid grid-cols-2 gap-4">
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-gray-900">{employee.assignedBookings}</p>
-                    <p className="text-xs text-gray-500">Assigned</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-green-600">{employee.completedToday}</p>
-                    <p className="text-xs text-gray-500">Completed Today</p>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="mt-4 flex justify-between items-center">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleEditEmployee(employee)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="Edit Employee"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteEmployee(employee.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Delete Employee"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                  
-                  <div className="text-sm text-gray-600">
-                    ₹{employee.salary.toLocaleString()}/month
-                  </div>
-                </div>
-              </div>
+        {/* Employees Table */}
+        <div className="bg-white rounded-lg shadow-sm">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-800">All Employees</h2>
+          </div>
+          
+          {employees.length === 0 ? (
+            <div className="p-8 text-center">
+              <User size={48} className="text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">No employees found</p>
             </div>
-          ))}
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Employee
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Contact
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Specialization
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Join Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {employees.map((employee) => (
+                    <tr key={employee._id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {employee.name}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            ID: {employee.employeeId || employee._id.slice(-6)}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{employee.email}</div>
+                        <div className="text-sm text-gray-500">{employee.phone}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getSpecializationColor(employee.specialization)}`}>
+                          {employee.specialization}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          employee.isActive 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {employee.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {formatDate(employee.joinDate)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEditEmployee(employee)}
+                            className="text-blue-600 hover:text-blue-900"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => deleteEmployee(employee._id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* Create/Edit Employee Modal */}
         {showCreateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              {/* Header */}
-              <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center rounded-t-2xl">
-                <h2 className="text-lg font-semibold">
-                  {editingEmployee ? 'Edit Employee' : 'Add Employee'}
-                </h2>
-                <button
-                  onClick={() => setShowCreateModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Form */}
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Name */}
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold">
+                    {editingEmployee ? 'Edit Employee' : 'Add New Employee'}
+                  </h2>
+                  <button
+                    onClick={() => setShowCreateModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name *
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Name *
                     </label>
                     <input
                       type="text"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter full name"
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
                     />
                   </div>
 
-                  {/* Email */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Email *
                     </label>
                     <input
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter email address"
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
                     />
                   </div>
 
-                  {/* Phone */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number *
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone *
                     </label>
                     <input
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter phone number"
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
                     />
                   </div>
 
-                  {/* Emergency Contact */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Address *
+                    </label>
+                    <textarea
+                      value={formData.address}
+                      onChange={(e) => setFormData({...formData, address: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows="2"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Specialization *
+                    </label>
+                    <select
+                      value={formData.specialization}
+                      onChange={(e) => setFormData({...formData, specialization: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                      <option value="car">Car Wash</option>
+                      <option value="bike">Bike Wash</option>
+                      <option value="laundry">Laundry</option>
+                      <option value="all">All Services</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Salary
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.salary}
+                      onChange={(e) => setFormData({...formData, salary: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Emergency Contact
                     </label>
                     <input
                       type="tel"
                       value={formData.emergencyContact}
-                      onChange={(e) => setFormData({ ...formData, emergencyContact: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter emergency contact"
+                      onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                  </div>
-
-                  {/* Specialization */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Specialization
-                    </label>
-                    <select
-                      value={formData.specialization}
-                      onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="car">Car Wash</option>
-                      <option value="bike">Bike Wash</option>
-                      <option value="laundry">Laundry</option>
-                    </select>
-                  </div>
-
-                  {/* Experience */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Experience
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.experience}
-                      onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="e.g., 2 years"
-                    />
-                  </div>
-
-                  {/* Salary */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Monthly Salary (₹)
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.salary}
-                      onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter monthly salary"
-                    />
-                  </div>
-
-                  {/* Join Date */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Join Date
-                    </label>
-                    <input
-                      type="date"
-                      value={formData.joinDate}
-                      onChange={(e) => setFormData({ ...formData, joinDate: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  {/* Aadhar Number */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Aadhar Number
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.aadharNumber}
-                      onChange={(e) => setFormData({ ...formData, aadharNumber: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="XXXX-XXXX-XXXX"
-                    />
-                  </div>
-
-                  {/* Status */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Status
-                    </label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
                   </div>
                 </div>
 
-                {/* Address */}
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Address
-                  </label>
-                  <textarea
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    rows="2"
-                    placeholder="Enter full address"
-                  />
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex space-x-4 mt-6">
+                <div className="flex justify-end space-x-3 mt-6">
                   <button
                     onClick={() => setShowCreateModal(false)}
-                    className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={handleSaveEmployee}
-                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
+                    onClick={saveEmployee}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                   >
-                    <Save className="h-4 w-4 mr-2" />
-                    {editingEmployee ? 'Update' : 'Add'} Employee
+                    {editingEmployee ? 'Update' : 'Create'} Employee
                   </button>
                 </div>
               </div>
@@ -698,54 +638,236 @@ const EmployeeManagement = () => {
 
         {/* Assign Booking Modal */}
         {showAssignModal && selectedBooking && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
-              {/* Header */}
-              <div className="border-b border-gray-200 p-4 flex justify-between items-center rounded-t-2xl">
-                <h2 className="text-lg font-semibold">Assign Booking</h2>
-                <button
-                  onClick={() => setShowAssignModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Content */}
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <div className="mb-4">
-                  <h3 className="font-medium text-gray-900 mb-2">Booking Details:</h3>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm"><strong>ID:</strong> {selectedBooking.id}</p>
-                    <p className="text-sm"><strong>Customer:</strong> {selectedBooking.customerName}</p>
-                    <p className="text-sm"><strong>Service:</strong> {selectedBooking.serviceMode} - {selectedBooking.plan}</p>
-                    <p className="text-sm"><strong>Location:</strong> {selectedBooking.location}</p>
-                  </div>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold">Assign Booking to Employee</h2>
+                  <button
+                    onClick={handleCloseAssignModal}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
 
+                {/* Comprehensive Booking Details */}
                 <div className="mb-6">
-                  <h3 className="font-medium text-gray-900 mb-2">Available Employees:</h3>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {employees
-                      .filter(emp => emp.status === 'active' && emp.specialization === selectedBooking.serviceMode)
-                      .map((employee) => (
-                        <button
-                          key={employee.id}
-                          onClick={() => assignBookingToEmployee(employee.id)}
-                          className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors"
-                        >
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <p className="font-medium text-gray-900">{employee.name}</p>
-                              <p className="text-sm text-gray-600">{employee.specialization} specialist</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-sm text-gray-600">{employee.assignedBookings} assigned</p>
-                            </div>
-                          </div>
-                        </button>
-                      ))}
+                  <h3 className="text-lg font-medium mb-4 text-gray-800">Booking Details</h3>
+                  
+                  {/* Basic Info */}
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600">Order Number</p>
+                        <p className="font-semibold text-lg">#{selectedBooking.orderNumber || selectedBooking._id.slice(-6)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Status</p>
+                        <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
+                          selectedBooking.orderStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          selectedBooking.orderStatus === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {(selectedBooking.orderStatus || 'pending').replace('_', ' ').toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Total Amount</p>
+                        <p className="font-bold text-xl text-green-600">₹{selectedBooking.totalAmount}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Order Date</p>
+                        <p className="font-medium">{formatDate(selectedBooking.createdAt)}</p>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Customer Information */}
+                  <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-medium text-gray-800 mb-3">Customer Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600">Name</p>
+                        <p className="font-medium">{selectedBooking.userId?.name || 'Unknown Customer'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Email</p>
+                        <p className="font-medium">{selectedBooking.userId?.email || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Phone</p>
+                        <p className="font-medium">{selectedBooking.userId?.phone || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Service Address */}
+                  {selectedBooking.serviceAddress && (
+                    <div className="bg-green-50 p-4 rounded-lg mb-4">
+                      <h4 className="font-medium text-gray-800 mb-3">Service Address</h4>
+                      <div className="space-y-2">
+                        <p className="font-medium">{selectedBooking.serviceAddress.fullAddress}</p>
+                        {selectedBooking.serviceAddress.city && (
+                          <p className="text-gray-600">
+                            {selectedBooking.serviceAddress.city}, {selectedBooking.serviceAddress.state} - {selectedBooking.serviceAddress.pincode}
+                          </p>
+                        )}
+                        {selectedBooking.serviceAddress.landmark && (
+                          <p className="text-sm text-gray-500">Landmark: {selectedBooking.serviceAddress.landmark}</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Service Items */}
+                  {selectedBooking.items && selectedBooking.items.length > 0 && (
+                    <div className="bg-purple-50 p-4 rounded-lg mb-4">
+                      <h4 className="font-medium text-gray-800 mb-3">Service Items</h4>
+                      <div className="space-y-3">
+                        {selectedBooking.items.map((item, index) => (
+                          <div key={index} className="bg-white p-3 rounded border">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <p className="font-medium">{item.serviceName}</p>
+                                {item.packageName && (
+                                  <p className="text-sm text-gray-600">Package: {item.packageName}</p>
+                                )}
+                                <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-semibold">₹{item.price}</p>
+                              </div>
+                            </div>
+                            
+                            {/* Add-ons */}
+                            {item.addOns && item.addOns.length > 0 && (
+                              <div className="mt-2 pt-2 border-t">
+                                <p className="text-xs text-gray-500 mb-1">Add-ons:</p>
+                                {item.addOns.map((addon, addonIndex) => (
+                                  <div key={addonIndex} className="flex justify-between text-sm">
+                                    <span>{addon.name} (x{addon.quantity})</span>
+                                    <span>₹{addon.price * addon.quantity}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Scheduled Information */}
+                  {(selectedBooking.scheduledDate || selectedBooking.scheduledTimeSlot) && (
+                    <div className="bg-orange-50 p-4 rounded-lg mb-4">
+                      <h4 className="font-medium text-gray-800 mb-3">Scheduled Information</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {selectedBooking.scheduledDate && (
+                          <div>
+                            <p className="text-sm text-gray-600">Scheduled Date</p>
+                            <p className="font-medium">{formatDate(selectedBooking.scheduledDate)}</p>
+                          </div>
+                        )}
+                        {selectedBooking.scheduledTimeSlot && (
+                          <div>
+                            <p className="text-sm text-gray-600">Time Slot</p>
+                            <p className="font-medium">{selectedBooking.scheduledTimeSlot}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Payment Information */}
+                  <div className="bg-yellow-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-medium text-gray-800 mb-3">Payment Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600">Payment Method</p>
+                        <p className="font-medium">{selectedBooking.paymentMethod || 'COD'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Payment Status</p>
+                        <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                          selectedBooking.paymentStatus === 'completed' ? 'bg-green-100 text-green-800' :
+                          selectedBooking.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {(selectedBooking.paymentStatus || 'pending').toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Customer Notes */}
+                  {selectedBooking.customerNotes && (
+                    <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                      <h4 className="font-medium text-gray-800 mb-2">Customer Notes</h4>
+                      <p className="text-gray-700 italic">"{selectedBooking.customerNotes}"</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Employee Assignment Section */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium mb-4 text-gray-800">Assign to Employee</h3>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Select Employee *
+                    </label>
+                    <select
+                      value={formData.assignedEmployee || ''}
+                      onChange={(e) => setFormData({...formData, assignedEmployee: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                      <option value="">Choose an employee...</option>
+                      {employees.filter(emp => emp.isActive).map((employee) => (
+                        <option key={employee._id} value={employee._id}>
+                          {employee.name} - {employee.specialization.toUpperCase()} Specialist
+                          {employee.phone && ` (${employee.phone})`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Show employee details when selected */}
+                  {formData.assignedEmployee && (
+                    <div className="bg-green-50 p-3 rounded-lg mb-4">
+                      {(() => {
+                        const selectedEmp = employees.find(emp => emp._id === formData.assignedEmployee);
+                        return selectedEmp ? (
+                          <div>
+                            <h5 className="font-medium text-green-800">Selected Employee:</h5>
+                            <p className="text-sm text-green-700">
+                              {selectedEmp.name} - {selectedEmp.specialization} specialist
+                            </p>
+                            <p className="text-sm text-green-600">{selectedEmp.email} | {selectedEmp.phone}</p>
+                          </div>
+                        ) : null;
+                      })()}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4 border-t">
+                  <button
+                    onClick={handleCloseAssignModal}
+                    className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={assignBooking}
+                    disabled={!formData.assignedEmployee || assigning}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                  >
+                    {assigning && (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    )}
+                    {assigning ? 'Assigning...' : 'Assign Booking'}
+                  </button>
                 </div>
               </div>
             </div>

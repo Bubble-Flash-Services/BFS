@@ -298,12 +298,6 @@ export default function ProfilePage() {
                 >
                   Order History
                 </button>
-                <button
-                  onClick={() => navigate('/addresses')}
-                  className="w-full text-left px-4 py-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors text-purple-700 font-medium"
-                >
-                  Manage Addresses
-                </button>
               </div>
             </div>
           </div>

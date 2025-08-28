@@ -5,6 +5,7 @@ import Coupon from '../models/Coupon.js';
 import Service from '../models/Service.js';
 import Package from '../models/Package.js';
 import AddOn from '../models/AddOn.js';
+import mongoose from 'mongoose';
 
 // Create new order
 export const createOrder = async (req, res) => {
@@ -19,11 +20,110 @@ export const createOrder = async (req, res) => {
       customerNotes
     } = req.body;
 
+    console.log('📋 Creating order with items:', items);
+
     let orderItems = [];
     let subtotal = 0;
 
-    // If items are not provided, get from cart
-    if (!items || items.length === 0) {
+    // If items are provided, process them
+    if (items && items.length > 0) {
+      for (const item of items) {
+        console.log('🔍 Processing item:', item);
+        
+        let service, packageData;
+        
+        // Try to find service by ID first (for real database IDs)
+        if (item.serviceId && mongoose.Types.ObjectId.isValid(item.serviceId)) {
+          service = await Service.findById(item.serviceId);
+        }
+        
+        // If no service found by ID, try to find by service type and name
+        if (!service) {
+          // Map cart types to service names
+          const serviceTypeMapping = {
+            'bike-wash': 'Basic Bike Wash',
+            'car-wash': 'Basic Car Wash',
+            'laundry': 'Laundry Service'
+          };
+          
+          const serviceName = serviceTypeMapping[item.type] || item.serviceName || 'Basic Car Wash';
+          service = await Service.findOne({ name: { $regex: serviceName, $options: 'i' } });
+          
+          console.log(`🔍 Found service by name "${serviceName}":`, !!service);
+        }
+
+        if (!service) {
+          // Fallback to first available service
+          service = await Service.findOne();
+          console.log('⚠️ Using fallback service:', service?.name);
+        }
+
+        if (!service) {
+          return res.status(404).json({
+            success: false,
+            message: 'No services available. Please contact support.'
+          });
+        }
+
+        // Try to find package by ID first
+        if (item.packageId && mongoose.Types.ObjectId.isValid(item.packageId)) {
+          packageData = await Package.findById(item.packageId);
+        }
+        
+        // If no package found by ID, try to find by name or use first available
+        if (!packageData) {
+          packageData = await Package.findOne({ service: service._id });
+          console.log(`🔍 Found package for service "${service.name}":`, packageData?.name);
+        }
+
+        // Use cart data directly, do NOT override with database values
+        const price = item.price || service.basePrice;
+        const packageName = item.packageName || item.name || packageData?.name || 'Custom Package';
+        
+        // REMOVED: Database override logic that was replacing cart prices/names
+        // We want to preserve the exact cart data from localStorage
+
+        // Process add-ons (keep as provided since they're custom)
+        const processedAddOns = item.addOns || [];
+
+        // Process laundry items (keep as provided since they're custom)
+        const laundryItems = item.laundryItems || [];
+
+        // Calculate totals
+        let addOnTotal = 0;
+        if (processedAddOns.length > 0) {
+          processedAddOns.forEach(addOn => {
+            addOnTotal += (addOn.price || 0) * (addOn.quantity || 1);
+          });
+        }
+
+        let laundryTotal = 0;
+        if (laundryItems.length > 0) {
+          laundryItems.forEach(laundryItem => {
+            laundryTotal += (laundryItem.pricePerItem || 0) * (laundryItem.quantity || 1);
+          });
+        }
+
+        const itemTotal = (price * (item.quantity || 1)) + addOnTotal + laundryTotal;
+        subtotal += itemTotal;
+
+        orderItems.push({
+          serviceId: service._id,
+          packageId: packageData?._id,
+          serviceName: item.serviceName || service.name,  // Use cart name first, then fallback
+          packageName: packageName,
+          quantity: item.quantity || 1,
+          price: price,
+          addOns: processedAddOns,
+          laundryItems: laundryItems,
+          vehicleType: item.vehicleType || item.category || 'standard',
+          specialInstructions: item.specialInstructions || item.notes || ''
+        });
+
+        console.log(`✅ Processed item: ${item.serviceName || service.name} - ${packageName} (₹${price})`);
+      }
+    } else {
+      // If no items provided, try to get from cart (existing logic)
       const cart = await Cart.findOne({ userId: req.user.id })
         .populate('items.serviceId')
         .populate('items.packageId')
@@ -38,76 +138,6 @@ export const createOrder = async (req, res) => {
 
       orderItems = cart.items;
       subtotal = cart.totalAmount;
-    } else {
-      // Process provided items
-      for (const item of items) {
-        const service = await Service.findById(item.serviceId);
-        if (!service) {
-          return res.status(404).json({
-            success: false,
-            message: `Service not found: ${item.serviceId}`
-          });
-        }
-
-        let packageData = null;
-        let price = service.basePrice;
-        let packageName = null;
-
-        if (item.packageId) {
-          packageData = await Package.findById(item.packageId);
-          if (!packageData) {
-            return res.status(404).json({
-              success: false,
-              message: `Package not found: ${item.packageId}`
-            });
-          }
-          price = packageData.price;
-          packageName = packageData.name;
-        }
-
-        // Process add-ons
-        const processedAddOns = [];
-        let addOnTotal = 0;
-        if (item.addOns && item.addOns.length > 0) {
-          for (const addOn of item.addOns) {
-            const addOnData = await AddOn.findById(addOn.addOnId);
-            if (addOnData) {
-              const addOnPrice = addOnData.price * (addOn.quantity || 1);
-              processedAddOns.push({
-                addOnId: addOn.addOnId,
-                name: addOnData.name,
-                quantity: addOn.quantity || 1,
-                price: addOnData.price
-              });
-              addOnTotal += addOnPrice;
-            }
-          }
-        }
-
-        // Calculate laundry items total
-        let laundryTotal = 0;
-        if (item.laundryItems && item.laundryItems.length > 0) {
-          item.laundryItems.forEach(laundryItem => {
-            laundryTotal += laundryItem.pricePerItem * laundryItem.quantity;
-          });
-        }
-
-        const itemTotal = (price * item.quantity) + addOnTotal + laundryTotal;
-        subtotal += itemTotal;
-
-        orderItems.push({
-          serviceId: item.serviceId,
-          packageId: item.packageId,
-          serviceName: service.name,
-          packageName,
-          quantity: item.quantity,
-          price: price,
-          addOns: processedAddOns,
-          laundryItems: item.laundryItems || [],
-          vehicleType: item.vehicleType,
-          specialInstructions: item.specialInstructions
-        });
-      }
     }
 
     // Apply coupon if provided
@@ -147,8 +177,14 @@ export const createOrder = async (req, res) => {
 
     const totalAmount = subtotal - discountAmount;
 
+    // Generate order number
+    const timestamp = Date.now().toString();
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const orderNumber = `BFS${timestamp.slice(-6)}${random}`;
+
     // Create order
     const order = new Order({
+      orderNumber,
       userId: req.user.id,
       items: orderItems,
       serviceAddress,
@@ -187,6 +223,11 @@ export const createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error('Create order error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      requestBody: req.body
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to create order',

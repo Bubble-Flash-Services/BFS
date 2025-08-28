@@ -2,6 +2,26 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import * as cartApi from '../api/cart';
 
+// Helper function to get default service images
+const getDefaultServiceImage = (serviceName) => {
+  if (!serviceName) return '/car/car1.png';
+  
+  const name = serviceName.toLowerCase();
+  
+  if (name.includes('car') || name.includes('vehicle')) {
+    return '/car/car1.png';
+  } else if (name.includes('bike') || name.includes('motorcycle') || name.includes('scooter')) {
+    return '/bike/bike1.png';
+  } else if (name.includes('helmet')) {
+    return '/helmet/helmethome.png';
+  } else if (name.includes('laundry') || name.includes('wash') || name.includes('clean')) {
+    return '/laundry/laundry1.png';
+  }
+  
+  // Default fallback
+  return '/car/car1.png';
+};
+
 const CartContext = createContext();
 
 export function useCart() {
@@ -26,6 +46,28 @@ export function CartProvider({ children }) {
       console.log('🛒 Cart items at unmount:', cartItems.map(item => ({id: item.id, name: item.name})));
     };
   }, [user?.email, cartItems]);
+
+  // Sync localStorage cart to database
+  const syncCartToDatabase = async () => {
+    if (!user || !token || cartItems.length === 0) return;
+    
+    setLoading(true);
+    try {
+      console.log('🔄 Syncing cart to database:', cartItems.length, 'items');
+      const response = await cartApi.syncCartToDatabase(token, cartItems);
+      if (response.success) {
+        console.log('✅ Cart synced successfully:', response.message);
+        // Reload cart from server to get the synced data
+        await loadCartFromServer();
+      } else {
+        console.error('❌ Failed to sync cart:', response.message);
+      }
+    } catch (error) {
+      console.error('💥 Error syncing cart to database:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Load cart when user logs in or on component mount
   useEffect(() => {
@@ -52,24 +94,59 @@ export function CartProvider({ children }) {
       if (response.success && response.data && response.data.items && response.data.items.length > 0) {
         // Convert backend cart format to frontend format
         const items = response.data.items || [];
-        setCartItems(items.map(item => ({
+        const formattedItems = items.map(item => ({
           id: item._id || item.serviceId,
           serviceId: item.serviceId,
           packageId: item.packageId,
-          name: item.serviceId?.name || item.name,
+          name: item.serviceName || item.name,
+          serviceName: item.serviceName,
+          packageName: item.packageName,
           price: item.price,
           quantity: item.quantity,
           addOns: item.addOns || [],
           vehicleType: item.vehicleType,
-          specialInstructions: item.specialInstructions
-        })));
+          specialInstructions: item.specialInstructions,
+          // Add image handling
+          img: item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
+          image: item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
+          // Add other properties as needed
+          category: item.category,
+          description: item.description,
+          packageDetails: item.packageDetails
+        }));
+        console.log('✅ Loaded cart from server:', formattedItems.length, 'items');
+        setCartItems(formattedItems);
+        
+        // Also save to localStorage for backup
+        const userCartKey = getUserCartKey(user);
+        localStorage.setItem(userCartKey, JSON.stringify(formattedItems));
       } else {
-        // If no server cart, try to load user-specific localStorage
+        // No server cart, try localStorage
+        console.log('No server cart found, checking localStorage...');
         loadUserSpecificCart();
+        
+        // If we found items in localStorage, sync them to server
+        const userCartKey = getUserCartKey(user);
+        const localCart = localStorage.getItem(userCartKey);
+        if (localCart) {
+          try {
+            const localCartItems = JSON.parse(localCart);
+            if (localCartItems.length > 0) {
+              console.log('🔄 Found localStorage cart, syncing to database...');
+              const syncResponse = await cartApi.syncCartToDatabase(token, localCartItems);
+              if (syncResponse.success) {
+                console.log('✅ localStorage cart synced to database');
+                // Don't clear localStorage - keep it as backup
+              }
+            }
+          } catch (error) {
+            console.error('Error parsing localStorage cart:', error);
+          }
+        }
       }
     } catch (error) {
-      console.error('Error loading cart from server:', error);
-      // Fallback to user-specific localStorage
+      console.error('💥 Error loading user cart:', error);
+      // Fallback to localStorage
       loadUserSpecificCart();
     } finally {
       setLoading(false);
@@ -197,7 +274,10 @@ export function CartProvider({ children }) {
           quantity: item.quantity,
           addOns: item.addOns || [],
           vehicleType: item.vehicleType,
-          specialInstructions: item.specialInstructions
+          specialInstructions: item.specialInstructions,
+          // Add image handling
+          img: item.image || item.img || getDefaultServiceImage(item.serviceId?.name || item.name),
+          image: item.image || item.img || getDefaultServiceImage(item.serviceId?.name || item.name)
         })));
       }
     } catch (error) {
@@ -283,28 +363,21 @@ export function CartProvider({ children }) {
         console.log('💾 Saving guest cart');
         localStorage.setItem('bubbleFlashCart', JSON.stringify(cartItems));
       }
-    } else if (cartItems.length === 0 && user) {
-      // Don't clear storage if cart is empty - user might want to keep their items
-      console.log('ℹ️ Cart is empty for user:', user.name, '- keeping existing storage');
     }
     console.log('💾 === SAVE EFFECT COMPLETE ===');
   }, [cartItems, user]);
 
   const addToCart = async (product) => {
-    // For now, always use local cart until we have proper services in database
-    // TODO: Re-enable server cart when services are properly seeded
-    addToLocalCart(product);
-    
-    // Uncomment below when services are properly seeded in database
-    /*
+    // Try server cart first for logged-in users
     if (user && token) {
-      // Add to server for logged-in users
       setLoading(true);
       try {
         const cartData = {
           serviceId: product.serviceId || product.id,
+          serviceName: product.name || product.serviceName, // Add service name for backend lookup
           packageId: product.packageId,
           quantity: 1,
+          price: product.price,
           addOns: product.addOns || [],
           vehicleType: product.vehicleType,
           specialInstructions: product.specialInstructions
@@ -328,7 +401,6 @@ export function CartProvider({ children }) {
       // Add to local cart for guest users
       addToLocalCart(product);
     }
-    */
   };
 
   const addToLocalCart = (product) => {
@@ -358,11 +430,6 @@ export function CartProvider({ children }) {
   };
 
   const removeFromCart = async (productId) => {
-    // For now, always use local cart
-    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
-    
-    // TODO: Re-enable server operations when services are seeded
-    /*
     if (user && token) {
       // Remove from server for logged-in users
       setLoading(true);
@@ -384,7 +451,6 @@ export function CartProvider({ children }) {
       // Remove from local cart for guest users
       setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
     }
-    */
   };
 
   const updateQuantity = async (productId, newQuantity) => {
@@ -393,11 +459,6 @@ export function CartProvider({ children }) {
       return;
     }
     
-    // For now, always use local cart
-    updateLocalQuantity(productId, newQuantity);
-    
-    // TODO: Re-enable server operations when services are seeded
-    /*
     if (user && token) {
       // Update on server for logged-in users
       setLoading(true);
@@ -419,7 +480,6 @@ export function CartProvider({ children }) {
       // Update local cart for guest users
       updateLocalQuantity(productId, newQuantity);
     }
-    */
   };
 
   const updateLocalQuantity = (productId, newQuantity) => {
@@ -446,8 +506,6 @@ export function CartProvider({ children }) {
       localStorage.removeItem('bubbleFlashCart');
     }
     
-    // TODO: Re-enable server operations when services are seeded
-    /*
     if (user && token) {
       // Clear server cart for logged-in users
       setLoading(true);
@@ -462,7 +520,6 @@ export function CartProvider({ children }) {
         setLoading(false);
       }
     }
-    */
   };
 
   const getCartTotal = () => {
@@ -483,7 +540,8 @@ export function CartProvider({ children }) {
     updateQuantity,
     clearCart,
     getCartTotal,
-    getCartItemsCount
+    getCartItemsCount,
+    syncCartToDatabase
   };
 
   return (

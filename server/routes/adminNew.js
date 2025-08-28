@@ -120,7 +120,7 @@ router.get('/users', authenticateAdmin, requirePermission('users'), async (req, 
     }
 
     if (status !== 'all') {
-      filter.isActive = status === 'active';
+      filter.status = status;
     }
 
     const skip = (page - 1) * limit;
@@ -140,7 +140,9 @@ router.get('/users', authenticateAdmin, requirePermission('users'), async (req, 
         $group: {
           _id: null,
           totalUsers: { $sum: 1 },
-          activeUsers: { $sum: { $cond: ['$isActive', 1, 0] } },
+          activeUsers: { $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] } },
+          inactiveUsers: { $sum: { $cond: [{ $eq: ['$status', 'inactive'] }, 1, 0] } },
+          suspendedUsers: { $sum: { $cond: [{ $eq: ['$status', 'suspended'] }, 1, 0] } },
           googleUsers: { $sum: { $cond: [{ $eq: ['$provider', 'google'] }, 1, 0] } },
           localUsers: { $sum: { $cond: [{ $eq: ['$provider', 'local'] }, 1, 0] } }
         }
@@ -160,6 +162,8 @@ router.get('/users', authenticateAdmin, requirePermission('users'), async (req, 
         stats: userStats[0] || {
           totalUsers: 0,
           activeUsers: 0,
+          inactiveUsers: 0,
+          suspendedUsers: 0,
           googleUsers: 0,
           localUsers: 0
         }
@@ -178,11 +182,19 @@ router.get('/users', authenticateAdmin, requirePermission('users'), async (req, 
 router.patch('/users/:userId/status', authenticateAdmin, requirePermission('users'), async (req, res) => {
   try {
     const { userId } = req.params;
-    const { isActive } = req.body;
+    const { status } = req.body;
+
+    // Validate status
+    if (!['active', 'inactive', 'suspended'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status. Must be active, inactive, or suspended'
+      });
+    }
 
     const user = await User.findByIdAndUpdate(
       userId,
-      { isActive },
+      { status },
       { new: true }
     ).select('-password');
 
@@ -195,7 +207,7 @@ router.patch('/users/:userId/status', authenticateAdmin, requirePermission('user
 
     res.json({
       success: true,
-      message: `User ${isActive ? 'activated' : 'deactivated'} successfully`,
+      message: `User status updated to ${status} successfully`,
       user
     });
   } catch (error) {
@@ -203,6 +215,95 @@ router.patch('/users/:userId/status', authenticateAdmin, requirePermission('user
     res.status(500).json({
       success: false,
       message: 'Failed to update user status'
+    });
+  }
+});
+
+// Update user status (PUT method for frontend compatibility)
+router.put('/users/:userId/status', authenticateAdmin, requirePermission('users'), async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    if (!['active', 'inactive', 'suspended'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status. Must be active, inactive, or suspended'
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { status },
+      { new: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `User status updated to ${status} successfully`,
+      user
+    });
+  } catch (error) {
+    console.error('Update user status error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update user status'
+    });
+  }
+});
+
+// Delete user
+router.delete('/users/:userId', authenticateAdmin, requirePermission('users'), async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Check if user has any orders (optional - you may want to keep this check)
+    const userOrders = await Order.countDocuments({ userId });
+    
+    if (userOrders > 0) {
+      // Instead of deleting, mark as inactive
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { status: 'inactive' },
+        { new: true }
+      ).select('-password');
+
+      return res.json({
+        success: true,
+        message: 'User deactivated (has existing orders)',
+        user,
+        deactivated: true
+      });
+    }
+
+    // If no orders, actually delete the user
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'User deleted successfully',
+      deleted: true
+    });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete user'
     });
   }
 });
@@ -494,7 +595,6 @@ router.get('/bookings', authenticateAdmin, requirePermission('bookings'), async 
     const [bookings, totalBookings] = await Promise.all([
       Order.find()
         .populate('userId', 'name email phone')
-        .populate('assignedEmployee', 'name employeeId specialization')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
@@ -528,6 +628,59 @@ router.get('/bookings', authenticateAdmin, requirePermission('bookings'), async 
     res.status(500).json({
       success: false,
       message: 'Failed to fetch bookings'
+    });
+  }
+});
+
+// Get unassigned bookings
+router.get('/bookings/unassigned', authenticateAdmin, requirePermission('bookings'), async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Find orders that don't have an assigned employee or have status 'pending' or 'confirmed'
+    const filter = {
+      $and: [
+        {
+          $or: [
+            { assignedEmployee: { $exists: false } },
+            { assignedEmployee: null }
+          ]
+        },
+        {
+          orderStatus: { $in: ['pending', 'confirmed'] }
+        }
+      ]
+    };
+
+    const [unassignedBookings, totalUnassigned] = await Promise.all([
+      Order.find(filter)
+        .populate('userId', 'name email phone')
+        .populate('items.serviceId', 'name')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Order.countDocuments(filter)
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        bookings: unassignedBookings,
+        pagination: {
+          page,
+          limit,
+          total: totalUnassigned,
+          pages: Math.ceil(totalUnassigned / limit)
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Get unassigned bookings error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch unassigned bookings'
     });
   }
 });
@@ -592,12 +745,14 @@ router.get('/coupons', authenticateAdmin, requirePermission('coupons'), async (r
     const limit = parseInt(req.query.limit) || 10;
     const search = req.query.search || '';
     const status = req.query.status || 'all';
+    const type = req.query.type || 'all';
 
     let filter = {};
 
     if (search) {
       filter.$or = [
         { code: { $regex: search, $options: 'i' } },
+        { name: { $regex: search, $options: 'i' } },
         { description: { $regex: search, $options: 'i' } }
       ];
     }
@@ -614,20 +769,35 @@ router.get('/coupons', authenticateAdmin, requirePermission('coupons'), async (r
       }
     }
 
+    if (type !== 'all') {
+      filter.couponType = type;
+    }
+
     const skip = (page - 1) * limit;
 
     const [coupons, totalCoupons] = await Promise.all([
       Coupon.find(filter)
+        .populate('applicableCategories', 'name')
+        .populate('applicableServices', 'name')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
       Coupon.countDocuments(filter)
     ]);
 
+    // Add computed fields for better frontend display
+    const enhancedCoupons = coupons.map(coupon => ({
+      ...coupon.toObject(),
+      typeLabel: getCouponTypeLabel(coupon.couponType),
+      isExpired: new Date() > coupon.validUntil,
+      isValid: coupon.isValid(),
+      usage: coupon.usageLimit ? `${coupon.usedCount}/${coupon.usageLimit}` : `${coupon.usedCount}/∞`
+    }));
+
     res.json({
       success: true,
       data: {
-        coupons,
+        coupons: enhancedCoupons,
         pagination: {
           page,
           limit,
@@ -644,6 +814,20 @@ router.get('/coupons', authenticateAdmin, requirePermission('coupons'), async (r
     });
   }
 });
+
+// Helper function for coupon type labels
+const getCouponTypeLabel = (type) => {
+  const labels = {
+    'welcome': 'Welcome Offer',
+    'festival_seasonal': 'Festival Special',
+    'referral': 'Referral Bonus',
+    'loyalty': 'Loyalty Reward',
+    'minimum_order': 'Minimum Order Discount',
+    'limited_time': 'Flash Sale',
+    'service_specific': 'Service Special'
+  };
+  return labels[type] || 'Special Offer';
+};
 
 // Create new coupon
 router.post('/coupons', authenticateAdmin, requirePermission('coupons'), async (req, res) => {

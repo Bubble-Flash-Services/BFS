@@ -111,6 +111,21 @@ const orderSchema = new mongoose.Schema({
     default: 'pending'
   },
   paymentId: String,
+  
+  // Razorpay specific fields
+  razorpayOrderId: String,
+  razorpayPaymentId: String,
+  razorpaySignature: String,
+  paidAt: Date,
+  paymentError: String,
+  paymentDetails: {
+    method: String,
+    bank: String,
+    wallet: String,
+    vpa: String,
+    email: String,
+    contact: String
+  },
   orderStatus: {
     type: String,
     enum: ['pending', 'confirmed', 'assigned', 'in_progress', 'completed', 'cancelled'],

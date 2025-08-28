@@ -2,6 +2,7 @@ import Cart from '../models/Cart.js';
 import Service from '../models/Service.js';
 import Package from '../models/Package.js';
 import AddOn from '../models/AddOn.js';
+import mongoose from 'mongoose';
 
 // Get user's cart
 export const getCart = async (req, res) => {
@@ -46,11 +47,50 @@ export const addToCart = async (req, res) => {
       addOns = [],
       laundryItems = [],
       vehicleType,
-      specialInstructions
+      specialInstructions,
+      serviceName,
+      price: customPrice
     } = req.body;
 
-    // Validate service exists
-    const service = await Service.findById(serviceId);
+    let service = null;
+    let actualServiceId = serviceId;
+
+    // Check if serviceId is a valid ObjectId or a custom ID
+    if (mongoose.Types.ObjectId.isValid(serviceId)) {
+      // Valid ObjectId - find by ID
+      service = await Service.findById(serviceId);
+    } else {
+      // Custom ID (like bikewash-1-timestamp) - find by name or use fallback
+      console.log(`🔍 Custom service ID detected: ${serviceId}`);
+      
+      if (serviceName) {
+        service = await Service.findOne({ name: serviceName });
+        if (service) {
+          actualServiceId = service._id;
+          console.log(`✅ Found service by name "${serviceName}": ${service._id}`);
+        }
+      }
+      
+      if (!service) {
+        // Fallback: find a default service based on category
+        const categoryMap = {
+          'bikewash': 'Basic Bike Wash',
+          'carwash': 'Basic Car Wash',
+          'helmet': 'Basic Helmet Wash',
+          'laundry': 'Basic Laundry'
+        };
+        
+        const category = Object.keys(categoryMap).find(cat => serviceId.includes(cat));
+        const fallbackServiceName = category ? categoryMap[category] : 'Basic Car Wash';
+        
+        service = await Service.findOne({ name: fallbackServiceName });
+        if (service) {
+          actualServiceId = service._id;
+          console.log(`⚠️ Using fallback service: ${fallbackServiceName} (${service._id})`);
+        }
+      }
+    }
+
     if (!service) {
       return res.status(404).json({
         success: false,
@@ -100,15 +140,18 @@ export const addToCart = async (req, res) => {
 
     // Check if item already exists in cart
     const existingItemIndex = cart.items.findIndex(item => 
-      item.serviceId.toString() === serviceId &&
+      item.serviceId.toString() === actualServiceId.toString() &&
       (packageId ? item.packageId?.toString() === packageId : !item.packageId)
     );
 
+    // Use custom price if provided, otherwise use calculated price
+    const finalPrice = customPrice || price;
+
     const cartItem = {
-      serviceId,
+      serviceId: actualServiceId, // Use the actual MongoDB ObjectId
       packageId: packageId || null,
       quantity,
-      price,
+      price: finalPrice,
       addOns: processedAddOns,
       laundryItems,
       vehicleType,
@@ -283,6 +326,98 @@ export const clearCart = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to clear cart',
+      error: error.message
+    });
+  }
+};
+
+// Sync localStorage cart to database
+export const syncCartToDatabase = async (req, res) => {
+  try {
+    const { items } = req.body;
+
+    if (!items || !Array.isArray(items)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid cart items data'
+      });
+    }
+
+    // Clear existing cart
+    await Cart.findOneAndDelete({ userId: req.user.id });
+
+    if (items.length === 0) {
+      return res.json({
+        success: true,
+        message: 'Cart synced successfully (empty cart)',
+        data: { items: [], totalAmount: 0, totalItems: 0 }
+      });
+    }
+
+    // Create new cart with localStorage items
+    const cart = new Cart({ userId: req.user.id, items: [] });
+
+    for (const item of items) {
+      // Validate and process each item
+      const processedItem = {
+        serviceId: item.serviceId || item.id,
+        packageId: item.packageId || null,
+        quantity: item.quantity || 1,
+        price: item.packageDetails?.basePrice || item.basePrice || item.price,
+        addOns: (item.addOns || item.packageDetails?.addons || []).map(addon => ({
+          ...addon,
+          quantity: addon.quantity || 1
+        })),
+        laundryItems: item.laundryItems || [],
+        vehicleType: item.vehicleType || 'all',
+        specialInstructions: item.specialInstructions || ''
+      };
+
+      // Validate serviceId exists
+      try {
+        const service = await Service.findById(processedItem.serviceId);
+        if (service) {
+          cart.items.push(processedItem);
+        } else {
+          console.warn(`Service not found for ID: ${processedItem.serviceId}, skipping item`);
+        }
+      } catch (error) {
+        console.warn(`Invalid service ID: ${processedItem.serviceId}, skipping item`);
+      }
+    }
+
+    // Calculate totals
+    let totalAmount = 0;
+    cart.items.forEach(item => {
+      const itemTotal = item.price * item.quantity;
+      const addOnsTotal = item.addOns.reduce((sum, addOn) => sum + (addOn.price * addOn.quantity), 0);
+      const laundryTotal = item.laundryItems.reduce((sum, laundry) => sum + (laundry.pricePerItem * laundry.quantity), 0);
+      totalAmount += itemTotal + addOnsTotal + laundryTotal;
+    });
+
+    cart.totalAmount = totalAmount;
+
+    await cart.save();
+
+    // Populate the saved cart for response
+    const populatedCart = await Cart.findOne({ userId: req.user.id })
+      .populate('items.serviceId', 'name basePrice')
+      .populate('items.packageId', 'name price features')
+      .populate('items.addOns.addOnId', 'name price');
+
+    res.json({
+      success: true,
+      message: 'Cart synced successfully',
+      data: populatedCart || { items: [], totalAmount: 0, totalItems: 0 }
+    });
+
+    console.log(`✅ Cart synced for user ${req.user.id}: ${cart.items.length} items, total: ₹${totalAmount}`);
+
+  } catch (error) {
+    console.error('Sync cart error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to sync cart to database',
       error: error.message
     });
   }

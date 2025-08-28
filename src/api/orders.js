@@ -28,6 +28,15 @@ export async function getOrderById(token, orderId) {
   return res.json();
 }
 
+// Admin order operations
+export async function getAllOrders(adminToken, filters = {}) {
+  const queryParams = new URLSearchParams(filters);
+  const res = await fetch(`${API}/api/admin/bookings?${queryParams}`, {
+    headers: { Authorization: `Bearer ${adminToken}` },
+  });
+  return res.json();
+}
+
 export async function cancelOrder(token, orderId) {
   const res = await fetch(`${API}/api/orders/${orderId}/cancel`, {
     method: 'PUT',

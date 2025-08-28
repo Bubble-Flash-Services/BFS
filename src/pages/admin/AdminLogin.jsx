@@ -26,7 +26,7 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/admin/auth/login', {
+      const response = await fetch('/api/admin/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -140,11 +140,11 @@ const AdminLogin = () => {
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Demo Credentials:</h3>
-            <p className="text-sm text-gray-600">Email: admin@bubbleflash.com</p>
-            <p className="text-sm text-gray-600">Password: admin123</p>
+          {/* Help Text */}
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-gray-600 text-center">
+              Need credentials? Check the <code className="bg-gray-200 px-2 py-1 rounded text-xs">DEMO_CREDENTIALS.md</code> file
+            </p>
           </div>
         </div>
       </div>

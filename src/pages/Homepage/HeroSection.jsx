@@ -75,6 +75,21 @@ export default function HeroSection() {
 	const [phoneNumber, setPhoneNumber] = useState('');
 	const [fullAddress, setFullAddress] = useState('');
 	const [addressData, setAddressData] = useState(null); // Store complete address data
+
+	// Auto-populate form fields from user profile
+	useEffect(() => {
+		if (user) {
+			// Set phone number from user profile if available
+			if (user.phone && !phoneNumber) {
+				setPhoneNumber(user.phone);
+			}
+			// Set address from user profile if available and no current location is set
+			if (user.address && !fullAddress) {
+				setFullAddress(user.address);
+			}
+		}
+	}, [user, phoneNumber, fullAddress]);
+
 	// Add state for FAQ and testimonials carousel
 	const [openIdx, setOpenIdx] = useState(-1); // Changed from 0 to -1 so no FAQ is open by default
 	const [visibleCount, setVisibleCount] = useState(4);
@@ -113,18 +128,13 @@ export default function HeroSection() {
 					setSelectedLocation(result.data.fullAddress);
 					setAddressData(result.data);
 				} else {
-					console.log('Failed to get current location:', result.message);
-					// Show user-friendly message for permission issues
-					if (result.message && result.message.includes('denied')) {
-						console.info('Location permission denied. Using default location.');
-					}
-					// Fallback to default location
+					// Silently handle location errors and use default location
+					// No need to show error messages to users since we have a good fallback
 					setFullAddress('Bengaluru, India');
 					setSelectedLocation('Bengaluru, India');
 				}
 			} catch (error) {
-				console.error('Error getting current location:', error);
-				// Fallback to default location
+				// Silently handle errors and use default location
 				setFullAddress('Bengaluru, India');
 				setSelectedLocation('Bengaluru, India');
 			}
@@ -395,7 +405,7 @@ export default function HeroSection() {
 	return (
 		<>
 			{/* Hero Section with Modern Design */}
-			<section className="relative min-h-screen bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] overflow-hidden">
+			<section id="home" className="relative min-h-screen bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] overflow-hidden">
 				{/* Animated Background Elements */}
 				<div className="absolute inset-0">
 					<motion.div
@@ -481,6 +491,12 @@ export default function HeroSection() {
 								<motion.button
 									whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(255, 180, 0, 0.3)" }}
 									whileTap={{ scale: 0.95 }}
+									onClick={() => {
+										const element = document.getElementById('service-categories');
+										if (element) {
+											element.scrollIntoView({ behavior: 'smooth' });
+										}
+									}}
 									className="px-8 py-4 bg-[#FFB400] text-[#1F3C88] font-bold rounded-2xl shadow-lg hover:bg-[#e0a000] transition-colors flex items-center justify-center gap-2"
 								>
 									View Services
@@ -503,12 +519,8 @@ export default function HeroSection() {
 								className="grid grid-cols-3 gap-8 pt-8"
 							>
 								<div>
-									<div className="text-2xl font-bold text-[#FFB400]">200K+</div>
+									<div className="text-2xl font-bold text-[#FFB400]">2000+</div>
 									<div className="text-sm text-gray-300">Happy Customers</div>
-								</div>
-								<div>
-									<div className="text-2xl font-bold text-[#FFB400]">24/7</div>
-									<div className="text-sm text-gray-300">Service Available</div>
 								</div>
 								<div>
 									<div className="text-2xl font-bold text-[#FFB400]">100%</div>
@@ -561,7 +573,7 @@ export default function HeroSection() {
 													</option>
 												))}
 											</select>
-											<ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+											
 										</div>
 									</motion.div>
 
@@ -576,10 +588,11 @@ export default function HeroSection() {
 										</label>
 										<div className="relative">
 											<div className="flex items-center border-2 border-gray-200 rounded-xl focus-within:border-[#FFB400] transition-colors">
-												<MapPin className="ml-4 w-5 h-5 text-gray-400" />
 												<div className="flex-1">
 													<AddressAutocomplete
-														onAddressSelect={handleAddressSelect}
+														value={fullAddress}
+														onChange={setFullAddress}
+														onSelect={handleAddressSelect}
 														placeholder="Enter your location"
 														initialValue={fullAddress}
 													/>
@@ -761,7 +774,9 @@ export default function HeroSection() {
 					/>
 				</div>
 
-				<ServiceCategories />
+				<div id="service-categories">
+					<ServiceCategories />
+				</div>
 			</div>
 
 			{/* About Us Section with Light Theme */}

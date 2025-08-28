@@ -62,19 +62,20 @@ router.get('/dashboard/current-customers', authenticateToken, async (req, res) =
     const currentCustomers = await Order.find({
       createdAt: { $gte: today, $lt: tomorrow }
     })
-    .populate('user', 'name phone')
-    .populate('address', 'area')
-    .select('user address services totalAmount paymentMethod status createdAt')
+    .populate('userId', 'name phone email')
+    .select('userId serviceAddress items totalAmount paymentMethod orderStatus createdAt')
     .sort({ createdAt: -1 });
 
     const formattedCustomers = currentCustomers.map(order => ({
       id: order._id,
-      customer: order.user?.name || 'Unknown',
-      contactNo: order.user?.phone || 'N/A',
-      location: order.address?.area || 'N/A',
-      serviceMode: order.services?.[0]?.category || 'N/A',
+      customer: order.userId?.name || 'Unknown',
+      contactNo: order.userId?.phone || 'N/A',
+      location: order.serviceAddress?.fullAddress || 'N/A',
+      serviceMode: order.items?.[0]?.serviceName || 'N/A',
       paymentMethod: order.paymentMethod || 'N/A',
-      plan: order.services?.[0]?.name || 'N/A',
+      plan: order.items?.[0]?.packageName || 'N/A',
+      amount: order.totalAmount || 0,
+      status: order.orderStatus || 'pending',
       date: order.createdAt.toISOString().split('T')[0]
     }));
 

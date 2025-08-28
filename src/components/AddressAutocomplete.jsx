@@ -54,14 +54,18 @@ const AddressAutocomplete = ({
   // Handle input change
   const handleInputChange = (e) => {
     const newValue = e.target.value;
-    onChange(newValue);
+    if (onChange) {
+      onChange(newValue);
+    }
     debouncedSearch(newValue);
     setSelectedIndex(-1);
   };
 
   // Handle suggestion selection
   const handleSuggestionClick = (suggestion) => {
-    onChange(suggestion.display_name);
+    if (onChange) {
+      onChange(suggestion.display_name);
+    }
     setShowSuggestions(false);
     setSuggestions([]);
     setSelectedIndex(-1);
@@ -86,7 +90,9 @@ const AddressAutocomplete = ({
     try {
       const result = await addressAPI.getCurrentAddress();
       if (result.success) {
-        onChange(result.data.fullAddress);
+        if (onChange) {
+          onChange(result.data.fullAddress);
+        }
         setShowSuggestions(false);
         setSuggestions([]);
         
@@ -204,7 +210,9 @@ const AddressAutocomplete = ({
             <button
               type="button"
               onClick={() => {
-                onChange('');
+                if (onChange) {
+                  onChange('');
+                }
                 setShowSuggestions(false);
                 setSuggestions([]);
                 inputRef.current?.focus();
