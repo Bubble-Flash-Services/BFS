@@ -36,6 +36,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Serve static files
+app.use('/uploads', express.static('uploads'));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin/auth', authAdminRoutes);

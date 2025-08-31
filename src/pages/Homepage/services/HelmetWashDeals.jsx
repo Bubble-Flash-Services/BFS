@@ -14,7 +14,7 @@ const helmetWashPackages = {
         id: 1,
         name: "Basic Clean",
         image: "/helmet/commuter & midsize/aiease_1755850674727.jpg",
-        price: "₹79",
+        price: "₹99",
         description: "Essential Cleaning for Daily Use",
         features: [
           "Exterior foam wash",
@@ -27,7 +27,7 @@ const helmetWashPackages = {
         id: 2,
         name: "Fresh Shield",
         image: "/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg",
-        price: "₹119",
+        price: "₹169",
         description: "Complete Hygiene Package",
         features: [
           "Deep exterior wash",
@@ -41,7 +41,7 @@ const helmetWashPackages = {
         id: 3,
         name: "Premium Care",
         image: "/helmet/commuter & midsize/DeWatermark.ai_1755851413119.jpeg",
-        price: "₹159",
+        price: "₹199",
         description: "Professional Deep Clean & Protection",
         features: [
           "Professional exterior detailing",
@@ -62,7 +62,7 @@ const helmetWashPackages = {
         id: 4,
         name: "Sport Clean",
         image: "/helmet/commuter & midsize/aiease_1755850674727.jpg",
-        price: "₹99",
+        price: "₹199",
         description: "Performance Helmet Care",
         features: [
           "Aerodynamic shell cleaning",
@@ -75,7 +75,7 @@ const helmetWashPackages = {
         id: 5,
         name: "Race Ready",
         image: "/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg",
-        price: "₹149",
+        price: "₹249",
         description: "Competition Grade Cleaning",
         features: [
           "Professional shell polishing",
@@ -89,7 +89,7 @@ const helmetWashPackages = {
         id: 6,
         name: "Champion Shield",
         image: "/helmet/commuter & midsize/DeWatermark.ai_1755851413119.jpeg",
-        price: "₹199",
+        price: "₹299",
         description: "Ultimate Racing Protection",
         features: [
           "Race-grade shell treatment",
@@ -110,7 +110,7 @@ const helmetWashPackages = {
         id: 7,
         name: "Luxury Clean",
         image: "/helmet/sports/aiease_1755850623823.jpg",
-        price: "₹129",
+        price: "₹299",
         description: "Premium Helmet Maintenance",
         features: [
           "Luxury shell detailing",
@@ -122,8 +122,8 @@ const helmetWashPackages = {
       {
         id: 8,
         name: "Elite Care",
-        image: "/helmet/sports/DeWatermark.ai_1755851442324.jpeg",
-        price: "₹179",
+        image: "/helmet/sports/aiease_1755850623823.jpg",
+        price: "₹399",
         description: "Exclusive Premium Service",
         features: [
           "Hand-detailed cleaning",
@@ -137,7 +137,7 @@ const helmetWashPackages = {
         id: 9,
         name: "Platinum Service",
         image: "/helmet/helmethome.png",
-        price: "₹239",
+        price: "₹499",
         description: "Ultimate Luxury Experience",
         features: [
           "Concierge-level service",
@@ -323,10 +323,12 @@ export default function HelmetWashDeals() {
     const cartItem = {
       id: `helmetwash-${category}-${selectedPackage.id}-${Date.now()}`,
       name: selectedPackage.name,
+  packageName: selectedPackage.name,
       image: selectedPackage.image,
       price: calculateTotal(),
       category: "Helmet Wash",
       type: "helmet-wash",
+  includedFeatures: selectedPackage.features,
       packageDetails: {
         basePrice: parseInt(selectedPackage.price.replace('₹', '')),
         addons: selectedAddons,
@@ -676,6 +678,51 @@ export default function HelmetWashDeals() {
           onLogin={handleLoginSuccess}
         />
       )}
+
+      {/* Service Availability Information */}
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 border border-green-200">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Service Availability</h3>
+            <div className="w-20 h-1 bg-green-500 mx-auto rounded"></div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Free Service */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-green-100">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-white font-bold text-lg">✓</span>
+                </div>
+                <h4 className="text-xl font-bold text-green-700">Free Service</h4>
+              </div>
+              <p className="text-gray-600 text-lg">
+                Free within <span className="font-semibold text-green-600">5 km radius</span>
+              </p>
+            </div>
+
+            {/* Extra Charges */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-orange-100">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-white font-bold text-lg">₹</span>
+                </div>
+                <h4 className="text-xl font-bold text-orange-700">Extra Charges</h4>
+              </div>
+              <div className="space-y-2 text-gray-600">
+                <div className="flex justify-between">
+                  <span>5–10 km</span>
+                  <span className="font-semibold text-orange-600">₹50</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>10–15 km</span>
+                  <span className="font-semibold text-orange-600">₹100</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

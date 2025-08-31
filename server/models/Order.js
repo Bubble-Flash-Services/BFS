@@ -62,7 +62,16 @@ const orderSchema = new mongoose.Schema({
       pricePerItem: Number
     }],
     vehicleType: String,
-    specialInstructions: String
+    specialInstructions: String,
+    // Optional detailed info captured from cart for admin/user visibility
+    includedFeatures: [String],
+    planDetails: {
+      weeklyIncludes: [String],
+      washIncludes: [String],
+      biWeeklyIncludes: [String],
+      monthlyBonuses: [String],
+      platinumExtras: [String]
+    }
   }],
   serviceAddress: {
     fullAddress: {

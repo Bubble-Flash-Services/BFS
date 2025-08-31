@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Calendar, Download, Eye, User, Phone, MapPin, Package, Calendar as CalendarIcon, CreditCard, Clock, CheckCircle, AlertCircle, XCircle, RefreshCw } from 'lucide-react';
+import { Search, Filter, Calendar, Download, Eye, User, Phone, MapPin, Package, Calendar as CalendarIcon, CreditCard, Clock, CheckCircle, AlertCircle, XCircle, RefreshCw, X } from 'lucide-react';
 import AdminLayout from '../../components/AdminLayout';
 
 const BookingHistory = () => {
@@ -13,6 +13,7 @@ const BookingHistory = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [acting, setActing] = useState(false);
 
   // Function to fetch bookings from backend
   const fetchBookings = async (isRefresh = false) => {
@@ -247,8 +248,6 @@ const BookingHistory = () => {
     switch (status) {
       case 'completed':
         return 'bg-green-100 text-green-800';
-      case 'in-progress':
-        return 'bg-blue-100 text-blue-800';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'cancelled':
@@ -280,6 +279,40 @@ const BookingHistory = () => {
     const booking = bookings.find(b => b.id === bookingId);
     setSelectedBooking(booking);
     setShowDetailModal(true);
+  };
+
+  const handleCancelBooking = async (bookingId) => {
+    if (!bookingId) return;
+    if (!window.confirm('Cancel this booking?')) return;
+    try {
+      setActing(true);
+      const res = await fetch(`/api/adminNew/bookings/${bookingId}/cancel`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ reason: 'your order is cancalled by the the management' })
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        // Update state lists
+        const updated = bookings.map(b => b.id === bookingId ? {
+          ...b,
+          status: 'cancelled'
+        } : b);
+        setBookings(updated);
+        setFilteredBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: 'cancelled' } : b));
+        if (selectedBooking && selectedBooking.id === bookingId) setSelectedBooking({ ...selectedBooking, status: 'cancelled' });
+      } else {
+        alert(result.message || 'Failed to cancel');
+      }
+    } catch (e) {
+      console.error('Cancel booking failed:', e);
+      alert('Failed to cancel');
+    } finally {
+      setActing(false);
+    }
   };
 
   const closeDetailModal = () => {
@@ -503,6 +536,9 @@ const BookingHistory = () => {
                     Payment
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -562,17 +598,52 @@ const BookingHistory = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">₹{booking.amount}</div>
-                      <div className="text-sm text-gray-500">{booking.paymentMethod}</div>
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full mt-1 ${
-                        booking.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        booking.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
-                        booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        booking.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
+                      {/* Payment Status (only Completed or Pending) */}
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        (booking.paymentStatus === 'completed') ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                       }`}>
-                        {booking.status}
+                        {(booking.paymentStatus === 'completed') ? 'completed' : 'pending'}
                       </span>
+                      <div className="text-sm text-gray-900 mt-1">₹{booking.amount}</div>
+                    </td>
+                    {/* Order Status column: dropdown to set Completed/Pending/Cancelled */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <select
+                        value={(booking.status === 'completed' || booking.status === 'cancelled') ? booking.status : 'pending'}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value;
+                          try {
+                            setActing(true);
+                            const res = await fetch(`/api/adminNew/bookings/${booking.id}/status`, {
+                              method: 'PUT',
+                              headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+                                'Content-Type': 'application/json'
+                              },
+                              body: JSON.stringify({ status: newStatus })
+                            });
+                            const result = await res.json();
+                            if (res.ok && result.success) {
+                              const updated = bookings.map(b => b.id === booking.id ? { ...b, status: newStatus } : b);
+                              setBookings(updated);
+                              setFilteredBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: newStatus } : b));
+                              if (selectedBooking && selectedBooking.id === booking.id) setSelectedBooking({ ...selectedBooking, status: newStatus });
+                            } else {
+                              alert(result.message || 'Failed to update status');
+                            }
+                          } catch (err) {
+                            console.error('Update status failed:', err);
+                            alert('Failed to update status');
+                          } finally {
+                            setActing(false);
+                          }
+                        }}
+                        className={`text-xs font-semibold rounded-full px-2 py-1 ${getStatusColor(booking.status)}`}
+                      >
+                        <option value="completed">completed</option>
+                        <option value="pending">pending</option>
+                        <option value="cancelled">cancelled</option>
+                      </select>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
@@ -582,6 +653,7 @@ const BookingHistory = () => {
                       >
                         <Eye className="h-4 w-4" />
                       </button>
+                      {/* Cancel action removed; status managed via dropdown */}
                     </td>
                   </tr>
                 ))}
@@ -680,6 +752,60 @@ const BookingHistory = () => {
                                   <span className="text-gray-700">Base Service: {item.packageName || 'Custom Package'}</span>
                                   <span className="text-gray-900 font-medium">₹{item.price}</span>
                                 </div>
+                                  {Array.isArray(item.includedFeatures) && item.includedFeatures.length > 0 && (
+                                    <div className="mt-2">
+                                      <p className="text-xs font-semibold text-gray-700 mb-1">Included Features</p>
+                                      <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                                        {item.includedFeatures.map((f, i) => (
+                                          <li key={i}>{f}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {item.planDetails && (
+                                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                      {Array.isArray(item.planDetails.washIncludes) && item.planDetails.washIncludes.length > 0 && (
+                                        <div className="bg-white rounded p-3 border border-blue-200">
+                                          <p className="text-xs font-semibold text-gray-700 mb-1">Each Wash Includes</p>
+                                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                                            {item.planDetails.washIncludes.map((f, i) => <li key={i}>{f}</li>)}
+                                          </ul>
+                                        </div>
+                                      )}
+                                      {Array.isArray(item.planDetails.weeklyIncludes) && item.planDetails.weeklyIncludes.length > 0 && (
+                                        <div className="bg-white rounded p-3 border border-blue-200">
+                                          <p className="text-xs font-semibold text-gray-700 mb-1">Weekly Includes</p>
+                                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                                            {item.planDetails.weeklyIncludes.map((f, i) => <li key={i}>{f}</li>)}
+                                          </ul>
+                                        </div>
+                                      )}
+                                      {Array.isArray(item.planDetails.biWeeklyIncludes) && item.planDetails.biWeeklyIncludes.length > 0 && (
+                                        <div className="bg-white rounded p-3 border border-blue-200">
+                                          <p className="text-xs font-semibold text-gray-700 mb-1">Bi-Weekly Includes</p>
+                                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                                            {item.planDetails.biWeeklyIncludes.map((f, i) => <li key={i}>{f}</li>)}
+                                          </ul>
+                                        </div>
+                                      )}
+                                      {Array.isArray(item.planDetails.monthlyBonuses) && item.planDetails.monthlyBonuses.length > 0 && (
+                                        <div className="bg-white rounded p-3 border border-blue-200">
+                                          <p className="text-xs font-semibold text-gray-700 mb-1">Monthly Bonuses</p>
+                                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                                            {item.planDetails.monthlyBonuses.map((f, i) => <li key={i}>{f}</li>)}
+                                          </ul>
+                                        </div>
+                                      )}
+                                      {Array.isArray(item.planDetails.platinumExtras) && item.planDetails.platinumExtras.length > 0 && (
+                                        <div className="bg-white rounded p-3 border border-blue-200">
+                                          <p className="text-xs font-semibold text-gray-700 mb-1">Premium Extras</p>
+                                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                                            {item.planDetails.platinumExtras.map((f, i) => <li key={i}>{f}</li>)}
+                                          </ul>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
                               </div>
                             </div>
 
@@ -768,42 +894,44 @@ const BookingHistory = () => {
                       </div>
                     )}
 
-                    {/* Order Summary */}
-                    <div className="bg-white rounded-lg border-2 border-green-200 p-6 mt-6">
-                      <h5 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <CreditCard className="w-5 h-5 mr-2" />
-                        Order Summary
-                      </h5>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-600">Subtotal ({(selectedBooking.items || []).reduce((sum, item) => sum + item.quantity, 0)} items)</span>
-                          <span className="text-gray-900 font-medium">₹{selectedBooking.subtotal || selectedBooking.amount}</span>
-                        </div>
-                        
-                        {selectedBooking.discountAmount > 0 && (
+                    {/* Order Summary - Only show if payment is completed */}
+                    {selectedBooking.paymentStatus === 'completed' && (
+                      <div className="bg-white rounded-lg border-2 border-green-200 p-6 mt-6">
+                        <h5 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                          <CreditCard className="w-5 h-5 mr-2" />
+                          Order Summary
+                        </h5>
+                        <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Discount {selectedBooking.couponCode && `(${selectedBooking.couponCode})`}</span>
-                            <span className="text-green-600 font-medium">-₹{selectedBooking.discountAmount}</span>
+                            <span className="text-gray-600">Subtotal ({(selectedBooking.items || []).reduce((sum, item) => sum + item.quantity, 0)} items)</span>
+                            <span className="text-gray-900 font-medium">₹{selectedBooking.subtotal || selectedBooking.amount}</span>
                           </div>
-                        )}
-                        
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-600">Service charge</span>
-                          <span className="text-green-600 font-medium">FREE</span>
+                          
+                          {selectedBooking.discountAmount > 0 && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-600">Discount {selectedBooking.couponCode && `(${selectedBooking.couponCode})`}</span>
+                              <span className="text-green-600 font-medium">-₹{selectedBooking.discountAmount}</span>
+                            </div>
+                          )}
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">Service charge</span>
+                            <span className="text-green-600 font-medium">FREE</span>
+                          </div>
+                          
+                          <div className="border-t pt-3">
+                            <div className="flex items-center justify-between text-xl font-bold">
+                              <span className="text-gray-800">Total</span>
+                              <span className="text-green-600">₹{selectedBooking.amount}</span>
+                            </div>
+                          </div>
                         </div>
                         
-                        <div className="border-t pt-3">
-                          <div className="flex items-center justify-between text-xl font-bold">
-                            <span className="text-gray-800">Total</span>
-                            <span className="text-green-600">₹{selectedBooking.amount}</span>
-                          </div>
+                        <div className="mt-4 p-3 bg-green-50 rounded-lg">
+                          <p className="text-sm text-green-700 font-medium text-center">Ready to checkout</p>
                         </div>
                       </div>
-                      
-                      <div className="mt-4 p-3 bg-green-50 rounded-lg">
-                        <p className="text-sm text-green-700 font-medium text-center">Ready to checkout</p>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
 
@@ -856,13 +984,18 @@ const BookingHistory = () => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Payment Status</p>
-                      <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
-                        selectedBooking.paymentStatus === 'completed' ? 'bg-green-100 text-green-800' :
-                        selectedBooking.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {(selectedBooking.paymentStatus || 'Pending').charAt(0).toUpperCase() + (selectedBooking.paymentStatus || 'Pending').slice(1)}
-                      </span>
+                      {selectedBooking.paymentStatus === 'completed' ? (
+                        <span className="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800">
+                          Completed
+                        </span>
+                      ) : (
+                        <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+                          selectedBooking.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {(selectedBooking.paymentStatus || 'Pending').charAt(0).toUpperCase() + (selectedBooking.paymentStatus || 'Pending').slice(1)}
+                        </span>
+                      )}
                     </div>
                     {selectedBooking.estimatedDuration && (
                       <div>

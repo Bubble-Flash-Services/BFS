@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './components/AuthContext';
 import { CartProvider } from './components/CartContext';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
+import ScrollToTop from './components/ScrollToTop';
 import HeroSection from './pages/Homepage/HeroSection';
 import Footer from './components/Footer';
 // Placeholder imports for new pages
@@ -26,7 +27,6 @@ import AddressesPage from './pages/AddressesPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import BookingHistory from './pages/admin/BookingHistory';
-import AdvertisementManagement from './pages/admin/AdvertisementManagement';
 import CouponManagement from './pages/admin/CouponManagement';
 import EmployeeManagement from './pages/admin/EmployeeManagement';
 import EmployeeDashboard from './pages/employee/EmployeeDashboard';
@@ -46,6 +46,7 @@ function AppContent() {
 
   return (
     <div>
+      <ScrollToTop />
       {!isAdminRoute && !isEmployeeRoute && <Header />}
       <Routes>
         <Route path="/" element={
@@ -90,11 +91,6 @@ function AppContent() {
         <Route path="/admin/employees" element={
           <ProtectedAdminRoute>
             <EmployeeManagement />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/ads" element={
-          <ProtectedAdminRoute>
-            <AdvertisementManagement />
           </ProtectedAdminRoute>
         } />
         <Route path="/admin/coupons" element={

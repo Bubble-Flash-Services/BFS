@@ -4,7 +4,6 @@ import {
   LayoutDashboard, 
   Users, 
   History, 
-  Megaphone, 
   Ticket, 
   UserCheck,
   Menu, 
@@ -40,12 +39,6 @@ const AdminLayout = ({ children }) => {
       href: '/admin/employees',
       icon: UserCheck,
       active: location.pathname === '/admin/employees'
-    },
-    {
-      name: 'Advertisement',
-      href: '/admin/ads',
-      icon: Megaphone,
-      active: location.pathname === '/admin/ads'
     },
     {
       name: 'Coupons',

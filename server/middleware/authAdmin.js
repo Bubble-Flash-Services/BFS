@@ -100,7 +100,10 @@ export const requirePermission = (permission) => {
       });
     }
 
-    if (req.admin.role === 'superadmin' || req.admin.permissions.includes(permission)) {
+  const perms = Array.isArray(req.admin.permissions) ? req.admin.permissions : [];
+  const role = req.admin.role || 'admin';
+
+  if (role === 'superadmin' || perms.includes(permission)) {
       next();
     } else {
       res.status(403).json({

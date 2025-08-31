@@ -58,11 +58,10 @@ const AdvertisementManagement = () => {
     try {
       setLoading(true);
       const response = await advertisementAPI.getAdvertisements(filters);
-      setAdvertisements(response.data || []);
+      setAdvertisements(response.data);
     } catch (error) {
       toast.error('Failed to fetch advertisements');
       console.error(error);
-      setAdvertisements([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -270,7 +269,7 @@ const AdvertisementManagement = () => {
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
-        ) : (!advertisements || advertisements.length === 0) ? (
+        ) : advertisements.length === 0 ? (
           <div className="text-center py-12">
             <FaImage className="mx-auto text-4xl text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No advertisements found</h3>
@@ -287,7 +286,7 @@ const AdvertisementManagement = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {advertisements && advertisements.map(ad => (
+            {advertisements.map(ad => (
               <motion.div
                 key={ad._id}
                 initial={{ opacity: 0, y: 20 }}

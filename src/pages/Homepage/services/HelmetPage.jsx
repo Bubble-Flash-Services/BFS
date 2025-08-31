@@ -11,7 +11,7 @@ const helmetCategories = [
   },
   {
     name: 'Mid-Size Helmets ',
-    image: '/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg',
+    image: '/helmet/commuter & midsize/DeWatermark.ai_1755851413119.jpeg',
     category: 'midsize',
     description: 'Standard full face protection',
     fallbackIcon: '🛡️'

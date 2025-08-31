@@ -632,6 +632,70 @@ router.get('/bookings', authenticateAdmin, requirePermission('bookings'), async 
   }
 });
 
+// Cancel a booking (admin)
+router.put('/bookings/:bookingId/cancel', authenticateAdmin, requirePermission('bookings'), async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const reason = req.body?.reason || 'your order is cancalled by the the management';
+
+    // Accept either Mongo ObjectId or BFS orderNumber
+    let order = null;
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(bookingId);
+    if (isObjectId) {
+      order = await Order.findById(bookingId);
+    } else {
+      order = await Order.findOne({ orderNumber: bookingId });
+    }
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    if (order.orderStatus === 'completed') {
+      return res.status(400).json({ success: false, message: 'Completed orders cannot be cancelled' });
+    }
+
+    order.orderStatus = 'cancelled';
+    order.customerNotes = reason;
+    await order.save();
+
+    res.json({ success: true, message: 'Booking cancelled successfully', booking: order });
+  } catch (error) {
+    console.error('Admin cancel booking error:', error);
+    res.status(500).json({ success: false, message: 'Failed to cancel booking' });
+  }
+});
+
+// Update booking status (admin) - completed | pending | cancelled
+router.put('/bookings/:bookingId/status', authenticateAdmin, requirePermission('bookings'), async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { status } = req.body || {};
+    const allowed = ['completed', 'pending', 'cancelled'];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status. Use completed, pending, or cancelled.' });
+    }
+
+    // Find by ObjectId or orderNumber
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(bookingId);
+    const order = isObjectId ? await Order.findById(bookingId) : await Order.findOne({ orderNumber: bookingId });
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    // Prevent illegal transitions if needed (optional). For now allow any of the three.
+    order.orderStatus = status;
+    if (status === 'cancelled' && !order.customerNotes) {
+      order.customerNotes = 'your order is cancalled by the the management';
+    }
+    await order.save();
+
+    res.json({ success: true, message: 'Booking status updated', booking: order });
+  } catch (error) {
+    console.error('Admin update booking status error:', error);
+    res.status(500).json({ success: false, message: 'Failed to update booking status' });
+  }
+});
+
 // Get unassigned bookings
 router.get('/bookings/unassigned', authenticateAdmin, requirePermission('bookings'), async (req, res) => {
   try {

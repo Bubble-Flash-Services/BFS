@@ -31,10 +31,16 @@ export const createOrder = async (req, res) => {
         console.log('🔍 Processing item:', item);
         
         let service, packageData;
+        // Helper: only accept 24-char hex strings as valid ObjectIds
+        const isValidObjectIdString = (v) => typeof v === 'string' && /^[0-9a-fA-F]{24}$/.test(v);
         
         // Try to find service by ID first (for real database IDs)
-        if (item.serviceId && mongoose.Types.ObjectId.isValid(item.serviceId)) {
-          service = await Service.findById(item.serviceId);
+        if (item.serviceId) {
+          if (isValidObjectIdString(item.serviceId)) {
+            service = await Service.findById(item.serviceId);
+          } else {
+            console.log(`⚠️ Invalid service ID: ${item.serviceId}, skipping ID lookup`);
+          }
         }
         
         // If no service found by ID, try to find by service type and name
@@ -66,8 +72,12 @@ export const createOrder = async (req, res) => {
         }
 
         // Try to find package by ID first
-        if (item.packageId && mongoose.Types.ObjectId.isValid(item.packageId)) {
-          packageData = await Package.findById(item.packageId);
+        if (item.packageId) {
+          if (isValidObjectIdString(item.packageId)) {
+            packageData = await Package.findById(item.packageId);
+          } else {
+            console.log(`⚠️ Invalid package ID: ${item.packageId}, skipping ID lookup`);
+          }
         }
         
         // If no package found by ID, try to find by name or use first available
@@ -117,7 +127,15 @@ export const createOrder = async (req, res) => {
           addOns: processedAddOns,
           laundryItems: laundryItems,
           vehicleType: item.vehicleType || item.category || 'standard',
-          specialInstructions: item.specialInstructions || item.notes || ''
+          specialInstructions: item.specialInstructions || item.notes || '',
+          includedFeatures: item.packageDetails?.features || item.includedFeatures || [],
+          planDetails: item.planDetails || {
+            weeklyIncludes: item.packageDetails?.weeklyIncludes || [],
+            washIncludes: item.packageDetails?.washIncludes || [],
+            biWeeklyIncludes: item.packageDetails?.biWeeklyIncludes || [],
+            monthlyBonuses: item.packageDetails?.monthlyBonuses || [],
+            platinumExtras: item.packageDetails?.platinumExtras || []
+          }
         });
 
         console.log(`✅ Processed item: ${item.serviceName || service.name} - ${packageName} (₹${price})`);

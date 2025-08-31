@@ -13,7 +13,7 @@ const carWashPackages = {
         id: 1,
         name: "Quick Shine",
         image: "/car/hatchback/car1.png",
-        price: "₹199",
+        price: "₹249",
         originalPrice: null,
         description: "Get a professional-grade car wash with high-quality cleaning solutions — ideal for everyday shine and instant freshness.",
         features: [
@@ -30,7 +30,7 @@ const carWashPackages = {
       {
         id: 2,
         name: "Deluxe Car Wash",
-        image: "/car/hatchback/aiease_1755725602539.png",
+        image: "/car/hatchback/aiease_1755725753769.png",
         price: "₹399",
         originalPrice: null,
         description: "A fast and efficient wash that gives your car a clean look and a fresh feel — all at a pocket-friendly price.",
@@ -70,7 +70,7 @@ const carWashPackages = {
       {
         id: 'silver',
         name: "Silver Plan",
-        price: "₹749/month",
+        price: "₹999/month",
         description: "For light users who want basic care — just enough to keep the car looking clean and fresh.",
         features: [
           "4 washes/month (1 wash per week)",
@@ -80,7 +80,6 @@ const carWashPackages = {
           "Exterior wash with high-pressure water gun",
           "Normal foam wash (standard white foam)",
           "Tyre cleaning",
-          "Car mats cleaning"
         ],
         biWeeklyIncludes: [
           "Interior vacuum cleaning (Seats + Corners)",
@@ -90,7 +89,7 @@ const carWashPackages = {
       {
         id: 'gold',
         name: "Gold Plan",
-        price: "₹1,499/month",
+        price: "₹1,599/month",
         description: "Perfect for regular drivers who need complete maintenance. Keep your car clean, fresh, and polished — inside and out — with premium care.",
         features: [
           "6 washes/month (1–2 times a week based on customer preference)"
@@ -115,7 +114,7 @@ const carWashPackages = {
       {
         id: 'platinum',
         name: "Platinum Plan",
-        price: "₹2,499/month",
+        price: "₹2,399/month",
         description: "For premium users who want their car always showroom-ready. Ultimate monthly care with premium detailing, free products, and exclusive perks — ideal for those who expect the best.",
         features: [
           "8 washes/month (2 washes per week)",
@@ -140,127 +139,6 @@ const carWashPackages = {
       }
     ]
   },
-  suv: {
-    title: "SUV Car Wash Packages",
-    subtitle: "Tough Body. Bigger Space. Deeper Clean. Perfectly designed for your SUV's size and detailing needs.",
-    packages: [
-      {
-        id: 1,
-        name: "Quick Shine",
-        image: "/car/suv/car3.png",
-        price: "₹399",
-        originalPrice: null,
-        description: "Fast Exterior Refresh - Ideal for a quick shine after travel or city driving.",
-        features: [
-          "Exterior wash using high-pressure water gun",
-          "Foam wash (normal white foam)",
-          "Tyre cleaning",
-          "Car mats cleaning"
-        ]
-      },
-      {
-        id: 2,
-        name: "Deluxe SUV Wash",
-        image: "/car/suv/pexels-eng_hk-2153621871-33018219.png",
-        price: "₹599",
-        originalPrice: null,
-        description: "Complete Regular Cleaning – Inside + Outside. All Quick Shine services plus enhanced interior care.",
-        features: [
-          "All Quick Shine services",
-          "Red Foam Wash",
-          "Tyre & Rim polishing",
-          "Interior vacuum cleaning (seats, floor, boot)",
-          "Dashboard cleaning",
-          "Windshield cleaning + water spot removal"
-        ]
-      },
-      {
-        id: 3,
-        name: "Premium SUV Wash",
-        image: "/car/suv/luxury_suv.png",
-        price: "₹799",
-        originalPrice: null,
-        description: "Showroom-Style Deep Clean & Shine. Best before long drives, resale, or monthly detailing.",
-        features: [
-          "Diamond Foam Wash (glossy wax-rich foam)",
-          "Tyre & rim cleaning + polishing",
-          "Full interior vacuuming",
-          "Seat & mat cleaning",
-          "Dashboard cleaning",
-          "Windshield polishing",
-          "Car paper mats free",
-          "Free Premium Air Freshener"
-        ]
-      }
-    ],
-    monthlyPlans: [
-      {
-        id: 'silver',
-        name: "Silver Plan",
-        price: "₹1,199/month",
-        description: "For light SUV users who want basic care.",
-        features: [
-          "4 washes/month (1 wash per week)",
-          "Interior mat & vacuum cleaning – 1 time/month"
-        ],
-        weeklyIncludes: [
-          "Exterior wash using high-pressure water",
-          "Normal foam wash",
-          "Tyre cleaning",
-          "Car mats cleaning"
-        ]
-      },
-      {
-        id: 'gold',
-        name: "Gold Plan",
-        price: "₹2,099/month",
-        description: "For regular SUV users who need proper maintenance inside and out.",
-        features: [
-          "6 washes/month (1–2 washes per week)",
-          "1 Free Premium Air Freshener/month",
-          "1 Complete Premium Service/month"
-        ],
-        washIncludes: [
-          "Exterior wash",
-          "Red foam wash",
-          "Tyre & rim cleaning",
-          "Interior vacuum cleaning",
-          "Car mats cleaning",
-          "Dashboard cleaning"
-        ],
-        monthlyBonuses: [
-          "1 Complete Premium Service includes:",
-          "• Diamond foam wash",
-          "• Wax polish",
-          "• Dashboard polish",
-          "• Tyre polish"
-        ]
-      },
-      {
-        id: 'platinum',
-        name: "Platinum Plan",
-        price: "₹3,299/month",
-        description: "For premium users who want their SUV always showroom-ready.",
-        features: [
-          "8 washes/month (2 washes/week)",
-          "Weekly Polishing Package: Diamond Foam + Wax + Tyre + Dashboard Polish"
-        ],
-        washIncludes: [
-          "High-pressure exterior wash",
-          "Diamond foam wash (once/week)",
-          "Tyre & rim cleaning + polishing",
-          "Interior vacuum cleaning (including boot)",
-          "Dashboard + seat cleaning & polishing",
-          "Roof/ceiling dry clean",
-          "Windshield water spot removal"
-        ],
-        platinumExtras: [
-          "Free Tissue Box + Premium Perfume",
-          "Car Cover Cleaning – 2 times/month (returned after wash)"
-        ]
-      }
-    ]
-  },
   "sedans": {
     title: "Sedan Car Wash Packages",
     subtitle: "Bigger Car, Deeper Clean — Designed for Long Body Vehicles (Dzire, City, Verna, etc.)",
@@ -268,7 +146,7 @@ const carWashPackages = {
       {
         id: 1,
         name: "Quick Shine",
-        image: "/car/sedan/car2.png",
+        image: "/car/sedan/sedansimage.jpg",
         price: "₹299",
         originalPrice: null,
         description: "Clean Look. Fresh Feel. Fast and efficient exterior wash using premium products for a fresh look.",
@@ -281,7 +159,7 @@ const carWashPackages = {
       {
         id: 2,
         name: "Deluxe Car Wash",
-        image: "/car/sedan/luxury_sedan.png",
+        image: "/car/sedan/sedansimage.jpg",
         price: "₹499",
         originalPrice: null,
         description: "More Than Just a Wash. Interior + exterior care for regular weekly maintenance.",
@@ -290,13 +168,14 @@ const carWashPackages = {
           "Interior vacuum cleaning",
           "Dashboard cleaning",
           "Windshield water spot removal",
-          "Tyre & rim polishing"
+          "Tyre & rim polishing",
+          "Car mats cleaning"
         ]
       },
       {
         id: 3,
         name: "Premium Car Wash",
-        image: "/car/sedan/luxury_sedan2.png",
+        image: "/car/sedan/sedansimage.jpg",
         price: "₹699",
         originalPrice: null,
         description: "Showroom Finish. Deep clean and polish for both body and interior — perfect for travel, events, or gifting.",
@@ -317,7 +196,7 @@ const carWashPackages = {
       {
         id: 'silver',
         name: "Silver Plan",
-        price: "₹999/month",
+        price: "₹1199/month",
         description: "For light users who want basic monthly care.",
         features: [
           "4 washes/month (1 per week)",
@@ -328,12 +207,13 @@ const carWashPackages = {
           "Normal foam wash",
           "Tyre cleaning",
           "Car mats cleaning"
+          
         ]
       },
       {
         id: 'gold',
         name: "Gold Plan",
-        price: "₹1,799/month",
+        price: "₹1,999/month",
         description: "For regular drivers who need inside-out cleaning.",
         features: [
           "6 washes/month (1–2 per week)",
@@ -347,8 +227,6 @@ const carWashPackages = {
           "Interior vacuum cleaning",
           "Dashboard cleaning",
           "Car mats cleaning",
-          "Free air freshener",
-          "Free tissue box"
         ],
         monthlyBonuses: [
           "1 Full Detailing Session includes:",
@@ -383,6 +261,249 @@ const carWashPackages = {
       }
     ]
   },
+  midsuv: {
+    title: "MID-SUV Car Wash Packages",
+    subtitle: "Tough Body. Bigger Space. Deeper Clean. Perfectly designed for your SUV's size and detailing needs.",
+    packages: [
+      {
+        id: 1,
+        name: "Quick Shine",
+        image: "/car/suv/pexels-eng_hk-2153621871-33018219.png",
+        price: "₹399",
+        originalPrice: null,
+        description: "Fast Exterior Refresh - Ideal for a quick shine after travel or city driving.",
+        features: [
+          "Exterior wash using high-pressure water gun",
+          "Foam wash (normal white foam)",
+          "Tyre cleaning"
+          
+        ]
+      },
+      {
+        id: 2,
+        name: "Deluxe SUV Wash",
+        image: "/car/suv/pexels-eng_hk-2153621871-33018219.png",
+        price: "₹599",
+        originalPrice: null,
+        description: "Complete Regular Cleaning – Inside + Outside. All Quick Shine services plus enhanced interior care.",
+        features: [
+          "All Quick Shine services",
+          "Red Foam Wash",
+          "Tyre & Rim polishing",
+          "Interior vacuum cleaning (seats, floor, boot)",
+          "Dashboard cleaning",
+          "Windshield cleaning + water spot removal",
+          "Car mats cleaning"
+        ]
+      },
+      {
+        id: 3,
+        name: "Premium SUV Wash",
+        image: "/car/suv/pexels-eng_hk-2153621871-33018219.png",
+        price: "₹899",
+        originalPrice: null,
+        description: "Showroom-Style Deep Clean & Shine. Best before long drives, resale, or monthly detailing.",
+        features: [
+          "Diamond Foam Wash (glossy wax-rich foam)",
+          "Tyre & rim cleaning + polishing",
+          "Full interior vacuuming",
+          "Seat & mat cleaning",
+          "Dashboard cleaning",
+          "Windshield polishing",
+          "Car paper mats free",
+          "Free Premium Air Freshener"
+        ]
+      }
+    ],
+    monthlyPlans: [
+      {
+        id: 'silver',
+        name: "Silver Plan",
+        price: "₹1,599/month",
+        description: "For light SUV users who want basic care.",
+        features: [
+          "4 washes/month (1 wash per week)",
+          "Interior mat & vacuum cleaning – 1 time/month"
+        ],
+        weeklyIncludes: [
+          "Exterior wash using high-pressure water",
+          "Normal foam wash",
+          "Tyre cleaning",
+          "Car mats cleaning"
+        ]
+      },
+      {
+        id: 'gold',
+        name: "Gold Plan",
+        price: "₹2,399/month",
+        description: "For regular SUV users who need proper maintenance inside and out.",
+        features: [
+          "6 washes/month (1–2 washes per week)",
+          "1 Free Premium Air Freshener/month",
+          "1 Complete Premium Service/month"
+        ],
+        washIncludes: [
+          "Exterior wash",
+          "Red foam wash",
+          "Tyre & rim cleaning",
+          "Interior vacuum cleaning",
+          "Car mats cleaning",
+          "Dashboard cleaning"
+        ],
+        monthlyBonuses: [
+          "1 Complete Premium Service includes:",
+          "• Diamond foam wash",
+          "• Wax polish",
+          "• Dashboard polish",
+          "• Tyre polish"
+        ]
+      },
+      {
+        id: 'platinum',
+        name: "Platinum Plan",
+        price: "₹3,199/month",
+        description: "For premium users who want their SUV always showroom-ready.",
+        features: [
+          "8 washes/month (2 washes/week)",
+          "Weekly Polishing Package: Diamond Foam + Wax + Tyre + Dashboard Polish"
+        ],
+        washIncludes: [
+          "High-pressure exterior wash",
+          "Diamond foam wash (once/week)",
+          "Tyre & rim cleaning + polishing",
+          "Interior vacuum cleaning (including boot)",
+          "Dashboard + seat cleaning & polishing",
+          "Windshield water spot removal"
+        ],
+        platinumExtras: [
+          "Free Tissue Box + Premium Perfume",
+          "Car Cover Cleaning – 2 times/month (returned after wash)"
+        ]
+      }
+    ]
+  },
+  suv: {
+    title: "SUV Car Wash Packages",
+    subtitle: "Tough Body. Bigger Space. Deeper Clean. Perfectly designed for your SUV's size and detailing needs.",
+    packages: [
+      {
+        id: 1,
+        name: "Quick Shine",
+        image: "/car/suv/suvimages.png",
+        price: "₹499",
+        originalPrice: null,
+        description: "Fast Exterior Refresh - Ideal for a quick shine after travel or city driving.",
+        features: [
+          "Exterior wash using high-pressure water gun",
+          "Foam wash (normal white foam)",
+          "Tyre cleaning"
+          
+        ]
+      },
+      {
+        id: 2,
+        name: "Deluxe SUV Wash",
+        image: "/car/suv/suvimages.png",
+        price: "₹699",
+        originalPrice: null,
+        description: "Complete Regular Cleaning – Inside + Outside. All Quick Shine services plus enhanced interior care.",
+        features: [
+          "All Quick Shine services",
+          "Red Foam Wash",
+          "Tyre & Rim polishing",
+          "Interior vacuum cleaning (seats, floor, boot)",
+          "Dashboard cleaning",
+          "Windshield cleaning + water spot removal",
+          "Car mats cleaning"
+        ]
+      },
+      {
+        id: 3,
+        name: "Premium SUV Wash",
+        image: "/car/suv/luxury_suv2.png",
+        price: "₹899",
+        originalPrice: null,
+        description: "Showroom-Style Deep Clean & Shine. Best before long drives, resale, or monthly detailing.",
+        features: [
+          "Diamond Foam Wash (glossy wax-rich foam)",
+          "Tyre & rim cleaning + polishing",
+          "Full interior vacuuming",
+          "Seat & mat cleaning",
+          "Dashboard cleaning",
+          "Windshield polishing",
+          "Car paper mats free",
+          "Free Premium Air Freshener"
+        ]
+      }
+    ],
+    monthlyPlans: [
+      {
+        id: 'silver',
+        name: "Silver Plan",
+        price: "₹1,199/month",
+        description: "For light SUV users who want basic care.",
+        features: [
+          "4 washes/month (1 wash per week)",
+          "Interior mat & vacuum cleaning – 1 time/month"
+        ],
+        weeklyIncludes: [
+          "Exterior wash using high-pressure water",
+          "Normal foam wash",
+          "Tyre cleaning",
+          "Car mats cleaning",
+        ]
+      },
+      {
+        id: 'gold',
+        name: "Gold Plan",
+        price: "₹2,399/month",
+        description: "For regular SUV users who need proper maintenance inside and out.",
+        features: [
+          "6 washes/month (1–2 washes per week)",
+          "1 Free Premium Air Freshener/month",
+          "1 Complete Premium Service/month"
+        ],
+        washIncludes: [
+          "Exterior wash",
+          "Red foam wash",
+          "Tyre & rim cleaning",
+          "Interior vacuum cleaning",
+          "Car mats cleaning",
+          "Dashboard cleaning"
+        ],
+        monthlyBonuses: [
+          "1 Complete Premium Service includes:",
+          "• Diamond foam wash",
+          "• Wax polish",
+          "• Dashboard polish",
+          "• Tyre polish"
+        ]
+      },
+      {
+        id: 'platinum',
+        name: "Platinum Plan",
+        price: "₹3,499/month",
+        description: "For premium users who want their SUV always showroom-ready.",
+        features: [
+          "8 washes/month (2 washes/week)",
+          "Weekly Polishing Package: Diamond Foam + Wax + Tyre + Dashboard Polish"
+        ],
+        washIncludes: [
+          "High-pressure exterior wash",
+          "Diamond foam wash (once/week)",
+          "Tyre & rim cleaning + polishing",
+          "Interior vacuum cleaning (including boot)",
+          "Dashboard + seat cleaning & polishing",
+          "Windshield water spot removal"
+        ],
+        platinumExtras: [
+          "Free Tissue Box + Premium Perfume",
+          "Car Cover Cleaning – 2 times/month (returned after wash)"
+        ]
+      }
+    ]
+  },
+  
   "luxuries": {
     title: "Luxury Car Wash Packages",
     subtitle: "Designed for Premium Cars – Extra Protection. Extra Shine.",
@@ -391,7 +512,7 @@ const carWashPackages = {
         id: 1,
         name: "Quick Shine",
         image: "/car/sedan/luxury_sedan.png",
-        price: "₹599",
+        price: "₹699",
         originalPrice: null,
         description: "Fast Premium Exterior Wash",
         features: [
@@ -399,7 +520,7 @@ const carWashPackages = {
           "pH-balanced foam wash (normal white foam)",
           "Tyre cleaning (scratch-free tools)",
           "Alloy-safe wheel rinse",
-          "Car mats cleaning",
+          "Paper mats cleaning",
           "Soft microfiber drying only"
         ]
       },
@@ -423,7 +544,7 @@ const carWashPackages = {
       {
         id: 3,
         name: "Luxury Premium Spa",
-        image: "/car/suv/luxury_suv2.png",
+        image: "/car/suv/luxury_suv.png",
         price: "₹1,299",
         originalPrice: null,
         description: "Detailing-Focused Deep Clean & Shine",
@@ -772,10 +893,10 @@ export default function CarWashDeals() {
 
   // Service Availability Information
   const serviceInfo = {
-    availability: "Free within 3 km radius",
+    availability: "Free within 5 km radius",
     extraCharges: [
-      { distance: "3–5 km", charge: "₹50" },
-      { distance: "5–10 km", charge: "₹100" }
+      { distance: "5–10 km", charge: "₹50" },
+      { distance: "10–15 km", charge: "₹100" }
     ]
   };
 
@@ -853,16 +974,28 @@ export default function CarWashDeals() {
 
     return {
       id: `carwash-${selectedPackage.id}-${Date.now()}`,
+      serviceId: selectedPackage.id,
       name: selectedPackage.name,
+      serviceName: selectedPackage.name,
+  packageName: selectedPackage.name,
       image: selectedPackage.image || "/car/car1.png",
       price: totalPrice,
       category: getCategoryDisplayName(),
       type: selectedPackage.type || 'car-wash',
+      vehicleType: category || 'hatchbacks',
+      packageId: selectedPackage.id,
+      addOns: selectedAddons, // Use addOns instead of addons
       packageDetails: {
         basePrice: packagePrice,
-        addons: selectedAddons,
-        addonsTotal: addonsTotal,
-        features: selectedPackage.features
+  addons: selectedAddons, // Keep this for display purposes
+  addonsTotal: addonsTotal,
+  features: selectedPackage.features,
+  // Monthly plan details if present on selected package
+  weeklyIncludes: selectedPackage.weeklyIncludes || [],
+  washIncludes: selectedPackage.washIncludes || [],
+  biWeeklyIncludes: selectedPackage.biWeeklyIncludes || [],
+  monthlyBonuses: selectedPackage.monthlyBonuses || [],
+  platinumExtras: selectedPackage.platinumExtras || []
       },
       quantity: 1
     };
@@ -1373,81 +1506,65 @@ export default function CarWashDeals() {
                       </div>
 
                       {/* Each Wash Includes */}
-                      <div>
-                        <h5 className="font-semibold text-gray-700 mb-2">Each Wash Includes:</h5>
-                        <ul className="space-y-1">
-                          {plan.washIncludes ? plan.washIncludes.map((item, index) => (
-                            <li key={index} className="flex items-start">
-                              <span className="text-blue-500 mr-2 text-sm">•</span>
-                              <span className="text-gray-600 text-sm">{item}</span>
-                            </li>
-                          )) : plan.weeklyIncludes ? plan.weeklyIncludes.map((item, index) => (
-                            <li key={index} className="flex items-start">
-                              <span className="text-blue-500 mr-2 text-sm">•</span>
-                              <span className="text-gray-600 text-sm">{item}</span>
-                            </li>
-                          )) : (
-                            <li className="flex items-start">
-                              <span className="text-gray-400 mr-2 text-sm">•</span>
-                              <span className="text-gray-400 text-sm">Basic wash services included</span>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
+                      {((Array.isArray(plan.washIncludes) && plan.washIncludes.length > 0) ||
+                        (Array.isArray(plan.weeklyIncludes) && plan.weeklyIncludes.length > 0)) && (
+                        <div>
+                          <h5 className="font-semibold text-gray-700 mb-2">Each Wash Includes:</h5>
+                          <ul className="space-y-1">
+                            {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).map((item, index) => (
+                              <li key={index} className="flex items-start">
+                                <span className="text-blue-500 mr-2 text-sm">•</span>
+                                <span className="text-gray-600 text-sm">{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
                       {/* Additional Services */}
-                      <div>
-                        <h5 className="font-semibold text-gray-700 mb-2">Additional Services:</h5>
-                        <ul className="space-y-1">
-                          {plan.biWeeklyIncludes ? plan.biWeeklyIncludes.map((item, index) => (
-                            <li key={index} className="flex items-start">
-                              <span className="text-purple-500 mr-2 text-sm">•</span>
-                              <span className="text-gray-600 text-sm">{item}</span>
-                            </li>
-                          )) : (
-                            <li className="flex items-start">
-                              <span className="text-gray-400 mr-2 text-sm">•</span>
-                              <span className="text-gray-400 text-sm">Not included in this plan</span>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
+                      {Array.isArray(plan.biWeeklyIncludes) && plan.biWeeklyIncludes.length > 0 && (
+                        <div>
+                          <h5 className="font-semibold text-gray-700 mb-2">Additional Services:</h5>
+                          <ul className="space-y-1">
+                            {plan.biWeeklyIncludes.map((item, index) => (
+                              <li key={index} className="flex items-start">
+                                <span className="text-purple-500 mr-2 text-sm">•</span>
+                                <span className="text-gray-600 text-sm">{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
                       {/* Monthly Bonuses */}
-                      <div>
-                        <h5 className="font-semibold text-gray-700 mb-2">Monthly Bonuses:</h5>
-                        <ul className="space-y-1">
-                          {plan.monthlyBonuses ? plan.monthlyBonuses.map((bonus, index) => (
-                            <li key={index} className="flex items-start">
-                              <span className="text-yellow-500 mr-2 text-sm">•</span>
-                              <span className="text-gray-600 text-sm">{bonus}</span>
-                            </li>
-                          )) : (
-                            <li className="flex items-start">
-                              <span className="text-gray-400 mr-2 text-sm">•</span>
-                              <span className="text-gray-400 text-sm">No monthly bonuses included</span>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
+                      {Array.isArray(plan.monthlyBonuses) && plan.monthlyBonuses.length > 0 && (
+                        <div>
+                          <h5 className="font-semibold text-gray-700 mb-2">Monthly Bonuses:</h5>
+                          <ul className="space-y-1">
+                            {plan.monthlyBonuses.map((bonus, index) => (
+                              <li key={index} className="flex items-start">
+                                <span className="text-yellow-500 mr-2 text-sm">•</span>
+                                <span className="text-gray-600 text-sm">{bonus}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
                       {/* Premium Extras */}
-                      <div>
-                        <h5 className="font-semibold text-gray-700 mb-2">Premium Extras:</h5>
-                        <ul className="space-y-1">
-                          {plan.platinumExtras ? plan.platinumExtras.map((extra, index) => (
-                            <li key={index} className="flex items-start">
-                              <span className="text-purple-500 mr-2 text-sm">•</span>
-                              <span className="text-gray-600 text-sm">{extra}</span>
-                            </li>
-                          )) : (
-                            <li className="flex items-start">
-                              <span className="text-gray-400 mr-2 text-sm">•</span>
-                              <span className="text-gray-400 text-sm">Premium extras not included</span>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
+                      {Array.isArray(plan.platinumExtras) && plan.platinumExtras.length > 0 && (
+                        <div>
+                          <h5 className="font-semibold text-gray-700 mb-2">Premium Extras:</h5>
+                          <ul className="space-y-1">
+                            {plan.platinumExtras.map((extra, index) => (
+                              <li key={index} className="flex items-start">
+                                <span className="text-purple-500 mr-2 text-sm">•</span>
+                                <span className="text-gray-600 text-sm">{extra}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
 
                     {/* Button and Terms - Fixed at bottom */}
@@ -1571,25 +1688,28 @@ export default function CarWashDeals() {
                             </div>
 
                             {/* Each Wash Includes */}
-                            <div>
-                              <h5 className="font-semibold text-gray-700 mb-2">Each Wash Includes:</h5>
-                              <ul className="space-y-1">
-                                {(plan.washIncludes || plan.weeklyIncludes || []).slice(0, 3).map((item, index) => (
-                                  <li key={index} className="flex items-start">
-                                    <span className="text-blue-500 mr-2 text-sm">•</span>
-                                    <span className="text-gray-600 text-sm">{item}</span>
-                                  </li>
-                                ))}
-                                {(plan.washIncludes || plan.weeklyIncludes || []).length > 3 && (
-                                  <li className="text-gray-500 text-xs">
-                                    +{(plan.washIncludes || plan.weeklyIncludes || []).length - 3} more services
-                                  </li>
-                                )}
-                              </ul>
-                            </div>
+                            {((Array.isArray(plan.washIncludes) && plan.washIncludes.length > 0) ||
+                              (Array.isArray(plan.weeklyIncludes) && plan.weeklyIncludes.length > 0)) && (
+                              <div>
+                                <h5 className="font-semibold text-gray-700 mb-2">Each Wash Includes:</h5>
+                                <ul className="space-y-1">
+                                  {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).slice(0, 3).map((item, index) => (
+                                    <li key={index} className="flex items-start">
+                                      <span className="text-blue-500 mr-2 text-sm">•</span>
+                                      <span className="text-gray-600 text-sm">{item}</span>
+                                    </li>
+                                  ))}
+                                  {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).length > 3 && (
+                                    <li className="text-gray-500 text-xs">
+                                      +{(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).length - 3} more services
+                                    </li>
+                                  )}
+                                </ul>
+                              </div>
+                            )}
 
                             {/* Show bonuses if available */}
-                            {plan.monthlyBonuses && (
+                            {Array.isArray(plan.monthlyBonuses) && plan.monthlyBonuses.length > 0 && (
                               <div>
                                 <h5 className="font-semibold text-gray-700 mb-2">Monthly Bonuses:</h5>
                                 <ul className="space-y-1">
@@ -1812,7 +1932,7 @@ export default function CarWashDeals() {
                         <input
                           type="checkbox"
                           id={`addon-${addon.id}`}
-                          checked={selectedAddons.find(item => item.id === addon.id)}
+                          checked={Boolean(selectedAddons.find(item => item.id === addon.id))}
                           onChange={() => handleAddonToggle(addon)}
                           className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />

@@ -27,8 +27,6 @@ const EmployeeManagement = () => {
     phone: '',
     address: '',
     specialization: 'car',
-    salary: '',
-    emergencyContact: '',
     bankDetails: {
       accountNumber: '',
       ifsc: '',
@@ -102,8 +100,6 @@ const EmployeeManagement = () => {
       phone: '',
       address: '',
       specialization: 'car',
-      salary: '',
-      emergencyContact: '',
       bankDetails: {
         accountNumber: '',
         ifsc: '',
@@ -122,8 +118,6 @@ const EmployeeManagement = () => {
       phone: employee.phone,
       address: employee.address,
       specialization: employee.specialization,
-      salary: employee.salary || '',
-      emergencyContact: employee.emergencyContact || '',
       bankDetails: employee.bankDetails || {
         accountNumber: '',
         ifsc: '',
@@ -592,29 +586,6 @@ const EmployeeManagement = () => {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Salary
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.salary}
-                      onChange={(e) => setFormData({...formData, salary: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Emergency Contact
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.emergencyContact}
-                      onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
                 </div>
 
                 <div className="flex justify-end space-x-3 mt-6">

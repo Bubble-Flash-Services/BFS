@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // Social media SVG icons
 const InstagramIcon = () => (
@@ -24,6 +25,25 @@ const CameraIcon = () => (
 );
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigation = (section) => {
+    // If we're not on the homepage, navigate to homepage first, then scroll to section
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: section } });
+    } else {
+      // If we're on homepage, just scroll to the section
+      const element = document.getElementById(section);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  const handlePageNavigation = (path) => {
+    navigate(path);
+  };
   return (
     <footer className="bg-white pt-16 pb-8 px-4 md:px-16 text-gray-800 border-t border-gray-200">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 md:gap-0">
@@ -57,20 +77,76 @@ const Footer = () => {
           <div className="min-w-[140px]">
             <h3 className="font-semibold mb-4 text-[#1F3C88] text-lg">SOLUTIONS</h3>
             <ul className="space-y-3 text-gray-600">
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Home</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">About us</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Contact us</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Customer reviews</a></li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('home')} 
+                  className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
+                >
+                  Home
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('aboutus')} 
+                  className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
+                >
+                  About us
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('contact')} 
+                  className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
+                >
+                  Contact us
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('testimonials')} 
+                  className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
+                >
+                  Customer reviews
+                </button>
+              </li>
             </ul>
           </div>
           {/* Services */}
           <div className="min-w-[140px]">
             <h3 className="font-semibold mb-4 text-[#1F3C88] text-lg">SERVICES</h3>
             <ul className="space-y-3 text-gray-600">
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Car wash</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Bike wash</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Laundry</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Packages</a></li>
+              <li>
+                <button 
+                  onClick={() => handlePageNavigation('/cars')} 
+                  className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
+                >
+                  Car wash
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handlePageNavigation('/bikes')} 
+                  className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
+                >
+                  Bike wash
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handlePageNavigation('/laundry')} 
+                  className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
+                >
+                  Laundry
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('services')} 
+                  className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
+                >
+                  Packages
+                </button>
+              </li>
             </ul>
           </div>
           {/* Follow Us */}

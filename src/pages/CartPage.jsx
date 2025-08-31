@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../components/CartContext';
 import { useAuth } from '../components/AuthContext';
-import { Trash2, Plus, Minus, ShoppingBag, X, MapPin, Phone, Calendar, CreditCard, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag, X, MapPin, Phone, Calendar, CreditCard, Sparkles, ArrowRight, CheckCircle, Clock } from 'lucide-react';
 import AddressAutocomplete from '../components/AddressAutocomplete';
 import RazorpayPayment from '../components/RazorpayPayment';
 import { createOrder } from '../api/orders';
@@ -19,6 +19,7 @@ export default function CartPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedPayment, setSelectedPayment] = useState('');
   const [addressData, setAddressData] = useState(null); // Store complete address data
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
   
   // Coupon state
   const [availableCoupons, setAvailableCoupons] = useState([]);
@@ -237,7 +238,10 @@ export default function CartPage() {
       setPhoneNumber(data.phoneNumber || user?.phone || '');
     }
     
-    setShowCheckoutModal(true);
+  // Preselect first available time slot if not set
+  const slots = generateTimeSlots();
+  if (!selectedTimeSlot && slots.length > 0) setSelectedTimeSlot(slots[0]);
+  setShowCheckoutModal(true);
   };
 
   // State for order placement
@@ -246,7 +250,7 @@ export default function CartPage() {
 
   const handlePlaceOrder = async () => {
     // Validate required fields
-    if (!pickupDate || !phoneNumber || !selectedLocation || !selectedPayment) {
+  if (!pickupDate || !phoneNumber || !selectedLocation || !selectedPayment || !selectedTimeSlot) {
       alert('Please fill in all required fields');
       return;
     }
@@ -269,7 +273,15 @@ export default function CartPage() {
           })),
           laundryItems: item.laundryItems || [],
           vehicleType: item.vehicleType || item.category,
-          specialInstructions: item.specialInstructions || item.notes
+          specialInstructions: item.specialInstructions || item.notes,
+          includedFeatures: item.packageDetails?.features || item.includedFeatures || [],
+          planDetails: {
+            washIncludes: item.packageDetails?.washIncludes || [],
+            weeklyIncludes: item.packageDetails?.weeklyIncludes || [],
+            biWeeklyIncludes: item.packageDetails?.biWeeklyIncludes || [],
+            monthlyBonuses: item.packageDetails?.monthlyBonuses || [],
+            platinumExtras: item.packageDetails?.platinumExtras || []
+          }
         })),
         serviceAddress: {
           fullAddress: selectedLocation,
@@ -280,8 +292,8 @@ export default function CartPage() {
           pincode: addressData?.pincode,
           landmark: addressData?.landmark
         },
-        scheduledDate: pickupDate,
-        scheduledTimeSlot: "10:00 AM - 12:00 PM", // Default time slot
+  scheduledDate: pickupDate,
+  scheduledTimeSlot: selectedTimeSlot,
         paymentMethod: selectedPayment === 'cod' ? 'cash' : selectedPayment,
         customerNotes: `Phone: ${phoneNumber}`,
         subtotal: getCartTotal(),
@@ -347,6 +359,23 @@ export default function CartPage() {
     { id: 'upi', name: 'UPI (PhonePe/GooglePay)', icon: '📱' },
     { id: 'cod', name: 'Cash on Delivery', icon: '💵' }
   ];
+
+  // Generate 1-hour time slots between 9 AM and 8 PM (inclusive of 7-8 PM; ending at 8 PM)
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 9; hour < 20; hour++) {
+      const start = formatHour(hour);
+      const end = formatHour(hour + 1);
+      slots.push(`${start} - ${end}`);
+    }
+    return slots;
+  };
+
+  const formatHour = (hour24) => {
+    const period = hour24 >= 12 ? 'PM' : 'AM';
+    const hour12 = ((hour24 + 11) % 12) + 1;
+    return `${hour12}:00 ${period}`;
+  };
 
   // Show loading state while checking authentication
   if (loading) {
@@ -501,6 +530,11 @@ export default function CartPage() {
                             {item.packageName || item.category}
                           </span>
                         )}
+                        {item.vehicleType && (
+                          <span className="text-blue-200 text-xs block mt-1">
+                            Vehicle: {item.vehicleType}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <button
@@ -555,6 +589,67 @@ export default function CartPage() {
                           <span className="text-gray-600">Base Service:</span>
                           <span className="font-medium">₹{item.packageDetails.basePrice}</span>
                         </div>
+                        {Array.isArray(item.packageDetails.features) && item.packageDetails.features.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-xs font-semibold text-gray-700 mb-1">Included Features:</p>
+                            <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                              {item.packageDetails.features.map((f, i) => (
+                                <li key={i}>{f}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {/* Monthly plan details if available */}
+                        {Array.isArray(item.packageDetails.washIncludes) && item.packageDetails.washIncludes.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-xs font-semibold text-gray-700 mb-1">Each Wash Includes:</p>
+                            <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                              {item.packageDetails.washIncludes.map((f, i) => (
+                                <li key={i}>{f}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {Array.isArray(item.packageDetails.weeklyIncludes) && item.packageDetails.weeklyIncludes.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-xs font-semibold text-gray-700 mb-1">Weekly Includes:</p>
+                            <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                              {item.packageDetails.weeklyIncludes.map((f, i) => (
+                                <li key={i}>{f}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {Array.isArray(item.packageDetails.biWeeklyIncludes) && item.packageDetails.biWeeklyIncludes.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-xs font-semibold text-gray-700 mb-1">Bi-Weekly Includes:</p>
+                            <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                              {item.packageDetails.biWeeklyIncludes.map((f, i) => (
+                                <li key={i}>{f}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {Array.isArray(item.packageDetails.monthlyBonuses) && item.packageDetails.monthlyBonuses.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-xs font-semibold text-gray-700 mb-1">Monthly Bonuses:</p>
+                            <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                              {item.packageDetails.monthlyBonuses.map((f, i) => (
+                                <li key={i}>{f}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {Array.isArray(item.packageDetails.platinumExtras) && item.packageDetails.platinumExtras.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-xs font-semibold text-gray-700 mb-1">Premium Extras:</p>
+                            <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                              {item.packageDetails.platinumExtras.map((f, i) => (
+                                <li key={i}>{f}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                         {item.packageDetails.addons && item.packageDetails.addons.length > 0 && (
                           <div className="space-y-1">
                             {item.packageDetails.addons.map((addon, idx) => (
@@ -565,6 +660,24 @@ export default function CartPage() {
                             ))}
                           </div>
                         )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Add-ons Details */}
+                  {item.addOns && item.addOns.length > 0 && !item.packageDetails && (
+                    <div className="mb-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-100">
+                      <h4 className="text-sm font-semibold text-gray-800 mb-2 flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                        Selected Add-ons
+                      </h4>
+                      <div className="space-y-1">
+                        {item.addOns.map((addon, idx) => (
+                          <div key={idx} className="flex justify-between text-xs">
+                            <span className="text-gray-600">+ {addon.name}</span>
+                            <span className="text-green-600 font-medium">₹{addon.price}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -821,11 +934,28 @@ export default function CartPage() {
                 <h3 className="font-semibold text-gray-800 mb-3">Order Items</h3>
                 <div className="space-y-2">
                   {cartItems.map((item, index) => (
-                    <div key={index} className="flex justify-between text-sm">
-                      <span className="text-gray-600">
-                        {item.title || item.name || item.serviceName} × {item.quantity}
-                      </span>
-                      <span className="font-medium">₹{item.price * item.quantity}</span>
+                    <div key={index} className="text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-800 font-medium">
+                          {item.title || item.name || item.serviceName} {item.packageName ? `- ${item.packageName}` : ''}
+                        </span>
+                        <span className="font-medium">₹{item.price * item.quantity}</span>
+                      </div>
+                      {Array.isArray(item.packageDetails?.features) && item.packageDetails.features.length > 0 && (
+                        <ul className="list-disc ml-5 text-xs text-gray-600 mt-1">
+                          {item.packageDetails.features.slice(0, 3).map((f, i) => (
+                            <li key={i}>{f}</li>
+                          ))}
+                          {item.packageDetails.features.length > 3 && (
+                            <li>+ {item.packageDetails.features.length - 3} more</li>
+                          )}
+                        </ul>
+                      )}
+                      {Array.isArray(item.packageDetails?.addons) && item.packageDetails.addons.length > 0 && (
+                        <div className="mt-1 text-xs text-gray-700">
+                          Add-ons: {item.packageDetails.addons.map(a => `${a.name} (₹${a.price})`).join(', ')}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -851,6 +981,17 @@ export default function CartPage() {
                     className="w-full"
                     showCurrentLocation={true}
                   />
+                  
+                  {/* Service Availability Warning */}
+                  <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="text-red-700 text-sm">
+                      <p className="font-semibold mb-2">⚠️ Service Availability:</p>
+                      <div className="space-y-1">
+                        <p>• <span className="font-medium">Free service</span> within 5 km radius</p>
+                        <p>• <span className="font-medium">Extra charges:</span> 5-10 km → ₹50, 10-15 km → ₹100</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
@@ -865,6 +1006,32 @@ export default function CartPage() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Clock className="inline w-4 h-4 mr-1" />
+                    Time Slot
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {generateTimeSlots().map((slot) => (
+                      <button
+                        type="button"
+                        key={slot}
+                        onClick={() => setSelectedTimeSlot(slot)}
+                        className={`px-3 py-2 rounded-lg border text-sm ${
+                          selectedTimeSlot === slot
+                            ? 'border-blue-600 bg-blue-50 text-blue-700'
+                            : 'border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {slot}
+                      </button>
+                    ))}
+                  </div>
+                  {!selectedTimeSlot && (
+                    <p className="text-xs text-red-600 mt-1">Please select a time slot.</p>
+                  )}
                 </div>
 
                 <div>

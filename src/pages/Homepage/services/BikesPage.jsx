@@ -4,18 +4,19 @@ import { useNavigate } from 'react-router-dom';
 const bikeCategories = [
   {
     name: 'Commuter Bikes',
-    image: '/bike/bike1.png',
+    image: '/bike/commuter/tvs-ntorq-125-race-edition-matte-white-175501476-vc4uk (1).png',
     category: 'commuter'
   },
-  {
-    name: 'Sports Bikes',
-    image: '/bike/bike2.png',
-    category: 'sports'
-  },
+ 
   {
     name: 'Cruiser Bikes',
     image: '/bike/bike3.png',
     category: 'cruiser'
+  },
+   {
+    name: 'Sports Bikes',
+    image: '/bike/sports/pexels-shrinidhi-holla-30444780.png',
+    category: 'sports'
   },
 ];
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Phone, Menu, ShoppingCart, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from './CartContext';
@@ -19,6 +19,31 @@ export default function Header() {
   const [openProfile, setOpenProfile] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Reset image loading state when user changes
+  useEffect(() => {
+    if (user?.image) {
+      setImageLoading(true);
+      setImageError(false);
+    }
+  }, [user?.image]);
 
   // Handle navigation from other pages
   useEffect(() => {
@@ -56,8 +81,26 @@ export default function Header() {
   };
 
   const getAvatar = () => {
-    if (user?.image) {
-      return <img src={user.image} alt="avatar" className="rounded-full w-8 h-8" />;
+    if (user?.image && !imageError) {
+      return (
+        <div className="relative">
+          {imageLoading && (
+            <div className="absolute inset-0 rounded-full w-8 h-8 bg-gray-200 animate-pulse flex items-center justify-center">
+              <div className="w-4 h-4 bg-gray-300 rounded-full"></div>
+            </div>
+          )}
+          <img 
+            src={user.image} 
+            alt="avatar" 
+            className={`rounded-full w-8 h-8 object-cover ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+            onLoad={() => setImageLoading(false)}
+            onError={() => {
+              setImageError(true);
+              setImageLoading(false);
+            }}
+          />
+        </div>
+      );
     }
     if (user?.email) {
       return (
@@ -75,8 +118,21 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <img src="/logo.jpg" alt="BFS Logo" className="w-16 h-16 object-contain mr-4" />
-              <h1 className="text-2xl font-bold capitalize bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent">bubble flash services</h1>
+              <button 
+                onClick={() => {
+                  navigate('/');
+                  // Small delay to ensure navigation completes, then scroll to top
+                  setTimeout(() => {
+                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                  }, 100);
+                }}
+                className="flex items-center hover:opacity-80 transition-opacity bg-transparent border-none cursor-pointer p-0"
+              >
+                <img src="/logo.jpg" alt="BFS Logo" className="w-12 h-12 sm:w-16 sm:h-16 object-contain mr-2 sm:mr-4" />
+                <h1 className="text-sm sm:text-xl md:text-2xl font-bold capitalize bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent">
+                  bubble flash services
+                </h1>
+              </button>
             </div>
 
             <nav className="hidden md:flex space-x-8">
@@ -122,23 +178,28 @@ export default function Header() {
                 </button>
               )}
               
-              <div className="relative">
+              <div className="relative" ref={dropdownRef}>
                 {user ? (
-                  <div onClick={() => setDropdownOpen((v) => !v)}>{getAvatar()}</div>
+                  <div 
+                    onClick={() => setDropdownOpen((v) => !v)}
+                    className="cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    {getAvatar()}
+                  </div>
                 ) : (
                   <button
-                    className="bg-yellow-400 hover:bg-yellow-500 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                    className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 sm:px-6 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base"
                     onClick={() => setDropdownOpen((v) => !v)}
                   >
                     Login
                   </button>
                 )}
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     {user ? (
                       <>
                         <button
-                          className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                          className="flex items-center gap-2 w-full text-left px-4 py-3 hover:bg-gray-100 text-gray-700 text-sm"
                           onClick={() => {
                             navigate('/profile');
                             setDropdownOpen(false);
@@ -148,7 +209,7 @@ export default function Header() {
                           View Profile
                         </button>
                         <button
-                          className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                          className="flex items-center gap-2 w-full text-left px-4 py-3 hover:bg-gray-100 text-gray-700 text-sm border-t border-gray-100"
                           onClick={() => {
                             setOpenProfile(true);
                             setDropdownOpen(false);
@@ -158,7 +219,7 @@ export default function Header() {
                           Edit Profile
                         </button>
                         <button
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                          className="block w-full text-left px-4 py-3 hover:bg-gray-100 text-gray-700 text-sm border-t border-gray-100"
                           onClick={() => {
                             logout();
                             setDropdownOpen(false);
@@ -171,13 +232,13 @@ export default function Header() {
                     ) : (
                       <>
                         <button
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                          className="block w-full text-left px-4 py-3 hover:bg-gray-100 text-gray-700 text-sm"
                           onClick={() => { setOpenSignin(true); setDropdownOpen(false); }}
                         >
                           Sign In
                         </button>
                         <button
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                          className="block w-full text-left px-4 py-3 hover:bg-gray-100 text-gray-700 text-sm border-t border-gray-100"
                           onClick={() => { setOpenSignup(true); setDropdownOpen(false); }}
                         >
                           Sign Up
@@ -221,6 +282,49 @@ export default function Header() {
               <Phone size={16} />
               Contact
             </button>
+            
+            {/* User Profile Section in Mobile Menu */}
+            {user && (
+              <>
+                <hr className="border-gray-200" />
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 px-2 py-2">
+                    {getAvatar()}
+                    <span className="text-gray-700 font-medium truncate">{user.email}</span>
+                  </div>
+                  <button
+                    className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:text-blue-500 transition-colors bg-transparent border-none cursor-pointer"
+                    onClick={() => {
+                      navigate('/profile');
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <User size={16} />
+                    View Profile
+                  </button>
+                  <button
+                    className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:text-blue-500 transition-colors bg-transparent border-none cursor-pointer"
+                    onClick={() => {
+                      setOpenProfile(true);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <User size={16} />
+                    Edit Profile
+                  </button>
+                  <button
+                    className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:text-blue-500 transition-colors bg-transparent border-none cursor-pointer"
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                      navigate('/');
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </header>

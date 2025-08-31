@@ -94,36 +94,36 @@ export default function ProfilePage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-8">
-            <div className="flex items-center justify-between">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-4 sm:px-6 py-6 sm:py-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
               <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white text-2xl font-bold backdrop-blur-sm">
+                  <div className="w-16 sm:w-20 h-16 sm:h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white text-xl sm:text-2xl font-bold backdrop-blur-sm">
                     {user?.image ? (
                       <img 
                         src={user.image} 
                         alt="Profile" 
-                        className="w-20 h-20 rounded-full object-cover"
+                        className="w-16 sm:w-20 h-16 sm:h-20 rounded-full object-cover"
                       />
                     ) : (
                       user.name ? user.name[0].toUpperCase() : user.email ? user.email[0].toUpperCase() : 'U'
                     )}
                   </div>
                   <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors">
-                    <Camera size={16} className="text-gray-600" />
+                    <Camera size={14} className="text-gray-600" />
                   </button>
                 </div>
                 <div className="text-white">
-                  <h1 className="text-3xl font-bold">{user.name || 'User'}</h1>
-                  <p className="text-blue-100">{user.email}</p>
-                  <p className="text-sm text-blue-200 mt-1">
+                  <h1 className="text-2xl sm:text-3xl font-bold">{user.name || 'User'}</h1>
+                  <p className="text-blue-100 text-sm sm:text-base">{user.email}</p>
+                  <p className="text-xs sm:text-sm text-blue-200 mt-1">
                     Member since {new Date(user.createdAt || Date.now()).toLocaleDateString()}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-all flex items-center gap-2 backdrop-blur-sm"
+                className="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-all flex items-center justify-center gap-2 backdrop-blur-sm w-full sm:w-auto text-sm sm:text-base"
               >
                 {isEditing ? <X size={16} /> : <Edit size={16} />}
                 {isEditing ? 'Cancel' : 'Edit Profile'}
@@ -234,7 +234,7 @@ export default function ProfilePage() {
 
                 {/* Save Button */}
                 {isEditing && (
-                  <div className="flex gap-3 pt-4">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-4">
                     <button
                       onClick={handleCancel}
                       className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"

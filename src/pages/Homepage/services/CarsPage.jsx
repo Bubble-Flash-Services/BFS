@@ -7,15 +7,21 @@ const carCategories = [
     image: '/car/car1.png',
     route: '/car-wash-deals/hatchbacks'
   },
-  {
-    name: 'SUV',
-    image: '/car/car2.png',
-    route: '/car-wash-deals/suv'
-  },
+  
   {
     name: 'Sedans',
-    image: '/car/car3.png',
+    image: '/car/sedan/sedansimage.jpg',
     route: '/car-wash-deals/sedans'
+  },
+   {
+    name: 'MID-SUV',
+    image: '/car/hatchback/aiease_1755725602539.png',
+    route: '/car-wash-deals/midsuv'
+  },
+  {
+    name: 'SUV',
+    image: '/car/suv/suvimages.png',
+    route: '/car-wash-deals/suv'
   },
   {
     name: 'Luxuries',

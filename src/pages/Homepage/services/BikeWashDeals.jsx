@@ -13,7 +13,7 @@ const bikeWashPackages = {
       {
         id: 1,
         name: "Basic Shine",
-        image: "/bike/commuter/bike1.png",
+        image: "/bike/commuter/tvs-ntorq-125-race-edition-matte-white-175501476-vc4uk (1).png",
         price: "₹99",
         description: "Quick Refresh for Daily Riders",
         features: [
@@ -50,58 +50,6 @@ const bikeWashPackages = {
           "Diamond foam wash",
           "Mat cleaning",
           "Tyre polish"
-        ]
-      }
-    ]
-  },
-  sports: {
-    title: "Sports Bike Wash Packages",
-    subtitle: "For bikes like Splendor, Pulsar, Apache, FZ, Shine, Xtreme, Unicorn, etc.",
-    packages: [
-      {
-        id: 1,
-        name: "Basic Ride",
-        image: "/bike/sports/bike2.png",
-        price: "₹119",
-        description: "Perfect for daily-use bikes needing a quick clean",
-        features: [
-          "High-pressure water wash",
-          "Normal foam wash",
-          "Tyre cleaning",
-          "Seat wipe",
-          "Number plate wipe"
-        ]
-      },
-      {
-        id: 2,
-        name: "Street Pro",
-        image: "/bike/sports/pexels-shrinidhi-holla-30444780.png",
-        price: "₹179",
-        description: "Ideal for weekly city riders wanting a fresh look",
-        features: [
-          "All services from Basic Ride",
-          "Red foam wash",
-          "High-pressure water wash",
-          "Tyre cleaning",
-          "Seat wipe",
-          "Number plate wipe"
-        ]
-      },
-      {
-        id: 3,
-        name: "Xtreme Spa",
-        image: "/bike/sports/pexels-thenoctishouse-10659911.png",
-        price: "₹249",
-        description: "For mid-segment or polished riders who want their bike to shine like new",
-        features: [
-          "All services from Street Pro",
-          "Diamond foam wash",
-          "Alloy & tyre polish",
-          "Mirror & headlight polish",
-          "High-pressure water wash",
-          "Tyre cleaning",
-          "Seat wipe",
-          "Number plate wipe"
         ]
       }
     ]
@@ -156,7 +104,60 @@ const bikeWashPackages = {
         ]
       }
     ]
-  }
+  },
+  sports: {
+    title: "Sports Bike Wash Packages",
+    subtitle: "For bikes like Splendor, Pulsar, Apache, FZ, Shine, Xtreme, Unicorn, etc.",
+    packages: [
+      {
+        id: 1,
+        name: "Basic Ride",
+        image: "/bike/sports/pexels-shrinidhi-holla-30444780.png",
+        price: "₹119",
+        description: "Perfect for daily-use bikes needing a quick clean",
+        features: [
+          "High-pressure water wash",
+          "Normal foam wash",
+          "Tyre cleaning",
+          "Seat wipe",
+          "Number plate wipe"
+        ]
+      },
+      {
+        id: 2,
+        name: "Street Pro",
+        image: "/bike/sports/pexels-shrinidhi-holla-30444780.png",
+        price: "₹179",
+        description: "Ideal for weekly city riders wanting a fresh look",
+        features: [
+          "All services from Basic Ride",
+          "Red foam wash",
+          "High-pressure water wash",
+          "Tyre cleaning",
+          "Seat wipe",
+          "Number plate wipe"
+        ]
+      },
+      {
+        id: 3,
+        name: "Xtreme Spa",
+        image: "/bike/sports/pexels-thenoctishouse-10659911.png",
+        price: "₹249",
+        description: "For mid-segment or polished riders who want their bike to shine like new",
+        features: [
+          "All services from Street Pro",
+          "Diamond foam wash",
+          "Alloy & tyre polish",
+          "Mirror & headlight polish",
+          "High-pressure water wash",
+          "Tyre cleaning",
+          "Seat wipe",
+          "Number plate wipe"
+        ]
+      }
+    ]
+  },
+  
 };
 
 export default function BikeWashDeals() {
@@ -418,11 +419,15 @@ export default function BikeWashDeals() {
       
       const cartItem = {
         id: `bikewash-${selectedPackage.id}-${Date.now()}`,
-        name: selectedPackage.name,
+  name: selectedPackage.name,
         image: selectedPackage.image,
         price: totalPrice,
         category: getCategoryDisplayName(),
         type: 'bike-wash',
+  serviceName: getCategoryDisplayName(),
+  packageName: selectedPackage.name,
+  includedFeatures: selectedPackage.features,
+  vehicleType: categoryKey,
         packageDetails: {
           basePrice: packagePrice,
           addons: selectedAddons,
@@ -446,11 +451,15 @@ export default function BikeWashDeals() {
       
       const cartItem = {
         id: `bikewash-${selectedPackage.id}-${Date.now()}`,
-        name: selectedPackage.name,
+  name: selectedPackage.name,
         image: selectedPackage.image,
         price: totalPrice,
         category: getCategoryDisplayName(),
         type: 'bike-wash',
+  serviceName: getCategoryDisplayName(),
+  packageName: selectedPackage.name,
+  includedFeatures: selectedPackage.features,
+  vehicleType: categoryKey,
         packageDetails: {
           basePrice: packagePrice,
           addons: selectedAddons,
@@ -931,6 +940,51 @@ export default function BikeWashDeals() {
           onLogin={handleLoginSuccess}
         />
       )}
+
+      {/* Service Availability Information */}
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 border border-green-200">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Service Availability</h3>
+            <div className="w-20 h-1 bg-green-500 mx-auto rounded"></div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Free Service */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-green-100">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-white font-bold text-lg">✓</span>
+                </div>
+                <h4 className="text-xl font-bold text-green-700">Free Service</h4>
+              </div>
+              <p className="text-gray-600 text-lg">
+                Free within <span className="font-semibold text-green-600">5 km radius</span>
+              </p>
+            </div>
+
+            {/* Extra Charges */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-orange-100">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-white font-bold text-lg">₹</span>
+                </div>
+                <h4 className="text-xl font-bold text-orange-700">Extra Charges</h4>
+              </div>
+              <div className="space-y-2 text-gray-600">
+                <div className="flex justify-between">
+                  <span>5–10 km</span>
+                  <span className="font-semibold text-orange-600">₹50</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>10–15 km</span>
+                  <span className="font-semibold text-orange-600">₹100</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

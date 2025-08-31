@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Phone, MapPin, ChevronDown, ArrowRight, Star, Shield, Clock, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Confetti from 'react-confetti';
 import ServiceCategories from './services/ServiceCategories';
 import AddressAutocomplete from '../../components/AddressAutocomplete';
 import { useAuth } from '../../components/AuthContext';
@@ -98,6 +99,48 @@ export default function HeroSection() {
 	const [isDraggingState, setIsDraggingState] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
 	const accessorySliderRef = useRef(null);
+	
+	// Launch Advertisement Modal State
+	const [showLaunchAd, setShowLaunchAd] = useState(false);
+	const [windowDimensions, setWindowDimensions] = useState({
+		width: typeof window !== 'undefined' ? window.innerWidth : 1200,
+		height: typeof window !== 'undefined' ? window.innerHeight : 800
+	});
+
+	// Handle window resize for confetti
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowDimensions({
+				width: window.innerWidth,
+				height: window.innerHeight
+			});
+		};
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
+	// Show launch advertisement on component mount
+	useEffect(() => {
+		// Check if user has already seen the ad today
+		const lastAdShown = localStorage.getItem('launchAdShown');
+		const today = new Date().toDateString();
+		
+		if (lastAdShown !== today) {
+			// Show ad after a short delay
+			const timer = setTimeout(() => {
+				setShowLaunchAd(true);
+			}, 2000); // Show after 2 seconds
+			
+			return () => clearTimeout(timer);
+		}
+	}, []);
+
+	// Close launch ad and remember user has seen it
+	const closeLaunchAd = () => {
+		setShowLaunchAd(false);
+		localStorage.setItem('launchAdShown', new Date().toDateString());
+	};
 	const startX = useRef(0);
 	const startTime = useRef(0);
 	const isDragging = useRef(false);
@@ -404,8 +447,201 @@ export default function HeroSection() {
 
 	return (
 		<>
+			{/* Launch Advertisement Modal */}
+			<AnimatePresence>
+				{showLaunchAd && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+						onClick={closeLaunchAd}
+					>
+						<motion.div
+							initial={{ scale: 0.5, y: 50 }}
+							animate={{ scale: 1, y: 0 }}
+							exit={{ scale: 0.5, y: 50 }}
+							className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 max-w-lg mx-4 relative overflow-hidden"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{/* Close Button */}
+							<button
+								onClick={closeLaunchAd}
+								className="absolute top-4 right-4 text-white hover:text-gray-200 text-2xl font-bold z-10"
+							>
+								×
+							</button>
+
+							{/* Animated Background Pattern */}
+							<div className="absolute inset-0">
+								{/* Continuous Confetti Animation */}
+								<Confetti
+									width={Math.min(500, windowDimensions.width * 0.9)}
+									height={Math.min(600, windowDimensions.height * 0.8)}
+									numberOfPieces={isMobile ? 100 : 150}
+									recycle={true}
+									colors={['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8']}
+									gravity={0.1}
+									wind={0.02}
+									opacity={0.8}
+									className="absolute inset-0"
+								/>
+								<motion.div
+									animate={{
+										rotate: [0, 360],
+									}}
+									transition={{
+										duration: 20,
+										repeat: Infinity,
+										ease: "linear"
+									}}
+									className="absolute -top-20 -right-20 w-40 h-40 border-4 border-white border-opacity-20 rounded-full"
+								/>
+								<motion.div
+									animate={{
+										rotate: [360, 0],
+									}}
+									transition={{
+										duration: 15,
+										repeat: Infinity,
+										ease: "linear"
+									}}
+									className="absolute -bottom-16 -left-16 w-32 h-32 border-4 border-white border-opacity-10 rounded-full"
+								/>
+							</div>
+
+							{/* Content */}
+							<div className="relative z-10 text-center text-white">
+								{/* Launch Badge */}
+								<motion.div
+									animate={{
+										scale: [1, 1.1, 1],
+									}}
+									transition={{
+										duration: 2,
+										repeat: Infinity,
+										ease: "easeInOut"
+									}}
+									className="inline-flex items-center bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2 mb-4"
+								>
+									<span className="text-sm font-semibold">🚀 WEBSITE LAUNCH</span>
+								</motion.div>
+
+								{/* Main Heading */}
+								<h2 className="text-3xl font-bold mb-2">
+									Grand Opening
+								</h2>
+								<h3 className="text-xl font-semibold mb-4">
+									Special Launch Offers!
+								</h3>
+
+								{/* Offers Grid */}
+								<div className="grid grid-cols-2 gap-4 mb-6">
+									<div className="bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-3">
+										<div className="text-2xl font-bold text-yellow-300">50%</div>
+										<div className="text-sm">OFF First Order</div>
+									</div>
+									<div className="bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-3">
+										<div className="text-2xl font-bold text-green-300">FREE</div>
+										<div className="text-sm">Pickup & Delivery</div>
+									</div>
+								</div>
+
+								{/* Service Icons */}
+								<div className="flex justify-center space-x-4 mb-6">
+									<div className="text-center">
+										<div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-2 mx-auto">
+											🚗
+										</div>
+										<div className="text-xs">Car Wash</div>
+									</div>
+									<div className="text-center">
+										<div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-2 mx-auto">
+											🏍️
+										</div>
+										<div className="text-xs">Bike Wash</div>
+									</div>
+									<div className="text-center">
+										<div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-2 mx-auto">
+											👕
+										</div>
+										<div className="text-xs">Laundry</div>
+									</div>
+								</div>
+
+								{/* Call to Action */}
+								<motion.button
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+									onClick={() => {
+										closeLaunchAd();
+										document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+									}}
+									className="w-full bg-white text-blue-600 font-bold py-3 px-6 rounded-xl hover:bg-gray-100 transition-colors duration-200 mb-4"
+								>
+									Book Now & Save 50%!
+								</motion.button>
+
+								{/* Validity */}
+								<p className="text-sm text-white text-opacity-80">
+									Valid till Dec 31, 2025 • Limited time offer
+								</p>
+							</div>
+						</motion.div>
+					</motion.div>
+				)}
+			</AnimatePresence>
+
 			{/* Hero Section with Modern Design */}
 			<section id="home" className="relative min-h-screen bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] overflow-hidden">
+				{/* Launch Offer Top Banner */}
+				<motion.div
+					initial={{ y: -100 }}
+					animate={{ y: 0 }}
+					transition={{ delay: 0.5, duration: 0.8 }}
+					className="relative z-20 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-white py-3 px-4 overflow-hidden"
+				>
+					{/* Subtle Confetti for Banner */}
+					<Confetti
+						width={windowDimensions.width}
+						height={100}
+						numberOfPieces={30}
+						recycle={true}
+						colors={['#FFD700', '#FFA500', '#FF4500', '#FFFFFF']}
+						gravity={0.05}
+						wind={0.01}
+						opacity={0.6}
+						className="absolute inset-0 pointer-events-none"
+					/>
+					<div className="container mx-auto text-center relative z-10">
+						<div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+							<motion.div
+								animate={{ scale: [1, 1.1, 1] }}
+								transition={{ duration: 2, repeat: Infinity }}
+								className="flex items-center space-x-2"
+							>
+								<span className="text-lg">🎉</span>
+								<span className="font-bold text-sm sm:text-base">WEBSITE LAUNCH SPECIAL</span>
+								<span className="text-lg">🎉</span>
+							</motion.div>
+							<div className="flex items-center space-x-4 text-sm sm:text-base">
+								<span className="bg-white bg-opacity-20 px-3 py-1 rounded-full font-semibold">
+									50% OFF First Order
+								</span>
+								<span className="bg-white bg-opacity-20 px-3 py-1 rounded-full font-semibold">
+									FREE Delivery
+								</span>
+								<button
+									onClick={() => document.getElementById('service-categories')?.scrollIntoView({ behavior: 'smooth' })}
+									className="bg-white text-orange-600 px-4 py-1 rounded-full font-bold hover:bg-gray-100 transition-colors"
+								>
+									Book Now!
+								</button>
+							</div>
+						</div>
+					</div>
+				</motion.div>
+
 				{/* Animated Background Elements */}
 				<div className="absolute inset-0">
 					<motion.div
@@ -464,7 +700,7 @@ export default function HeroSection() {
 								transition={{ delay: 0.4, duration: 0.8 }}
 								className="text-4xl md:text-6xl font-bold leading-tight"
 							>
-								Professional
+								Branded & Professional
 								<span className="block text-[#FFB400]">Cleaning Services</span>
 								<span className="block text-3xl md:text-4xl font-normal text-gray-200">
 									for Cars, Bikes & More
@@ -1488,7 +1724,7 @@ export default function HeroSection() {
 								whileHover={{ y: -5, scale: 1.02, boxShadow: "0 20px 40px rgba(37, 211, 102, 0.2)" }}
 								className="bg-gradient-to-br from-white via-green-50 to-emerald-50 rounded-2xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-green-200 border-opacity-50 transition-all duration-300 hover:border-opacity-80"
 								onClick={() => {
-									window.open('https://wa.me/919591572775', '_blank');
+									window.open('https://wa.me/919980123452?text=Hello! I would like to know more about your services.', '_blank');
 								}}
 							>
 								<motion.div
@@ -2237,7 +2473,10 @@ export default function HeroSection() {
 										main: "Bangalore, India",
 										sub: "State-of-the-art equipment & expert technicians",
 										color: "from-emerald-400 to-teal-500",
-										delay: 0.1
+										delay: 0.1,
+										action: () => {
+											window.open("https://maps.google.com/?q=Bangalore,India", "_blank");
+										}
 									},
 									{
 										icon: (
@@ -2249,7 +2488,10 @@ export default function HeroSection() {
 										main: "+91 9980123452",
 										sub: "Available 7 days a week for your convenience",
 										color: "from-blue-400 to-indigo-500",
-										delay: 0.2
+										delay: 0.2,
+										action: () => {
+											window.open("tel:+919980123452", "_self");
+										}
 									},
 									{
 										icon: (
@@ -2261,7 +2503,10 @@ export default function HeroSection() {
 										main: "hello@bubbleflash.in",
 										sub: "Quick response within 2 hours guaranteed",
 										color: "from-purple-400 to-pink-500",
-										delay: 0.3
+										delay: 0.3,
+										action: () => {
+											window.open("mailto:hello@bubbleflash.in?subject=Service Inquiry&body=Hello, I would like to inquire about your services.", "_self");
+										}
 									},
 									{
 										icon: (
@@ -2273,7 +2518,8 @@ export default function HeroSection() {
 										main: "Mon-Sat: 9AM-8PM",
 										sub: "Sunday: 10AM-6PM | Extended hours available",
 										color: "from-orange-400 to-red-500",
-										delay: 0.4
+										delay: 0.4,
+										action: null // No action for this card
 									}
 								].map((item, index) => (
 									<motion.div
@@ -2287,7 +2533,8 @@ export default function HeroSection() {
 											rotateY: 5,
 											transition: { duration: 0.3 }
 										}}
-										className="group bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-500 hover:shadow-2xl hover:border-white/40"
+										onClick={item.action}
+										className={`group bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-500 hover:shadow-2xl hover:border-white/40 ${item.action ? 'cursor-pointer' : ''}`}
 									>
 										<div className="text-center">
 											<motion.div 
@@ -2412,6 +2659,9 @@ export default function HeroSection() {
 										transition={{ duration: 0.6, delay: 1 }}
 										whileHover={{ scale: 1.05 }}
 										whileTap={{ scale: 0.95 }}
+										onClick={() => {
+											window.open("https://wa.me/919980123452?text=Hello! I'm interested in your services and would like to know more.", "_blank");
+										}}
 										className="group bg-white/20 text-white font-bold py-5 px-10 rounded-2xl border border-white/40 hover:bg-white/30 hover:border-white/60 transition-all duration-500 inline-flex items-center justify-center gap-4 text-lg"
 									>
 										<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
