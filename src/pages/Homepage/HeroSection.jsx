@@ -953,7 +953,7 @@ export default function HeroSection() {
 							{
 								icon: Award,
 								title: "Trusted Service",
-								description: "200,000+ satisfied customers across Bengaluru"
+								description: "2,000+ satisfied customers across Bengaluru"
 							}
 						].map((feature, index) => (
 							<motion.div
@@ -1088,7 +1088,7 @@ export default function HeroSection() {
 											alt="check"
 											className="inline w-4 h-4 mr-3 align-middle"
 										/>
-										Over 2,00,000 cleans
+										Over 2,000 cleans
 									</motion.li>
 									<motion.li
 										initial={{ opacity: 0, x: -20 }}

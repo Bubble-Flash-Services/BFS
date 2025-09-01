@@ -18,6 +18,18 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
+    // Match conditions shared across computations
+    const revenueMatch = {
+      $or: [
+        { paymentStatus: 'completed' },
+        { orderStatus: 'completed' },
+        { status: 'completed' }
+      ]
+    };
+    const cancelledMatch = { $or: [ { orderStatus: 'cancelled' }, { status: 'cancelled' } ] };
+    const completedMatch = { $or: [ { orderStatus: 'completed' }, { status: 'completed' } ] };
+    const pendingMatch = { $or: [ { orderStatus: 'pending' }, { status: { $in: ['assigned', 'in-progress'] } } ] };
+
     // Get stats in parallel for better performance
     const [
       totalUsers,
@@ -32,24 +44,32 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       User.countDocuments({ isActive: true }),
       Employee.countDocuments({ isActive: true }),
       Order.countDocuments(),
-      Order.countDocuments({ createdAt: { $gte: today, $lt: tomorrow } }),
+      // Today bookings should use scheduledDate, not createdAt
+      Order.countDocuments({ scheduledDate: { $gte: today, $lt: tomorrow } }),
+      // Revenue from completed orders/payments
       Order.aggregate([
-        { $match: { status: { $in: ['completed', 'paid'] } } },
+        { $match: revenueMatch },
         { $group: { _id: null, total: { $sum: '$totalAmount' } } }
       ]),
-      Order.countDocuments({ status: 'pending' }),
-      Order.countDocuments({ status: 'completed' }),
-      Order.countDocuments({ status: 'cancelled' })
+      // Pending/Completed/Cancelled across either field name
+      Order.countDocuments(pendingMatch),
+      Order.countDocuments(completedMatch),
+      Order.countDocuments(cancelledMatch)
     ]);
 
     const totalRevenue = revenueResult.length > 0 ? revenueResult[0].total : 0;
 
     // Get monthly revenue data for chart
+    const startOfYear = new Date(new Date().getFullYear(), 0, 1);
     const monthlyRevenue = await Order.aggregate([
       {
         $match: {
-          status: { $in: ['completed', 'paid'] },
-          createdAt: { $gte: new Date(new Date().getFullYear(), 0, 1) }
+          createdAt: { $gte: startOfYear },
+          $or: [
+            { paymentStatus: 'completed' },
+            { orderStatus: 'completed' },
+            { status: 'completed' }
+          ]
         }
       },
       {
@@ -62,12 +82,12 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       { $sort: { '_id.month': 1 } }
     ]);
 
-    // Get recent bookings
+    // Get recent bookings with fields needed for admin dashboard table
     const recentBookings = await Order.find()
       .populate('userId', 'name email phone')
       .sort({ createdAt: -1 })
       .limit(5)
-      .select('_id serviceType status totalAmount createdAt');
+      .select('_id serviceType status totalAmount paymentMethod serviceAddress items createdAt');
 
     res.json({
       success: true,

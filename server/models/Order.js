@@ -156,6 +156,24 @@ const orderSchema = new mongoose.Schema({
   isReviewSubmitted: {
     type: Boolean,
     default: false
+  },
+  // Employee assignment and work media
+  assignedEmployee: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
+  assignedAt: Date,
+  startedAt: Date,
+  completedAt: Date,
+  status: { type: String, enum: ['assigned', 'in-progress', 'completed', 'cancelled'], default: 'assigned' },
+  workImages: {
+    before: {
+      url: String,
+      publicId: String,
+      uploadedAt: Date
+    },
+    after: {
+      url: String,
+      publicId: String,
+      uploadedAt: Date
+    }
   }
 }, {
   timestamps: true

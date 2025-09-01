@@ -66,6 +66,11 @@ export default function ServiceCategories() {
   };
 
   const handleCategoryClick = (category) => {
+    if (category === 'laundry') {
+      // Show coming soon page instead of navigating to old Laundry content
+      navigate('/laundry');
+      return;
+    }
     navigate(`/${category}`);
   };
 
@@ -134,16 +139,6 @@ export default function ServiceCategories() {
       hoverColor: 'hover:bg-green-100'
     },
     {
-      name: 'Laundry Service',
-      image: '/laundry/home.png',
-      category: 'laundry',
-      description: 'Fresh & clean laundry solutions',
-      fallbackIcon: Shirt,
-      gradient: 'from-purple-500 to-pink-500',
-      bgColor: 'bg-purple-50',
-      hoverColor: 'hover:bg-purple-100'
-    },
-    {
       name: 'Helmet Care',
       image: '/helmet/helmethome.png',
       category: 'helmets',
@@ -152,7 +147,18 @@ export default function ServiceCategories() {
       gradient: 'from-orange-500 to-red-500',
       bgColor: 'bg-orange-50',
       hoverColor: 'hover:bg-orange-100'
+    },
+    {
+      name: 'Laundry Service',
+      image: '/laundry/home.png',
+      category: 'laundry',
+      description: 'Fresh & clean laundry solutions',
+      fallbackIcon: Shirt,
+      gradient: 'from-purple-500 to-pink-500',
+      bgColor: 'bg-purple-50',
+      hoverColor: 'hover:bg-purple-100'
     }
+    
   ];
 
   return (

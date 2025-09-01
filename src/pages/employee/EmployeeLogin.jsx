@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, Eye, EyeOff, UserCheck } from 'lucide-react';
+import { LogIn, Eye, EyeOff, UserCheck, Smartphone } from 'lucide-react';
+import { employeeLoginMobile } from '../../api/employee';
 
 const EmployeeLogin = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ const EmployeeLogin = () => {
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -54,6 +56,27 @@ const EmployeeLogin = () => {
     }
   };
 
+  const handlePhoneLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const data = await employeeLoginMobile(phone.trim());
+      if (data.success) {
+        localStorage.setItem('employeeToken', data.token);
+        localStorage.setItem('employeeUser', JSON.stringify(data.employee));
+        navigate('/employee/dashboard');
+      } else {
+        setError(data.message || 'Login failed');
+      }
+    } catch (err) {
+      console.error('Phone login error:', err);
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
@@ -66,7 +89,7 @@ const EmployeeLogin = () => {
           <p className="text-gray-600 mt-2">Employee Portal</p>
         </div>
 
-        {/* Login Form */}
+  {/* Login Form */}
         <div className="bg-white rounded-lg shadow-xl p-8">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900 text-center">Employee Login</h2>
@@ -140,11 +163,56 @@ const EmployeeLogin = () => {
             </button>
           </form>
 
+          <div className="my-6 flex items-center">
+            <div className="flex-grow border-t border-gray-200" />
+            <span className="px-3 text-xs text-gray-500">or</span>
+            <div className="flex-grow border-t border-gray-200" />
+          </div>
+
+          {/* Phone login */}
+          <form onSubmit={handlePhoneLogin} className="space-y-4">
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Mobile Number (no OTP)
+              </label>
+              <div className="relative">
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 pl-12"
+                  placeholder="10-digit mobile number"
+                  pattern="^[0-9]{10}$"
+                  required
+                />
+                <Smartphone className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-5 h-5" />
+                  <span>Sign In with Mobile</span>
+                </>
+              )}
+            </button>
+          </form>
+
           {/* Help Text */}
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-gray-600 text-center">
-              Need credentials? Check the <code className="bg-gray-200 px-2 py-1 rounded text-xs">DEMO_CREDENTIALS.md</code> file
-            </p>
+            <p className="text-sm text-gray-600 text-center">Use email/password or your registered mobile number.</p>
           </div>
         </div>
       </div>

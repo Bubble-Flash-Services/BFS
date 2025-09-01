@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { getDashboardStats, getCurrentCustomers, getMonthlyData } from '../../api/admin';
+import { getDashboardStats } from '../../api/admin';
 import AdminLayout from '../../components/AdminLayout';
 
 // Register Chart.js components
@@ -34,90 +34,60 @@ const AdminDashboard = () => {
 
   const [currentCustomers, setCurrentCustomers] = useState([]);
   const [monthlyData, setMonthlyData] = useState({
-    sales: [],
-    revenue: [],
-    months: []
+    sales: new Array(12).fill(0),
+    revenue: new Array(12).fill(0),
+    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   });
+  const [loadError, setLoadError] = useState('');
 
   // Load dashboard data
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
-        // Load dashboard stats
+        // Load dashboard stats (includes overview, monthlyRevenue, and recentBookings)
         const statsResponse = await getDashboardStats();
-        if (statsResponse.success) {
-          setDashboardStats(statsResponse.data);
+        if (!statsResponse.success) {
+          throw new Error(statsResponse.message || 'Failed to load dashboard stats');
         }
 
-        // Load current customers
-        const customersResponse = await getCurrentCustomers();
-        if (customersResponse.success) {
-          setCurrentCustomers(customersResponse.data);
-        }
+        const { overview, monthlyRevenue = [], recentBookings = [] } = statsResponse.data || {};
 
-        // Load monthly data
-        const monthlyResponse = await getMonthlyData();
-        if (monthlyResponse.success) {
-          setMonthlyData(monthlyResponse.data);
-        }
+        // Cards
+        setDashboardStats({
+          bookingsCount: overview?.totalBookings ?? 0,
+          todayBookings: overview?.todayBookings ?? 0,
+          totalRevenue: overview?.totalRevenue ?? 0,
+          cancellationRequests: overview?.cancelledBookings ?? 0,
+        });
+
+        // Current customers table from recent bookings
+        const customersFromRecent = recentBookings.map((rb) => ({
+          id: rb._id,
+          customer: rb.userId?.name || 'Unknown',
+          contactNo: rb.userId?.phone || 'N/A',
+          location: rb.serviceAddress?.fullAddress || 'N/A',
+          serviceMode: rb.serviceType || rb.items?.[0]?.serviceName || 'N/A',
+          paymentMethod: rb.paymentMethod || 'N/A',
+          plan: rb.items?.[0]?.packageName || 'N/A',
+          date: rb.createdAt ? new Date(rb.createdAt).toISOString().split('T')[0] : 'N/A',
+        }));
+        setCurrentCustomers(customersFromRecent);
+
+        // Monthly charts from monthlyRevenue
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const sales = new Array(12).fill(0);
+        const revenue = new Array(12).fill(0);
+        monthlyRevenue.forEach((item) => {
+          const idx = (item.month ?? item._id?.month) - 1;
+          if (idx >= 0 && idx < 12) {
+            sales[idx] = item.orders ?? 0;
+            revenue[idx] = item.revenue ?? 0;
+          }
+        });
+        setMonthlyData({ months, sales, revenue });
       } catch (error) {
         console.error('Error loading dashboard data:', error);
-        // Keep mock data as fallback
-        setDashboardStats({
-          bookingsCount: 1250,
-          todayBookings: 8,
-          totalRevenue: 50000,
-          cancellationRequests: 5
-        });
-
-        setCurrentCustomers([
-          {
-            id: 1,
-            customer: 'Darvin',
-            contactNo: '9566751053',
-            location: 'HSR Layout',
-            serviceMode: 'Car',
-            paymentMethod: 'UPI',
-            plan: 'Premium Wash',
-            date: '2025-07-23'
-          },
-          {
-            id: 2,
-            customer: 'Priya Sharma',
-            contactNo: '9876543210',
-            location: 'Koramangala',
-            serviceMode: 'Bike',
-            paymentMethod: 'Card',
-            plan: 'Basic Wash',
-            date: '2025-07-23'
-          },
-          {
-            id: 3,
-            customer: 'Rajesh Kumar',
-            contactNo: '9123456789',
-            location: 'Whitefield',
-            serviceMode: 'Laundry',
-            paymentMethod: 'Cash',
-            plan: 'Dry Clean',
-            date: '2025-07-23'
-          },
-          {
-            id: 4,
-            customer: 'Anita Singh',
-            contactNo: '9555666777',
-            location: 'Indiranagar',
-            serviceMode: 'Car',
-            paymentMethod: 'UPI',
-            plan: 'Deluxe Wash',
-            date: '2025-07-23'
-          }
-        ]);
-
-        setMonthlyData({
-          sales: [45, 52, 48, 61, 55, 67, 73, 69, 75, 82, 88, 95],
-          revenue: [35000, 42000, 38000, 51000, 45000, 58000, 62000, 59000, 68000, 72000, 78000, 85000],
-          months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        });
+        setLoadError('Failed to load dashboard data. Please check your admin authentication and server.');
       }
     };
 
@@ -272,6 +242,9 @@ const AdminDashboard = () => {
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Current Customers</h2>
             <p className="text-sm text-gray-600">Today's active bookings and services</p>
+            {loadError && (
+              <div className="mt-2 text-sm text-red-600">{loadError}</div>
+            )}
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">

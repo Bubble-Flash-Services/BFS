@@ -18,6 +18,8 @@ import adminNewRoutes from './routes/adminNew.js';
 import employeeRoutes from './routes/employee.js';
 import dotenv from 'dotenv';
 dotenv.config();
+import { configureCloudinary } from './services/cloudinary.js';
+import { startCleanupTasks } from './services/cleanupScheduler.js';
 
 const app = express();
 
@@ -82,15 +84,49 @@ app.use('*', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('MongoDB connected successfully');
+const connectOnce = async (uri) => {
+  await mongoose.connect(uri, {
+        serverSelectionTimeoutMS: 8000,
+        socketTimeoutMS: 20000,
+        retryWrites: true,
+  });
+};
+
+const connectWithRetry = async (retries = 5, delayMs = 4000) => {
+  const primary = process.env.MONGO_URI;
+  const fallback = process.env.MONGO_URI_FALLBACK;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      await connectOnce(primary);
+      console.log('MongoDB connected successfully');
+      return;
+    } catch (err) {
+      console.error(`MongoDB connection error (attempt ${attempt}/${retries}):`, err.message || err);
+      if (attempt === retries) {
+        if (fallback) {
+          console.warn('Primary DB unreachable. Trying fallback URI...');
+          await connectOnce(fallback);
+          console.log('MongoDB connected via fallback URI');
+          return;
+        }
+        throw err;
+      }
+      await new Promise(r => setTimeout(r, delayMs));
+    }
+  }
+};
+
+(async () => {
+  try {
+    configureCloudinary();
+    startCleanupTasks();
+    await connectWithRetry();
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
     });
-  })
-  .catch(err => {
-    console.error('MongoDB connection error:', err);
+  } catch (err) {
+    console.error('Fatal startup error:', err);
     process.exit(1);
-  });
+  }
+})();

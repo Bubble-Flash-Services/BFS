@@ -989,6 +989,7 @@ export default function CartPage() {
                       <div className="space-y-1">
                         <p>• <span className="font-medium">Free service</span> within 5 km radius</p>
                         <p>• <span className="font-medium">Extra charges:</span> 5-10 km → ₹50, 10-15 km → ₹100</p>
+                        <p>• <span className="font-medium">Requirement:</span> Please ensure 2 buckets of water and a power supply are available at your address.</p>
                       </div>
                     </div>
                   </div>

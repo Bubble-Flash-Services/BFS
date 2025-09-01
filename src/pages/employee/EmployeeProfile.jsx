@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, Phone, Mail, MapPin, Calendar, Edit, Save, X, Camera } from 'lucide-react';
 import EmployeeLayout from '../../components/EmployeeLayout';
+import { getEmployeeProfile, updateEmployeeProfile } from '../../api/employee';
 
 const EmployeeProfile = () => {
   const [employee, setEmployee] = useState(null);
@@ -8,50 +9,34 @@ const EmployeeProfile = () => {
   const [editedEmployee, setEditedEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Mock data
   useEffect(() => {
-    const mockEmployee = {
-      id: 1,
-      name: 'Ravi Kumar',
-      email: 'ravi.kumar@bubbleflash.com',
-      phone: '9876543210',
-      address: '123 Main Street, HSR Layout, Bangalore',
-      specialization: 'car',
-      joinDate: '2024-06-15',
-      employeeId: 'BF-EMP-001',
-      rating: 4.8,
-      profileImage: null,
-      emergencyContact: {
-        name: 'Sunita Kumar',
-        phone: '9876543211',
-        relation: 'Wife'
-      },
-      bankDetails: {
-        accountNumber: '****1234',
-        ifscCode: 'HDFC0001234',
-        bankName: 'HDFC Bank'
-      },
-      documents: {
-        aadharVerified: true,
-        panVerified: true,
-        licenseVerified: true
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await getEmployeeProfile();
+        if (res?.success && res?.data?.employee) {
+          setEmployee(res.data.employee);
+          setEditedEmployee(res.data.employee);
+        }
+      } finally {
+        setLoading(false);
       }
-    };
-
-    setTimeout(() => {
-      setEmployee(mockEmployee);
-      setEditedEmployee(mockEmployee);
-      setLoading(false);
-    }, 1000);
+    })();
   }, []);
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+  const handleEdit = () => setIsEditing(true);
 
-  const handleSave = () => {
-    setEmployee(editedEmployee);
-    setIsEditing(false);
+  const handleSave = async () => {
+    const payload = {
+      name: editedEmployee?.name,
+      phone: editedEmployee?.phone,
+      address: editedEmployee?.address,
+    };
+    const res = await updateEmployeeProfile(payload);
+    if (res?.success) {
+      setEmployee(prev => ({ ...prev, ...payload }));
+      setIsEditing(false);
+    }
   };
 
   const handleCancel = () => {
@@ -60,20 +45,7 @@ const EmployeeProfile = () => {
   };
 
   const handleChange = (field, value) => {
-    setEditedEmployee(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleEmergencyContactChange = (field, value) => {
-    setEditedEmployee(prev => ({
-      ...prev,
-      emergencyContact: {
-        ...prev.emergencyContact,
-        [field]: value
-      }
-    }));
+    setEditedEmployee(prev => ({ ...prev, [field]: value }));
   };
 
   const getSpecializationLabel = (specialization) => {
@@ -85,7 +57,7 @@ const EmployeeProfile = () => {
       case 'laundry':
         return 'Laundry Specialist';
       default:
-        return 'General Specialist';
+        return specialization ? `${String(specialization).charAt(0).toUpperCase()}${String(specialization).slice(1)} Specialist` : 'Specialist';
     }
   };
 
@@ -135,26 +107,17 @@ const EmployeeProfile = () => {
               <p className="text-gray-600">Manage your personal information</p>
             </div>
             {!isEditing ? (
-              <button
-                onClick={handleEdit}
-                className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
+              <button onClick={handleEdit} className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Profile
               </button>
             ) : (
               <div className="flex space-x-3">
-                <button
-                  onClick={handleSave}
-                  className="flex items-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
+                <button onClick={handleSave} className="flex items-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
                   <Save className="h-4 w-4 mr-2" />
                   Save
                 </button>
-                <button
-                  onClick={handleCancel}
-                  className="flex items-center border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-                >
+                <button onClick={handleCancel} className="flex items-center border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
                   <X className="h-4 w-4 mr-2" />
                   Cancel
                 </button>
@@ -169,7 +132,7 @@ const EmployeeProfile = () => {
             {/* Personal Information */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">Personal Information</h2>
-              
+
               {/* Profile Picture Section */}
               <div className="flex items-center mb-6">
                 <div className="relative">
@@ -185,10 +148,12 @@ const EmployeeProfile = () => {
                 <div className="ml-4">
                   <h3 className="text-lg font-semibold text-gray-900">{employee?.name}</h3>
                   <p className="text-sm text-gray-600">{getSpecializationLabel(employee?.specialization)}</p>
-                  <div className="flex items-center mt-1">
-                    <div className="flex">{renderStars(employee?.rating)}</div>
-                    <span className="text-sm text-gray-600 ml-2">({employee?.rating})</span>
-                  </div>
+                  {employee?.stats?.averageRating ? (
+                    <div className="flex items-center mt-1">
+                      <div className="flex">{renderStars(Math.round(employee.stats.averageRating))}</div>
+                      <span className="text-sm text-gray-600 ml-2">({employee.stats.averageRating.toFixed(1)})</span>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
@@ -290,89 +255,14 @@ const EmployeeProfile = () => {
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 text-gray-400 mr-2" />
                     <span className="text-gray-900">
-                      {new Date(employee?.joinDate).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
+                      {employee?.joinDate ? new Date(employee?.joinDate).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      }) : ''}
                     </span>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Emergency Contact */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Emergency Contact</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Contact Name</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editedEmployee?.emergencyContact?.name || ''}
-                      onChange={(e) => handleEmergencyContactChange('name', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <span className="text-gray-900">{employee?.emergencyContact?.name}</span>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                  {isEditing ? (
-                    <input
-                      type="tel"
-                      value={editedEmployee?.emergencyContact?.phone || ''}
-                      onChange={(e) => handleEmergencyContactChange('phone', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <span className="text-gray-900">{employee?.emergencyContact?.phone}</span>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Relationship</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editedEmployee?.emergencyContact?.relation || ''}
-                      onChange={(e) => handleEmergencyContactChange('relation', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <span className="text-gray-900">{employee?.emergencyContact?.relation}</span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Bank Details */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Bank Details</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Bank Name</label>
-                  <span className="text-gray-900">{employee?.bankDetails?.bankName}</span>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
-                  <span className="text-gray-900 font-mono">{employee?.bankDetails?.accountNumber}</span>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">IFSC Code</label>
-                  <span className="text-gray-900 font-mono">{employee?.bankDetails?.ifscCode}</span>
-                </div>
-              </div>
-              
-              <div className="mt-4 text-sm text-gray-600">
-                <p>Contact admin to update bank details</p>
               </div>
             </div>
           </div>

@@ -14,7 +14,7 @@ const bikeWashPackages = {
         id: 1,
         name: "Basic Shine",
         image: "/bike/commuter/tvs-ntorq-125-race-edition-matte-white-175501476-vc4uk (1).png",
-        price: "₹99",
+        price: "₹129",
         description: "Quick Refresh for Daily Riders",
         features: [
           "High-pressure water wash",
@@ -27,7 +27,7 @@ const bikeWashPackages = {
         id: 2,
         name: "Urban Shine",
         image: "/bike/commuter/pexels-pixabay-159192.png",
-        price: "₹149",
+        price: "₹169",
         description: "Weekly Clean for Better Look & Feel",
         features: [
           "High-pressure water wash",
@@ -41,7 +41,7 @@ const bikeWashPackages = {
         id: 3,
         name: "Supreme Spa",
         image: "/bike/commuter/tvs-ntorq-125-race-edition-matte-white-175501476-vc4uk (1).png",
-        price: "₹199",
+        price: "₹229",
         description: "Deep Clean & Shine – Like New Again",
         features: [
           "High-pressure water wash",
@@ -62,7 +62,7 @@ const bikeWashPackages = {
         id: 1,
         name: "Torque Wash",
         image: "/bike/cruiser/bike3.png",
-        price: "₹199",
+        price: "₹159",
         description: "Quick & effective clean for regular maintenance",
         features: [
           "High-pressure water wash",
@@ -113,7 +113,7 @@ const bikeWashPackages = {
         id: 1,
         name: "Basic Ride",
         image: "/bike/sports/pexels-shrinidhi-holla-30444780.png",
-        price: "₹119",
+        price: "₹249",
         description: "Perfect for daily-use bikes needing a quick clean",
         features: [
           "High-pressure water wash",
@@ -127,7 +127,7 @@ const bikeWashPackages = {
         id: 2,
         name: "Street Pro",
         image: "/bike/sports/pexels-shrinidhi-holla-30444780.png",
-        price: "₹179",
+        price: "₹379",
         description: "Ideal for weekly city riders wanting a fresh look",
         features: [
           "All services from Basic Ride",
@@ -142,7 +142,7 @@ const bikeWashPackages = {
         id: 3,
         name: "Xtreme Spa",
         image: "/bike/sports/pexels-thenoctishouse-10659911.png",
-        price: "₹249",
+        price: "₹449",
         description: "For mid-segment or polished riders who want their bike to shine like new",
         features: [
           "All services from Street Pro",
@@ -940,6 +940,13 @@ export default function BikeWashDeals() {
           onLogin={handleLoginSuccess}
         />
       )}
+
+      {/* Requirements Notice (water & power) */}
+      <div className="max-w-6xl mx-auto px-4">
+        <p className="text-red-600 text-center font-semibold">
+          Note: For every wash, please ensure 2 buckets of water and a power supply are available at the service location.
+        </p>
+      </div>
 
       {/* Service Availability Information */}
       <div className="max-w-6xl mx-auto px-4 py-12">

@@ -92,7 +92,7 @@ const carWashPackages = {
         price: "₹1,599/month",
         description: "Perfect for regular drivers who need complete maintenance. Keep your car clean, fresh, and polished — inside and out — with premium care.",
         features: [
-          "6 washes/month (1–2 times a week based on customer preference)"
+          "4 washes/month (1 wash per week)"
         ],
         washIncludes: [
           "Exterior wash using high-pressure water",
@@ -117,7 +117,7 @@ const carWashPackages = {
         price: "₹2,399/month",
         description: "For premium users who want their car always showroom-ready. Ultimate monthly care with premium detailing, free products, and exclusive perks — ideal for those who expect the best.",
         features: [
-          "8 washes/month (2 washes per week)",
+          "4 washes/month (1 wash per week)",
           "1 Diamond Foam Wash per week (premium glossy foam with wax effect)",
           "1 Tyre Polishing per week",
           "1 Dashboard Polishing per week",
@@ -216,7 +216,7 @@ const carWashPackages = {
         price: "₹1,999/month",
         description: "For regular drivers who need inside-out cleaning.",
         features: [
-          "6 washes/month (1–2 per week)",
+          "4 washes/month (1 per week)",
           "1 Free Premium Air Freshener/month",
           "1 Full Detailing Session/month"
         ],
@@ -242,7 +242,7 @@ const carWashPackages = {
         price: "₹2,999/month",
         description: "For luxury-focused customers who want a showroom finish every week.",
         features: [
-          "8 washes/month (2 per week)",
+          "4 washes/month (1 wash per week)",
           "1 Wax + Tyre + Dashboard Polishing every week"
         ],
         washIncludes: [
@@ -262,7 +262,7 @@ const carWashPackages = {
     ]
   },
   midsuv: {
-    title: "MID-SUV Car Wash Packages",
+  title: "MID-SUV Car Wash Packages",
     subtitle: "Tough Body. Bigger Space. Deeper Clean. Perfectly designed for your SUV's size and detailing needs.",
     packages: [
       {
@@ -281,7 +281,7 @@ const carWashPackages = {
       },
       {
         id: 2,
-        name: "Deluxe SUV Wash",
+  name: "Deluxe MID-SUV Wash",
         image: "/car/suv/pexels-eng_hk-2153621871-33018219.png",
         price: "₹599",
         originalPrice: null,
@@ -298,7 +298,7 @@ const carWashPackages = {
       },
       {
         id: 3,
-        name: "Premium SUV Wash",
+  name: "Premium MID-SUV Wash",
         image: "/car/suv/pexels-eng_hk-2153621871-33018219.png",
         price: "₹899",
         originalPrice: null,
@@ -338,7 +338,7 @@ const carWashPackages = {
         price: "₹2,399/month",
         description: "For regular SUV users who need proper maintenance inside and out.",
         features: [
-          "6 washes/month (1–2 washes per week)",
+          "4 washes/month (1 wash per week)",
           "1 Free Premium Air Freshener/month",
           "1 Complete Premium Service/month"
         ],
@@ -361,10 +361,10 @@ const carWashPackages = {
       {
         id: 'platinum',
         name: "Platinum Plan",
-        price: "₹3,199/month",
+        price: "₹3,599/month",
         description: "For premium users who want their SUV always showroom-ready.",
         features: [
-          "8 washes/month (2 washes/week)",
+          "4 washes/month (1 wash per week)",
           "Weekly Polishing Package: Diamond Foam + Wax + Tyre + Dashboard Polish"
         ],
         washIncludes: [
@@ -440,7 +440,7 @@ const carWashPackages = {
       {
         id: 'silver',
         name: "Silver Plan",
-        price: "₹1,199/month",
+        price: "₹1,999/month",
         description: "For light SUV users who want basic care.",
         features: [
           "4 washes/month (1 wash per week)",
@@ -459,7 +459,7 @@ const carWashPackages = {
         price: "₹2,399/month",
         description: "For regular SUV users who need proper maintenance inside and out.",
         features: [
-          "6 washes/month (1–2 washes per week)",
+          "4 washes/month (1 wash per week)",
           "1 Free Premium Air Freshener/month",
           "1 Complete Premium Service/month"
         ],
@@ -485,7 +485,7 @@ const carWashPackages = {
         price: "₹3,499/month",
         description: "For premium users who want their SUV always showroom-ready.",
         features: [
-          "8 washes/month (2 washes/week)",
+          "4 washes/month (1 wash per week)",
           "Weekly Polishing Package: Diamond Foam + Wax + Tyre + Dashboard Polish"
         ],
         washIncludes: [
@@ -564,7 +564,7 @@ const carWashPackages = {
       {
         id: 'silver',
         name: "Silver Plan",
-        price: "₹1,799/month",
+        price: "₹2,799/month",
         description: "For occasional users who need gentle, regular exterior care.",
         features: [
           "4 washes/month (1 per week)",
@@ -581,10 +581,10 @@ const carWashPackages = {
       {
         id: 'gold',
         name: "Gold Plan",
-        price: "₹2,999/month",
+        price: "₹3,599/month",
         description: "For regular premium drivers who expect a clean interior & shine every week.",
         features: [
-          "6 washes/month (1–2 per week)",
+          "4 washes/month (1 wash per week)",
           "1 Diamond Foam Wash/month",
           "1 Premium Wax Polish/month",
           "1 Air Freshener/month"
@@ -601,10 +601,10 @@ const carWashPackages = {
       {
         id: 'platinum',
         name: "Platinum Plan",
-        price: "₹4,499/month",
+        price: "₹5,199/month",
         description: "For luxury owners who want a showroom finish—always.",
         features: [
-          "8 washes/month (2 per week)",
+          "4 washes/month (1 wash per week)",
           "Weekly Detailing: Diamond Foam Wash + Wax Polish + Dashboard & Tyre Polishing"
         ],
         washIncludes: [
@@ -649,6 +649,7 @@ export default function CarWashDeals() {
 
   const categoryKey = category?.toLowerCase().replace(/\s+/g, '-').replace('&', '');
   const dealData = carWashPackages[categoryKey] || carWashPackages.hatchbacks;
+  const isLuxury = categoryKey === 'luxuries';
 
   // Car wash details for booking modal
   const carWashDetails = {
@@ -941,6 +942,7 @@ export default function CarWashDeals() {
       case 'suv': return 'SUV';
       case 'sedans': return 'Sedans';
       case 'luxuries': return 'Luxuries';
+  case 'midsuv': return 'MID-SUV';
       default: return 'Hatchbacks';
     }
   };
@@ -1238,12 +1240,19 @@ export default function CarWashDeals() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white min-h-screen">
+    <section
+      className={
+        isLuxury
+          ? "py-16 min-h-screen bg-[#0a0a0a] text-white"
+          : "py-16 bg-gradient-to-b from-gray-50 to-white min-h-screen"
+      }
+      style={isLuxury ? { fontFamily: 'Montserrat, ui-sans-serif, system-ui' } : undefined}
+    >
       <div className="container mx-auto px-4">
         {/* Advertisement Banner */}
-        <div className="relative mb-12 h-48 rounded-2xl overflow-hidden">
+        <div className={`relative mb-12 h-48 rounded-2xl overflow-hidden ${isLuxury ? 'bg-black/60 ring-1 ring-[#d4af37]/30' : ''}`}>
           <div 
-            className="flex h-full transition-transform duration-500 ease-in-out"
+            className={`flex h-full transition-transform duration-500 ease-in-out ${isLuxury ? 'bg-gradient-to-r from-black/60 to-black/30' : ''}`}
             style={{
               transform: `translateX(-${adSlide * 100}%)`,
             }}
@@ -1251,13 +1260,13 @@ export default function CarWashDeals() {
             {adBanners.map((ad) => (
               <div
                 key={ad.id}
-                className={`flex-shrink-0 w-full h-full bg-gradient-to-r ${ad.bgColor} flex items-center justify-center text-white relative`}
+                className={`flex-shrink-0 w-full h-full ${isLuxury ? 'bg-black' : 'bg-gradient-to-r ' + ad.bgColor} flex items-center justify-center ${isLuxury ? 'text-[#d4af37]' : 'text-white'} relative`}
               >
                 <div className="text-center px-6">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                  <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${isLuxury ? 'font-[\'Playfair Display\'] text-[#d4af37]' : ''}`}>
                     {ad.title}
                   </h2>
-                  <p className="text-lg md:text-xl opacity-90">
+                  <p className={`text-lg md:text-xl opacity-90 ${isLuxury ? 'text-white/80' : ''}`}>
                     {ad.subtitle}
                   </p>
                 </div>
@@ -1270,11 +1279,7 @@ export default function CarWashDeals() {
               {adBanners.map((_, index) => (
                 <button
                   key={index}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === adSlide 
-                      ? 'bg-white shadow-lg' 
-                      : 'bg-white/50 hover:bg-white/70'
-                  }`}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${index === adSlide ? (isLuxury ? 'bg-[#d4af37]' : 'bg-white shadow-lg') : (isLuxury ? 'bg-white/30 hover:bg-white/50' : 'bg-white/50 hover:bg-white/70')}`}
                   onClick={() => setAdSlide(index)}
                 />
               ))}
@@ -1284,11 +1289,17 @@ export default function CarWashDeals() {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-block bg-blue-500 text-white px-6 py-2 rounded-full text-sm font-semibold mb-6">
-            CAR WASH COMBOS
-          </div>
+          {!isLuxury && (
+            <div className="inline-block bg-blue-500 text-white px-6 py-2 rounded-full text-sm font-semibold mb-6">
+              CAR WASH COMBOS
+            </div>
+          )}
           
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+          <h1
+            className={`text-3xl md:text-4xl font-bold mb-4 ${
+              isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : "text-gray-800"
+            }`}
+          >
             {dealData.title}
           </h1>
         </div>
@@ -1296,54 +1307,72 @@ export default function CarWashDeals() {
         {/* Desktop Grid Layout */}
         <div className="hidden md:grid md:grid-cols-3 gap-8">
           {dealData.packages.map((pkg) => (
-            <div key={pkg.id} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow h-full">
+            <div
+              key={pkg.id}
+              className={
+                isLuxury
+                  ? "rounded-2xl overflow-hidden h-full bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]"
+                  : "bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow h-full"
+              }
+            >
               <div className="p-6 h-full flex flex-col">
                 <img 
                   src={pkg.image} 
                   alt={pkg.name} 
-                  className="w-full h-48 object-cover rounded-lg mb-4"
+                  className={`w-full h-48 object-cover rounded-lg mb-4 ${isLuxury ? 'ring-1 ring-[#d4af37]/30' : ''}`}
                 />
-                <h3 className="text-xl font-bold text-gray-800 mb-3 min-h-[3rem]">
+                <h3 className={`text-xl font-bold mb-3 min-h-[3rem] ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
                   {pkg.name}
                 </h3>
                 {pkg.description && (
-                  <p className="text-gray-600 text-sm mb-4 italic">
+                  <p className={`${isLuxury ? 'text-white/80 italic' : 'text-gray-600'} text-sm mb-4 italic`}>
                     {pkg.description}
                   </p>
                 )}
                 <div className="mb-4">
-                  <h4 className="font-semibold text-gray-700 mb-2">Included Services:</h4>
+                  <h4 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Included Services:</h4>
                   <ul className="space-y-2 mb-4 flex-grow">
                     {pkg.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
-                        <span className="text-green-500 mr-2 text-lg leading-none mt-1">•</span>
-                        <span className="text-gray-600 text-sm">{feature}</span>
+                        <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-lg leading-none mt-1`}>•</span>
+                        <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 {pkg.foamUpgrades && (
-                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                    <h4 className="font-semibold text-gray-700 mb-2 text-sm">Foam Upgrade Options:</h4>
+                  <div className={`mb-4 p-3 rounded-lg ${isLuxury ? 'bg-black/50 border border-[#d4af37]/20' : 'bg-gray-50'}`}>
+                    <h4 className={`font-semibold mb-2 text-sm ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Foam Upgrade Options:</h4>
                     <div className="space-y-1">
                       {pkg.foamUpgrades.map((foam, index) => (
-                        <div key={index} className="text-xs text-gray-600">
-                          <span className="font-medium">{foam.name}</span> - ₹{foam.price}
+                        <div key={index} className={`text-xs ${isLuxury ? 'text-white/80' : 'text-gray-600'}`}>
+                          <span className={`font-medium ${isLuxury ? 'text-[#d4af37]' : ''}`}>{foam.name}</span> - ₹{foam.price}
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
                 <div className="text-center mt-auto">
-                  <div className="text-2xl font-bold text-blue-500 mb-4">
+                  <div className={`text-2xl font-bold mb-4 ${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'}`}>
                     {getPrice(pkg.price)}
                   </div>
-                  <button 
+                  <button
                     onClick={() => handleBookNow(pkg)}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                    className={
+                      isLuxury
+                        ? "w-full bg-black border border-[#d4af37] text-[#d4af37] font-semibold py-3 px-6 rounded-lg hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition"
+                        : "w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                    }
                   >
                     Book Now
                   </button>
+                  {isLuxury && (
+                    <div className="mt-3 text-center">
+                      <span className="inline-block text-sm italic font-semibold text-[#d4af37] underline">
+                        🎁 FREE: Premium Air Freshener
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1398,34 +1427,45 @@ export default function CarWashDeals() {
                   key={pkg.id}
                   className="flex-shrink-0 w-full px-4"
                 >
-                  <div className="bg-white rounded-2xl overflow-hidden shadow-lg max-w-sm mx-auto h-full">
+                  <div className={`${isLuxury ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]' : 'bg-white shadow-lg'} rounded-2xl overflow-hidden max-w-sm mx-auto h-full`}>
                     <div className="p-6 h-full flex flex-col">
                       <img 
                         src={pkg.image} 
                         alt={pkg.name} 
-                        className="w-full h-48 object-cover rounded-lg mb-4"
+                        className={`w-full h-48 object-cover rounded-lg mb-4 ${isLuxury ? 'ring-1 ring-[#d4af37]/30' : ''}`}
                       />
-                      <h3 className="text-xl font-bold text-gray-800 mb-4 min-h-[3rem]">
+                      <h3 className={`text-xl font-bold mb-4 min-h-[3rem] ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
                         {pkg.name}
                       </h3>
                       <ul className="space-y-2 mb-6 flex-grow">
                         {pkg.features.map((feature, index) => (
                           <li key={index} className="flex items-center">
-                            <span className="text-green-500 mr-2 text-lg leading-none">•</span>
-                            <span className="text-gray-600 text-sm">{feature}</span>
+                            <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-lg leading-none`}>•</span>
+                            <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
                           </li>
                         ))}
                       </ul>
                       <div className="text-center mt-auto">
-                        <div className="text-2xl font-bold text-blue-500 mb-4">
+                        <div className={`text-2xl font-bold mb-4 ${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'}`}>
                           {getPrice(pkg.price)}
                         </div>
-                        <button 
+                        <button
                           onClick={() => handleBookNow(pkg)}
-                          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                          className={
+                            isLuxury
+                              ? "w-full bg-black border border-[#d4af37] text-[#d4af37] font-semibold py-3 px-6 rounded-lg hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition"
+                              : "w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                          }
                         >
                           Book Now
                         </button>
+                        {isLuxury && (
+                          <div className="mt-3 text-center">
+                            <span className="inline-block text-sm italic font-semibold text-[#d4af37] underline">
+                              🎁 FREE: Premium Air Freshener
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1436,24 +1476,24 @@ export default function CarWashDeals() {
         </div>
 
         {/* Service Availability Section */}
-        <div className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">Service Availability</h3>
+        <div className={`mt-12 rounded-2xl p-6 ${isLuxury ? 'bg-black/60 border border-[#d4af37]/30' : 'bg-gradient-to-r from-blue-50 to-indigo-50'}`}>
+            <h3 className={`text-xl font-bold mb-4 text-center ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-800'}`}>Service Availability</h3>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3">
-                  <span className="text-green-600 font-bold">✓</span>
+                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${isLuxury ? 'bg-black border border-[#d4af37]/40' : 'bg-green-100'}`}>
+                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-600'} font-bold`}>✓</span>
                 </div>
-                <h4 className="font-semibold text-gray-700 mb-2">Free Service</h4>
-                <p className="text-gray-600">{serviceInfo.availability}</p>
+                <h4 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37]" : 'text-gray-700'}`}>Free Service</h4>
+                <p className={`${isLuxury ? 'text-white/80' : 'text-gray-600'}`}>{serviceInfo.availability}</p>
               </div>
               <div className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
-                  <span className="text-blue-600 font-bold">₹</span>
+                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${isLuxury ? 'bg-black border border-[#d4af37]/40' : 'bg-blue-100'}`}>
+                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-blue-600'} font-bold`}>₹</span>
                 </div>
-                <h4 className="font-semibold text-gray-700 mb-2">Extra Charges</h4>
+                <h4 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37]" : 'text-gray-700'}`}>Extra Charges</h4>
                 <div className="space-y-1">
                   {serviceInfo.extraCharges.map((charge, index) => (
-                    <p key={index} className="text-gray-600 text-sm">
+                    <p key={index} className={`${isLuxury ? 'text-white/80' : 'text-gray-600'} text-sm`}>
                       {charge.distance} → {charge.charge}
                     </p>
                   ))}
@@ -1462,44 +1502,58 @@ export default function CarWashDeals() {
             </div>
           </div>
 
+        {/* Requirements Notice (water & power) */}
+        <div className="mt-8">
+          <p className={`${isLuxury ? 'text-[#d4af37] italic font-semibold text-center' : 'text-red-600 text-center font-semibold'}`}>
+            Note: For every wash, please ensure 2 buckets of water and a power supply are available at the service location.
+          </p>
+        </div>
+
         {/* Monthly Plans Section */}
         {dealData.monthlyPlans && (
           <div className="mt-12">
-            <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">
+            <h3 className={`text-2xl font-bold text-center mb-8 ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
               Monthly Car Wash Plans – {getCategoryDisplayName()}
             </h3>
-            <p className="text-center text-gray-600 mb-8">
+            <p className={`text-center mb-8 ${isLuxury ? 'text-white/80' : 'text-gray-600'}`}>
               Maintain Your Car's Shine – All Month Long! Affordable and convenient subscription packages with premium service quality.
             </p>
             
             {/* Desktop Grid Layout */}
             <div className="hidden md:grid md:grid-cols-3 gap-8">
               {dealData.monthlyPlans.map((plan) => (
-                <div key={plan.id} className={`bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow relative h-full flex flex-col ${
-                  plan.id === 'gold' ? 'ring-2 ring-yellow-400' : ''
-                }`}>
+                <div
+                  key={plan.id}
+                  className={`rounded-2xl overflow-hidden relative h-full flex flex-col ${
+                    isLuxury
+                      ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]'
+                      : 'bg-white shadow-lg hover:shadow-xl transition-shadow'
+                  } ${plan.id === 'gold' && !isLuxury ? 'ring-2 ring-yellow-400' : ''} ${
+                    isLuxury && plan.id === 'gold' ? 'ring-1 ring-[#d4af37] shadow-[0_0_25px_rgba(212,175,55,0.25)]' : ''
+                  } ${isLuxury && plan.id === 'platinum' ? 'ring-2 ring-[#d4af37] outline outline-1 outline-[#d4af37]/50' : ''}`}
+                >
                   {plan.id === 'gold' && (
-                    <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold">
+                    <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold ${isLuxury ? 'bg-[#d4af37] text-black' : 'bg-yellow-400 text-yellow-900'}`}>
                       POPULAR
                     </div>
                   )}
                   
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="text-center mb-6">
-                      <h4 className="text-xl font-bold text-gray-800 mb-2">{plan.name}</h4>
-                      <div className="text-3xl font-bold text-blue-500 mb-2">{plan.price}</div>
-                      <p className="text-gray-600 text-sm">{plan.description}</p>
+                      <h4 className={`text-xl font-bold mb-2 ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>{plan.name}</h4>
+                      <div className={`text-3xl font-bold mb-2 ${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'}`}>{plan.price}</div>
+                      <p className={`${isLuxury ? 'text-white/80' : 'text-gray-600'} text-sm`}>{plan.description}</p>
                     </div>
 
                     <div className="space-y-4 flex-1">
                       {/* Plan Features */}
                       <div>
-                        <h5 className="font-semibold text-gray-700 mb-2">Plan Features:</h5>
+                        <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Plan Features:</h5>
                         <ul className="space-y-1">
-                          {plan.features.map((feature, index) => (
+              {plan.features.map((feature, index) => (
                             <li key={index} className="flex items-start">
-                              <span className="text-green-500 mr-2 text-sm">•</span>
-                              <span className="text-gray-600 text-sm">{feature}</span>
+                              <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-sm`}>•</span>
+                <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
                             </li>
                           ))}
                         </ul>
@@ -1509,12 +1563,12 @@ export default function CarWashDeals() {
                       {((Array.isArray(plan.washIncludes) && plan.washIncludes.length > 0) ||
                         (Array.isArray(plan.weeklyIncludes) && plan.weeklyIncludes.length > 0)) && (
                         <div>
-                          <h5 className="font-semibold text-gray-700 mb-2">Each Wash Includes:</h5>
+                          <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Each Wash Includes:</h5>
                           <ul className="space-y-1">
-                            {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).map((item, index) => (
+              {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).map((item, index) => (
                               <li key={index} className="flex items-start">
-                                <span className="text-blue-500 mr-2 text-sm">•</span>
-                                <span className="text-gray-600 text-sm">{item}</span>
+                                <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'} mr-2 text-sm`}>•</span>
+                <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(item) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{item}</span>
                               </li>
                             ))}
                           </ul>
@@ -1524,12 +1578,12 @@ export default function CarWashDeals() {
                       {/* Additional Services */}
                       {Array.isArray(plan.biWeeklyIncludes) && plan.biWeeklyIncludes.length > 0 && (
                         <div>
-                          <h5 className="font-semibold text-gray-700 mb-2">Additional Services:</h5>
+          <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Additional Services:</h5>
                           <ul className="space-y-1">
                             {plan.biWeeklyIncludes.map((item, index) => (
                               <li key={index} className="flex items-start">
-                                <span className="text-purple-500 mr-2 text-sm">•</span>
-                                <span className="text-gray-600 text-sm">{item}</span>
+            <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-purple-500'} mr-2 text-sm`}>•</span>
+            <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(item) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{item}</span>
                               </li>
                             ))}
                           </ul>
@@ -1539,12 +1593,12 @@ export default function CarWashDeals() {
                       {/* Monthly Bonuses */}
                       {Array.isArray(plan.monthlyBonuses) && plan.monthlyBonuses.length > 0 && (
                         <div>
-                          <h5 className="font-semibold text-gray-700 mb-2">Monthly Bonuses:</h5>
+          <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Monthly Bonuses:</h5>
                           <ul className="space-y-1">
                             {plan.monthlyBonuses.map((bonus, index) => (
                               <li key={index} className="flex items-start">
-                                <span className="text-yellow-500 mr-2 text-sm">•</span>
-                                <span className="text-gray-600 text-sm">{bonus}</span>
+            <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-yellow-500'} mr-2 text-sm`}>•</span>
+            <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(bonus) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{bonus}</span>
                               </li>
                             ))}
                           </ul>
@@ -1556,10 +1610,10 @@ export default function CarWashDeals() {
                         <div>
                           <h5 className="font-semibold text-gray-700 mb-2">Premium Extras:</h5>
                           <ul className="space-y-1">
-                            {plan.platinumExtras.map((extra, index) => (
+              {plan.platinumExtras.map((extra, index) => (
                               <li key={index} className="flex items-start">
-                                <span className="text-purple-500 mr-2 text-sm">•</span>
-                                <span className="text-gray-600 text-sm">{extra}</span>
+                <span className="text-purple-500 mr-2 text-sm">•</span>
+                <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(extra) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{extra}</span>
                               </li>
                             ))}
                           </ul>
@@ -1582,20 +1636,24 @@ export default function CarWashDeals() {
                           };
                           handleBookNow(planPackage);
                         }}
-                        className={`w-full font-bold py-3 px-6 rounded-lg transition-colors ${
-                          plan.id === 'gold' 
-                            ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
-                            : plan.id === 'platinum'
-                            ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                            : 'bg-gray-500 hover:bg-gray-600 text-white'
-                        }`}
+                        className={
+                          isLuxury
+                            ? 'w-full font-semibold py-3 px-6 rounded-lg border border-[#d4af37] text-[#d4af37] bg-black hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition'
+                            : `w-full font-bold py-3 px-6 rounded-lg transition-colors ${
+                                plan.id === 'gold' 
+                                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
+                                  : plan.id === 'platinum'
+                                  ? 'bg-purple-500 hover:bg-purple-600 text-white'
+                                  : 'bg-gray-500 hover:bg-gray-600 text-white'
+                              }`
+                        }
                       >
                         Subscribe to {plan.name}
                       </button>
                     </div>
 
                     <div className="mt-3 text-center">
-                      <p className="text-xs text-gray-500">
+                      <p className={`text-xs ${isLuxury ? 'text-white/60' : 'text-gray-500'}`}>
                         Valid for 30 days from date of first wash
                       </p>
                     </div>
@@ -1652,35 +1710,37 @@ export default function CarWashDeals() {
                       key={plan.id}
                       className="flex-shrink-0 w-full px-4"
                     >
-                      <div className={`bg-white rounded-2xl overflow-hidden shadow-lg max-w-sm mx-auto h-full relative ${
-                        plan.id === 'gold' ? 'ring-2 ring-yellow-400' : ''
-                      }`}>
+                      <div className={`rounded-2xl overflow-hidden max-w-sm mx-auto h-full relative ${
+                        isLuxury
+                          ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]'
+                          : 'bg-white shadow-lg'
+                      } ${plan.id === 'gold' && !isLuxury ? 'ring-2 ring-yellow-400' : ''}`}>
                         {plan.id === 'gold' && (
-                          <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold">
+                          <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold ${isLuxury ? 'bg-[#d4af37] text-black' : 'bg-yellow-400 text-yellow-900'}`}>
                             POPULAR
                           </div>
                         )}
                         
                         <div className="p-6 h-full flex flex-col">
                           <div className="text-center mb-6">
-                            <h4 className="text-xl font-bold text-gray-800 mb-2">{plan.name}</h4>
-                            <div className="text-3xl font-bold text-blue-500 mb-2">{plan.price}</div>
-                            <p className="text-gray-600 text-sm">{plan.description}</p>
+                            <h4 className={`text-xl font-bold mb-2 ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>{plan.name}</h4>
+                            <div className={`text-3xl font-bold mb-2 ${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'}`}>{plan.price}</div>
+                            <p className={`${isLuxury ? 'text-white/80' : 'text-gray-600'} text-sm`}>{plan.description}</p>
                           </div>
 
                           <div className="space-y-4 flex-1">
                             {/* Plan Features */}
                             <div>
-                              <h5 className="font-semibold text-gray-700 mb-2">Plan Features:</h5>
+                              <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Plan Features:</h5>
                               <ul className="space-y-1">
-                                {plan.features.slice(0, 2).map((feature, index) => (
+                {plan.features.slice(0, 2).map((feature, index) => (
                                   <li key={index} className="flex items-start">
-                                    <span className="text-green-500 mr-2 text-sm">•</span>
-                                    <span className="text-gray-600 text-sm">{feature}</span>
+                                    <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-sm`}>•</span>
+                  <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
                                   </li>
                                 ))}
                                 {plan.features.length > 2 && (
-                                  <li className="text-gray-500 text-xs">
+                                  <li className={`${isLuxury ? 'text-white/60' : 'text-gray-500'} text-xs`}>
                                     +{plan.features.length - 2} more features
                                   </li>
                                 )}
@@ -1691,16 +1751,16 @@ export default function CarWashDeals() {
                             {((Array.isArray(plan.washIncludes) && plan.washIncludes.length > 0) ||
                               (Array.isArray(plan.weeklyIncludes) && plan.weeklyIncludes.length > 0)) && (
                               <div>
-                                <h5 className="font-semibold text-gray-700 mb-2">Each Wash Includes:</h5>
+                                <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Each Wash Includes:</h5>
                                 <ul className="space-y-1">
-                                  {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).slice(0, 3).map((item, index) => (
+                  {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).slice(0, 3).map((item, index) => (
                                     <li key={index} className="flex items-start">
-                                      <span className="text-blue-500 mr-2 text-sm">•</span>
-                                      <span className="text-gray-600 text-sm">{item}</span>
+                                      <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'} mr-2 text-sm`}>•</span>
+                    <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(item) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{item}</span>
                                     </li>
                                   ))}
                                   {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).length > 3 && (
-                                    <li className="text-gray-500 text-xs">
+                                    <li className={`${isLuxury ? 'text-white/60' : 'text-gray-500'} text-xs`}>
                                       +{(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).length - 3} more services
                                     </li>
                                   )}
@@ -1711,16 +1771,16 @@ export default function CarWashDeals() {
                             {/* Show bonuses if available */}
                             {Array.isArray(plan.monthlyBonuses) && plan.monthlyBonuses.length > 0 && (
                               <div>
-                                <h5 className="font-semibold text-gray-700 mb-2">Monthly Bonuses:</h5>
+                                <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Monthly Bonuses:</h5>
                                 <ul className="space-y-1">
-                                  {plan.monthlyBonuses.slice(0, 2).map((bonus, index) => (
+                  {plan.monthlyBonuses.slice(0, 2).map((bonus, index) => (
                                     <li key={index} className="flex items-start">
-                                      <span className="text-yellow-500 mr-2 text-sm">•</span>
-                                      <span className="text-gray-600 text-sm">{bonus}</span>
+                                      <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-yellow-500'} mr-2 text-sm`}>•</span>
+                    <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(bonus) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{bonus}</span>
                                     </li>
                                   ))}
                                   {plan.monthlyBonuses.length > 2 && (
-                                    <li className="text-gray-500 text-xs">
+                                    <li className={`${isLuxury ? 'text-white/60' : 'text-gray-500'} text-xs`}>
                                       +{plan.monthlyBonuses.length - 2} more bonuses
                                     </li>
                                   )}
@@ -1744,20 +1804,24 @@ export default function CarWashDeals() {
                                 };
                                 handleBookNow(planPackage);
                               }}
-                              className={`w-full font-bold py-3 px-6 rounded-lg transition-colors ${
-                                plan.id === 'gold' 
-                                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
-                                  : plan.id === 'platinum'
-                                  ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                                  : 'bg-gray-500 hover:bg-gray-600 text-white'
-                              }`}
+                              className={
+                                isLuxury
+                                  ? 'w-full font-semibold py-3 px-6 rounded-lg border border-[#d4af37] text-[#d4af37] bg-black hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition'
+                                  : `w-full font-bold py-3 px-6 rounded-lg transition-colors ${
+                                      plan.id === 'gold' 
+                                        ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
+                                        : plan.id === 'platinum'
+                                        ? 'bg-purple-500 hover:bg-purple-600 text-white'
+                                        : 'bg-gray-500 hover:bg-gray-600 text-white'
+                                    }`
+                              }
                             >
                               Subscribe to {plan.name}
                             </button>
                           </div>
 
                           <div className="mt-3 text-center">
-                            <p className="text-xs text-gray-500">
+                            <p className={`text-xs ${isLuxury ? 'text-white/60' : 'text-gray-500'}`}>
                               Valid for 30 days from date of first wash
                             </p>
                           </div>
@@ -1774,18 +1838,14 @@ export default function CarWashDeals() {
                   <button
                     key={index}
                     onClick={() => setMonthlyPlansSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                      index === monthlyPlansSlide 
-                        ? 'bg-blue-600 scale-125' 
-                        : 'bg-gray-400 hover:bg-gray-500'
-                    }`}
+                    className={`w-3 h-3 rounded-full transition-all duration-200 ${index === monthlyPlansSlide ? (isLuxury ? 'bg-[#d4af37] scale-125' : 'bg-blue-600 scale-125') : (isLuxury ? 'bg-white/30 hover:bg-white/50' : 'bg-gray-400 hover:bg-gray-500')}`}
                   />
                 ))}
               </div>
             </div>
 
             <div className="mt-8 text-center">
-              <p className="text-gray-600 text-sm">
+              <p className={`${isLuxury ? 'text-white/70' : 'text-gray-600'} text-sm`}>
                 <strong>Terms:</strong> Valid for 30 days from date of first wash • Advance booking preferred • Add-on services available at discounted rates for members
               </p>
             </div>

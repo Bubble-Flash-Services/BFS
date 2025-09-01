@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, Phone, User, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, User, ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react';
 import EmployeeLayout from '../../components/EmployeeLayout';
+import { getEmployeeSchedule } from '../../api/employee';
 
 const EmployeeSchedule = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -9,127 +10,30 @@ const EmployeeSchedule = () => {
   const [viewMode, setViewMode] = useState('week'); // 'week' or 'month'
   const [loading, setLoading] = useState(true);
 
-  // Mock schedule data
+  // Load schedule data from API
   useEffect(() => {
-    const mockScheduleData = {
-      '2025-01-23': [
-        {
-          id: 'BF001',
-          customerName: 'Darvin Kumar',
-          customerPhone: '9566751053',
-          serviceType: 'Premium Car Wash',
-          location: 'HSR Layout, Bangalore',
-          address: '123 Main Street, HSR Layout',
-          time: '10:00 AM',
-          duration: '45 mins',
-          amount: 699,
-          status: 'confirmed',
-          priority: 'high'
-        },
-        {
-          id: 'BF002',
-          customerName: 'Priya Sharma',
-          customerPhone: '9876543210',
-          serviceType: 'Essential Car Wash',
-          location: 'Koramangala, Bangalore',
-          address: '456 Park Avenue, Koramangala',
-          time: '2:00 PM',
-          duration: '30 mins',
-          amount: 299,
-          status: 'confirmed',
-          priority: 'medium'
-        },
-        {
-          id: 'BF003',
-          customerName: 'Rajesh Kumar',
-          customerPhone: '9123456789',
-          serviceType: 'Deluxe Car Wash',
-          location: 'Whitefield, Bangalore',
-          address: '789 Tech Park, Whitefield',
-          time: '4:30 PM',
-          duration: '60 mins',
-          amount: 899,
-          status: 'confirmed',
-          priority: 'low'
+    (async () => {
+      setLoading(true);
+      try {
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 30);
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + 60);
+        const res = await getEmployeeSchedule({
+          startDate: startDate.toISOString().split('T')[0],
+          endDate: endDate.toISOString().split('T')[0]
+        });
+        if (res?.success && res?.data?.scheduleData) {
+          setScheduleData(res.data.scheduleData);
+        } else {
+          setScheduleData({});
         }
-      ],
-      '2025-01-24': [
-        {
-          id: 'BF006',
-          customerName: 'Meera Patel',
-          customerPhone: '9444555666',
-          serviceType: 'Essential Car Wash',
-          location: 'Electronic City, Bangalore',
-          address: '777 Tech Boulevard, Electronic City',
-          time: '3:00 PM',
-          duration: '30 mins',
-          amount: 299,
-          status: 'confirmed',
-          priority: 'medium'
-        },
-        {
-          id: 'BF009',
-          customerName: 'Suresh Reddy',
-          customerPhone: '9333444555',
-          serviceType: 'Premium Bike Wash',
-          location: 'Marathahalli, Bangalore',
-          address: '999 ORR, Marathahalli',
-          time: '11:00 AM',
-          duration: '35 mins',
-          amount: 399,
-          status: 'pending',
-          priority: 'high'
-        }
-      ],
-      '2025-01-25': [
-        {
-          id: 'BF010',
-          customerName: 'Kavya Rao',
-          customerPhone: '9222333444',
-          serviceType: 'Laundry Service',
-          location: 'JP Nagar, Bangalore',
-          address: '111 5th Phase, JP Nagar',
-          time: '9:00 AM',
-          duration: '90 mins',
-          amount: 350,
-          status: 'confirmed',
-          priority: 'medium'
-        }
-      ],
-      '2025-01-26': [
-        {
-          id: 'BF011',
-          customerName: 'Arjun Krishnan',
-          customerPhone: '9111000999',
-          serviceType: 'Premium Car Wash',
-          location: 'Hebbal, Bangalore',
-          address: '222 Outer Ring Road, Hebbal',
-          time: '1:00 PM',
-          duration: '45 mins',
-          amount: 699,
-          status: 'tentative',
-          priority: 'high'
-        },
-        {
-          id: 'BF012',
-          customerName: 'Sneha Iyer',
-          customerPhone: '9000888777',
-          serviceType: 'Bike Wash',
-          location: 'RT Nagar, Bangalore',
-          address: '333 CMH Road, RT Nagar',
-          time: '5:00 PM',
-          duration: '25 mins',
-          amount: 199,
-          status: 'confirmed',
-          priority: 'low'
-        }
-      ]
-    };
-
-    setTimeout(() => {
-      setScheduleData(mockScheduleData);
-      setLoading(false);
-    }, 1000);
+      } catch {
+        setScheduleData({});
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   const formatDate = (date) => {
@@ -197,18 +101,7 @@ const EmployeeSchedule = () => {
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'high':
-        return 'border-l-4 border-red-500';
-      case 'medium':
-        return 'border-l-4 border-yellow-500';
-      case 'low':
-        return 'border-l-4 border-green-500';
-      default:
-        return 'border-l-4 border-gray-500';
-    }
-  };
+  // priority removed from UI
 
   const getTodaySchedule = () => {
     const today = formatDate(new Date());
@@ -277,6 +170,16 @@ const EmployeeSchedule = () => {
                   Month
                 </button>
               </div>
+              {/* Add Task (placeholder trigger, can wire to modal later) */}
+              <button
+                type="button"
+                className="inline-flex items-center bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700"
+                title="Add task for selected day"
+                onClick={() => alert('Add Task: open a form to create an assignment for the selected date.')}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Task
+              </button>
             </div>
           </div>
 
@@ -311,7 +214,7 @@ const EmployeeSchedule = () => {
           <div className="space-y-3">
             {getTodaySchedule().length > 0 ? (
               getTodaySchedule().map((task, index) => (
-                <div key={task.id} className={`bg-white rounded-lg p-4 ${getPriorityColor(task.priority)}`}>
+                <div key={task.id} className={`bg-white rounded-lg p-4`}>
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h4 className="font-semibold text-gray-900">{task.serviceType}</h4>
@@ -362,7 +265,7 @@ const EmployeeSchedule = () => {
                         {daySchedule.map((task) => (
                           <div
                             key={task.id}
-                            className={`p-2 rounded text-xs cursor-pointer hover:shadow-sm transition-shadow ${getPriorityColor(task.priority)}`}
+                            className={`p-2 rounded text-xs cursor-pointer hover:shadow-sm transition-shadow`}
                             style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
                           >
                             <div className="font-medium text-gray-900 truncate">{task.serviceType}</div>
@@ -458,23 +361,7 @@ const EmployeeSchedule = () => {
                 </div>
               </div>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Priority</h4>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="w-4 h-4 border-l-4 border-red-500 mr-2"></div>
-                  <span className="text-sm text-gray-600">High priority</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-4 h-4 border-l-4 border-yellow-500 mr-2"></div>
-                  <span className="text-sm text-gray-600">Medium priority</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-4 h-4 border-l-4 border-green-500 mr-2"></div>
-                  <span className="text-sm text-gray-600">Low priority</span>
-                </div>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>

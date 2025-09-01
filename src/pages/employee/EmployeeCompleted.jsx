@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, CheckCircle, Star, Calendar, MapPin, Phone, User, Clock } from 'lucide-react';
 import EmployeeLayout from '../../components/EmployeeLayout';
+import { getCompletedTasks } from '../../api/employee';
 
 const EmployeeCompleted = () => {
   const [completedTasks, setCompletedTasks] = useState([]);
@@ -10,7 +11,6 @@ const EmployeeCompleted = () => {
   const [ratingFilter, setRatingFilter] = useState('all');
   const [loading, setLoading] = useState(true);
 
-  // Mock completed tasks data
   useEffect(() => {
     const mockCompletedTasks = [
       {
@@ -110,10 +110,38 @@ const EmployeeCompleted = () => {
       }
     ];
 
-    setTimeout(() => {
-      setCompletedTasks(mockCompletedTasks);
-      setLoading(false);
-    }, 1000);
+    (async () => {
+      try {
+        const res = await getCompletedTasks({ dateFilter: 'all' });
+        if (res.success) {
+          setCompletedTasks(
+            res.data.tasks?.map(t => ({
+              id: t.id,
+              customerName: t.customerName,
+              customerPhone: t.customerPhone,
+              serviceType: t.serviceType,
+              location: t.location,
+              address: t.address,
+              completedDate: t.completedDate,
+              completedTime: t.completedTime,
+              scheduledTime: t.scheduledTime,
+              estimatedDuration: t.estimatedDuration,
+              actualDuration: t.actualDuration,
+              amount: t.amount,
+              customerRating: t.customerRating,
+              customerFeedback: t.customerFeedback,
+              earnings: t.earnings,
+            })) || []
+          );
+        } else {
+          setCompletedTasks(mockCompletedTasks);
+        }
+      } catch (e) {
+        setCompletedTasks(mockCompletedTasks);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   // Filter tasks based on search and filters

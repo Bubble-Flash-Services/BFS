@@ -1,9 +1,33 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import Employee from '../models/Employee.js';
 import Order from '../models/Order.js';
 import { authenticateEmployee } from '../middleware/authAdmin.js';
+import multer from 'multer';
+import { uploadImage, getResourceByPublicId } from '../services/cloudinary.js';
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+
+// =============== AUTH: MOBILE NUMBER ONLY (NO OTP) =================
+router.post('/auth/login-mobile', async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ success: false, message: 'Phone is required' });
+
+    const employee = await Employee.findOne({ phone });
+    if (!employee || !employee.isActive) {
+      return res.status(401).json({ success: false, message: 'Invalid phone or inactive account' });
+    }
+
+    const token = jwt.sign({ id: employee._id, type: 'employee' }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    await Employee.findByIdAndUpdate(employee._id, { lastLogin: new Date() });
+    res.json({ success: true, token, employee: { id: employee._id, name: employee.name, phone: employee.phone } });
+  } catch (err) {
+    console.error('Employee login-mobile error:', err);
+    res.status(500).json({ success: false, message: 'Login failed' });
+  }
+});
 
 // ==================== EMPLOYEE DASHBOARD ROUTES ====================
 
@@ -16,11 +40,20 @@ router.get('/dashboard', authenticateEmployee, async (req, res) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Get today's assignments
+    // Get today's assignments (for stats)
     const todayAssignments = await Order.find({
       assignedEmployee: employeeId,
       scheduledDate: { $gte: today, $lt: tomorrow }
     }).populate('userId', 'name phone');
+
+    // Get active assignments to display (regardless of date)
+    const activeAssignments = await Order.find({
+      assignedEmployee: employeeId,
+      status: { $in: ['assigned', 'in-progress'] }
+    })
+      .populate('userId', 'name phone')
+      .sort({ scheduledDate: 1, scheduledTimeSlot: 1 })
+      .limit(50);
 
     // Get employee stats
     const [
@@ -73,19 +106,20 @@ router.get('/dashboard', authenticateEmployee, async (req, res) => {
           pendingTasks,
           totalEarnings: Math.round(earnings)
         },
-        assignments: todayAssignments.map(assignment => ({
+        // Prefer active assignments for display; fallback to today's if none
+        assignments: (activeAssignments.length ? activeAssignments : todayAssignments).map(assignment => ({
           id: assignment._id,
           customerName: assignment.userId?.name || 'Unknown',
           customerPhone: assignment.userId?.phone || '',
           serviceType: assignment.serviceType,
-          location: assignment.address?.area || assignment.address?.city || '',
-          address: `${assignment.address?.street || ''}, ${assignment.address?.area || ''}, ${assignment.address?.city || ''}`,
-          scheduledTime: assignment.scheduledTime,
-          estimatedDuration: assignment.estimatedDuration || '30 mins',
+          location: assignment.serviceAddress?.city || assignment.serviceAddress?.state || '',
+          address: assignment.serviceAddress?.fullAddress || '',
+          scheduledTime: assignment.scheduledTimeSlot,
+          estimatedDuration: (assignment.estimatedDuration ? `${assignment.estimatedDuration} mins` : '30 mins'),
           amount: assignment.totalAmount,
           status: assignment.status,
           priority: assignment.priority || 'medium',
-          instructions: assignment.specialInstructions || '',
+          instructions: assignment.customerNotes || '',
           assignedTime: assignment.assignedAt
         }))
       }
@@ -171,16 +205,16 @@ router.get('/assignments', authenticateEmployee, async (req, res) => {
       customerName: assignment.userId?.name || 'Unknown',
       customerPhone: assignment.userId?.phone || '',
       serviceType: assignment.serviceType,
-      location: assignment.address?.area || assignment.address?.city || '',
-      address: `${assignment.address?.street || ''}, ${assignment.address?.area || ''}, ${assignment.address?.city || ''}`,
+      location: assignment.serviceAddress?.city || assignment.serviceAddress?.state || '',
+      address: assignment.serviceAddress?.fullAddress || '',
       scheduledDate: assignment.scheduledDate?.toISOString().split('T')[0] || '',
-      scheduledTime: assignment.scheduledTime,
-      estimatedDuration: assignment.estimatedDuration || '30 mins',
+      scheduledTime: assignment.scheduledTimeSlot,
+      estimatedDuration: (assignment.estimatedDuration ? `${assignment.estimatedDuration} mins` : '30 mins'),
       actualDuration: assignment.actualDuration,
       amount: assignment.totalAmount,
       status: assignment.status,
       priority: assignment.priority || 'medium',
-      instructions: assignment.specialInstructions || '',
+      instructions: assignment.customerNotes || '',
       assignedTime: assignment.assignedAt,
       completedTime: assignment.completedAt,
       customerRating: assignment.rating,
@@ -271,6 +305,211 @@ router.patch('/assignments/:assignmentId/status', authenticateEmployee, async (r
       success: false,
       message: 'Failed to update assignment status'
     });
+  }
+});
+
+// Get full assignment/order details for an employee
+router.get('/assignments/:assignmentId/details', authenticateEmployee, async (req, res) => {
+  try {
+    const { assignmentId } = req.params;
+    const employeeId = req.employee._id;
+
+    const order = await Order.findOne({ _id: assignmentId, assignedEmployee: employeeId })
+      .populate('userId', 'name phone email')
+      .lean();
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Assignment not found or not assigned to you' });
+    }
+
+    // Prepare a concise payload for UI
+    const data = {
+      id: order._id,
+      orderNumber: order.orderNumber,
+      user: order.userId ? { name: order.userId.name, phone: order.userId.phone, email: order.userId.email } : null,
+      items: (order.items || []).map(it => ({
+        serviceId: it.serviceId,
+        packageId: it.packageId,
+        serviceName: it.serviceName,
+        packageName: it.packageName,
+        vehicleType: it.vehicleType,
+        quantity: it.quantity,
+        price: it.price,
+        includedFeatures: it.includedFeatures || [],
+        planDetails: it.planDetails || {},
+        addOns: (it.addOns || []).map(a => ({ addOnId: a.addOnId, name: a.name, quantity: a.quantity, price: a.price }))
+      })),
+      pricing: {
+        subtotal: order.subtotal,
+        discountAmount: order.discountAmount || 0,
+        couponCode: order.couponCode || null,
+        totalAmount: order.totalAmount,
+        serviceCharge: 0
+      },
+      schedule: {
+        date: order.scheduledDate,
+        timeSlot: order.scheduledTimeSlot,
+        estimatedDuration: order.estimatedDuration
+      },
+      payment: {
+        method: order.paymentMethod,
+        status: order.paymentStatus
+      },
+      address: {
+        fullAddress: order.serviceAddress?.fullAddress || '',
+        latitude: order.serviceAddress?.latitude,
+        longitude: order.serviceAddress?.longitude,
+        city: order.serviceAddress?.city,
+        state: order.serviceAddress?.state,
+        pincode: order.serviceAddress?.pincode,
+        landmark: order.serviceAddress?.landmark
+      }
+    };
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Get assignment details error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch assignment details' });
+  }
+});
+
+// ==================== TASK MEDIA & ATTENDANCE ROUTES ====================
+
+// Upload attendance selfie (base64 or file)
+router.post('/attendance/selfie', authenticateEmployee, upload.single('image'), async (req, res) => {
+  try {
+  const employeeId = req.employee._id.toString();
+  const employeeName = (req.employee.name || 'employee').toLowerCase();
+  const slug = employeeName.replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+
+    let dataUri;
+    if (req.file) {
+      const base64 = req.file.buffer.toString('base64');
+      dataUri = `data:${req.file.mimetype};base64,${base64}`;
+    } else if (req.body.image) {
+      dataUri = req.body.image; // expect data URI base64
+    }
+
+    if (!dataUri) return res.status(400).json({ success: false, message: 'Image is required' });
+
+  // Store attendance under the employee name folder
+  const folder = `bfs/attendance/${slug}`;
+  const publicId = `${slug}_${dateStr}`;
+  const result = await uploadImage(dataUri, { folder, public_id: publicId, overwrite: true });
+
+    res.json({ success: true, url: result.secure_url, publicId: result.public_id, uploadedAt: result.created_at });
+  } catch (err) {
+    console.error('Attendance upload error:', err);
+    res.status(500).json({ success: false, message: 'Failed to upload selfie' });
+  }
+});
+
+// Check if today's attendance selfie exists
+router.get('/attendance/status', authenticateEmployee, async (req, res) => {
+  try {
+    const employeeId = req.employee._id.toString();
+    const employeeName = (req.employee.name || 'employee').toLowerCase();
+    const slug = employeeName.replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+    // New path: name-based folder
+    const folderName = `bfs/attendance/${slug}`;
+    const publicIdName = `${folderName}/${slug}_${dateStr}`;
+    // Old path fallback: id-based folder (for backward compatibility during transition)
+    const folderId = `bfs/attendance/${employeeId}`;
+    const publicIdOld = `${folderId}/${slug}_${dateStr}`;
+
+    try {
+      const resource = await getResourceByPublicId(publicIdName);
+      return res.json({ success: true, doneToday: true, url: resource.secure_url, publicId: resource.public_id });
+    } catch (e) {
+      // Try old id-based location before returning not found
+      try {
+        const legacy = await getResourceByPublicId(publicIdOld);
+        return res.json({ success: true, doneToday: true, url: legacy.secure_url, publicId: legacy.public_id });
+      } catch {
+        return res.json({ success: true, doneToday: false });
+      }
+    }
+  } catch (err) {
+    console.error('Attendance status error:', err);
+    res.status(500).json({ success: false, message: 'Failed to check attendance' });
+  }
+});
+
+// Get tasks assigned to employee (simple)
+router.get('/tasks', authenticateEmployee, async (req, res) => {
+  try {
+    const tasks = await Order.find({ assignedEmployee: req.employee._id })
+      .select('orderNumber serviceType serviceAddress scheduledDate scheduledTimeSlot status workImages totalAmount')
+      .sort({ createdAt: -1 });
+    res.json({ success: true, tasks });
+  } catch (err) {
+    console.error('Get tasks error:', err);
+    res.status(500).json({ success: false, message: 'Failed to fetch tasks' });
+  }
+});
+
+// Upload before/after images for a task
+router.post('/tasks/:orderId/images', authenticateEmployee, upload.fields([{ name: 'before', maxCount: 1 }, { name: 'after', maxCount: 1 }]), async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findOne({ _id: orderId, assignedEmployee: req.employee._id });
+    if (!order) return res.status(404).json({ success: false, message: 'Task not found' });
+
+    const folder = `bfs/orders/${orderId}_folder`;
+    const updates = {};
+
+    const processPart = async (field) => {
+      const file = req.files?.[field]?.[0];
+      const input = req.body?.[field];
+      if (!file && !input) return null;
+      const dataUri = file ? `data:${file.mimetype};base64,${file.buffer.toString('base64')}` : input;
+      const result = await uploadImage(dataUri, { folder, public_id: `${orderId}_${field}`, overwrite: true });
+      return { url: result.secure_url, publicId: result.public_id, uploadedAt: new Date(result.created_at) };
+    };
+
+    const [before, after] = await Promise.all([processPart('before'), processPart('after')]);
+    if (before) updates['workImages.before'] = before;
+    if (after) updates['workImages.after'] = after;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ success: false, message: 'No images provided' });
+    }
+
+    const updated = await Order.findByIdAndUpdate(orderId, { $set: updates }, { new: true }).select('workImages');
+    res.json({ success: true, workImages: updated.workImages });
+  } catch (err) {
+    console.error('Task images upload error:', err);
+    res.status(500).json({ success: false, message: 'Failed to upload images' });
+  }
+});
+
+// Mark task completed (requires both images present)
+router.post('/tasks/:orderId/complete', authenticateEmployee, async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findOne({ _id: orderId, assignedEmployee: req.employee._id });
+    if (!order) return res.status(404).json({ success: false, message: 'Task not found' });
+    if (!order.workImages?.before?.url || !order.workImages?.after?.url) {
+      return res.status(400).json({ success: false, message: 'Before and After images are required' });
+    }
+
+    order.status = 'completed';
+    order.completedAt = new Date();
+    await order.save();
+    res.json({ success: true, message: 'Task marked as completed' });
+  } catch (err) {
+    console.error('Complete task error:', err);
+    res.status(500).json({ success: false, message: 'Failed to complete task' });
   }
 });
 

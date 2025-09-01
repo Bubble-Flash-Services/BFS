@@ -9,11 +9,12 @@ import Footer from './components/Footer';
 // Placeholder imports for new pages
 import CarsPage from './pages/Homepage/services/CarsPage';
 import BikesPage from './pages/Homepage/services/BikesPage';
-import LaundryPage from './pages/Homepage/services/LaundryPage';
+// import LaundryPage from './pages/Homepage/services/LaundryPage';
 import HelmetPage from './pages/Homepage/services/HelmetPage';
 import CarWashDeals from './pages/Homepage/services/CarWashDeals';
 import BikeWashDeals from './pages/Homepage/services/BikeWashDeals';
-import LaundryDeals from './pages/Homepage/services/LaundryDeals';
+// import LaundryDeals from './pages/Homepage/services/LaundryDeals';
+import ComingSoon from './pages/ComingSoon';
 import HelmetWashDeals from './pages/Homepage/services/HelmetWashDeals';
 import CartPage from './pages/CartPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
@@ -34,6 +35,7 @@ import EmployeeAssignments from './pages/employee/EmployeeAssignments';
 import EmployeeCompleted from './pages/employee/EmployeeCompleted';
 import EmployeeSchedule from './pages/employee/EmployeeSchedule';
 import EmployeeProfile from './pages/employee/EmployeeProfile';
+import EmployeeAttendance from './pages/employee/EmployeeAttendance';
 import AdminLogin from './pages/admin/AdminLogin';
 import EmployeeLogin from './pages/employee/EmployeeLogin';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
@@ -56,11 +58,11 @@ function AppContent() {
         } />
         <Route path="/cars" element={<CarsPage />} />
         <Route path="/bikes" element={<BikesPage />} />
-        <Route path="/laundry" element={<LaundryPage />} />
+  <Route path="/laundry" element={<ComingSoon title="Laundry Service Coming Soon" message="We’re working hard to bring laundry services to you. Stay tuned!" />} />
         <Route path="/helmets" element={<HelmetPage />} />
         <Route path="/car-wash-deals/:category" element={<CarWashDeals />} />
         <Route path="/bike-wash-deals/:category" element={<BikeWashDeals />} />
-        <Route path="/laundry-deals/:category" element={<LaundryDeals />} />
+  <Route path="/laundry-deals/:category" element={<ComingSoon title="Laundry Service Coming Soon" message="We’re working hard to bring laundry services to you. Stay tuned!" />} />
         <Route path="/helmet-wash-deals/:category" element={<HelmetWashDeals />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/services" element={<ServicesPage />} />
@@ -100,6 +102,11 @@ function AppContent() {
         } />
         <Route path="/employee/login" element={<EmployeeLogin />} />
         <Route path="/employee" element={<Navigate to="/employee/dashboard" replace />} />
+        <Route path="/employee/attendance" element={
+          <ProtectedEmployeeRoute>
+            <EmployeeAttendance />
+          </ProtectedEmployeeRoute>
+        } />
         <Route path="/employee/dashboard" element={
           <ProtectedEmployeeRoute>
             <EmployeeDashboard />

@@ -679,6 +679,13 @@ export default function HelmetWashDeals() {
         />
       )}
 
+      {/* Requirements Notice (water & power) */}
+      <div className="max-w-6xl mx-auto px-4">
+        <p className="text-red-600 text-center font-semibold">
+          Note: For every wash, please ensure 2 buckets of water and a power supply are available at the service location.
+        </p>
+      </div>
+
       {/* Service Availability Information */}
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 border border-green-200">

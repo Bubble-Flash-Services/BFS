@@ -1,10 +1,10 @@
-const API_BASE_URL = 'http://localhost:5000/api/admin';
+const API_BASE_URL = '/api/adminNew';
 
 // Get dashboard statistics
 export const getDashboardStats = async () => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
+  const token = localStorage.getItem('adminToken');
+  const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -26,8 +26,9 @@ export const getDashboardStats = async () => {
 // Get current customers
 export const getCurrentCustomers = async () => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/dashboard/current-customers`, {
+  const token = localStorage.getItem('adminToken');
+  // This endpoint doesn't exist under adminNew; keep legacy path under /api/admin
+  const response = await fetch(`/api/admin/dashboard/current-customers`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -49,8 +50,9 @@ export const getCurrentCustomers = async () => {
 // Get monthly sales and revenue data
 export const getMonthlyData = async () => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/dashboard/monthly-data`, {
+  const token = localStorage.getItem('adminToken');
+  // This endpoint doesn't exist under adminNew; keep legacy path under /api/admin
+  const response = await fetch(`/api/admin/dashboard/monthly-data`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

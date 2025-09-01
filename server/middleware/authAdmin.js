@@ -35,13 +35,15 @@ export const authenticateAdmin = async (req, res, next) => {
     req.admin = admin;
     next();
   } catch (error) {
-    // Don't log JWT malformed errors for invalid tokens to reduce noise
-    if (error.name !== 'JsonWebTokenError') {
+    // Don't log common JWT errors to reduce noise
+    if (error.name !== 'JsonWebTokenError' && error.name !== 'TokenExpiredError') {
       console.error('Admin auth middleware error:', error);
     }
+    const isExpired = error.name === 'TokenExpiredError';
     res.status(401).json({
       success: false,
-      message: 'Access denied. Invalid token.'
+      message: isExpired ? 'Token expired. Please login again.' : 'Access denied. Invalid token.',
+      code: isExpired ? 'TOKEN_EXPIRED' : 'TOKEN_INVALID'
     });
   }
 };
@@ -79,13 +81,15 @@ export const authenticateEmployee = async (req, res, next) => {
     req.employee = employee;
     next();
   } catch (error) {
-    // Don't log JWT malformed errors for invalid tokens to reduce noise
-    if (error.name !== 'JsonWebTokenError') {
+    // Don't log common JWT errors to reduce noise
+    if (error.name !== 'JsonWebTokenError' && error.name !== 'TokenExpiredError') {
       console.error('Employee auth middleware error:', error);
     }
+    const isExpired = error.name === 'TokenExpiredError';
     res.status(401).json({
       success: false,
-      message: 'Access denied. Invalid token.'
+      message: isExpired ? 'Token expired. Please login again.' : 'Access denied. Invalid token.',
+      code: isExpired ? 'TOKEN_EXPIRED' : 'TOKEN_INVALID'
     });
   }
 };

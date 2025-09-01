@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Clock, MapPin, Phone, User, Calendar, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 import EmployeeLayout from '../../components/EmployeeLayout';
+import { getAssignments, updateAssignmentStatus, uploadTaskImages, completeTask, getAssignmentDetails } from '../../api/employee';
+import OrderDetailsModal from '../../components/employee/OrderDetailsModal';
 
 const EmployeeAssignments = () => {
   const [assignments, setAssignments] = useState([]);
@@ -9,8 +11,12 @@ const EmployeeAssignments = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('today');
   const [loading, setLoading] = useState(true);
+  const [imageFiles, setImageFiles] = useState({}); // { [id]: { before?: File, after?: File } }
+  const [uploadingByField, setUploadingByField] = useState({}); // { [id]: { before?: boolean, after?: boolean } }
+  const [uploadedByField, setUploadedByField] = useState({});  // { [id]: { before?: boolean, after?: boolean } }
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(null);
 
-  // Mock data
   useEffect(() => {
     const mockAssignments = [
       {
@@ -25,7 +31,6 @@ const EmployeeAssignments = () => {
         estimatedDuration: '45 mins',
         amount: 699,
         status: 'in-progress',
-        priority: 'high',
         instructions: 'Customer requested extra care for leather seats',
         assignedTime: '2025-01-23T09:30:00',
         completedTime: null,
@@ -43,7 +48,6 @@ const EmployeeAssignments = () => {
         estimatedDuration: '30 mins',
         amount: 299,
         status: 'pending',
-        priority: 'medium',
         instructions: 'Regular wash, customer will provide water',
         assignedTime: '2025-01-23T13:30:00',
         completedTime: null,
@@ -61,7 +65,6 @@ const EmployeeAssignments = () => {
         estimatedDuration: '60 mins',
         amount: 899,
         status: 'pending',
-        priority: 'low',
         instructions: 'Include dashboard polishing',
         assignedTime: '2025-01-23T16:00:00',
         completedTime: null,
@@ -79,7 +82,6 @@ const EmployeeAssignments = () => {
         estimatedDuration: '25 mins',
         amount: 199,
         status: 'completed',
-        priority: 'medium',
         instructions: 'Quick wash before office',
         assignedTime: '2025-01-22T10:30:00',
         completedTime: '2025-01-22T11:20:00',
@@ -97,7 +99,6 @@ const EmployeeAssignments = () => {
         estimatedDuration: '120 mins',
         amount: 450,
         status: 'completed',
-        priority: 'low',
         instructions: 'Handle delicate fabrics with care',
         assignedTime: '2025-01-21T08:30:00',
         completedTime: '2025-01-21T10:45:00',
@@ -115,7 +116,6 @@ const EmployeeAssignments = () => {
         estimatedDuration: '30 mins',
         amount: 299,
         status: 'pending',
-        priority: 'medium',
         instructions: 'Park in basement level 2',
         assignedTime: '2025-01-24T14:30:00',
         completedTime: null,
@@ -123,10 +123,39 @@ const EmployeeAssignments = () => {
       }
     ];
 
-    setTimeout(() => {
-      setAssignments(mockAssignments);
-      setLoading(false);
-    }, 1000);
+    (async () => {
+      try {
+        const res = await getAssignments({ status: 'all', dateFilter: 'all' });
+        if (res.success) {
+          setAssignments(
+            res.data.assignments?.map(a => ({
+              id: a.id,
+              customerName: a.customerName,
+              customerPhone: a.customerPhone,
+              serviceType: a.serviceType,
+              location: a.location,
+              address: a.address,
+              scheduledDate: a.scheduledDate,
+              scheduledTime: a.scheduledTime,
+              estimatedDuration: a.estimatedDuration,
+              amount: a.amount,
+              status: a.status,
+              
+              instructions: a.instructions,
+              assignedTime: a.assignedTime,
+              completedTime: a.completedTime,
+              customerRating: a.customerRating,
+            })) || []
+          );
+        } else {
+          setAssignments(mockAssignments);
+        }
+      } catch (e) {
+        setAssignments(mockAssignments);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   // Filter assignments based on search and filters
@@ -143,9 +172,12 @@ const EmployeeAssignments = () => {
       );
     }
 
-    // Status filter
+    // Status filter (treat 'assigned' as 'pending' for UI)
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(assignment => assignment.status === statusFilter);
+      filtered = filtered.filter(assignment => {
+        if (statusFilter === 'pending') return assignment.status === 'pending' || assignment.status === 'assigned';
+        return assignment.status === statusFilter;
+      });
     }
 
     // Date filter
@@ -167,21 +199,47 @@ const EmployeeAssignments = () => {
     setFilteredAssignments(filtered);
   }, [assignments, searchTerm, statusFilter, dateFilter]);
 
-  const handleUpdateStatus = (assignmentId, newStatus) => {
-    setAssignments(assignments.map(assignment => 
-      assignment.id === assignmentId 
-        ? { 
-            ...assignment, 
-            status: newStatus,
-            completedTime: newStatus === 'completed' ? new Date().toISOString() : assignment.completedTime
-          }
-        : assignment
-    ));
+  const handleUpdateStatus = async (assignmentId, newStatus) => {
+    const prev = assignments;
+    try {
+      if (newStatus === 'completed') {
+        const res = await completeTask(assignmentId);
+        if (!res.success) throw new Error('Complete failed');
+        setAssignments(prev.map(a => a.id === assignmentId ? { ...a, status: 'completed', completedTime: new Date().toISOString() } : a));
+      } else {
+        setAssignments(prev.map(a => a.id === assignmentId ? { ...a, status: newStatus } : a));
+        const res = await updateAssignmentStatus(assignmentId, newStatus);
+        if (!res.success) setAssignments(prev);
+      }
+    } catch {
+      setAssignments(prev);
+    }
+  };
+
+  const onPickFile = async (assignmentId, field, file) => {
+    if (!file) return;
+    setImageFiles((prev) => ({
+      ...prev,
+      [assignmentId]: { ...(prev[assignmentId] || {}), [field]: file },
+    }));
+    setUploadingByField(prev => ({ ...prev, [assignmentId]: { ...(prev[assignmentId] || {}), [field]: true } }));
+    try {
+      const res = await uploadTaskImages(assignmentId, { [field]: file });
+      if (res?.success) {
+        setUploadedByField(prev => ({
+          ...prev,
+          [assignmentId]: { ...(prev[assignmentId] || {}), [field]: true }
+        }));
+      }
+    } finally {
+      setUploadingByField(prev => ({ ...prev, [assignmentId]: { ...(prev[assignmentId] || {}), [field]: false } }));
+    }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
+  case 'pending':
+  case 'assigned':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'in-progress':
         return 'bg-blue-100 text-blue-800 border-blue-200';
@@ -194,22 +252,12 @@ const EmployeeAssignments = () => {
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'high':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low':
-        return 'bg-green-100 text-green-800 border-green-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
+  // priority removed from UI
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending':
+  case 'pending':
+  case 'assigned':
         return <Clock className="h-4 w-4" />;
       case 'in-progress':
         return <AlertCircle className="h-4 w-4" />;
@@ -220,6 +268,16 @@ const EmployeeAssignments = () => {
       default:
         return <Clock className="h-4 w-4" />;
     }
+  };
+
+  const openDetails = async (assignmentId) => {
+    try {
+      const res = await getAssignmentDetails(assignmentId);
+      if (res?.success) {
+        setOrderDetails(res.data);
+        setDetailsOpen(true);
+      }
+    } catch {}
   };
 
   const formatDate = (dateString) => {
@@ -338,9 +396,6 @@ const EmployeeAssignments = () => {
                 <div className="flex-1">
                   <div className="flex items-center mb-2">
                     <h3 className="text-lg font-semibold text-gray-900 mr-3">{assignment.serviceType}</h3>
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full border ${getPriorityColor(assignment.priority)}`}>
-                      {assignment.priority} priority
-                    </span>
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-600">
                     <span>ID: {assignment.id}</span>
@@ -353,7 +408,7 @@ const EmployeeAssignments = () => {
                 <div className="text-right">
                   <div className={`flex items-center px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(assignment.status)} mb-2`}>
                     {getStatusIcon(assignment.status)}
-                    <span className="ml-1 capitalize">{assignment.status.replace('-', ' ')}</span>
+                    <span className="ml-1 capitalize">{(assignment.status === 'assigned' ? 'pending' : assignment.status).replace('-', ' ')}</span>
                   </div>
                   <p className="text-lg font-bold text-gray-900">₹{assignment.amount}</p>
                 </div>
@@ -423,7 +478,7 @@ const EmployeeAssignments = () => {
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
-                {assignment.status === 'pending' && (
+                {(assignment.status === 'pending' || assignment.status === 'assigned') && (
                   <>
                     <button
                       onClick={() => handleUpdateStatus(assignment.id, 'in-progress')}
@@ -431,28 +486,87 @@ const EmployeeAssignments = () => {
                     >
                       Start Task
                     </button>
-                    <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                    <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                       Call Customer
-                    </button>
-                    <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                    </a>
+                    <a
+                      href={assignment.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assignment.address)}` : '#'}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                    >
                       View on Map
+                    </a>
+                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                      View Details
                     </button>
                   </>
                 )}
                 
                 {assignment.status === 'in-progress' && (
                   <>
-                    <button
-                      onClick={() => handleUpdateStatus(assignment.id, 'completed')}
-                      className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors"
-                    >
-                      Mark Completed
-                    </button>
-                    <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <label
+                        className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-60"
+                        disabled={uploadingByField[assignment.id]?.before}
+                      >
+                        {uploadingByField[assignment.id]?.before
+                          ? 'Uploading Before…'
+                          : uploadedByField[assignment.id]?.before
+                          ? 'Reupload Before'
+                          : 'Upload Before'}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => onPickFile(assignment.id, 'before', e.target.files?.[0])}
+                        />
+                      </label>
+                      {uploadedByField[assignment.id]?.before && (
+                        <span className="text-green-600 text-sm">Before uploaded</span>
+                      )}
+                      <label
+                        className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-60"
+                        disabled={uploadingByField[assignment.id]?.after}
+                      >
+                        {uploadingByField[assignment.id]?.after
+                          ? 'Uploading After…'
+                          : uploadedByField[assignment.id]?.after
+                          ? 'Reupload After'
+                          : 'Upload After'}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => onPickFile(assignment.id, 'after', e.target.files?.[0])}
+                        />
+                      </label>
+                      {uploadedByField[assignment.id]?.after && (
+                        <span className="text-green-600 text-sm">After uploaded</span>
+                      )}
+                      <button
+                        onClick={() => handleUpdateStatus(assignment.id, 'completed')}
+                        className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-60"
+                        disabled={!
+                          uploadedByField[assignment.id]?.before || !uploadedByField[assignment.id]?.after
+                        }
+                      >
+                        Mark Completed
+                      </button>
+                    </div>
+                    <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                       Call Customer
-                    </button>
-                    <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                    </a>
+                    <a
+                      href={assignment.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assignment.address)}` : '#'}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                    >
                       View on Map
+                    </a>
+                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                      View Details
                     </button>
                   </>
                 )}
@@ -463,7 +577,7 @@ const EmployeeAssignments = () => {
                       <CheckCircle className="h-4 w-4 mr-2" />
                       <span className="text-sm font-medium">Task Completed</span>
                     </div>
-                    <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors">
                       View Details
                     </button>
                   </>
@@ -481,6 +595,7 @@ const EmployeeAssignments = () => {
           </div>
         )}
       </div>
+      <OrderDetailsModal open={detailsOpen} onClose={() => setDetailsOpen(false)} order={orderDetails} />
     </EmployeeLayout>
   );
 };

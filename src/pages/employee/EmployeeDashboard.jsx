@@ -1,101 +1,133 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, MapPin, Phone, CheckCircle, AlertCircle, Calendar, User } from 'lucide-react';
 import EmployeeLayout from '../../components/EmployeeLayout';
+import { getEmployeeDashboard, uploadAttendanceSelfie, uploadTaskImages, completeTask, updateAssignmentStatus, getAssignmentDetails } from '../../api/employee';
+import OrderDetailsModal from '../../components/employee/OrderDetailsModal';
 
 const EmployeeDashboard = () => {
   const [assignments, setAssignments] = useState([]);
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [imageFiles, setImageFiles] = useState({}); // { [id]: { before?: File, after?: File } }
+  const [uploadingByField, setUploadingByField] = useState({}); // { [id]: { before?: boolean, after?: boolean } }
+  const [uploadedByField, setUploadedByField] = useState({});  // { [id]: { before?: boolean, after?: boolean } }
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(null);
 
-  // Mock data
   useEffect(() => {
-    const mockEmployee = {
-      id: 1,
-      name: 'Ravi Kumar',
-      specialization: 'car',
-      phone: '9876543210',
-      email: 'ravi.kumar@bubbleflash.com',
-      todayAssignments: 3,
-      completedToday: 1,
-      pendingTasks: 2,
-      totalEarnings: 850
-    };
+  // Minimal fallbacks to avoid hardcoding names when API is unavailable
+  const fallbackEmployee = { name: 'Employee', specialization: '', todayAssignments: 0, completedToday: 0, pendingTasks: 0, totalEarnings: 0 };
+  const fallbackAssignments = [];
 
-    const mockAssignments = [
-      {
-        id: 'BF001',
-        customerName: 'Darvin Kumar',
-        customerPhone: '9566751053',
-        serviceType: 'Premium Car Wash',
-        location: 'HSR Layout, Bangalore',
-        address: '123 Main Street, HSR Layout',
-        scheduledTime: '10:00 AM',
-        estimatedDuration: '45 mins',
-        amount: 699,
-        status: 'in-progress',
-        priority: 'high',
-        instructions: 'Customer requested extra care for leather seats',
-        assignedTime: '2025-07-23T09:30:00'
-      },
-      {
-        id: 'BF002',
-        customerName: 'Priya Sharma',
-        customerPhone: '9876543210',
-        serviceType: 'Essential Car Wash',
-        location: 'Koramangala, Bangalore',
-        address: '456 Park Avenue, Koramangala',
-        scheduledTime: '2:00 PM',
-        estimatedDuration: '30 mins',
-        amount: 299,
-        status: 'pending',
-        priority: 'medium',
-        instructions: 'Regular wash, customer will provide water',
-        assignedTime: '2025-07-23T13:30:00'
-      },
-      {
-        id: 'BF003',
-        customerName: 'Rajesh Kumar',
-        customerPhone: '9123456789',
-        serviceType: 'Deluxe Car Wash',
-        location: 'Whitefield, Bangalore',
-        address: '789 Tech Park, Whitefield',
-        scheduledTime: '4:30 PM',
-        estimatedDuration: '60 mins',
-        amount: 899,
-        status: 'pending',
-        priority: 'low',
-        instructions: 'Include dashboard polishing',
-        assignedTime: '2025-07-23T16:00:00'
+    (async () => {
+      try {
+        const res = await getEmployeeDashboard();
+        if (res.success) {
+          setEmployee({
+            id: res.data.employee.id,
+            name: res.data.employee.name,
+            specialization: res.data.employee.specialization,
+            todayAssignments: res.data.todayStats.todayAssignments,
+            completedToday: res.data.todayStats.completedToday,
+            pendingTasks: res.data.todayStats.pendingTasks,
+            totalEarnings: res.data.todayStats.totalEarnings,
+          });
+          setAssignments(res.data.assignments.map(a => ({
+            id: a.id,
+            customerName: a.customerName,
+            customerPhone: a.customerPhone,
+            serviceType: a.serviceType,
+            location: a.location,
+            address: a.address,
+            scheduledTime: a.scheduledTime,
+            estimatedDuration: a.estimatedDuration,
+            amount: a.amount,
+            status: a.status,
+            instructions: a.instructions,
+            assignedTime: a.assignedTime,
+          })));
+        } else {
+          setEmployee(fallbackEmployee);
+          setAssignments(fallbackAssignments);
+        }
+      } catch (e) {
+  setEmployee(fallbackEmployee);
+  setAssignments(fallbackAssignments);
+      } finally {
+        setLoading(false);
       }
-    ];
-
-    setTimeout(() => {
-      setEmployee(mockEmployee);
-      setAssignments(mockAssignments);
-      setLoading(false);
-    }, 1000);
+    })();
   }, []);
 
-  const handleUpdateStatus = (assignmentId, newStatus) => {
-    setAssignments(assignments.map(assignment => 
-      assignment.id === assignmentId 
-        ? { ...assignment, status: newStatus }
-        : assignment
-    ));
-
-    // Update employee stats
-    if (newStatus === 'completed') {
-      setEmployee(prev => ({
-        ...prev,
-        completedToday: prev.completedToday + 1,
-        pendingTasks: prev.pendingTasks - 1
-      }));
+  const handleUpdateStatus = async (assignmentId, newStatus) => {
+    const prev = assignments;
+    try {
+      if (newStatus === 'completed') {
+        const res = await completeTask(assignmentId);
+        if (!res.success) throw new Error('Complete failed');
+        setAssignments(prev.map(a => a.id === assignmentId ? { ...a, status: 'completed', completedTime: new Date().toISOString() } : a));
+      } else {
+        setAssignments(prev.map(a => a.id === assignmentId ? { ...a, status: newStatus } : a));
+        const res = await updateAssignmentStatus(assignmentId, newStatus);
+        if (!res.success) setAssignments(prev);
+      }
+    } catch {
+      setAssignments(prev);
     }
+  };
+
+  const handleAttendanceUpload = async (file) => {
+    await uploadAttendanceSelfie(file);
+  };
+
+  const handleTaskImagesUpload = async (orderId, files) => {
+    // Upload single or both fields; update per-field flags accordingly
+    const fields = ['before', 'after'];
+    for (const field of fields) {
+      const file = files[field];
+      if (!file) continue;
+      setUploadingByField(prev => ({ ...prev, [orderId]: { ...(prev[orderId] || {}), [field]: true } }));
+      try {
+        const res = await uploadTaskImages(orderId, { [field]: file });
+        if (res?.success) {
+          setUploadedByField(prev => ({
+            ...prev,
+            [orderId]: { ...(prev[orderId] || {}), [field]: true }
+          }));
+        }
+      } finally {
+        setUploadingByField(prev => ({ ...prev, [orderId]: { ...(prev[orderId] || {}), [field]: false } }));
+      }
+    }
+  };
+
+  const handleCompleteTask = async (orderId) => {
+    await completeTask(orderId);
+  };
+
+  const openDetails = async (assignmentId) => {
+    try {
+      const res = await getAssignmentDetails(assignmentId);
+      if (res?.success) {
+        setOrderDetails(res.data);
+        setDetailsOpen(true);
+      }
+    } catch {}
+  };
+
+  const onPickFile = async (assignmentId, field, file) => {
+    if (!file) return;
+    setImageFiles((prev) => ({
+      ...prev,
+      [assignmentId]: { ...(prev[assignmentId] || {}), [field]: file },
+    }));
+    await handleTaskImagesUpload(assignmentId, { [field]: file });
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
+  case 'pending':
+  case 'assigned':
         return 'bg-yellow-100 text-yellow-800';
       case 'in-progress':
         return 'bg-blue-100 text-blue-800';
@@ -108,18 +140,7 @@ const EmployeeDashboard = () => {
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'high':
-        return 'bg-red-100 text-red-800';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'low':
-        return 'bg-green-100 text-green-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  // priority removed from UI
 
   const getCurrentTime = () => {
     return new Date().toLocaleTimeString('en-US', { 
@@ -150,6 +171,7 @@ const EmployeeDashboard = () => {
   return (
     <EmployeeLayout>
       <div className="p-6">
+  {/* Attendance is gated before entering Dashboard, so no UI here */}
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -257,15 +279,42 @@ const EmployeeDashboard = () => {
                     {assignment.scheduledTime} ({assignment.estimatedDuration})
                   </div>
                 </div>
-                <div className="mt-4 flex space-x-3">
+                <div className="mt-4 flex flex-wrap gap-3 items-center">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <label className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-60" disabled={uploadingByField[assignment.id]?.before}>
+                        {uploadingByField[assignment.id]?.before ? 'Uploading Before…' : (uploadedByField[assignment.id]?.before ? 'Reupload Before' : 'Upload Before')}
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => onPickFile(assignment.id, 'before', e.target.files?.[0])} />
+                      </label>
+                      {uploadedByField[assignment.id]?.before && <span className="text-green-600 text-sm">Before uploaded</span>}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <label className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-60" disabled={uploadingByField[assignment.id]?.after}>
+                        {uploadingByField[assignment.id]?.after ? 'Uploading After…' : (uploadedByField[assignment.id]?.after ? 'Reupload After' : 'Upload After')}
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => onPickFile(assignment.id, 'after', e.target.files?.[0])} />
+                      </label>
+                      {uploadedByField[assignment.id]?.after && <span className="text-green-600 text-sm">After uploaded</span>}
+                    </div>
+                  </div>
                   <button
                     onClick={() => handleUpdateStatus(assignment.id, 'completed')}
-                    className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                    className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors"
                   >
                     Mark Completed
                   </button>
-                  <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                  <a href={`tel:${assignment.customerPhone}`} className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
                     Call Customer
+                  </a>
+                  <a
+                    href={assignment.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assignment.address)}` : '#'}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    View on Map
+                  </a>
+                  <button onClick={() => openDetails(assignment.id)} className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
+                    View Details
                   </button>
                 </div>
               </div>
@@ -289,15 +338,12 @@ const EmployeeDashboard = () => {
                     <div className="flex-1">
                       <div className="flex items-center mb-2">
                         <h3 className="text-lg font-semibold text-gray-900 mr-3">{assignment.serviceType}</h3>
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(assignment.priority)}`}>
-                          {assignment.priority} priority
-                        </span>
                       </div>
                       <p className="text-sm text-gray-600">Booking ID: {assignment.id}</p>
                     </div>
                     <div className="text-right">
                       <span className={`px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(assignment.status)}`}>
-                        {assignment.status}
+                        {assignment.status === 'assigned' ? 'pending' : assignment.status}
                       </span>
                       <p className="text-lg font-bold text-gray-900 mt-1">₹{assignment.amount}</p>
                     </div>
@@ -347,7 +393,7 @@ const EmployeeDashboard = () => {
 
                   {/* Action Buttons */}
                   <div className="flex flex-wrap gap-3">
-                    {assignment.status === 'pending' && (
+                    {(assignment.status === 'pending' || assignment.status === 'assigned') && (
                       <>
                         <button
                           onClick={() => handleUpdateStatus(assignment.id, 'in-progress')}
@@ -355,9 +401,9 @@ const EmployeeDashboard = () => {
                         >
                           Start Task
                         </button>
-                        <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                        <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                           Call Customer
-                        </button>
+                        </a>
                       </>
                     )}
                     
@@ -365,13 +411,30 @@ const EmployeeDashboard = () => {
                       <>
                         <button
                           onClick={() => handleUpdateStatus(assignment.id, 'completed')}
-                          className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                          className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-60"
+                          disabled={!uploadedByField[assignment.id]?.before || !uploadedByField[assignment.id]?.after}
                         >
                           Mark Completed
                         </button>
-                        <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2">
+                            <label className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-60" disabled={uploadingByField[assignment.id]?.before}>
+                              {uploadingByField[assignment.id]?.before ? 'Uploading Before…' : (uploadedByField[assignment.id]?.before ? 'Reupload Before' : 'Upload Before')}
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => onPickFile(assignment.id, 'before', e.target.files?.[0])} />
+                            </label>
+                            {uploadedByField[assignment.id]?.before && <span className="text-green-600 text-sm">Before uploaded</span>}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <label className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-60" disabled={uploadingByField[assignment.id]?.after}>
+                              {uploadingByField[assignment.id]?.after ? 'Uploading After…' : (uploadedByField[assignment.id]?.after ? 'Reupload After' : 'Upload After')}
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => onPickFile(assignment.id, 'after', e.target.files?.[0])} />
+                            </label>
+                            {uploadedByField[assignment.id]?.after && <span className="text-green-600 text-sm">After uploaded</span>}
+                          </div>
+                        </div>
+                        <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                           Call Customer
-                        </button>
+                        </a>
                       </>
                     )}
 
@@ -382,8 +445,16 @@ const EmployeeDashboard = () => {
                       </div>
                     )}
 
-                    <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                    <a
+                      href={assignment.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assignment.address)}` : '#'}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                    >
                       View on Map
+                    </a>
+                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                      View Details
                     </button>
                   </div>
                 </div>
@@ -399,6 +470,7 @@ const EmployeeDashboard = () => {
           </div>
         </div>
       </div>
+  <OrderDetailsModal open={detailsOpen} onClose={() => setDetailsOpen(false)} order={orderDetails} />
     </EmployeeLayout>
   );
 };

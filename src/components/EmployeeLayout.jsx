@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getEmployeeProfile, getAttendanceStatus } from '../api/employee';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -54,12 +55,44 @@ const EmployeeLayout = ({ children }) => {
     window.location.href = '/employee/login';
   };
 
-  // Mock employee data - in real app, this would come from authentication context
-  const employee = {
-    name: 'Ravi Kumar',
-    specialization: 'Car Wash Specialist',
-    profileImage: null
-  };
+  const [employeeHeader, setEmployeeHeader] = useState({ name: '', specialization: '', profileImage: null });
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('employeeUser') || '{}');
+      const name = stored?.name || '';
+      setEmployeeHeader(prev => ({ ...prev, name }));
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getEmployeeProfile();
+        if (res?.success && res?.data?.employee) {
+          const e = res.data.employee;
+          setEmployeeHeader(prev => ({
+            ...prev,
+            name: prev.name || e.name || '',
+            specialization: e.specialization ? (e.specialization === 'all' ? 'Specialist' : `${e.specialization.charAt(0).toUpperCase()}${e.specialization.slice(1)} Specialist`) : prev.specialization,
+            profileImage: e.profileImage || prev.profileImage || null,
+          }));
+        }
+      } catch {}
+    })();
+  }, []);
+
+  // Enhance avatar with today's attendance selfie if available
+  useEffect(() => {
+    (async () => {
+      try {
+        const status = await getAttendanceStatus();
+        if (status?.success && status.doneToday && status.url) {
+          setEmployeeHeader(prev => ({ ...prev, profileImage: status.url }));
+        }
+      } catch {}
+    })();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -90,15 +123,15 @@ const EmployeeLayout = ({ children }) => {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center">
             <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-              {employee.profileImage ? (
-                <img src={employee.profileImage} alt={employee.name} className="w-10 h-10 rounded-full object-cover" />
+              {employeeHeader.profileImage ? (
+                <img src={employeeHeader.profileImage} alt={employeeHeader.name} className="w-10 h-10 rounded-full object-cover" />
               ) : (
                 <User className="h-5 w-5 text-gray-600" />
               )}
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-900">{employee.name}</p>
-              <p className="text-xs text-gray-500">{employee.specialization}</p>
+              <p className="text-sm font-medium text-gray-900">{employeeHeader.name || 'Employee'}</p>
+              <p className="text-xs text-gray-500">{employeeHeader.specialization || ''}</p>
             </div>
           </div>
         </div>

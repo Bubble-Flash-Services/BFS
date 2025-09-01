@@ -13,8 +13,8 @@ const carCategories = [
     image: '/car/sedan/sedansimage.jpg',
     route: '/car-wash-deals/sedans'
   },
-   {
-    name: 'MID-SUV',
+  {
+   name: 'MID-SUV',
     image: '/car/hatchback/aiease_1755725602539.png',
     route: '/car-wash-deals/midsuv'
   },
