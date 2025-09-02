@@ -8,6 +8,9 @@ import RazorpayPayment from '../components/RazorpayPayment';
 import { createOrder } from '../api/orders';
 import toast from 'react-hot-toast';
 
+// API base for all requests in this module
+const API = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+
 export default function CartPage() {
   const navigate = useNavigate();
   const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal, loading: cartLoading } = useCart();
@@ -52,8 +55,6 @@ export default function CartPage() {
     try {
       const token = localStorage.getItem('token');
       const cartTotal = getCartTotal();
-      
-  const API = import.meta.env.VITE_API_URL || window.location.origin;
   const response = await fetch(`${API}/api/coupons?orderAmount=${cartTotal}&userId=${user?.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -75,6 +76,11 @@ export default function CartPage() {
     try {
       setCouponLoading(true);
       const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please log in to apply a coupon');
+        setCouponLoading(false);
+        return;
+      }
       const cartTotal = getCartTotal();
 
       console.log('🎫 Applying coupon:', {
@@ -83,7 +89,7 @@ export default function CartPage() {
         userId: user?.id
       });
 
-  const response = await fetch(`${API}/api/coupons/validate`, {
+      const response = await fetch(`${API}/api/coupons/validate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,12 +97,20 @@ export default function CartPage() {
         },
         body: JSON.stringify({
           code: coupon.code,
-          orderAmount: cartTotal,
+          orderAmount: Number(cartTotal) || 0,
           userId: user?.id
         })
       });
 
       const result = await response.json();
+      if (!response.ok) {
+        if (response.status === 401) {
+          toast.error('Session expired. Please log in again to use coupons');
+        } else {
+          toast.error(result.message || 'Failed to validate coupon');
+        }
+        return;
+      }
       console.log('🎫 Coupon validation response:', result);
 
       if (result.success && result.data.isValid) {
@@ -132,6 +146,11 @@ export default function CartPage() {
     try {
       setCouponLoading(true);
       const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please log in to apply a coupon');
+        setCouponLoading(false);
+        return;
+      }
       const cartTotal = getCartTotal();
 
       console.log('🎫 Applying coupon by code:', {
@@ -140,7 +159,7 @@ export default function CartPage() {
         userId: user?.id
       });
 
-  const response = await fetch(`${API}/api/coupons/validate`, {
+      const response = await fetch(`${API}/api/coupons/validate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,12 +167,20 @@ export default function CartPage() {
         },
         body: JSON.stringify({
           code: couponCode.toUpperCase(),
-          orderAmount: cartTotal,
+          orderAmount: Number(cartTotal) || 0,
           userId: user?.id
         })
       });
 
       const result = await response.json();
+      if (!response.ok) {
+        if (response.status === 401) {
+          toast.error('Session expired. Please log in again to use coupons');
+        } else {
+          toast.error(result.message || 'Failed to validate coupon');
+        }
+        return;
+      }
       console.log('🎫 Coupon by code validation response:', result);
 
       if (result.success && result.data.isValid) {
@@ -847,11 +874,24 @@ export default function CartPage() {
                               <div className="space-y-2">
                                 <p className="text-sm font-medium text-gray-700">Available Coupons:</p>
                                 <div className="max-h-40 overflow-y-auto space-y-2">
-                                  {availableCoupons.map((coupon) => (
+                                  {availableCoupons.map((coupon) => {
+                                    const eligible = (getCartTotal() >= (coupon.minimumOrderAmount || 0));
+                                    const handleClick = () => {
+                                      if (!eligible) {
+                                        toast.error(`Add ₹${Math.max(0, (coupon.minimumOrderAmount || 0) - getCartTotal())} more to use ${coupon.code}`);
+                                        return;
+                                      }
+                                      applyCoupon(coupon);
+                                    };
+                                    return (
                                     <div
                                       key={coupon._id}
-                                      className="p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors"
-                                      onClick={() => applyCoupon(coupon)}
+                                      className={
+                                        "p-3 border rounded-lg transition-colors " +
+                                        (eligible ? "border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer" : "border-gray-200 bg-gray-50 opacity-70 cursor-not-allowed")
+                                      }
+                                      onClick={eligible ? handleClick : undefined}
+                                      aria-disabled={!eligible}
                                     >
                                       <div className="flex justify-between items-start">
                                         <div className="flex-1">
@@ -880,7 +920,7 @@ export default function CartPage() {
                                         </div>
                                       </div>
                                     </div>
-                                  ))}
+                                  )})}
                                 </div>
                               </div>
                             )}
