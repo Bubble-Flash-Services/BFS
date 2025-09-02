@@ -507,13 +507,64 @@ const BookingHistory = () => {
 
         {/* Bookings Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-4 md:px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
               Booking Records ({filteredBookings.length})
             </h2>
           </div>
-          
-          <div className="overflow-x-auto">
+          {/* Mobile card list */}
+          <div className="md:hidden p-4 space-y-4">
+            {filteredBookings.length === 0 && (
+              <div className="text-sm text-gray-500">No bookings found</div>
+            )}
+            {filteredBookings.map((b) => (
+              <div key={b.id} className="rounded-lg border border-gray-200 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-semibold text-gray-900">#{b.id}</div>
+                    <div className="text-sm text-gray-600">{b.customerName} • {b.phone}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-semibold text-gray-900">₹{b.amount}</div>
+                    <div className={`mt-1 text-xs inline-block px-2 py-1 rounded-full ${(b.paymentStatus === 'completed') ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{(b.paymentStatus === 'completed') ? 'completed' : 'pending'}</div>
+                  </div>
+                </div>
+                <div className="mt-3 text-sm text-gray-700">
+                  {b.items && b.items.length ? (
+                    <ul className="space-y-1">
+                      {b.items.map((it, idx) => (
+                        <li key={idx} className="flex justify-between">
+                          <span>
+                            <span className="font-medium">{it.serviceName}</span>
+                            {it.packageName && <span className="text-gray-500"> - {it.packageName}</span>}
+                            <span className="block text-xs text-gray-400">{it.vehicleType} × {it.quantity}</span>
+                          </span>
+                          <span className="text-green-600 font-medium">₹{it.price}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="text-gray-600">
+                      <span className="font-medium">{b.serviceMode}</span>
+                      <span className="block text-xs">{b.plan} - {b.category}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-2 text-sm">
+                  <div className="flex justify-between"><span className="text-gray-500">Location</span><span className="text-gray-800 text-right ml-3 flex-1 line-clamp-2">{b.location}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-500">Booked</span><span className="text-gray-800">{b.bookingDate}</span></div>
+                  {b.completedDate && <div className="flex justify-between"><span className="text-gray-500">Completed</span><span className="text-gray-800">{b.completedDate}</span></div>}
+                  <div className="flex justify-between"><span className="text-gray-500">Status</span><span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(b.status)}`}>{b.status}</span></div>
+                </div>
+                <div className="mt-4">
+                  <button onClick={() => handleViewBooking(b.id)} className="px-3 py-2 rounded border text-blue-600 border-blue-200">View Details</button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -559,7 +610,7 @@ const BookingHistory = () => {
                       <div className="max-w-xs">
                         {booking.items && booking.items.length > 0 ? (
                           <div className="space-y-1">
-                            {booking.items.slice(0, 2).map((item, index) => (
+                            {booking.items.map((item, index) => (
                               <div key={index} className="flex items-center justify-between text-sm">
                                 <div>
                                   <span className="font-medium text-gray-900">{item.serviceName}</span>
@@ -573,11 +624,6 @@ const BookingHistory = () => {
                                 <span className="text-green-600 font-medium">₹{item.price}</span>
                               </div>
                             ))}
-                            {booking.items.length > 2 && (
-                              <div className="text-xs text-blue-600 cursor-pointer hover:underline">
-                                +{booking.items.length - 2} more items
-                              </div>
-                            )}
                           </div>
                         ) : (
                           <div className="text-sm text-gray-500">
@@ -624,10 +670,17 @@ const BookingHistory = () => {
                             });
                             const result = await res.json();
                             if (res.ok && result.success) {
-                              const updated = bookings.map(b => b.id === booking.id ? { ...b, status: newStatus } : b);
+                              const bUpd = result.booking;
+                              const patch = {
+                                status: newStatus,
+                                amount: bUpd?.totalAmount ?? booking.amount,
+                                paymentStatus: bUpd?.paymentStatus ?? booking.paymentStatus,
+                                completedDate: (bUpd?.actualEndTime ? new Date(bUpd.actualEndTime).toISOString().split('T')[0] : booking.completedDate)
+                              };
+                              const updated = bookings.map(b => b.id === booking.id ? { ...b, ...patch } : b);
                               setBookings(updated);
-                              setFilteredBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: newStatus } : b));
-                              if (selectedBooking && selectedBooking.id === booking.id) setSelectedBooking({ ...selectedBooking, status: newStatus });
+                              setFilteredBookings(prev => prev.map(b => b.id === booking.id ? { ...b, ...patch } : b));
+                              if (selectedBooking && selectedBooking.id === booking.id) setSelectedBooking({ ...selectedBooking, ...patch });
                             } else {
                               alert(result.message || 'Failed to update status');
                             }
@@ -726,8 +779,33 @@ const BookingHistory = () => {
                     Service Details
                   </h3>
                   <div className="space-y-6">
-                    {selectedBooking.items && selectedBooking.items.length > 0 ? (
-                      selectedBooking.items.map((item, index) => (
+                    {selectedBooking.items && selectedBooking.items.length > 0 ? (() => {
+                      const getItemGroup = (item) => {
+                        const type = (item.type || '').toLowerCase();
+                        const label = ((item.serviceName || '') + ' ' + (item.vehicleType || '')).toLowerCase();
+                        if (type.includes('car')) return 'Car';
+                        if (type.includes('bike')) return 'Bike';
+                        if (type.includes('helmet')) return 'Helmet';
+                        if (/hatch|sedan|suv|mid\s*-\s*suv|luxur/.test(label)) return 'Car';
+                        if (/scooter|motorbike|cruiser|bike/.test(label)) return 'Bike';
+                        if (/helmet/.test(label)) return 'Helmet';
+                        return 'Others';
+                      };
+                      const groups = {};
+                      selectedBooking.items.forEach((it) => {
+                        const g = getItemGroup(it);
+                        if (!groups[g]) groups[g] = [];
+                        groups[g].push(it);
+                      });
+                      const order = ['Car','Bike','Helmet','Others'];
+                      return order.filter(k=>groups[k]?.length).map((gk) => (
+                        <div key={gk}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="text-lg font-bold text-gray-800">{gk}</h4>
+                            <span className="text-xs text-gray-500">{groups[gk].length} item{groups[gk].length>1?'s':''}</span>
+                          </div>
+                          <div className="space-y-4">
+                            {groups[gk].map((item, index) => (
                         <div key={index} className="bg-white rounded-lg border border-blue-200 overflow-hidden">
                           {/* Item Header */}
                           <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
@@ -736,25 +814,33 @@ const BookingHistory = () => {
                                 <h4 className="text-lg font-semibold text-gray-900">{item.serviceName}</h4>
                                 <p className="text-sm text-gray-600">{item.vehicleType || 'Standard'}</p>
                               </div>
-                              <div className="text-right">
-                                <p className="text-lg font-bold text-gray-900">₹{item.price * item.quantity}</p>
-                                <p className="text-sm text-gray-500">₹{item.price} each</p>
-                              </div>
+                              {(() => {
+                                const addOnsTotal = (item.addOns || []).reduce((s, a) => s + (a.price * (a.quantity || 1)), 0);
+                                const laundryTotal = (item.laundryItems || []).reduce((s, l) => s + (l.pricePerItem * (l.quantity || 1)), 0);
+                                const baseTotal = (item.price || 0) * (item.quantity || 1);
+                                const finalTotal = baseTotal + addOnsTotal + laundryTotal;
+                                return (
+                                  <div className="text-right">
+                                    <p className="text-lg font-bold text-gray-900">₹{finalTotal}</p>
+                                    <p className="text-sm text-gray-500">₹{item.price} each</p>
+                                  </div>
+                                );
+                              })()}
                             </div>
                           </div>
 
                           {/* Package Details */}
                           <div className="px-6 py-4">
                             <div className="mb-4">
-                              <h5 className="text-sm font-semibold text-gray-700 mb-2">Package Includes</h5>
+                <h5 className="text-sm font-semibold text-gray-700 mb-2">Package Includes</h5>
                               <div className="bg-blue-50 rounded-lg p-4">
                                 <div className="flex items-center justify-between">
-                                  <span className="text-gray-700">Base Service: {item.packageName || 'Custom Package'}</span>
-                                  <span className="text-gray-900 font-medium">₹{item.price}</span>
+                  <span className="text-gray-700">Base Service: {item.packageName || 'Custom Package'}</span>
+                  <span className="text-gray-900 font-medium">₹{item.price}</span>
                                 </div>
-                                  {Array.isArray(item.includedFeatures) && item.includedFeatures.length > 0 && (
+                  {Array.isArray(item.includedFeatures) && item.includedFeatures.length > 0 && (
                                     <div className="mt-2">
-                                      <p className="text-xs font-semibold text-gray-700 mb-1">Included Features</p>
+                    <p className="text-xs font-semibold text-gray-700 mb-1">{(item.type||'')==='monthly_plan' ? 'Plan Features' : 'Included Features'}</p>
                                       <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
                                         {item.includedFeatures.map((f, i) => (
                                           <li key={i}>{f}</li>
@@ -874,8 +960,11 @@ const BookingHistory = () => {
                             )}
                           </div>
                         </div>
+                          ))}
+                          </div>
+                        </div>
                       ))
-                    ) : (
+                    })() : (
                       <div className="bg-white rounded-lg p-4 border border-blue-200">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
@@ -894,8 +983,19 @@ const BookingHistory = () => {
                       </div>
                     )}
 
-                    {/* Order Summary - Only show if payment is completed */}
-                    {selectedBooking.paymentStatus === 'completed' && (
+                    {/* Order Summary: always show breakdown and compute grand total from items */}
+                    {(() => {
+                      const items = selectedBooking.items || [];
+                      const itemsCount = items.reduce((sum, it) => sum + (it.quantity || 1), 0);
+                      const computedSubtotal = items.reduce((sum, it) => {
+                        const base = (it.price || 0) * (it.quantity || 1);
+                        const add = (it.addOns || []).reduce((s, a) => s + (a.price * (a.quantity || 1)), 0);
+                        const laundry = (it.laundryItems || []).reduce((s, l) => s + (l.pricePerItem * (l.quantity || 1)), 0);
+                        return sum + base + add + laundry;
+                      }, 0);
+                      const discount = Number(selectedBooking.discountAmount) || 0;
+                      const grandTotal = Math.max(0, computedSubtotal - discount);
+                      return (
                       <div className="bg-white rounded-lg border-2 border-green-200 p-6 mt-6">
                         <h5 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                           <CreditCard className="w-5 h-5 mr-2" />
@@ -903,14 +1003,14 @@ const BookingHistory = () => {
                         </h5>
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Subtotal ({(selectedBooking.items || []).reduce((sum, item) => sum + item.quantity, 0)} items)</span>
-                            <span className="text-gray-900 font-medium">₹{selectedBooking.subtotal || selectedBooking.amount}</span>
+                            <span className="text-gray-600">Subtotal ({itemsCount} {itemsCount===1?'item':'items'})</span>
+                            <span className="text-gray-900 font-medium">₹{computedSubtotal}</span>
                           </div>
                           
-                          {selectedBooking.discountAmount > 0 && (
+                          {discount > 0 && (
                             <div className="flex items-center justify-between">
                               <span className="text-gray-600">Discount {selectedBooking.couponCode && `(${selectedBooking.couponCode})`}</span>
-                              <span className="text-green-600 font-medium">-₹{selectedBooking.discountAmount}</span>
+                              <span className="text-green-600 font-medium">-₹{discount}</span>
                             </div>
                           )}
                           
@@ -922,16 +1022,17 @@ const BookingHistory = () => {
                           <div className="border-t pt-3">
                             <div className="flex items-center justify-between text-xl font-bold">
                               <span className="text-gray-800">Total</span>
-                              <span className="text-green-600">₹{selectedBooking.amount}</span>
+                              <span className="text-green-600">₹{grandTotal}</span>
                             </div>
                           </div>
                         </div>
                         
                         <div className="mt-4 p-3 bg-green-50 rounded-lg">
-                          <p className="text-sm text-green-700 font-medium text-center">Ready to checkout</p>
+                          <p className="text-sm text-green-700 font-medium text-center">Grand total computed from items</p>
                         </div>
                       </div>
-                    )}
+                      );
+                    })()}
                   </div>
                 </div>
 

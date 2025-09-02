@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Eye, Save, X, User, Phone, MapPin, Calendar, RefreshCw } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Save, X, User, Phone, MapPin, Calendar, RefreshCw, Star } from 'lucide-react';
 import AdminLayout from '../../components/AdminLayout';
 
 const EmployeeManagement = () => {
@@ -19,6 +19,9 @@ const EmployeeManagement = () => {
     bikeSpecialists: 0,
     laundrySpecialists: 0
   });
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [employeeDetails, setEmployeeDetails] = useState(null);
 
   // Form state for employee
   const [formData, setFormData] = useState({
@@ -132,12 +135,12 @@ const EmployeeManagement = () => {
   const saveEmployee = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const url = editingEmployee 
+      const url = editingEmployee
         ? `/api/adminNew/employees/${editingEmployee._id}`
         : '/api/adminNew/employees';
-      
+
       const method = editingEmployee ? 'PUT' : 'POST';
-      
+
       const payload = {
         ...formData,
         password: editingEmployee ? undefined : 'defaultPassword123' // Default password for new employees
@@ -153,7 +156,7 @@ const EmployeeManagement = () => {
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         setShowCreateModal(false);
         fetchEmployees(); // Refresh employee list
@@ -184,7 +187,7 @@ const EmployeeManagement = () => {
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         fetchEmployees(); // Refresh employee list
         alert('Employee deleted successfully!');
@@ -207,7 +210,7 @@ const EmployeeManagement = () => {
     try {
       const selectedEmployee = employees.find(emp => emp._id === formData.assignedEmployee);
       const confirmMessage = `Are you sure you want to assign this booking to ${selectedEmployee?.name}?`;
-      
+
       if (!window.confirm(confirmMessage)) {
         return;
       }
@@ -226,7 +229,7 @@ const EmployeeManagement = () => {
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         // Reset form and close modal
         setFormData({
@@ -234,11 +237,11 @@ const EmployeeManagement = () => {
           assignedEmployee: ''
         });
         handleCloseAssignModal();
-        
+
         // Refresh data
         fetchUnassignedBookings();
         fetchEmployees(); // Refresh to update employee stats
-        
+
         alert(`Booking successfully assigned to ${selectedEmployee?.name}!`);
       } else {
         alert(result.message || 'Failed to assign booking');
@@ -269,6 +272,34 @@ const EmployeeManagement = () => {
       ...formData,
       assignedEmployee: '' // Reset selected employee
     });
+  };
+
+  // Open details modal
+  const openDetails = async (emp) => {
+    setDetailsLoading(true);
+    setShowDetailsModal(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      const res = await fetch(`/api/adminNew/employees/${emp._id}/details`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (res.status === 401) {
+        localStorage.removeItem('adminToken');
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (result.success) {
+        setEmployeeDetails(result.data);
+      } else {
+        setEmployeeDetails({ employee: emp, attendance: [], tasks: [] });
+      }
+    } catch (e) {
+      console.error('Load employee details failed', e);
+      setEmployeeDetails({ employee: emp, attendance: [], tasks: [] });
+    } finally {
+      setDetailsLoading(false);
+    }
   };
 
   // Format date helper
@@ -334,6 +365,265 @@ const EmployeeManagement = () => {
         </div>
 
         {/* Error Message */}
+        {/* Employee Details Modal */}
+        {showDetailsModal && (
+          <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+              {/* Header */}
+              <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between z-10">
+                <div className="min-w-0">
+                  <h2 className="text-xl font-semibold truncate">
+                    {employeeDetails?.employee?.name || 'Employee Details'}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    ID: {employeeDetails?.employee?.employeeId || employeeDetails?.employee?._id?.slice?.(-6) || '—'} • {employeeDetails?.employee?.specialization?.toUpperCase?.()}
+                  </p>
+                </div>
+                <button
+                  onClick={() => { setShowDetailsModal(false); setEmployeeDetails(null); }}
+                  className="p-2 rounded hover:bg-gray-100 text-gray-500"
+                  aria-label="Close"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Loading state */}
+              {detailsLoading ? (
+                <div className="p-10 flex items-center justify-center">
+                  <div className="w-8 h-8 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <div className="p-6 space-y-6">
+                  {/* Summary */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <p className="text-sm text-blue-800">Contact</p>
+                      <p className="text-sm text-blue-900 truncate">{employeeDetails?.employee?.email || '—'}</p>
+                      <p className="text-sm text-blue-900">{employeeDetails?.employee?.phone || '—'}</p>
+                    </div>
+                    <div className="bg-green-50 rounded-lg p-4">
+                      <p className="text-sm text-green-800">Join Date</p>
+                      <p className="text-sm text-green-900">{formatDate(employeeDetails?.employee?.createdAt)}</p>
+                    </div>
+                    <div className="bg-purple-50 rounded-lg p-4">
+                      <p className="text-sm text-purple-800">Specialization</p>
+                      <span className={`inline-flex mt-1 px-2 py-1 text-xs font-semibold rounded-full ${getSpecializationColor(employeeDetails?.employee?.specialization)}`}>
+                        {employeeDetails?.employee?.specialization || '—'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Quick Stats */}
+                  {(() => {
+                    const tasks = employeeDetails?.tasks || [];
+                    const attendance = employeeDetails?.attendance || [];
+                    const ratings = tasks.map(t => typeof t.rating === 'number' ? t.rating : null).filter(r => r !== null);
+                    const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : 0;
+                    const reviewsCount = tasks.filter(t => t.review || typeof t.rating === 'number').length;
+                    return (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="bg-white border rounded-lg p-3">
+                          <p className="text-xs text-gray-500">Completed Tasks</p>
+                          <p className="text-xl font-semibold text-gray-800">{tasks.length}</p>
+                        </div>
+                        <div className="bg-white border rounded-lg p-3">
+                          <p className="text-xs text-gray-500">Average Rating</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-xl font-semibold text-gray-800">{avgRating.toFixed(1)}</p>
+                            <div className="flex items-center">
+                              {[1,2,3,4,5].map(n => (
+                                <Star key={n} size={14} className={n <= Math.round(avgRating) ? 'text-yellow-500 fill-yellow-400' : 'text-gray-300'} />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="bg-white border rounded-lg p-3">
+                          <p className="text-xs text-gray-500">Reviews</p>
+                          <p className="text-xl font-semibold text-gray-800">{reviewsCount}</p>
+                        </div>
+                        <div className="bg-white border rounded-lg p-3">
+                          <p className="text-xs text-gray-500">Attendance Photos</p>
+                          <p className="text-xl font-semibold text-gray-800">{attendance.length}</p>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Attendance Gallery */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-gray-800">Attendance</h3>
+                      <span className="text-sm text-gray-500">{employeeDetails?.attendance?.length || 0} photos</span>
+                    </div>
+                    {employeeDetails?.attendance?.length ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                        {employeeDetails.attendance.slice(0, 24).map((a, idx) => (
+                          <a key={a.publicId || idx} href={a.url} target="_blank" rel="noreferrer" className="group block">
+                            <div className="aspect-square overflow-hidden rounded-md border">
+                              <img src={a.url} alt={`attendance-${idx}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                            </div>
+                            <p className="mt-1 text-[11px] text-gray-500 truncate">{formatDate(a.uploadedAt)}</p>
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-6 text-center text-gray-500 border rounded">No attendance records</div>
+                    )}
+                  </div>
+
+                  {/* Completed Tasks */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-gray-800">Completed Tasks</h3>
+                      <span className="text-sm text-gray-500">{employeeDetails?.tasks?.length || 0} orders</span>
+                    </div>
+                    {employeeDetails?.tasks?.length ? (
+                      <div className="space-y-4">
+                        {employeeDetails.tasks.map((t, idx) => (
+                          <div key={t.orderNumber || idx} className="border rounded-lg overflow-hidden">
+                            {/* Top bar */}
+                            <div className="px-4 py-3 bg-gray-50 flex items-center justify-between">
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium text-gray-800">Order #{t.orderNumber || '—'}</p>
+                                <p className="text-xs text-gray-500">Completed: {formatDate(t.completedAt)}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-sm font-semibold text-green-700">₹{t.amount ?? 0}</p>
+                              </div>
+                            </div>
+                            {/* Content */}
+                            <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                              {/* Images */}
+                              <div className="lg:col-span-2 grid grid-cols-2 gap-3">
+                                <div>
+                                  <p className="text-xs text-gray-500 mb-1">Before</p>
+                                  <div className="aspect-video rounded-md overflow-hidden border bg-gray-50">
+                                    {t.beforeImage ? (
+                                      <a href={t.beforeImage} target="_blank" rel="noreferrer">
+                                        <img src={t.beforeImage} alt="before" className="w-full h-full object-cover" />
+                                      </a>
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No image</div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-500 mb-1">After</p>
+                                  <div className="aspect-video rounded-md overflow-hidden border bg-gray-50">
+                                    {t.afterImage ? (
+                                      <a href={t.afterImage} target="_blank" rel="noreferrer">
+                                        <img src={t.afterImage} alt="after" className="w-full h-full object-cover" />
+                                      </a>
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No image</div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Details */}
+                              <div className="space-y-2">
+                                <div>
+                                  <p className="text-xs text-gray-500">Customer</p>
+                                  <p className="text-sm text-gray-800">{t.customer?.name || '—'}{t.customer?.phone ? ` • ${t.customer.phone}` : ''}</p>
+                                </div>
+                                {t.address ? (
+                                  <div>
+                                    <p className="text-xs text-gray-500">Address</p>
+                                    <p className="text-sm text-gray-800 line-clamp-3">{t.address}</p>
+                                  </div>
+                                ) : null}
+                                {Array.isArray(t.items) && t.items.length ? (
+                                  <div>
+                                    <p className="text-xs text-gray-500">Items</p>
+                                    <ul className="text-sm text-gray-800 list-disc ml-4 space-y-0.5">
+                                      {t.items.slice(0, 4).map((it, i2) => (
+                                        <li key={i2}>{it.name} ×{it.qty}</li>
+                                      ))}
+                                      {t.items.length > 4 && (
+                                        <li className="text-gray-500">+ {t.items.length - 4} more</li>
+                                      )}
+                                    </ul>
+                                  </div>
+                                ) : null}
+                                {/* Rating & Review */}
+                                {(t.rating || t.review) && (
+                                  <div className="pt-2 border-t">
+                                    {typeof t.rating === 'number' && (
+                                      <div className="flex items-center gap-1 mb-1">
+                                        {[1,2,3,4,5].map(n => (
+                                          <Star key={n} size={16} className={n <= t.rating ? 'text-yellow-500 fill-yellow-400' : 'text-gray-300'} />
+                                        ))}
+                                        <span className="text-xs text-gray-500 ml-1">{t.rating}/5</span>
+                                      </div>
+                                    )}
+                                    {t.review && (
+                                      <p className="text-sm text-gray-700 italic">“{t.review}”</p>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-6 text-center text-gray-500 border rounded">No completed tasks</div>
+                    )}
+                  </div>
+
+                  {/* Customer Reviews */}
+                  {(() => {
+                    const reviews = (employeeDetails?.tasks || []).filter(t => t.review || typeof t.rating === 'number');
+                    if (!reviews.length) return null;
+                    return (
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-lg font-semibold text-gray-800">Customer Reviews</h3>
+                          <span className="text-sm text-gray-500">{reviews.length} review{reviews.length > 1 ? 's' : ''}</span>
+                        </div>
+                        <div className="space-y-3">
+                          {reviews.slice(0, 10).map((r, i) => (
+                            <div key={(r.orderNumber || i) + '-review'} className="border rounded-lg p-3 bg-white">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-sm font-medium text-gray-800">Order #{r.orderNumber || '—'}</p>
+                                  <p className="text-xs text-gray-500">{r.customer?.name || '—'}{r.customer?.phone ? ` • ${r.customer.phone}` : ''}</p>
+                                </div>
+                                {typeof r.rating === 'number' && (
+                                  <div className="flex items-center gap-1">
+                                    {[1,2,3,4,5].map(n => (
+                                      <Star key={n} size={14} className={n <= r.rating ? 'text-yellow-500 fill-yellow-400' : 'text-gray-300'} />
+                                    ))}
+                                    <span className="text-xs text-gray-500 ml-1">{r.rating}/5</span>
+                                  </div>
+                                )}
+                              </div>
+                              {r.review && (
+                                <p className="mt-2 text-sm text-gray-700 italic">“{r.review}”</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Footer */}
+                  <div className="pt-4 border-t flex justify-end">
+                    <button
+                      onClick={() => { setShowDetailsModal(false); setEmployeeDetails(null); }}
+                      className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p className="text-red-700">{error}</p>
@@ -407,17 +697,45 @@ const EmployeeManagement = () => {
 
         {/* Employees Table */}
         <div className="bg-white rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-4 md:px-6 py-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800">All Employees</h2>
           </div>
-          
+
           {employees.length === 0 ? (
             <div className="p-8 text-center">
               <User size={48} className="text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500">No employees found</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <>
+            {/* Mobile card list */}
+            <div className="md:hidden p-4 space-y-4">
+              {employees.map((employee) => (
+                <div key={employee._id} className="rounded-lg border border-gray-200 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="font-semibold text-gray-900">{employee.name}</div>
+                      <div className="text-sm text-gray-600">ID: {employee.employeeId || employee._id.slice(-6)}</div>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded-full ${getSpecializationColor(employee.specialization)}`}>{employee.specialization}</span>
+                  </div>
+                  <div className="mt-3 grid grid-cols-1 gap-2 text-sm">
+                    <div className="flex justify-between"><span className="text-gray-500">Email</span><span className="text-gray-800 ml-3 truncate max-w-[60%] text-right">{employee.email}</span></div>
+                    <div className="flex justify-between"><span className="text-gray-500">Phone</span><span className="text-gray-800">{employee.phone}</span></div>
+                    <div className="flex justify-between"><span className="text-gray-500">Status</span><span className={`text-xs px-2 py-1 rounded-full ${employee.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{employee.isActive ? 'Active' : 'Inactive'}</span></div>
+                    <div className="flex justify-between"><span className="text-gray-500">Joined</span><span className="text-gray-800">{formatDate(employee.createdAt)}</span></div>
+                  </div>
+                  <div className="mt-4 flex gap-3">
+                    <button onClick={() => openDetails(employee)} className="px-3 py-2 rounded border text-blue-600 border-blue-200">View</button>
+                    <button onClick={() => handleEditEmployee(employee)} className="px-3 py-2 rounded border text-green-600 border-green-200">Edit</button>
+                    <button onClick={() => deleteEmployee(employee._id)} className="px-3 py-2 rounded border text-red-600 border-red-200">Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
@@ -441,6 +759,7 @@ const EmployeeManagement = () => {
                     </th>
                   </tr>
                 </thead>
+                {/* FIX START: Added missing table cells and corrected tbody placement */}
                 <tbody className="bg-white divide-y divide-gray-200">
                   {employees.map((employee) => (
                     <tr key={employee._id} className="hover:bg-gray-50">
@@ -464,38 +783,33 @@ const EmployeeManagement = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          employee.isActive 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${employee.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                           {employee.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatDate(employee.joinDate)}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDate(employee.createdAt)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleEditEmployee(employee)}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            <Edit size={16} />
+                        <div className="flex items-center space-x-3">
+                          <button onClick={() => openDetails(employee)} className="text-gray-500 hover:text-blue-600" title="View Details">
+                            <Eye size={18} />
                           </button>
-                          <button
-                            onClick={() => deleteEmployee(employee._id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 size={16} />
+                          <button onClick={() => handleEditEmployee(employee)} className="text-gray-500 hover:text-green-600" title="Edit Employee">
+                            <Edit size={18} />
+                          </button>
+                          <button onClick={() => deleteEmployee(employee._id)} className="text-gray-500 hover:text-red-600" title="Delete Employee">
+                            <Trash2 size={18} />
                           </button>
                         </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
+                {/* FIX END */}
               </table>
             </div>
+            </>
           )}
         </div>
 
@@ -524,7 +838,7 @@ const EmployeeManagement = () => {
                     <input
                       type="text"
                       value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
@@ -537,7 +851,7 @@ const EmployeeManagement = () => {
                     <input
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
@@ -550,7 +864,7 @@ const EmployeeManagement = () => {
                     <input
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
@@ -562,7 +876,7 @@ const EmployeeManagement = () => {
                     </label>
                     <textarea
                       value={formData.address}
-                      onChange={(e) => setFormData({...formData, address: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       rows="2"
                       required
@@ -575,7 +889,7 @@ const EmployeeManagement = () => {
                     </label>
                     <select
                       value={formData.specialization}
-                      onChange={(e) => setFormData({...formData, specialization: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     >
@@ -584,6 +898,46 @@ const EmployeeManagement = () => {
                       <option value="laundry">Laundry</option>
                       <option value="all">All Services</option>
                     </select>
+                  </div>
+
+                  {/* FIX: Added missing bank details fields */}
+                  <div className="border-t pt-4">
+                    <h3 className="text-md font-medium text-gray-800 mb-2">Bank Details (Optional)</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Bank Name
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.bankDetails.bankName}
+                          onChange={(e) => setFormData({ ...formData, bankDetails: { ...formData.bankDetails, bankName: e.target.value } })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Account Number
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.bankDetails.accountNumber}
+                          onChange={(e) => setFormData({ ...formData, bankDetails: { ...formData.bankDetails, accountNumber: e.target.value } })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          IFSC Code
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.bankDetails.ifsc}
+                          onChange={(e) => setFormData({ ...formData, bankDetails: { ...formData.bankDetails, ifsc: e.target.value } })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
                   </div>
 
                 </div>
@@ -625,7 +979,7 @@ const EmployeeManagement = () => {
                 {/* Comprehensive Booking Details */}
                 <div className="mb-6">
                   <h3 className="text-lg font-medium mb-4 text-gray-800">Booking Details</h3>
-                  
+
                   {/* Basic Info */}
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg mb-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -635,11 +989,10 @@ const EmployeeManagement = () => {
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Status</p>
-                        <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
-                          selectedBooking.orderStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          selectedBooking.orderStatus === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
+                        <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${selectedBooking.orderStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            selectedBooking.orderStatus === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                          }`}>
                           {(selectedBooking.orderStatus || 'pending').replace('_', ' ').toUpperCase()}
                         </span>
                       </div>
@@ -710,7 +1063,7 @@ const EmployeeManagement = () => {
                                 <p className="font-semibold">₹{item.price}</p>
                               </div>
                             </div>
-                            
+
                             {/* Add-ons */}
                             {item.addOns && item.addOns.length > 0 && (
                               <div className="mt-2 pt-2 border-t">
@@ -760,11 +1113,10 @@ const EmployeeManagement = () => {
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Payment Status</p>
-                        <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                          selectedBooking.paymentStatus === 'completed' ? 'bg-green-100 text-green-800' :
-                          selectedBooking.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
+                        <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${selectedBooking.paymentStatus === 'completed' ? 'bg-green-100 text-green-800' :
+                            selectedBooking.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-gray-100 text-gray-800'
+                          }`}>
                           {(selectedBooking.paymentStatus || 'pending').toUpperCase()}
                         </span>
                       </div>
@@ -789,7 +1141,7 @@ const EmployeeManagement = () => {
                     </label>
                     <select
                       value={formData.assignedEmployee || ''}
-                      onChange={(e) => setFormData({...formData, assignedEmployee: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, assignedEmployee: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     >

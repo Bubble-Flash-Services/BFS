@@ -987,7 +987,7 @@ export default function CarWashDeals() {
       vehicleType: category || 'hatchbacks',
       packageId: selectedPackage.id,
       addOns: selectedAddons, // Use addOns instead of addons
-      packageDetails: {
+    packageDetails: {
         basePrice: packagePrice,
   addons: selectedAddons, // Keep this for display purposes
   addonsTotal: addonsTotal,
@@ -1429,11 +1429,13 @@ export default function CarWashDeals() {
                 >
                   <div className={`${isLuxury ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]' : 'bg-white shadow-lg'} rounded-2xl overflow-hidden max-w-sm mx-auto h-full`}>
                     <div className="p-6 h-full flex flex-col">
-                      <img 
-                        src={pkg.image} 
-                        alt={pkg.name} 
-                        className={`w-full h-48 object-cover rounded-lg mb-4 ${isLuxury ? 'ring-1 ring-[#d4af37]/30' : ''}`}
-                      />
+                      <div className={`w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden ${isLuxury ? 'ring-1 ring-[#d4af37]/30 bg-black/30' : 'bg-gray-50'}`}>
+                        <img 
+                          src={pkg.image} 
+                          alt={pkg.name} 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
                       <h3 className={`text-xl font-bold mb-4 min-h-[3rem] ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
                         {pkg.name}
                       </h3>
@@ -1631,6 +1633,12 @@ export default function CarWashDeals() {
                             name: plan.name,
                             price: plan.price,
                             features: plan.features,
+                            // Include all monthly plan detail sections so they reach cart/order
+                            washIncludes: plan.washIncludes || [],
+                            weeklyIncludes: plan.weeklyIncludes || [],
+                            biWeeklyIncludes: plan.biWeeklyIncludes || [],
+                            monthlyBonuses: plan.monthlyBonuses || [],
+                            platinumExtras: plan.platinumExtras || [],
                             type: 'monthly_plan',
                             image: "/car/car1.png" // Default image for monthly plans
                           };
@@ -1733,17 +1741,12 @@ export default function CarWashDeals() {
                             <div>
                               <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Plan Features:</h5>
                               <ul className="space-y-1">
-                {plan.features.slice(0, 2).map((feature, index) => (
+                                {plan.features.map((feature, index) => (
                                   <li key={index} className="flex items-start">
                                     <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-sm`}>•</span>
-                  <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
+                                    <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
                                   </li>
                                 ))}
-                                {plan.features.length > 2 && (
-                                  <li className={`${isLuxury ? 'text-white/60' : 'text-gray-500'} text-xs`}>
-                                    +{plan.features.length - 2} more features
-                                  </li>
-                                )}
                               </ul>
                             </div>
 
@@ -1753,17 +1756,12 @@ export default function CarWashDeals() {
                               <div>
                                 <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Each Wash Includes:</h5>
                                 <ul className="space-y-1">
-                  {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).slice(0, 3).map((item, index) => (
+                                  {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).map((item, index) => (
                                     <li key={index} className="flex items-start">
                                       <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'} mr-2 text-sm`}>•</span>
-                    <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(item) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{item}</span>
+                                      <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(item) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{item}</span>
                                     </li>
                                   ))}
-                                  {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).length > 3 && (
-                                    <li className={`${isLuxury ? 'text-white/60' : 'text-gray-500'} text-xs`}>
-                                      +{(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).length - 3} more services
-                                    </li>
-                                  )}
                                 </ul>
                               </div>
                             )}
@@ -1773,17 +1771,12 @@ export default function CarWashDeals() {
                               <div>
                                 <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Monthly Bonuses:</h5>
                                 <ul className="space-y-1">
-                  {plan.monthlyBonuses.slice(0, 2).map((bonus, index) => (
+                                  {plan.monthlyBonuses.map((bonus, index) => (
                                     <li key={index} className="flex items-start">
                                       <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-yellow-500'} mr-2 text-sm`}>•</span>
-                    <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(bonus) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{bonus}</span>
+                                      <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(bonus) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{bonus}</span>
                                     </li>
                                   ))}
-                                  {plan.monthlyBonuses.length > 2 && (
-                                    <li className={`${isLuxury ? 'text-white/60' : 'text-gray-500'} text-xs`}>
-                                      +{plan.monthlyBonuses.length - 2} more bonuses
-                                    </li>
-                                  )}
                                 </ul>
                               </div>
                             )}
@@ -1799,6 +1792,12 @@ export default function CarWashDeals() {
                                   name: plan.name,
                                   price: plan.price,
                                   features: plan.features,
+                                  // Include all monthly plan detail sections so they reach cart/order
+                                  washIncludes: plan.washIncludes || [],
+                                  weeklyIncludes: plan.weeklyIncludes || [],
+                                  biWeeklyIncludes: plan.biWeeklyIncludes || [],
+                                  monthlyBonuses: plan.monthlyBonuses || [],
+                                  platinumExtras: plan.platinumExtras || [],
                                   type: 'monthly_plan',
                                   image: "/car/car1.png" // Default image for monthly plans
                                 };

@@ -354,13 +354,43 @@ const UserManagement = () => {
 
         {/* Users Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-4 md:px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
               Registered Users ({filteredUsers.length})
             </h2>
           </div>
-          
-          <div className="overflow-x-auto">
+          {/* Mobile card list */}
+          <div className="md:hidden p-4 space-y-4">
+            {filteredUsers.length === 0 && (
+              <div className="text-sm text-gray-500">No users found</div>
+            )}
+            {filteredUsers.map((u) => (
+              <div key={u.id} className="rounded-lg border border-gray-200 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-semibold text-gray-900">{u.name}</div>
+                    <div className="text-sm text-gray-600">{u.email}</div>
+                  </div>
+                  <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(u.status)}`}>{u.status}</span>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-2 text-sm">
+                  <div className="flex justify-between"><span className="text-gray-500">Phone</span><span className="text-gray-800">{u.phone}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-500">Joined</span><span className="text-gray-800">{u.joinedDate}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-500">Bookings</span><span className="text-gray-800">{u.totalBookings}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-500">Total Spent</span><span className="text-gray-800">₹{u.totalSpent.toLocaleString()}</span></div>
+                </div>
+                <div className="mt-3 text-xs text-gray-600 line-clamp-2">{u.location}</div>
+                <div className="mt-4 flex gap-3">
+                  <button onClick={() => handleViewUser(u.id)} className="px-3 py-2 rounded border text-blue-600 border-blue-200">View</button>
+                  <button onClick={() => handleEditUser(u.id)} className="px-3 py-2 rounded border text-green-600 border-green-200">Edit</button>
+                  <button onClick={() => handleDeleteUser(u.id)} className="px-3 py-2 rounded border text-red-600 border-red-200">Delete</button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>

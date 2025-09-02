@@ -124,7 +124,7 @@ const AdminDashboard = () => {
 
   const chartOptions = {
     responsive: true,
-    plugins: {
+  plugins: {
       legend: {
         position: 'top',
       },
@@ -134,6 +134,7 @@ const AdminDashboard = () => {
         beginAtZero: true,
       },
     },
+  maintainAspectRatio: false,
   };
 
   const getServiceModeColor = (mode) => {
@@ -164,10 +165,10 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
           <p className="text-gray-600">Welcome back! Here's what's happening with your business today.</p>
           <div className="text-sm text-gray-500 mt-2">
             {new Date().toLocaleDateString('en-US', { 
@@ -179,7 +180,7 @@ const AdminDashboard = () => {
           </div>
         </div>
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -239,14 +240,41 @@ const AdminDashboard = () => {
 
         {/* Current Customers Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-4 md:px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Current Customers</h2>
             <p className="text-sm text-gray-600">Today's active bookings and services</p>
             {loadError && (
               <div className="mt-2 text-sm text-red-600">{loadError}</div>
             )}
           </div>
-          <div className="overflow-x-auto">
+          {/* Mobile card list */}
+          <div className="md:hidden p-4 space-y-4">
+            {currentCustomers.length === 0 && (
+              <div className="text-sm text-gray-500">No recent customers</div>
+            )}
+            {currentCustomers.map((c) => (
+              <div key={c.id} className="rounded-lg border border-gray-200 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-semibold text-gray-900">{c.customer}</div>
+                    <div className="text-sm text-gray-600">{c.plan}</div>
+                  </div>
+                  <div className={`text-xs px-2 py-1 rounded-full ${getServiceModeColor(c.serviceMode)}`}>{c.serviceMode}</div>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-2 text-sm">
+                  <div className="flex justify-between"><span className="text-gray-500">Contact</span><span className="text-gray-800">{c.contactNo}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-500">Payment</span><span className={`px-2 py-0.5 rounded-full ${getPaymentMethodColor(c.paymentMethod)}`}>{c.paymentMethod}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-500">Date</span><span className="text-gray-800">{c.date}</span></div>
+                </div>
+                <div className="mt-3 text-xs text-gray-600">
+                  <div className="line-clamp-2">{c.location}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -309,25 +337,25 @@ const AdminDashboard = () => {
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {/* Monthly Sales Chart */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Monthly Sales</h3>
               <p className="text-sm text-gray-600">Number of bookings per month</p>
             </div>
-            <div className="h-80">
+            <div className="h-64 md:h-80">
               <Line data={salesChartData} options={chartOptions} />
             </div>
           </div>
 
           {/* Monthly Revenue Chart */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Monthly Revenue</h3>
               <p className="text-sm text-gray-600">Revenue generated per month</p>
             </div>
-            <div className="h-80">
+            <div className="h-64 md:h-80">
               <Line data={revenueChartData} options={chartOptions} />
             </div>
           </div>

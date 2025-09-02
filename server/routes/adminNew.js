@@ -5,6 +5,7 @@ import User from '../models/User.js';
 import Order from '../models/Order.js';
 import Coupon from '../models/Coupon.js';
 import { authenticateAdmin, requirePermission } from '../middleware/authAdmin.js';
+import { searchByFolder } from '../services/cloudinary.js';
 
 const router = express.Router();
 
@@ -414,6 +415,49 @@ router.get('/employees', authenticateAdmin, requirePermission('employees'), asyn
   }
 });
 
+// Get employee details: attendance, completed tasks (with images), reviews
+router.get('/employees/:employeeId/details', authenticateAdmin, requirePermission('employees'), async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const employee = await Employee.findById(employeeId).select('-password');
+    if (!employee) return res.status(404).json({ success: false, message: 'Employee not found' });
+
+    // Attendance images from Cloudinary (last 30)
+    const slug = (employee.name || 'employee').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+    const attendanceFolder = `bfs/attendance/${slug}`;
+    let attendance = [];
+    try {
+      const att = await searchByFolder({ folder: attendanceFolder, maxResults: 60 });
+      attendance = (att.resources || []).map(r => ({ url: r.secure_url, publicId: r.public_id, uploadedAt: r.created_at }));
+    } catch (e) {
+      attendance = [];
+    }
+
+    // Completed orders assigned to this employee with images and reviews
+    const completedOrders = await Order.find({ assignedEmployee: employee._id, $or: [ { orderStatus: 'completed' }, { status: 'completed' } ] })
+      .select('orderNumber userId totalAmount completedAt workImages rating review serviceAddress items')
+      .populate('userId', 'name phone');
+
+    const tasks = completedOrders.map(o => ({
+      orderNumber: o.orderNumber,
+      amount: o.totalAmount,
+      completedAt: o.completedAt,
+      beforeImage: o.workImages?.before?.url || null,
+      afterImage: o.workImages?.after?.url || null,
+      customer: { name: o.userId?.name || '', phone: o.userId?.phone || '' },
+      rating: o.rating || null,
+      review: o.review || '',
+      address: o.serviceAddress?.fullAddress || '',
+      items: (o.items || []).map(it => ({ name: it.serviceName, qty: it.quantity, price: it.price }))
+    }));
+
+    res.json({ success: true, data: { employee, attendance, tasks } });
+  } catch (error) {
+    console.error('Get employee details error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch employee details' });
+  }
+});
+
 // Create new employee
 router.post('/employees', authenticateAdmin, requirePermission('employees'), async (req, res) => {
   try {
@@ -704,12 +748,38 @@ router.put('/bookings/:bookingId/status', authenticateAdmin, requirePermission('
 
     // Prevent illegal transitions if needed (optional). For now allow any of the three.
     order.orderStatus = status;
+    // Keep legacy `status` in sync for employee views
+    if (status === 'completed') order.status = 'completed';
+    if (status === 'cancelled') order.status = 'cancelled';
+
+    // If marking completed, recompute totals from items and mark payment done (COD/Wallet/UPI/etc.)
+    if (status === 'completed') {
+      if (order.paymentStatus !== 'completed') {
+        const subtotal = (order.items || []).reduce((sum, it) => {
+          const base = (it.price || 0) * (it.quantity || 1);
+          const addOns = (it.addOns || []).reduce((s, a) => s + (a.price || 0) * (a.quantity || 1), 0);
+          const laundry = (it.laundryItems || []).reduce((s, l) => s + (l.pricePerItem || 0) * (l.quantity || 1), 0);
+          return sum + base + addOns + laundry;
+        }, 0);
+        order.subtotal = subtotal;
+        const discount = order.discountAmount || 0;
+        order.totalAmount = Math.max(0, subtotal - discount);
+        // Consider completion as payment collected for non-gateway flows
+        const markPaidMethods = new Set(['cash', 'gpay', 'phonepe', 'paytm', 'upi', 'wallet']);
+        if (markPaidMethods.has((order.paymentMethod || '').toLowerCase())) {
+          order.paymentStatus = 'completed';
+          order.paidAt = new Date();
+        }
+      }
+      // Always record finish time
+      order.actualEndTime = new Date();
+    }
     if (status === 'cancelled' && !order.customerNotes) {
       order.customerNotes = 'your order is cancalled by the the management';
     }
-    await order.save();
+  await order.save();
 
-    res.json({ success: true, message: 'Booking status updated', booking: order });
+  res.json({ success: true, message: 'Booking status updated', booking: order });
   } catch (error) {
     console.error('Admin update booking status error:', error);
     res.status(500).json({ success: false, message: 'Failed to update booking status' });
@@ -784,11 +854,12 @@ router.patch('/bookings/:bookingId/assign', authenticateAdmin, requirePermission
       });
     }
 
-    const booking = await Order.findByIdAndUpdate(
+  const booking = await Order.findByIdAndUpdate(
       bookingId,
       { 
         assignedEmployee: employeeId,
-        status: 'assigned'
+    status: 'assigned',
+    orderStatus: 'assigned'
       },
       { new: true }
     ).populate('userId', 'name email phone')

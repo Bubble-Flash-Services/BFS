@@ -225,7 +225,7 @@ export default function HeroSection() {
 	const accessories = [
 		{
 			img: '/aboutus/car-spray.png',
-			title: 'Hoora car spray',
+			title: 'car spray',
 			price: 99,
 			oldPrice: 150,
 			offer: '50%offer',
@@ -306,14 +306,14 @@ export default function HeroSection() {
 		},
 	];
 
-	// Navigation for individual cards (mobile: 1 card, desktop: 3 cards)
+	// Navigation for accessories slider: use car-wash style sliding
+	// Desktop shows 3 products per slide; Mobile shows 1 per slide
 	const cardsPerSlide = isMobile ? 1 : 3;
-	const totalSlides = accessories.length; // Total number of individual items
-	
-	const handleDotClick = idx => setAccessorySlide(idx);
-	const handlePrev = () =>
-		setAccessorySlide(s => (s - 1 + totalSlides) % totalSlides);
-	const handleNext = () => setAccessorySlide(s => (s + 1) % totalSlides);
+	const totalSlides = Math.ceil(accessories.length / cardsPerSlide); // number of slide groups
+
+	const handleDotClick = idx => setAccessorySlide(Math.max(0, Math.min(totalSlides - 1, idx)));
+	const handlePrev = () => setAccessorySlide(s => Math.max(0, s - 1));
+	const handleNext = () => setAccessorySlide(s => Math.min(totalSlides - 1, s + 1));
 
 	// Enhanced touch handlers for mobile dragging
 	const handleTouchStart = (e) => {
@@ -335,7 +335,7 @@ export default function HeroSection() {
 		// Apply temporary transform for visual feedback
 		const container = e.currentTarget.querySelector('.slider-container');
 		if (container) {
-			const currentTransform = -accessorySlide * 100;
+			const currentTransform = -accessorySlide * 100; // group-based translate like car wash
 			container.style.transform = `translateX(${currentTransform - movePercent}%)`;
 		}
 	};
@@ -1383,61 +1383,51 @@ export default function HeroSection() {
 						viewport={{ once: true }}
 						className="relative"
 					>
-						{/* Slider Container */}
-						<div className="flex items-center justify-center gap-4 max-w-7xl mx-auto">
-							{/* Left Arrow */}
-							<button
-								onClick={handlePrev}
-								className="rounded-full bg-[#FFB400] text-[#1F3C88] w-12 h-12 flex items-center justify-center shadow-lg hover:bg-[#e0a000] focus:outline-none transition-all duration-300 flex-shrink-0 z-10"
-								aria-label="Previous"
-							>
-								<ArrowRight className="w-6 h-6 rotate-180" />
-							</button>
-
-							{/* Cards Container */}
-							<div className="overflow-hidden flex-1 max-w-5xl"
-								onTouchStart={handleTouchStart}
-								onTouchMove={handleTouchMove}
-								onTouchEnd={handleTouchEnd}
-							>
-								<motion.div
-									className={`flex gap-3 md:gap-4 slider-container ${isDraggingState ? 'transition-none' : 'transition-transform duration-500 ease-out'}`}
-									style={{
-										transform: isMobile 
-											? `translateX(-${accessorySlide * 100}%)` 
-											: `translateX(-${Math.floor(accessorySlide / 3) * 100}%)`,
-										touchAction: 'pan-y pinch-zoom',
-									}}
+							{/* Slider Container */}
+							<div className="relative flex items-center justify-center gap-4 max-w-7xl mx-auto">
+								{/* Left Arrow (car-wash style) */}
+								<button
+									onClick={handlePrev}
+									disabled={accessorySlide === 0}
+									className={`absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${accessorySlide === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 hover:shadow-xl'}`}
+									aria-label="Previous"
 								>
-									{accessories.map((item, index) => (
-										<motion.div
-											key={index}
-											initial={{ 
-												opacity: 0, 
-												y: 50,
-												scale: 0.9
-											}}
-											whileInView={{ 
-												opacity: 1, 
-												y: 0,
-												scale: 1,
-												transition: {
-													type: "spring",
-													stiffness: 100,
-													damping: 15,
-													delay: index * 0.1
-												}
-											}}
-											viewport={{ once: true }}
-											whileHover={{ 
-												scale: 1.05,
-												y: -10,
-												transition: { type: "spring", stiffness: 300, damping: 20 }
-											}}
-											whileTap={{ scale: 0.95 }}
-											onClick={() => handleAddToCart(item)}
-											className="relative bg-white rounded-2xl p-4 md:p-6 cursor-pointer shadow-lg backdrop-blur-sm border border-gray-200 hover:shadow-xl transition-all duration-300 group overflow-hidden flex-shrink-0 w-full min-w-full md:min-w-0 md:w-1/3 lg:w-1/3"
-										>
+									<svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+									</svg>
+								</button>
+
+								{/* Cards Container */}
+								<div className="overflow-hidden flex-1 max-w-5xl"
+									onTouchStart={handleTouchStart}
+									onTouchMove={handleTouchMove}
+									onTouchEnd={handleTouchEnd}
+								>
+									<motion.div
+										className={`flex slider-container ${isDraggingState ? 'transition-none' : 'transition-transform duration-500 ease-out'}`}
+										style={{
+											transform: `translateX(-${accessorySlide * 100}%)`,
+											touchAction: 'pan-y pinch-zoom',
+										}}
+									>
+										{Array.from({ length: totalSlides }, (_, slideIndex) => {
+											const group = accessories.slice(slideIndex * cardsPerSlide, slideIndex * cardsPerSlide + cardsPerSlide);
+											return (
+												<div key={`slide-${slideIndex}`} className="flex-shrink-0 w-full">
+													<div className="flex gap-3 md:gap-4">
+														{group.map((item, idx) => {
+															const globalIdx = slideIndex * cardsPerSlide + idx;
+															return (
+																<motion.div
+																	key={`${slideIndex}-${idx}`}
+																	initial={{ opacity: 0, y: 50, scale: 0.9 }}
+																	whileInView={{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 100, damping: 15, delay: globalIdx * 0.05 } }}
+																	viewport={{ once: true }}
+																	whileHover={{ scale: 1.05, y: -10, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
+																	whileTap={{ scale: 0.95 }}
+																	onClick={() => handleAddToCart(item)}
+																	className="relative bg-white rounded-2xl p-4 md:p-6 cursor-pointer shadow-lg backdrop-blur-sm border border-gray-200 hover:shadow-xl transition-all duration-300 group overflow-hidden w-full md:w-1/3 lg:w-1/3"
+																>
 											{/* Gradient Overlay on Hover */}
 											<motion.div
 												initial={{ opacity: 0 }}
@@ -1458,7 +1448,7 @@ export default function HeroSection() {
 															type: "spring",
 															stiffness: 200,
 															damping: 10,
-															delay: 0.3 + index * 0.1
+																																	delay: 0.3 + globalIdx * 0.05
 														}
 													}}
 													viewport={{ once: true }}
@@ -1490,7 +1480,7 @@ export default function HeroSection() {
 												<motion.h3
 													initial={{ opacity: 0, y: 10 }}
 													whileInView={{ opacity: 1, y: 0 }}
-													transition={{ delay: 0.4 + index * 0.1 }}
+													transition={{ delay: 0.4 + globalIdx * 0.05 }}
 													className="text-base md:text-lg font-bold text-[#1F3C88] mb-2 text-center group-hover:text-[#FFB400] transition-colors duration-300"
 												>
 													{item.title}
@@ -1500,7 +1490,7 @@ export default function HeroSection() {
 												<motion.div
 													initial={{ opacity: 0, y: 10 }}
 													whileInView={{ opacity: 1, y: 0 }}
-													transition={{ delay: 0.5 + index * 0.1 }}
+													transition={{ delay: 0.5 + globalIdx * 0.05 }}
 													className="flex justify-center items-center mb-3"
 												>
 													{[...Array(item.stars)].map((_, i) => (
@@ -1512,7 +1502,7 @@ export default function HeroSection() {
 												<motion.div
 													initial={{ opacity: 0, y: 10 }}
 													whileInView={{ opacity: 1, y: 0 }}
-													transition={{ delay: 0.5 + index * 0.1 }}
+													transition={{ delay: 0.5 + globalIdx * 0.05 }}
 													className="text-center mb-4"
 												>
 													<div className="text-gray-400 line-through text-xs mb-1">MRP: ₹{item.oldPrice}</div>
@@ -1526,7 +1516,7 @@ export default function HeroSection() {
 												<motion.div
 													initial={{ opacity: 0, y: 10 }}
 													whileInView={{ opacity: 1, y: 0 }}
-													transition={{ delay: 0.6 + index * 0.1 }}
+													transition={{ delay: 0.6 + globalIdx * 0.05 }}
 													className="text-center"
 												>
 													<motion.button
@@ -1544,18 +1534,26 @@ export default function HeroSection() {
 													</motion.button>
 												</motion.div>
 											</div>
-										</motion.div>
-									))}
+											</motion.div>
+											);
+										})}
+												</div>
+											</div>
+										);
+									})}
 								</motion.div>
 							</div>
 
-							{/* Right Arrow */}
+							{/* Right Arrow (car-wash style) */}
 							<button
 								onClick={handleNext}
-								className="rounded-full bg-[#FFB400] text-[#1F3C88] w-12 h-12 flex items-center justify-center shadow-lg hover:bg-[#e0a000] focus:outline-none transition-all duration-300 flex-shrink-0 z-10"
+								disabled={accessorySlide === totalSlides - 1}
+								className={`absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${accessorySlide === totalSlides - 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 hover:shadow-xl'}`}
 								aria-label="Next"
 							>
-								<ArrowRight className="w-6 h-6" />
+								<svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+								</svg>
 							</button>
 						</div>
 					</motion.div>

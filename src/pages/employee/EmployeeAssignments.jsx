@@ -14,6 +14,7 @@ const EmployeeAssignments = () => {
   const [imageFiles, setImageFiles] = useState({}); // { [id]: { before?: File, after?: File } }
   const [uploadingByField, setUploadingByField] = useState({}); // { [id]: { before?: boolean, after?: boolean } }
   const [uploadedByField, setUploadedByField] = useState({});  // { [id]: { before?: boolean, after?: boolean } }
+  const [amountCollectedByOrder, setAmountCollectedByOrder] = useState({}); // { [id]: boolean }
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
 
@@ -158,6 +159,24 @@ const EmployeeAssignments = () => {
     })();
   }, []);
 
+  // Load persisted upload flags from localStorage when assignments change
+  useEffect(() => {
+    if (!assignments || assignments.length === 0) return;
+    setUploadedByField((prev) => {
+      const next = { ...prev };
+      for (const a of assignments) {
+        try {
+          const raw = localStorage.getItem(`taskUploads:${a.id}`);
+          if (raw) {
+            const obj = JSON.parse(raw);
+            next[a.id] = { ...(next[a.id] || {}), ...obj };
+          }
+        } catch {}
+      }
+      return next;
+    });
+  }, [assignments]);
+
   // Filter assignments based on search and filters
   useEffect(() => {
     let filtered = assignments;
@@ -203,7 +222,7 @@ const EmployeeAssignments = () => {
     const prev = assignments;
     try {
       if (newStatus === 'completed') {
-        const res = await completeTask(assignmentId);
+        const res = await completeTask(assignmentId, { amountReceived: true, amountCollected: true });
         if (!res.success) throw new Error('Complete failed');
         setAssignments(prev.map(a => a.id === assignmentId ? { ...a, status: 'completed', completedTime: new Date().toISOString() } : a));
       } else {
@@ -230,6 +249,12 @@ const EmployeeAssignments = () => {
           ...prev,
           [assignmentId]: { ...(prev[assignmentId] || {}), [field]: true }
         }));
+        // Persist flags to localStorage for refresh survival
+        try {
+          const current = JSON.parse(localStorage.getItem(`taskUploads:${assignmentId}`) || '{}');
+          current[field] = true;
+          localStorage.setItem(`taskUploads:${assignmentId}`, JSON.stringify(current));
+        } catch {}
       }
     } finally {
       setUploadingByField(prev => ({ ...prev, [assignmentId]: { ...(prev[assignmentId] || {}), [field]: false } }));
@@ -331,7 +356,7 @@ const EmployeeAssignments = () => {
 
   return (
     <EmployeeLayout>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">My Assignments</h1>
@@ -339,7 +364,7 @@ const EmployeeAssignments = () => {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Search */}
             <div className="relative">
@@ -388,9 +413,9 @@ const EmployeeAssignments = () => {
         </div>
 
         {/* Assignments List */}
-        <div className="space-y-6">
+    <div className="space-y-6">
           {filteredAssignments.map((assignment) => (
-            <div key={assignment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+      <div key={assignment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6 hover:shadow-md transition-shadow">
               {/* Assignment Header */}
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
@@ -482,22 +507,22 @@ const EmployeeAssignments = () => {
                   <>
                     <button
                       onClick={() => handleUpdateStatus(assignment.id, 'in-progress')}
-                      className="bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                      className="bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors w-full sm:w-auto"
                     >
                       Start Task
                     </button>
-                    <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                    <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors w-full sm:w-auto">
                       Call Customer
                     </a>
                     <a
                       href={assignment.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assignment.address)}` : '#'}
                       target="_blank"
                       rel="noreferrer"
-                      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors w-full sm:w-auto"
                     >
                       View on Map
                     </a>
-                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors w-full sm:w-auto">
                       View Details
                     </button>
                   </>
@@ -544,28 +569,37 @@ const EmployeeAssignments = () => {
                       {uploadedByField[assignment.id]?.after && (
                         <span className="text-green-600 text-sm">After uploaded</span>
                       )}
+                      <label className="flex items-center gap-2 text-sm text-gray-700">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300"
+                          checked={!!amountCollectedByOrder[assignment.id]}
+                          onChange={(e) => setAmountCollectedByOrder(prev => ({ ...prev, [assignment.id]: e.target.checked }))}
+                        />
+                        Amount collected
+                      </label>
                       <button
                         onClick={() => handleUpdateStatus(assignment.id, 'completed')}
-                        className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-60"
+                        className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-60 w-full sm:w-auto"
                         disabled={!
-                          uploadedByField[assignment.id]?.before || !uploadedByField[assignment.id]?.after
+                          uploadedByField[assignment.id]?.before || !uploadedByField[assignment.id]?.after || !amountCollectedByOrder[assignment.id]
                         }
                       >
                         Mark Completed
                       </button>
                     </div>
-                    <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                    <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors w-full sm:w-auto">
                       Call Customer
                     </a>
                     <a
                       href={assignment.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assignment.address)}` : '#'}
                       target="_blank"
                       rel="noreferrer"
-                      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors w-full sm:w-auto"
                     >
                       View on Map
                     </a>
-                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors w-full sm:w-auto">
                       View Details
                     </button>
                   </>

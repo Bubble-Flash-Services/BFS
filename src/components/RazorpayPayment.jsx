@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import { createRazorpayOrder, verifyRazorpayPayment, handlePaymentFailure } from '../api/payments';
 import { CheckCircle, AlertCircle, Loader, CreditCard } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const RazorpayPayment = ({ 
   amount, 
@@ -27,12 +28,18 @@ const RazorpayPayment = ({
 
   const handlePayment = async () => {
     if (!user || !token) {
-      alert('Please login to continue payment');
+      toast.error('Please login to continue payment');
       return;
     }
 
     if (!amount || amount <= 0) {
-      alert('Invalid payment amount');
+      toast.error('Invalid payment amount');
+      return;
+    }
+
+    // Optional guard: if host passes invalid orderId, block
+    if (!orderId) {
+      toast.error('Order was not created correctly. Please try placing the order again.');
       return;
     }
 
@@ -114,6 +121,7 @@ const RazorpayPayment = ({
           ondismiss: function() {
             setIsProcessing(false);
             setPaymentStatus('cancelled');
+            toast('Payment window closed. Your order is not confirmed until payment is completed.');
           }
         }
       };
@@ -146,8 +154,8 @@ const RazorpayPayment = ({
       setIsProcessing(false);
       
       // Show user-friendly error message
-      const errorMessage = error.message || 'Payment initiation failed. Please try again.';
-      alert(errorMessage);
+  const errorMessage = error.message || 'Payment initiation failed. Please try again.';
+  toast.error(errorMessage);
       
       onFailure && onFailure(error);
     }

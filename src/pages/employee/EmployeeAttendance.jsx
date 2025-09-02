@@ -74,7 +74,7 @@ export default function EmployeeAttendance() {
 
   return (
     <EmployeeLayout>
-      <div className="p-6 max-w-lg mx-auto">
+      <div className="p-4 md:p-6 max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-4">Mark Attendance</h1>
         {alreadyDone && (
           <div className="bg-green-50 text-green-800 border border-green-200 rounded p-3 mb-4 text-sm flex items-center justify-between">

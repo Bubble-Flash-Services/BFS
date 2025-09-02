@@ -40,4 +40,13 @@ export const searchByFolderAndAge = async ({ folder, olderThanDays = 7 }) => {
   return cloudinary.search.expression(expression).max_results(500).execute();
 };
 
+// Search by folder and return most recent assets
+export const searchByFolder = async ({ folder, maxResults = 30 }) => {
+  return cloudinary.search
+    .expression(`folder:${folder}`)
+    .sort_by('uploaded_at', 'desc')
+    .max_results(maxResults)
+    .execute();
+};
+
 export default cloudinary;

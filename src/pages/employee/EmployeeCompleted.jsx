@@ -249,7 +249,7 @@ const EmployeeCompleted = () => {
 
   return (
     <EmployeeLayout>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Completed Tasks</h1>
@@ -257,7 +257,7 @@ const EmployeeCompleted = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -316,7 +316,7 @@ const EmployeeCompleted = () => {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Search */}
             <div className="relative">
@@ -366,9 +366,9 @@ const EmployeeCompleted = () => {
         </div>
 
         {/* Completed Tasks List */}
-        <div className="space-y-6">
+    <div className="space-y-6">
           {filteredTasks.map((task) => (
-            <div key={task.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+      <div key={task.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6 hover:shadow-md transition-shadow">
               {/* Task Header */}
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">

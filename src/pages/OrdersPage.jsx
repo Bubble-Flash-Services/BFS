@@ -14,6 +14,11 @@ export default function OrdersPage() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showCancelSuccess, setShowCancelSuccess] = useState(false);
   const [cancelTargetId, setCancelTargetId] = useState(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewTarget, setReviewTarget] = useState(null);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -122,11 +127,41 @@ export default function OrdersPage() {
     const phoneFromNotes = order.customerNotes && /Phone:\s*([^\n]+)/i.exec(order.customerNotes)?.[1]?.trim();
     const customerName = (user?.name) || (order.userId?.name) || '';
     const customerPhone = (user?.phone) || (order.userId?.phone) || phoneFromNotes || '';
-    const itemsRows = (order.items || []).map((item, idx) => {
-      const addOns = (item.addOns || []).map(a => `${a.name} x${a.quantity} (₹${a.price})`).join(', ');
-      return `
+    // Group items for better readability in invoice
+    const getItemGroup = (item) => {
+      const type = (item.type || '').toLowerCase();
+      const label = ((item.serviceName || '') + ' ' + (item.vehicleType || '')).toLowerCase();
+      if (type.includes('car')) return 'Car';
+      if (type.includes('bike')) return 'Bike';
+      if (type.includes('helmet')) return 'Helmet';
+      if (/hatch|sedan|suv|mid\s*-\s*suv|luxur/.test(label)) return 'Car';
+      if (/scooter|motorbike|cruiser|bike/.test(label)) return 'Bike';
+      if (/helmet/.test(label)) return 'Helmet';
+      return 'Others';
+    };
+    const orderGroups = ['Car','Bike','Helmet','Others'];
+    const itemsByGroup = {};
+    (order.items || []).forEach((it) => {
+      const g = getItemGroup(it);
+      if (!itemsByGroup[g]) itemsByGroup[g] = [];
+      itemsByGroup[g].push(it);
+    });
+    let rowIndex = 0;
+    const itemsRows = orderGroups.flatMap((gk) => {
+      const arr = itemsByGroup[gk] || [];
+      if (!arr.length) return [];
+      const headerRow = `
         <tr>
-          <td>${idx + 1}</td>
+          <td colspan="5" style="background:#f3f4f6;font-weight:700">${gk}</td>
+        </tr>`;
+      const rows = arr.map((item) => {
+        const addOns = item.addOns || [];
+        const baseTotal = (item.price || 0) * (item.quantity || 1);
+        const laundryTotal = (item.laundryItems || []).reduce((s,l)=> s + (l.pricePerItem || 0) * (l.quantity || 1), 0);
+        const itemRowTotal = baseTotal + laundryTotal; // exclude add-ons here; they will be separate rows
+        const mainRow = `
+        <tr>
+          <td>${++rowIndex}</td>
           <td>
             <div><strong>${item.serviceName || item.serviceId?.name || 'Service'}</strong></div>
             <div style="color:#555">${item.packageName || 'Custom Package'}</div>
@@ -138,13 +173,23 @@ export default function OrdersPage() {
               ['Monthly Bonuses', item.planDetails.monthlyBonuses],
               ['Premium Extras', item.planDetails.platinumExtras],
             ].map(([label, arr]) => Array.isArray(arr) && arr.length ? `<div style=\"margin-top:4px\"><em>${label}:</em><ul>${arr.map(x => `<li>${x}</li>`).join('')}</ul></div>` : '').join('') : ''}
-            ${addOns ? `<div style="margin-top:6px"><em>Add-ons:</em> ${addOns}</div>` : ''}
           </td>
           <td>${item.quantity}</td>
           <td>₹${item.price}</td>
-          <td>₹${(item.price * item.quantity) + (item.addOns||[]).reduce((s,a)=>s+(a.price*a.quantity),0) + (item.laundryItems||[]).reduce((s,l)=>s+(l.pricePerItem*l.quantity),0)}</td>
+          <td>₹${itemRowTotal}</td>
         </tr>`;
-    }).join('');
+        const addOnRows = addOns.map(a => `
+        <tr>
+          <td></td>
+          <td style="padding-left:18px">+ Add-on: ${a.name}</td>
+          <td>${a.quantity || 1}</td>
+          <td>₹${a.price}</td>
+          <td>₹${(a.price || 0) * (a.quantity || 1)}</td>
+        </tr>`).join('');
+        return mainRow + addOnRows;
+      });
+      return [headerRow, ...rows];
+  }).join('');
     const html = `
 <!doctype html><html><head><meta charset="utf-8"/>
 <title>Invoice ${order.orderNumber || order._id}</title>
@@ -193,11 +238,49 @@ export default function OrdersPage() {
   <div style="clear:both;margin-top:48px" class="muted">Thank you for choosing Bubble Flash Services.</div>
   <button onclick="window.print()" style="margin-top:16px;padding:8px 12px;border:1px solid #ddd;border-radius:6px;background:#fff">Print / Save PDF</button>
 </body></html>`;
-    const w = window.open('', '_blank');
-    if (!w) return;
-    w.document.open();
-    w.document.write(html);
-    w.document.close();
+    // Try opening in a new tab (desktop-friendly). Many mobile browsers block this.
+    let opened = false;
+    try {
+      const w = window.open('', '_blank');
+      if (w && w.document) {
+        w.document.open();
+        w.document.write(html);
+        w.document.close();
+        opened = true;
+      }
+    } catch (_) {
+      // ignore and try next fallback
+    }
+
+    if (opened) return;
+
+    // Fallback 1: Force a file download via Blob (works on most Android browsers)
+    try {
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice-${order.orderNumber || order._id}.html`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 1000);
+      opened = true;
+    } catch (_) {
+      // ignore and try next fallback
+    }
+
+    if (opened) return;
+
+    // Fallback 2: Open inline in the same tab using a data URL (iOS Safari friendly)
+    try {
+      const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+      window.location.href = dataUrl;
+    } catch (_) {
+      // As a last resort, do nothing (user can retry)
+    }
   };
 
   const getStatusColor = (orderStatus) => {
@@ -209,6 +292,39 @@ export default function OrdersPage() {
       case 'completed': return 'bg-green-100 text-green-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const openReview = (order) => {
+    setReviewTarget(order);
+    setReviewRating(order.rating || 5);
+    setReviewText(order.review || '');
+    setShowReviewModal(true);
+  };
+
+  const submitReview = async () => {
+    if (!reviewTarget) return;
+    try {
+      setReviewSubmitting(true);
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/orders/${reviewTarget._id}/review`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rating: reviewRating, review: reviewText })
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        // Update in list
+        setOrders(prev => prev.map(o => o._id === reviewTarget._id ? result.data : o));
+        if (selectedOrder && selectedOrder._id === reviewTarget._id) setSelectedOrder(result.data);
+        setShowReviewModal(false);
+      } else {
+        console.error('Review failed:', result);
+      }
+    } catch (e) {
+      console.error('Submit review error:', e);
+    } finally {
+      setReviewSubmitting(false);
     }
   };
 
@@ -238,6 +354,25 @@ export default function OrdersPage() {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {showReviewModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+              <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">Rate your service</h4>
+                <div className="flex items-center gap-2 mb-3">
+                  {[1,2,3,4,5].map(n => (
+                    <button key={n} onClick={() => setReviewRating(n)} className={"p-1 " + (reviewRating>=n? 'text-yellow-500' : 'text-gray-300')}>
+                      <Star size={20} fill={reviewRating>=n? 'currentColor':'none'} />
+                    </button>
+                  ))}
+                </div>
+                <textarea className="w-full border rounded-lg p-2 text-sm" rows={4} placeholder="Share your feedback..." value={reviewText} onChange={e=>setReviewText(e.target.value)} />
+                <div className="flex justify-end gap-2 mt-3">
+                  <button onClick={()=>setShowReviewModal(false)} className="px-4 py-2 rounded-lg border">Close</button>
+                  <button onClick={submitReview} disabled={reviewSubmitting} className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50">Submit</button>
+                </div>
+              </div>
+            </div>
+          )}
           {/* Cancel Confirm Modal (Detail View) */}
           {showCancelConfirm && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -346,13 +481,18 @@ export default function OrdersPage() {
                     Download Bill
                   </button>
                 )}
-        {selectedOrder.orderStatus === 'pending' && (
+                {selectedOrder.orderStatus === 'pending' && (
                   <button
           onClick={() => openCancelConfirm(selectedOrder._id)}
                     disabled={acting}
                     className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
                   >
                     Cancel Booking
+                  </button>
+                )}
+                {(selectedOrder.orderStatus === 'completed' || selectedOrder.status === 'completed') && !selectedOrder.isReviewSubmitted && (
+                  <button onClick={()=>openReview(selectedOrder)} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Leave a Review
                   </button>
                 )}
               </div>
@@ -370,9 +510,9 @@ export default function OrdersPage() {
                           <CheckCircle className="w-4 h-4 text-green-600" /> Package Includes
                         </div>
                         <div className="text-sm text-gray-700">Base Service: <span className="font-medium">₹{item.price}</span></div>
-                        {Array.isArray(item.includedFeatures) && item.includedFeatures.length > 0 && (
+            {Array.isArray(item.includedFeatures) && item.includedFeatures.length > 0 && (
                           <div className="mt-2">
-                            <p className="text-xs font-semibold text-gray-700 mb-1">Included Features:</p>
+              <p className="text-xs font-semibold text-gray-700 mb-1">{(item.type||'')==='monthly_plan' ? 'Plan Features:' : 'Included Features:'}</p>
                             <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
                               {item.includedFeatures.map((f, i) => <li key={i}>{f}</li>)}
                             </ul>
@@ -454,6 +594,26 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Review Modal (List View) */}
+        {showReviewModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
+              <h4 className="text-lg font-semibold text-gray-800 mb-2">Rate your service</h4>
+              <div className="flex items-center gap-2 mb-3">
+                {[1,2,3,4,5].map(n => (
+                  <button key={n} onClick={() => setReviewRating(n)} className={"p-1 " + (reviewRating>=n? 'text-yellow-500' : 'text-gray-300')}>
+                    <Star size={20} fill={reviewRating>=n? 'currentColor':'none'} />
+                  </button>
+                ))}
+              </div>
+              <textarea className="w-full border rounded-lg p-2 text-sm" rows={4} placeholder="Share your feedback..." value={reviewText} onChange={e=>setReviewText(e.target.value)} />
+              <div className="flex justify-end gap-2 mt-3">
+                <button onClick={()=>setShowReviewModal(false)} className="px-4 py-2 rounded-lg border">Close</button>
+                <button onClick={submitReview} disabled={reviewSubmitting} className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50">Submit</button>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Cancel Confirm Modal */}
         {showCancelConfirm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -582,8 +742,8 @@ export default function OrdersPage() {
                       <Eye size={16} />
                       View Details
                     </button>
-                    {order.orderStatus === 'completed' && (
-                      <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    {(order.orderStatus === 'completed' || order.status === 'completed') && !order.isReviewSubmitted && (
+                      <button onClick={()=>openReview(order)} className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                         <Star size={16} />
                         Review
                       </button>

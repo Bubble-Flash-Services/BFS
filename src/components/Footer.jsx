@@ -169,12 +169,7 @@ const Footer = () => {
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <a href="#" className="flex items-center gap-2 hover:text-[#1F3C88] transition-colors duration-300">
-                  <TwitterIcon /> Twitter
-                </a>
-              </li>
-              <li className="flex items-center gap-2">
-                <a href="#" className="flex items-center gap-2 hover:text-[#1F3C88] transition-colors duration-300">
+                <a href="https://www.facebook.com/people/Bubble-Flash-Services/61580041413856/" className="flex items-center gap-2 hover:text-[#1F3C88] transition-colors duration-300">
                   <FacebookIcon /> Facebook
                 </a>
               </li>
@@ -184,11 +179,13 @@ const Footer = () => {
           <div className="min-w-[140px]">
             <h3 className="font-semibold mb-4 text-[#1F3C88] text-lg">COMPANY</h3>
             <ul className="space-y-3 text-gray-600">
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">About</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Privacy</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Terms</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">License</a></li>
-              <li><a href="#" className="hover:text-[#1F3C88] transition-colors duration-300">Security</a></li>
+              <li><a href="/about" className="hover:text-[#1F3C88] transition-colors duration-300">About</a></li>
+              <li><a href="/privacy" className="hover:text-[#1F3C88] transition-colors duration-300">Privacy</a></li>
+              <li><a href="/terms" className="hover:text-[#1F3C88] transition-colors duration-300">Terms</a></li>
+              <li><a href="/license" className="hover:text-[#1F3C88] transition-colors duration-300">License</a></li>
+              <li><a href="/security" className="hover:text-[#1F3C88] transition-colors duration-300">Security</a></li>
+              <li><a href="/shipping" className="hover:text-[#1F3C88] transition-colors duration-300">Shipping</a></li>
+              <li><a href="/refund" className="hover:text-[#1F3C88] transition-colors duration-300">Refunds</a></li>
             </ul>
           </div>
         </div>

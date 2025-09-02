@@ -330,14 +330,14 @@ const CouponManagement = () => {
 
   return (
     <AdminLayout>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Header */}
-        <div className="mb-8 flex justify-between items-start">
+        <div className="mb-6 md:mb-8 flex flex-col gap-3 md:flex-row md:justify-between md:items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Coupon Management</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Coupon Management</h1>
             <p className="text-gray-600">Create and manage discount coupons for your customers</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={handleRefresh}
               disabled={refreshing}
@@ -397,7 +397,7 @@ const CouponManagement = () => {
         </div>
 
         {/* Coupons Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {filteredCoupons.map((coupon) => {
             const typeConfig = getTypeConfig(coupon.couponType);
             const Icon = typeConfig.icon;
@@ -470,10 +470,10 @@ const CouponManagement = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="p-4 border-t border-gray-100 flex gap-2">
+        <div className="p-4 border-t border-gray-100 flex flex-wrap gap-2">
                   <button
                     onClick={() => handleEditCoupon(coupon)}
-                    className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          className="flex-1 min-w-[140px] flex items-center justify-center gap-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                   >
                     <Edit className="w-4 h-4" />
                     Edit
@@ -481,7 +481,7 @@ const CouponManagement = () => {
                   
                   <button
                     onClick={() => toggleCouponStatus(coupon)}
-                    className={`flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm rounded-md transition-colors ${
+          className={`flex-1 min-w-[140px] flex items-center justify-center gap-1 px-3 py-2 text-sm rounded-md transition-colors ${
                       coupon.isActive 
                         ? 'bg-yellow-600 text-white hover:bg-yellow-700' 
                         : 'bg-green-600 text-white hover:bg-green-700'
@@ -492,7 +492,7 @@ const CouponManagement = () => {
                   
                   <button
                     onClick={() => handleDeleteCoupon(coupon._id)}
-                    className="px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          className="flex-1 min-w-[120px] px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

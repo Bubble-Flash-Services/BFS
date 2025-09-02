@@ -11,6 +11,7 @@ const EmployeeDashboard = () => {
   const [imageFiles, setImageFiles] = useState({}); // { [id]: { before?: File, after?: File } }
   const [uploadingByField, setUploadingByField] = useState({}); // { [id]: { before?: boolean, after?: boolean } }
   const [uploadedByField, setUploadedByField] = useState({});  // { [id]: { before?: boolean, after?: boolean } }
+  const [amountCollectedByOrder, setAmountCollectedByOrder] = useState({}); // { [id]: boolean }
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
 
@@ -59,11 +60,29 @@ const EmployeeDashboard = () => {
     })();
   }, []);
 
+  // Load persisted upload flags from localStorage when assignments change
+  useEffect(() => {
+    if (!assignments || assignments.length === 0) return;
+    setUploadedByField((prev) => {
+      const next = { ...prev };
+      for (const a of assignments) {
+        try {
+          const raw = localStorage.getItem(`taskUploads:${a.id}`);
+          if (raw) {
+            const obj = JSON.parse(raw);
+            next[a.id] = { ...(next[a.id] || {}), ...obj };
+          }
+        } catch {}
+      }
+      return next;
+    });
+  }, [assignments]);
+
   const handleUpdateStatus = async (assignmentId, newStatus) => {
     const prev = assignments;
     try {
       if (newStatus === 'completed') {
-        const res = await completeTask(assignmentId);
+        const res = await completeTask(assignmentId, { amountReceived: true, amountCollected: true });
         if (!res.success) throw new Error('Complete failed');
         setAssignments(prev.map(a => a.id === assignmentId ? { ...a, status: 'completed', completedTime: new Date().toISOString() } : a));
       } else {
@@ -94,6 +113,12 @@ const EmployeeDashboard = () => {
             ...prev,
             [orderId]: { ...(prev[orderId] || {}), [field]: true }
           }));
+          // Persist to localStorage so it survives refreshes
+          try {
+            const current = JSON.parse(localStorage.getItem(`taskUploads:${orderId}`) || '{}');
+            current[field] = true;
+            localStorage.setItem(`taskUploads:${orderId}`, JSON.stringify(current));
+          } catch {}
         }
       } finally {
         setUploadingByField(prev => ({ ...prev, [orderId]: { ...(prev[orderId] || {}), [field]: false } }));
@@ -102,7 +127,10 @@ const EmployeeDashboard = () => {
   };
 
   const handleCompleteTask = async (orderId) => {
-    await completeTask(orderId);
+    // Always mark amount as received per requirement
+    await completeTask(orderId, { amountReceived: true, amountCollected: true });
+    // Optionally clear persisted upload flags after completion
+    try { localStorage.removeItem(`taskUploads:${orderId}`); } catch {}
   };
 
   const openDetails = async (assignmentId) => {
@@ -170,16 +198,16 @@ const EmployeeDashboard = () => {
 
   return (
     <EmployeeLayout>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
   {/* Attendance is gated before entering Dashboard, so no UI here */}
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Good Morning, {employee?.name}!</h1>
               <p className="text-gray-600">Here are your assignments for today</p>
             </div>
-            <div className="text-right">
+            <div className="text-left md:text-right">
               <div className="text-2xl font-bold text-blue-600">{getCurrentTime()}</div>
               <div className="text-sm text-gray-500">
                 {new Date().toLocaleDateString('en-US', { 
@@ -296,8 +324,28 @@ const EmployeeDashboard = () => {
                       {uploadedByField[assignment.id]?.after && <span className="text-green-600 text-sm">After uploaded</span>}
                     </div>
                   </div>
+                  <label className="flex items-center gap-2 text-sm text-gray-700">
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300"
+                      checked={!!amountCollectedByOrder[assignment.id]}
+                      onChange={(e) => setAmountCollectedByOrder(prev => ({ ...prev, [assignment.id]: e.target.checked }))}
+                    />
+                    Amount collected
+                  </label>
                   <button
-                    onClick={() => handleUpdateStatus(assignment.id, 'completed')}
+                    onClick={async () => {
+                      // Always send amount received = true regardless of checkbox, but keep checkbox for UI
+                      try {
+                        setAssignments(prev => prev.map(a => a.id === assignment.id ? { ...a, status: 'completed', completedTime: new Date().toISOString() } : a));
+                        const res = await completeTask(assignment.id, { amountReceived: true, amountCollected: true });
+                        if (!res?.success) throw new Error('Complete failed');
+                      } catch {
+                        // revert status on failure
+                        setAssignments(prev => prev.map(a => a.id === assignment.id ? { ...a, status: 'in-progress' } : a));
+                        alert('Failed to mark as completed. Please try again.');
+                      }
+                    }}
                     className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors"
                   >
                     Mark Completed
@@ -324,17 +372,17 @@ const EmployeeDashboard = () => {
 
         {/* Today's Assignments */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-4 md:px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Today's Assignments</h2>
             <p className="text-sm text-gray-600">Your scheduled tasks for today</p>
           </div>
           
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             <div className="space-y-6">
               {assignments.map((assignment) => (
-                <div key={assignment.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                <div key={assignment.id} className="border border-gray-200 rounded-lg p-4 md:p-6 hover:shadow-md transition-shadow">
                   {/* Assignment Header */}
-                  <div className="flex justify-between items-start mb-4">
+                  <div className="flex justify-between items-start mb-4 gap-3">
                     <div className="flex-1">
                       <div className="flex items-center mb-2">
                         <h3 className="text-lg font-semibold text-gray-900 mr-3">{assignment.serviceType}</h3>
@@ -397,11 +445,11 @@ const EmployeeDashboard = () => {
                       <>
                         <button
                           onClick={() => handleUpdateStatus(assignment.id, 'in-progress')}
-                          className="bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                          className="bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors w-full sm:w-auto"
                         >
                           Start Task
                         </button>
-                        <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                        <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors w-full sm:w-auto">
                           Call Customer
                         </a>
                       </>
@@ -409,10 +457,19 @@ const EmployeeDashboard = () => {
                     
                     {assignment.status === 'in-progress' && (
                       <>
+                        <label className="flex items-center gap-2 text-sm text-gray-700">
+                          <input
+                            type="checkbox"
+                            className="rounded border-gray-300"
+                            checked={!!amountCollectedByOrder[assignment.id]}
+                            onChange={(e) => setAmountCollectedByOrder(prev => ({ ...prev, [assignment.id]: e.target.checked }))}
+                          />
+                          Amount collected
+                        </label>
                         <button
                           onClick={() => handleUpdateStatus(assignment.id, 'completed')}
-                          className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-60"
-                          disabled={!uploadedByField[assignment.id]?.before || !uploadedByField[assignment.id]?.after}
+                          className="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-60 w-full sm:w-auto"
+                          disabled={!uploadedByField[assignment.id]?.before || !uploadedByField[assignment.id]?.after || !amountCollectedByOrder[assignment.id]}
                         >
                           Mark Completed
                         </button>
@@ -432,7 +489,7 @@ const EmployeeDashboard = () => {
                             {uploadedByField[assignment.id]?.after && <span className="text-green-600 text-sm">After uploaded</span>}
                           </div>
                         </div>
-                        <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                        <a href={`tel:${assignment.customerPhone}`} className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors w-full sm:w-auto">
                           Call Customer
                         </a>
                       </>
@@ -449,11 +506,11 @@ const EmployeeDashboard = () => {
                       href={assignment.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(assignment.address)}` : '#'}
                       target="_blank"
                       rel="noreferrer"
-                      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors w-full sm:w-auto"
                     >
                       View on Map
                     </a>
-                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                    <button onClick={() => openDetails(assignment.id)} className="border border-blue-600 text-blue-600 py-2 px-4 rounded-lg font-medium hover:bg-blue-50 transition-colors w-full sm:w-auto">
                       View Details
                     </button>
                   </div>

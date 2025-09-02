@@ -9,6 +9,7 @@
     "seed": "node seedDatabase.js",
     "seed:dev": "nodemon seedDatabase.js",
     "seed:admin": "node seedAdminEmployee.js",
+  "migrate": "node scripts/migrateDatabase.js",
     "test:routes": "node test-routes.js"
   },
   "dependencies": {

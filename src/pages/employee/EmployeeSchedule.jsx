@@ -138,15 +138,15 @@ const EmployeeSchedule = () => {
 
   return (
     <EmployeeLayout>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">My Schedule</h1>
               <p className="text-gray-600">View your upcoming assignments and manage your time</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3 flex-wrap">
               {/* View Mode Toggle */}
               <div className="flex bg-gray-100 rounded-lg p-1">
                 <button
@@ -241,95 +241,159 @@ const EmployeeSchedule = () => {
         {/* Calendar View */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           {viewMode === 'week' ? (
-            // Week View
-            <div className="grid grid-cols-7 gap-0">
-              {/* Week Header */}
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                <div key={day} className="bg-gray-50 p-4 text-center font-medium text-gray-700 border-b border-gray-200">
-                  {day}
-                </div>
-              ))}
-              
-              {/* Week Days */}
-              {getWeekDays(currentDate).map((date) => {
-                const daySchedule = getDateSchedule(date);
-                return (
-                  <div key={date.toISOString()} className="border-r border-gray-200 last:border-r-0">
-                    <div className={`p-3 border-b border-gray-200 ${isToday(date) ? 'bg-blue-50' : 'bg-white'}`}>
-                      <div className={`text-center font-medium ${isToday(date) ? 'text-blue-600' : 'text-gray-900'}`}>
-                        {date.getDate()}
-                      </div>
-                    </div>
-                    <div className="p-2 min-h-48">
-                      <div className="space-y-2">
-                        {daySchedule.map((task) => (
-                          <div
-                            key={task.id}
-                            className={`p-2 rounded text-xs cursor-pointer hover:shadow-sm transition-shadow`}
-                            style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
-                          >
-                            <div className="font-medium text-gray-900 truncate">{task.serviceType}</div>
-                            <div className="text-gray-600 truncate">{task.customerName}</div>
-                            <div className="flex items-center text-gray-500 mt-1">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {task.time}
-                            </div>
-                            <span className={`inline-block px-1 py-0.5 text-xs rounded-full mt-1 ${getStatusColor(task.status)}`}>
-                              {task.status}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+            <div>
+              <div className="hidden md:grid grid-cols-7 gap-0">
+                {/* Week Header */}
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                  <div key={day} className="bg-gray-50 p-4 text-center font-medium text-gray-700 border-b border-gray-200">
+                    {day}
                   </div>
-                );
-              })}
+                ))}
+                {/* Week Days */}
+                {getWeekDays(currentDate).map((date) => {
+                  const daySchedule = getDateSchedule(date);
+                  return (
+                    <div key={date.toISOString()} className="border-r border-gray-200 last:border-r-0">
+                      <div className={`p-3 border-b border-gray-200 ${isToday(date) ? 'bg-blue-50' : 'bg-white'}`}>
+                        <div className={`text-center font-medium ${isToday(date) ? 'text-blue-600' : 'text-gray-900'}`}>
+                          {date.getDate()}
+                        </div>
+                      </div>
+                      <div className="p-2 min-h-48">
+                        <div className="space-y-2">
+                          {daySchedule.map((task) => (
+                            <div key={task.id} className="p-2 rounded text-xs cursor-pointer hover:shadow-sm transition-shadow" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                              <div className="font-medium text-gray-900 truncate">{task.serviceType}</div>
+                              <div className="text-gray-600 truncate">{task.customerName}</div>
+                              <div className="flex items-center text-gray-500 mt-1">
+                                <Clock className="h-3 w-3 mr-1" />
+                                {task.time}
+                              </div>
+                              <span className={`inline-block px-1 py-0.5 text-xs rounded-full mt-1 ${getStatusColor(task.status)}`}>{task.status}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {/* Mobile list for week view */}
+              <div className="md:hidden p-3 space-y-3">
+                {getWeekDays(currentDate).map((date) => {
+                  const daySchedule = getDateSchedule(date);
+                  return (
+                    <div key={date.toISOString()}>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="font-semibold text-gray-900">{date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                        {isToday(date) && <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Today</span>}
+                      </div>
+                      {daySchedule.length === 0 ? (
+                        <div className="text-sm text-gray-500">No assignments</div>
+                      ) : (
+                        <div className="space-y-2">
+                          {daySchedule.map((task) => (
+                            <div key={task.id} className="border border-gray-200 rounded-lg p-3">
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <div className="text-sm font-medium text-gray-900">{task.serviceType}</div>
+                                  <div className="text-xs text-gray-600">{task.customerName} • {task.location || ''}</div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="flex items-center text-xs text-gray-600 justify-end">
+                                    <Clock className="h-3 w-3 mr-1" />
+                                    {task.time}
+                                  </div>
+                                  <span className={`inline-block px-2 py-0.5 text-xs rounded-full mt-1 ${getStatusColor(task.status)}`}>{task.status}</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           ) : (
-            // Month View
-            <div className="grid grid-cols-7 gap-0">
-              {/* Month Header */}
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                <div key={day} className="bg-gray-50 p-4 text-center font-medium text-gray-700 border-b border-gray-200">
-                  {day}
-                </div>
-              ))}
-              
-              {/* Month Days */}
-              {getMonthDays(currentDate).map((date) => {
-                const daySchedule = getDateSchedule(date);
-                const isCurrentMonth = isSameMonth(date);
-                return (
-                  <div key={date.toISOString()} className="border-r border-b border-gray-200 last:border-r-0">
-                    <div className={`p-2 h-24 ${isCurrentMonth ? 'bg-white' : 'bg-gray-50'}`}>
-                      <div className={`text-sm font-medium mb-1 ${
-                        isToday(date) 
-                          ? 'text-blue-600 bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center' 
-                          : isCurrentMonth 
-                            ? 'text-gray-900' 
-                            : 'text-gray-400'
-                      }`}>
-                        {date.getDate()}
-                      </div>
-                      <div className="space-y-1">
-                        {daySchedule.slice(0, 2).map((task) => (
-                          <div
-                            key={task.id}
-                            className="text-xs bg-blue-100 text-blue-800 px-1 py-0.5 rounded truncate"
-                          >
-                            {task.time} - {task.customerName}
-                          </div>
-                        ))}
-                        {daySchedule.length > 2 && (
-                          <div className="text-xs text-gray-500">
-                            +{daySchedule.length - 2} more
-                          </div>
-                        )}
+            <div>
+              <div className="hidden md:grid grid-cols-7 gap-0">
+                {/* Month Header */}
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                  <div key={day} className="bg-gray-50 p-4 text-center font-medium text-gray-700 border-b border-gray-200">
+                    {day}
+                  </div>
+                ))}
+                {/* Month Days */}
+                {getMonthDays(currentDate).map((date) => {
+                  const daySchedule = getDateSchedule(date);
+                  const isCurrent = isSameMonth(date);
+                  return (
+                    <div key={date.toISOString()} className="border-r border-b border-gray-200 last:border-r-0">
+                      <div className={`p-2 h-24 ${isCurrent ? 'bg-white' : 'bg-gray-50'}`}>
+                        <div className={`text-sm font-medium mb-1 ${
+                          isToday(date)
+                            ? 'text-blue-600 bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center'
+                            : isCurrent
+                              ? 'text-gray-900'
+                              : 'text-gray-400'
+                        }`}>
+                          {date.getDate()}
+                        </div>
+                        <div className="space-y-1">
+                          {daySchedule.slice(0, 2).map((task) => (
+                            <div key={task.id} className="text-xs bg-blue-100 text-blue-800 px-1 py-0.5 rounded truncate">
+                              {task.time} - {task.customerName}
+                            </div>
+                          ))}
+                          {daySchedule.length > 2 && (
+                            <div className="text-xs text-gray-500">+{daySchedule.length - 2} more</div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+              {/* Mobile list for month view */}
+              <div className="md:hidden p-3 space-y-3">
+                {getMonthDays(currentDate).map((date) => {
+                  const daySchedule = getDateSchedule(date);
+                  if (!isSameMonth(date)) return null;
+                  return (
+                    <div key={date.toISOString()}>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="font-semibold text-gray-900">{date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                        {isToday(date) && <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Today</span>}
+                      </div>
+                      {daySchedule.length === 0 ? (
+                        <div className="text-sm text-gray-500">No assignments</div>
+                      ) : (
+                        <div className="space-y-2">
+                          {daySchedule.map((task) => (
+                            <div key={task.id} className="border border-gray-200 rounded-lg p-3">
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <div className="text-sm font-medium text-gray-900">{task.serviceType}</div>
+                                  <div className="text-xs text-gray-600">{task.customerName} • {task.location || ''}</div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="flex items-center text-xs text-gray-600 justify-end">
+                                    <Clock className="h-3 w-3 mr-1" />
+                                    {task.time}
+                                  </div>
+                                  <span className={`inline-block px-2 py-0.5 text-xs rounded-full mt-1 ${getStatusColor(task.status)}`}>{task.status}</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

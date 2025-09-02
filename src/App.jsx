@@ -20,6 +20,12 @@ import CartPage from './pages/CartPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
 import ServicesBrowser from './pages/ServicesBrowser';
 import AboutPage from './pages/aboutus/AboutPage';
+import Privacy from './pages/policies/Privacy';
+import Terms from './pages/policies/Terms';
+import License from './pages/policies/License';
+import Security from './pages/policies/Security';
+import Shipping from './pages/policies/Shipping';
+import Refund from './pages/policies/Refund';
 import GoogleSuccess from './pages/GoogleSuccess';
 import ContactPage from './pages/contact/ContactPage';
 import ProfilePage from './pages/ProfilePage';
@@ -68,6 +74,12 @@ function AppContent() {
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services-browser" element={<ServicesBrowser />} />
         <Route path="/about" element={<AboutPage />} />
+  <Route path="/privacy" element={<Privacy />} />
+  <Route path="/terms" element={<Terms />} />
+  <Route path="/license" element={<License />} />
+  <Route path="/security" element={<Security />} />
+  <Route path="/shipping" element={<Shipping />} />
+  <Route path="/refund" element={<Refund />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/addresses" element={<AddressesPage />} />

@@ -41,7 +41,7 @@ router.get('/dashboard', authenticateEmployee, async (req, res) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     // Get today's assignments (for stats)
-    const todayAssignments = await Order.find({
+  const todayAssignments = await Order.find({
       assignedEmployee: employeeId,
       scheduledDate: { $gte: today, $lt: tomorrow }
     }).populate('userId', 'name phone');
@@ -108,7 +108,7 @@ router.get('/dashboard', authenticateEmployee, async (req, res) => {
         },
         // Prefer active assignments for display; fallback to today's if none
         assignments: (activeAssignments.length ? activeAssignments : todayAssignments).map(assignment => ({
-          id: assignment._id,
+          id: assignment.orderNumber,
           customerName: assignment.userId?.name || 'Unknown',
           customerPhone: assignment.userId?.phone || '',
           serviceType: assignment.serviceType,
@@ -184,7 +184,7 @@ router.get('/assignments', authenticateEmployee, async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    const [assignments, totalAssignments] = await Promise.all([
+  const [assignments, totalAssignments] = await Promise.all([
       query,
       Order.countDocuments(filter)
     ]);
@@ -201,7 +201,7 @@ router.get('/assignments', authenticateEmployee, async (req, res) => {
     }
 
     const formattedAssignments = filteredAssignments.map(assignment => ({
-      id: assignment._id,
+      id: assignment.orderNumber,
       customerName: assignment.userId?.name || 'Unknown',
       customerPhone: assignment.userId?.phone || '',
       serviceType: assignment.serviceType,
@@ -245,7 +245,7 @@ router.get('/assignments', authenticateEmployee, async (req, res) => {
 // Update assignment status
 router.patch('/assignments/:assignmentId/status', authenticateEmployee, async (req, res) => {
   try {
-    const { assignmentId } = req.params;
+  const { assignmentId } = req.params; // This is orderNumber now
     const { status } = req.body;
     const employeeId = req.employee._id;
 
@@ -257,20 +257,36 @@ router.patch('/assignments/:assignmentId/status', authenticateEmployee, async (r
       });
     }
 
-    const updateData = { status };
+    // Keep legacy `status` and main `orderStatus` in sync so Admin/User UIs reflect updates
+    const statusToOrderStatus = {
+      'in-progress': 'in_progress',
+      'completed': 'completed',
+      'cancelled': 'cancelled'
+    };
+
+    const updateData = { 
+      status,
+      orderStatus: statusToOrderStatus[status] || undefined
+    };
     
     if (status === 'in-progress') {
       updateData.startedAt = new Date();
     } else if (status === 'completed') {
       updateData.completedAt = new Date();
       updateData.actualDuration = req.body.actualDuration;
+      // Optional: also set actualEndTime for reporting consistency if present in schema
+      updateData.actualEndTime = updateData.completedAt;
     }
 
-    const assignment = await Order.findOneAndUpdate(
-      { _id: assignmentId, assignedEmployee: employeeId },
+    // Accept both ObjectId and orderNumber to avoid cross-app mismatches
+  // Treat param strictly as orderNumber for employee app
+  const match = { orderNumber: assignmentId, assignedEmployee: employeeId };
+
+  let assignment = await Order.findOneAndUpdate(
+      match,
       updateData,
       { new: true }
-    ).populate('userId', 'name phone');
+  ).populate('userId', 'name phone');
 
     if (!assignment) {
       return res.status(404).json({
@@ -281,6 +297,13 @@ router.patch('/assignments/:assignmentId/status', authenticateEmployee, async (r
 
     // Update employee stats if completed
     if (status === 'completed') {
+      // If payment is collected onsite (cash/upi/wallet variants), mark as paid
+      const markPaidMethods = new Set(['cash', 'gpay', 'phonepe', 'paytm', 'upi', 'wallet']);
+      if (assignment && assignment.paymentStatus !== 'completed' && markPaidMethods.has((assignment.paymentMethod || '').toLowerCase())) {
+        assignment.paymentStatus = 'completed';
+        assignment.paidAt = new Date();
+        await assignment.save();
+      }
       await Employee.findByIdAndUpdate(employeeId, {
         $inc: { 
           'stats.completedTasks': 1,
@@ -293,10 +316,11 @@ router.patch('/assignments/:assignmentId/status', authenticateEmployee, async (r
       success: true,
       message: `Assignment ${status === 'in-progress' ? 'started' : status} successfully`,
       assignment: {
-        id: assignment._id,
+        id: assignment.orderNumber,
         status: assignment.status,
         completedAt: assignment.completedAt,
-        actualDuration: assignment.actualDuration
+        actualDuration: assignment.actualDuration,
+        paymentStatus: assignment.paymentStatus
       }
     });
   } catch (error) {
@@ -311,10 +335,10 @@ router.patch('/assignments/:assignmentId/status', authenticateEmployee, async (r
 // Get full assignment/order details for an employee
 router.get('/assignments/:assignmentId/details', authenticateEmployee, async (req, res) => {
   try {
-    const { assignmentId } = req.params;
+  const { assignmentId } = req.params; // This is orderNumber now
     const employeeId = req.employee._id;
 
-    const order = await Order.findOne({ _id: assignmentId, assignedEmployee: employeeId })
+  const order = await Order.findOne({ orderNumber: assignmentId, assignedEmployee: employeeId })
       .populate('userId', 'name phone email')
       .lean();
 
@@ -324,8 +348,7 @@ router.get('/assignments/:assignmentId/details', authenticateEmployee, async (re
 
     // Prepare a concise payload for UI
     const data = {
-      id: order._id,
-      orderNumber: order.orderNumber,
+      id: order.orderNumber,
       user: order.userId ? { name: order.userId.name, phone: order.userId.phone, email: order.userId.email } : null,
       items: (order.items || []).map(it => ({
         serviceId: it.serviceId,
@@ -461,11 +484,12 @@ router.get('/tasks', authenticateEmployee, async (req, res) => {
 // Upload before/after images for a task
 router.post('/tasks/:orderId/images', authenticateEmployee, upload.fields([{ name: 'before', maxCount: 1 }, { name: 'after', maxCount: 1 }]), async (req, res) => {
   try {
-    const { orderId } = req.params;
-    const order = await Order.findOne({ _id: orderId, assignedEmployee: req.employee._id });
+    const { orderId } = req.params; // orderNumber
+    const order = await Order.findOne({ orderNumber: orderId, assignedEmployee: req.employee._id });
     if (!order) return res.status(404).json({ success: false, message: 'Task not found' });
 
-    const folder = `bfs/orders/${orderId}_folder`;
+    // Use human-readable orderNumber for Cloudinary organization
+    const folder = `bfs/orders/${order.orderNumber}`;
     const updates = {};
 
     const processPart = async (field) => {
@@ -473,7 +497,7 @@ router.post('/tasks/:orderId/images', authenticateEmployee, upload.fields([{ nam
       const input = req.body?.[field];
       if (!file && !input) return null;
       const dataUri = file ? `data:${file.mimetype};base64,${file.buffer.toString('base64')}` : input;
-      const result = await uploadImage(dataUri, { folder, public_id: `${orderId}_${field}`, overwrite: true });
+      const result = await uploadImage(dataUri, { folder, public_id: `${order.orderNumber}_${field}`, overwrite: true });
       return { url: result.secure_url, publicId: result.public_id, uploadedAt: new Date(result.created_at) };
     };
 
@@ -485,7 +509,7 @@ router.post('/tasks/:orderId/images', authenticateEmployee, upload.fields([{ nam
       return res.status(400).json({ success: false, message: 'No images provided' });
     }
 
-    const updated = await Order.findByIdAndUpdate(orderId, { $set: updates }, { new: true }).select('workImages');
+  const updated = await Order.findOneAndUpdate({ orderNumber: orderId, assignedEmployee: req.employee._id }, { $set: updates }, { new: true }).select('workImages');
     res.json({ success: true, workImages: updated.workImages });
   } catch (err) {
     console.error('Task images upload error:', err);
@@ -496,15 +520,22 @@ router.post('/tasks/:orderId/images', authenticateEmployee, upload.fields([{ nam
 // Mark task completed (requires both images present)
 router.post('/tasks/:orderId/complete', authenticateEmployee, async (req, res) => {
   try {
-    const { orderId } = req.params;
-    const order = await Order.findOne({ _id: orderId, assignedEmployee: req.employee._id });
+  const { orderId } = req.params; // orderNumber
+  const order = await Order.findOne({ orderNumber: orderId, assignedEmployee: req.employee._id });
     if (!order) return res.status(404).json({ success: false, message: 'Task not found' });
     if (!order.workImages?.before?.url || !order.workImages?.after?.url) {
       return res.status(400).json({ success: false, message: 'Before and After images are required' });
     }
 
     order.status = 'completed';
+    order.orderStatus = 'completed';
     order.completedAt = new Date();
+    // If onsite payment method, mark as paid
+    const markPaidMethods = new Set(['cash', 'gpay', 'phonepe', 'paytm', 'upi', 'wallet']);
+    if (order.paymentStatus !== 'completed' && markPaidMethods.has((order.paymentMethod || '').toLowerCase())) {
+      order.paymentStatus = 'completed';
+      order.paidAt = new Date();
+    }
     await order.save();
     res.json({ success: true, message: 'Task marked as completed' });
   } catch (err) {

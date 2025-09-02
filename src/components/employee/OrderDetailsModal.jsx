@@ -10,6 +10,21 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
   if (!open) return null;
   const items = order?.items || [];
   const pricing = order?.pricing || {};
+  const getItemGroup = (it) => {
+    const type = (it.type || '').toLowerCase();
+    const label = ((it.serviceName || '') + ' ' + (it.vehicleType || '')).toLowerCase();
+    if (type.includes('car')) return 'Car';
+    if (type.includes('bike')) return 'Bike';
+    if (type.includes('helmet')) return 'Helmet';
+    if (/hatch|sedan|suv|mid\s*-\s*suv|luxur/.test(label)) return 'Car';
+    if (/scooter|motorbike|cruiser|bike/.test(label)) return 'Bike';
+    if (/helmet/.test(label)) return 'Helmet';
+    return 'Others';
+  };
+  const groupOrder = ['Car','Bike','Helmet','Others'];
+  const grouped = groupOrder
+    .map((g) => ({ key: g, items: items.filter((it) => getItemGroup(it) === g) }))
+    .filter((g) => g.items.length);
 
   // Compute counts
   const itemsCount = items.reduce((sum, it) => sum + (it.quantity || 0), 0) || items.length || 1;
@@ -29,11 +44,16 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
         </div>
 
         <div className="p-6 space-y-6">
-          {items.map((it, idx) => {
+          {grouped.map((grp) => (
+            <div key={grp.key}>
+              <h3 className="text-base font-bold text-gray-800 mb-2">{grp.key}</h3>
+              {grp.items.map((it, idx) => {
             const addOns = it.addOns || [];
+            const laundryItems = it.laundryItems || [];
             const baseTotal = (it.price || 0) * (it.quantity || 1);
             const addOnsTotal = addOns.reduce((s, a) => s + (a.price || 0) * (a.quantity || 1), 0);
-            const itemTotal = baseTotal + addOnsTotal;
+            const laundryTotal = laundryItems.reduce((s, l) => s + (l.pricePerItem || 0) * (l.quantity || 1), 0);
+            const itemTotal = baseTotal + addOnsTotal + laundryTotal;
             return (
               <div key={idx} className="border border-gray-200 rounded-xl p-4">
                 <div className="flex items-start justify-between">
@@ -60,22 +80,56 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                   </div>
                   {Array.isArray(it.includedFeatures) && it.includedFeatures.length > 0 && (
                     <div className="mt-2">
-                      <h5 className="text-sm font-medium text-gray-700">Included Features</h5>
+                      <h5 className="text-sm font-medium text-gray-700">{(it.type||'')==='monthly_plan' ? 'Plan Features' : 'Included Features'}</h5>
                       <ul className="list-disc pl-5 text-sm text-gray-700">
                         {it.includedFeatures.map((f, i) => <li key={i}>{f}</li>)}
                       </ul>
                     </div>
                   )}
 
-                  {/* Plan details (if subscription) */}
-                  {it.planDetails && (it.planDetails.weeklyIncludes?.length || it.planDetails.washIncludes?.length) && (
-                    <div className="mt-2">
-                      <h5 className="text-sm font-medium text-gray-700">Plan Details</h5>
-                      <ul className="list-disc pl-5 text-sm text-gray-700 space-y-1">
-                        {(it.planDetails.washIncludes || it.planDetails.weeklyIncludes || []).map((line, i) => (
-                          <li key={i}>{line}</li>
-                        ))}
-                      </ul>
+                  {/* Full Monthly Plan details */}
+                  {it.planDetails && (
+                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {Array.isArray(it.planDetails.washIncludes) && it.planDetails.washIncludes.length > 0 && (
+                        <div className="bg-white rounded p-3 border border-blue-200">
+                          <p className="text-xs font-semibold text-gray-700 mb-1">Each Wash Includes</p>
+                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                            {it.planDetails.washIncludes.map((f, i) => <li key={i}>{f}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {Array.isArray(it.planDetails.weeklyIncludes) && it.planDetails.weeklyIncludes.length > 0 && (
+                        <div className="bg-white rounded p-3 border border-blue-200">
+                          <p className="text-xs font-semibold text-gray-700 mb-1">Weekly Includes</p>
+                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                            {it.planDetails.weeklyIncludes.map((f, i) => <li key={i}>{f}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {Array.isArray(it.planDetails.biWeeklyIncludes) && it.planDetails.biWeeklyIncludes.length > 0 && (
+                        <div className="bg-white rounded p-3 border border-blue-200">
+                          <p className="text-xs font-semibold text-gray-700 mb-1">Bi-Weekly Includes</p>
+                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                            {it.planDetails.biWeeklyIncludes.map((f, i) => <li key={i}>{f}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {Array.isArray(it.planDetails.monthlyBonuses) && it.planDetails.monthlyBonuses.length > 0 && (
+                        <div className="bg-white rounded p-3 border border-blue-200">
+                          <p className="text-xs font-semibold text-gray-700 mb-1">Monthly Bonuses</p>
+                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                            {it.planDetails.monthlyBonuses.map((f, i) => <li key={i}>{f}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {Array.isArray(it.planDetails.platinumExtras) && it.planDetails.platinumExtras.length > 0 && (
+                        <div className="bg-white rounded p-3 border border-blue-200">
+                          <p className="text-xs font-semibold text-gray-700 mb-1">Premium Extras</p>
+                          <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
+                            {it.planDetails.platinumExtras.map((f, i) => <li key={i}>{f}</li>)}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -111,6 +165,8 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
               </div>
             );
           })}
+            </div>
+          ))}
 
           {/* Order Summary */}
           <div className="border border-gray-200 rounded-xl p-4">

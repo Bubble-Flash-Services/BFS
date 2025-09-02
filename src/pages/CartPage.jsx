@@ -6,6 +6,7 @@ import { Trash2, Plus, Minus, ShoppingBag, X, MapPin, Phone, Calendar, CreditCar
 import AddressAutocomplete from '../components/AddressAutocomplete';
 import RazorpayPayment from '../components/RazorpayPayment';
 import { createOrder } from '../api/orders';
+import toast from 'react-hot-toast';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -109,13 +110,14 @@ export default function CartPage() {
           discountAmount: result.data.discountAmount
         });
         alert(`Coupon ${coupon.code} applied successfully! You saved ₹${result.data.discountAmount}`);
+        toast.success(`Coupon ${coupon.code} applied! You saved ₹${result.data.discountAmount}`);
       } else {
         console.error('❌ Coupon validation failed:', result);
-        alert(result.message || 'Invalid coupon');
+        toast.error(result.message || 'Invalid coupon');
       }
     } catch (error) {
       console.error('💥 Error applying coupon:', error);
-      alert('Failed to apply coupon');
+      toast.error('Failed to apply coupon');
     } finally {
       setCouponLoading(false);
     }
@@ -123,7 +125,7 @@ export default function CartPage() {
 
   const applyCouponByCode = async () => {
     if (!couponCode.trim()) {
-      alert('Please enter a coupon code');
+      toast.error('Please enter a coupon code');
       return;
     }
 
@@ -166,14 +168,14 @@ export default function CartPage() {
           code: couponCode.toUpperCase(),
           discountAmount: result.data.discountAmount
         });
-        alert(`Coupon ${couponCode.toUpperCase()} applied successfully! You saved ₹${result.data.discountAmount}`);
+        toast.success(`Coupon ${couponCode.toUpperCase()} applied! You saved ₹${result.data.discountAmount}`);
       } else {
         console.error('❌ Coupon by code validation failed:', result);
-        alert(result.message || 'Invalid coupon code');
+        toast.error(result.message || 'Invalid coupon code');
       }
     } catch (error) {
       console.error('💥 Error applying coupon by code:', error);
-      alert('Failed to apply coupon');
+      toast.error('Failed to apply coupon');
     } finally {
       setCouponLoading(false);
     }
@@ -182,7 +184,7 @@ export default function CartPage() {
   const removeCoupon = () => {
     setAppliedCoupon(null);
     setCouponCode('');
-    alert('Coupon removed successfully');
+  toast('Coupon removed');
   };
 
   // Handle start shopping - navigate to home and scroll to service categories
@@ -212,6 +214,31 @@ export default function CartPage() {
   const getDiscountAmount = () => {
     return appliedCoupon ? appliedCoupon.discountAmount : 0;
   };
+
+  // Normalize item into high-level group for cart sections
+  const getItemGroup = (item) => {
+    const type = (item.type || '').toLowerCase();
+    const categoryText = ((item.category || item.serviceName || '') + ' ' + (item.vehicleType || '')).toLowerCase();
+    if (type.includes('car')) return 'Car';
+    if (type.includes('bike')) return 'Bike';
+    if (type.includes('helmet')) return 'Helmet';
+    if (type.includes('laundry') || item.laundryDetails) return 'Laundry';
+    if (/hatch|sedan|suv|mid\s*-\s*suv|luxur/.test(categoryText)) return 'Car';
+    if (/scooter|motorbike|cruiser|bike/.test(categoryText)) return 'Bike';
+    if (/helmet/.test(categoryText)) return 'Helmet';
+    return 'Others';
+  };
+
+  const groupOrder = ['Car', 'Bike', 'Helmet', 'Laundry', 'Others'];
+  const groupedCart = React.useMemo(() => {
+    const groups = {};
+    (cartItems || []).forEach((it) => {
+      const g = getItemGroup(it);
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(it);
+    });
+    return groupOrder.filter((g) => groups[g]?.length).map((g) => ({ key: g, items: groups[g] }));
+  }, [cartItems]);
 
   // Handle address selection from autocomplete
   const handleAddressSelect = (selectedAddress) => {
@@ -249,9 +276,17 @@ export default function CartPage() {
   const [createdOrder, setCreatedOrder] = useState(null);
 
   const handlePlaceOrder = async () => {
-    // Validate required fields
-  if (!pickupDate || !phoneNumber || !selectedLocation || !selectedPayment || !selectedTimeSlot) {
-      alert('Please fill in all required fields');
+    // Validate required fields with specific messages
+    const missing = [];
+    if (!selectedLocation || selectedLocation.trim().length < 5) missing.push('Service address');
+    if (!pickupDate) missing.push('Pickup date');
+    if (!selectedTimeSlot) missing.push('Preferred time slot');
+    if (!phoneNumber || !/^\d{10}$/.test((phoneNumber || '').trim())) missing.push('Valid 10-digit phone number');
+    if (!selectedPayment) missing.push('Payment method');
+    if (!cartItems || cartItems.length === 0) missing.push('At least one item in cart');
+
+    if (missing.length) {
+      toast.error(`Please provide: ${missing.join(', ')}`);
       return;
     }
 
@@ -305,7 +340,7 @@ export default function CartPage() {
       // Get auth token
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('Please login to place order');
+        toast.error('Please login to place order');
         return;
       }
 
@@ -321,36 +356,37 @@ export default function CartPage() {
           console.log('Order created, showing payment options:', result.data);
         } else {
           // COD order - complete immediately
-          alert(`Order placed successfully! Order Number: ${result.data.orderNumber}`);
+          toast.success(`Order placed! #${result.data.orderNumber}`);
           clearCart();
           setShowCheckoutModal(false);
           setPlacingOrder(false);
         }
       } else {
-        alert(`Order failed: ${result.message}`);
+        toast.error(`Order failed: ${result.message}`);
         setPlacingOrder(false);
       }
     } catch (error) {
       console.error('Order placement error:', error);
-      alert('Failed to place order. Please try again.');
+      toast.error('Failed to place order. Please try again.');
       setPlacingOrder(false);
     }
   };
 
   const handlePaymentSuccess = (paymentData) => {
     console.log('Payment successful:', paymentData);
-    alert(`Payment successful! Order Number: ${createdOrder.orderNumber}`);
+  toast.success(`Payment successful! #${createdOrder.orderNumber}`);
     clearCart();
     setShowCheckoutModal(false);
     setPlacingOrder(false);
     setCreatedOrder(null);
-    // Navigate to order confirmation page
-    // navigate('/orders');
+    // Navigate to orders
+    navigate('/orders');
   };
 
   const handlePaymentFailure = (error) => {
     console.error('Payment failed:', error);
-    alert('Payment failed. Please try again or contact support.');
+  const reason = error?.description || error?.message || 'Payment failed.';
+  toast.error(`${reason} Please try again or contact support.`);
     setPlacingOrder(false);
     // Order is created but payment failed - user can retry payment
   };
@@ -507,9 +543,16 @@ export default function CartPage() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items - Left Section */}
-          <div className="lg:col-span-2 space-y-4">
-            {cartItems.map((item, index) => (
+          {/* Cart Items - Left Section (grouped) */}
+          <div className="lg:col-span-2 space-y-6">
+            {groupedCart.map((group) => (
+              <div key={group.key}>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-xl font-bold text-gray-800">{group.key}</h3>
+                  <span className="text-xs text-gray-500">{group.items.length} item{group.items.length > 1 ? 's' : ''}</span>
+                </div>
+                <div className="space-y-4">
+            {group.items.map((item, index) => (
               <div 
                 key={item.id || `${item.serviceId}-${item.packageId}-${index}`}
                 className="group bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
@@ -589,9 +632,9 @@ export default function CartPage() {
                           <span className="text-gray-600">Base Service:</span>
                           <span className="font-medium">₹{item.packageDetails.basePrice}</span>
                         </div>
-                        {Array.isArray(item.packageDetails.features) && item.packageDetails.features.length > 0 && (
+            {Array.isArray(item.packageDetails.features) && item.packageDetails.features.length > 0 && (
                           <div className="mt-2">
-                            <p className="text-xs font-semibold text-gray-700 mb-1">Included Features:</p>
+              <p className="text-xs font-semibold text-gray-700 mb-1">{item.type === 'monthly_plan' ? 'Plan Features:' : 'Included Features:'}</p>
                             <ul className="list-disc ml-5 text-xs text-gray-600 space-y-1">
                               {item.packageDetails.features.map((f, i) => (
                                 <li key={i}>{f}</li>
@@ -729,6 +772,9 @@ export default function CartPage() {
                       </span>
                     </div>
                   )}
+                </div>
+              </div>
+            ))}
                 </div>
               </div>
             ))}
@@ -932,30 +978,37 @@ export default function CartPage() {
               {/* Order Items Summary */}
               <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4">
                 <h3 className="font-semibold text-gray-800 mb-3">Order Items</h3>
-                <div className="space-y-2">
-                  {cartItems.map((item, index) => (
-                    <div key={index} className="text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-800 font-medium">
-                          {item.title || item.name || item.serviceName} {item.packageName ? `- ${item.packageName}` : ''}
-                        </span>
-                        <span className="font-medium">₹{item.price * item.quantity}</span>
+                <div className="space-y-3">
+                  {groupedCart.map((group) => (
+                    <div key={group.key}>
+                      <div className="text-sm font-semibold text-gray-800 mb-1">{group.key}</div>
+                      <div className="space-y-2">
+                        {group.items.map((item, index) => (
+                          <div key={index} className="text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-gray-800 font-medium">
+                                {item.title || item.name || item.serviceName}{item.packageName ? ` - ${item.packageName}` : ''}
+                              </span>
+                              <span className="font-medium">₹{item.price * item.quantity}</span>
+                            </div>
+                            {Array.isArray(item.packageDetails?.features) && item.packageDetails.features.length > 0 && (
+                              <ul className="list-disc ml-5 text-xs text-gray-600 mt-1">
+                                {item.packageDetails.features.slice(0, 3).map((f, i) => (
+                                  <li key={i}>{f}</li>
+                                ))}
+                                {item.packageDetails.features.length > 3 && (
+                                  <li>+ {item.packageDetails.features.length - 3} more</li>
+                                )}
+                              </ul>
+                            )}
+                            {Array.isArray(item.packageDetails?.addons) && item.packageDetails.addons.length > 0 && (
+                              <div className="mt-1 text-xs text-gray-700">
+                                Add-ons: {item.packageDetails.addons.map(a => `${a.name} (₹${a.price})`).join(', ')}
+                              </div>
+                            )}
+                          </div>
+                        ))}
                       </div>
-                      {Array.isArray(item.packageDetails?.features) && item.packageDetails.features.length > 0 && (
-                        <ul className="list-disc ml-5 text-xs text-gray-600 mt-1">
-                          {item.packageDetails.features.slice(0, 3).map((f, i) => (
-                            <li key={i}>{f}</li>
-                          ))}
-                          {item.packageDetails.features.length > 3 && (
-                            <li>+ {item.packageDetails.features.length - 3} more</li>
-                          )}
-                        </ul>
-                      )}
-                      {Array.isArray(item.packageDetails?.addons) && item.packageDetails.addons.length > 0 && (
-                        <div className="mt-1 text-xs text-gray-700">
-                          Add-ons: {item.packageDetails.addons.map(a => `${a.name} (₹${a.price})`).join(', ')}
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>

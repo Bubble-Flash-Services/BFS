@@ -154,10 +154,13 @@ export const uploadTaskImages = async (orderId, filesOrData) => {
   try { return await res.json(); } catch { return { success: false, message: 'Invalid response' }; }
 };
 
-export const completeTask = async (orderId) => {
+export const completeTask = async (orderId, payload) => {
+  const hasBody = payload && Object.keys(payload).length > 0;
+  const headers = getAuthHeaders();
   const res = await fetch(`/api/employee/tasks/${orderId}/complete`, {
     method: 'POST',
-    headers: getAuthHeaders(),
+    headers,
+    body: hasBody ? JSON.stringify(payload) : undefined,
   });
   if (res.status === 401) {
     let body = {};

@@ -1,6 +1,7 @@
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import User from '../models/User.js';
+import Employee from '../models/Employee.js';
 import Coupon from '../models/Coupon.js';
 import Service from '../models/Service.js';
 import Package from '../models/Package.js';
@@ -361,6 +362,11 @@ export const cancelOrder = async (req, res) => {
     order.orderStatus = 'cancelled';
     order.customerNotes = reason || 'Cancelled by customer';
     await order.save();
+    // Sync legacy status for any views still using it
+    if (order.status !== 'cancelled') {
+      order.status = 'cancelled';
+      await order.save();
+    }
 
     // Process refund if payment was completed
     if (order.paymentStatus === 'completed') {
@@ -424,6 +430,25 @@ export const submitOrderReview = async (req, res) => {
     order.isReviewSubmitted = true;
     await order.save();
 
+    // If order was assigned to an employee, update their average rating and satisfaction
+    if (order.assignedEmployee) {
+      try {
+        const agg = await Order.aggregate([
+          { $match: { assignedEmployee: order.assignedEmployee, rating: { $gte: 1 } } },
+          { $group: { _id: '$assignedEmployee', avgRating: { $avg: '$rating' }, count: { $sum: 1 } } }
+        ]);
+        const avg = agg?.[0]?.avgRating || rating;
+        await Employee.findByIdAndUpdate(order.assignedEmployee, {
+          $set: {
+            'stats.averageRating': Math.round(avg * 10) / 10,
+            'stats.customerSatisfaction': Math.round((avg / 5) * 1000) / 10 // percentage with 1 decimal
+          }
+        });
+      } catch (e) {
+        console.error('Failed updating employee rating stats:', e);
+      }
+    }
+
     res.json({
       success: true,
       message: 'Review submitted successfully',
@@ -461,6 +486,10 @@ export const updatePaymentStatus = async (req, res) => {
     // If payment is successful, confirm the order
     if (paymentStatus === 'completed') {
       order.orderStatus = 'confirmed';
+      // Maintain legacy `status` for employee/admin stats
+      if (!order.status || order.status === 'assigned') {
+        order.status = 'assigned';
+      }
     }
 
     await order.save();
