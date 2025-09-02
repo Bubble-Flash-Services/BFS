@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Eye, Edit, Trash2, Filter } from 'lucide-react';
 import AdminLayout from '../../components/AdminLayout';
+const API = import.meta.env.VITE_API_URL || window.location.origin;
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -52,7 +53,7 @@ const UserManagement = () => {
         params.append('search', searchTerm);
       }
 
-      const response = await fetch(`/api/adminNew/users?${params}`, {
+  const response = await fetch(`${API}/api/adminNew/users?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -160,7 +161,7 @@ const UserManagement = () => {
   const updateUserStatus = async (userId, newStatus) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`/api/adminNew/users/${userId}/status`, {
+  const response = await fetch(`${API}/api/adminNew/users/${userId}/status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -191,7 +192,7 @@ const UserManagement = () => {
   const deleteUser = async (userId) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`/api/adminNew/users/${userId}`, {
+  const response = await fetch(`${API}/api/adminNew/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

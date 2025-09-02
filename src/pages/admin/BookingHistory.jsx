@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Calendar, Download, Eye, User, Phone, MapPin, Package, Calendar as CalendarIcon, CreditCard, Clock, CheckCircle, AlertCircle, XCircle, RefreshCw, X } from 'lucide-react';
 import AdminLayout from '../../components/AdminLayout';
+import toast from 'react-hot-toast';
+
+const API = import.meta.env.VITE_API_URL || window.location.origin;
 
 const BookingHistory = () => {
   const [bookings, setBookings] = useState([]);
@@ -24,7 +27,7 @@ const BookingHistory = () => {
         setLoading(true);
       }
 
-      const response = await fetch('/api/adminNew/bookings', {
+  const response = await fetch(`${API}/api/adminNew/bookings`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -286,7 +289,7 @@ const BookingHistory = () => {
     if (!window.confirm('Cancel this booking?')) return;
     try {
       setActing(true);
-      const res = await fetch(`/api/adminNew/bookings/${bookingId}/cancel`, {
+      const res = await fetch(`${API}/api/adminNew/bookings/${bookingId}/cancel`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
@@ -305,11 +308,11 @@ const BookingHistory = () => {
         setFilteredBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: 'cancelled' } : b));
         if (selectedBooking && selectedBooking.id === bookingId) setSelectedBooking({ ...selectedBooking, status: 'cancelled' });
       } else {
-        alert(result.message || 'Failed to cancel');
+        toast.error(result.message || 'Failed to cancel');
       }
     } catch (e) {
       console.error('Cancel booking failed:', e);
-      alert('Failed to cancel');
+      toast.error('Failed to cancel');
     } finally {
       setActing(false);
     }
@@ -660,7 +663,7 @@ const BookingHistory = () => {
                           const newStatus = e.target.value;
                           try {
                             setActing(true);
-                            const res = await fetch(`/api/adminNew/bookings/${booking.id}/status`, {
+                            const res = await fetch(`${API}/api/adminNew/bookings/${booking.id}/status`, {
                               method: 'PUT',
                               headers: {
                                 'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
@@ -682,11 +685,11 @@ const BookingHistory = () => {
                               setFilteredBookings(prev => prev.map(b => b.id === booking.id ? { ...b, ...patch } : b));
                               if (selectedBooking && selectedBooking.id === booking.id) setSelectedBooking({ ...selectedBooking, ...patch });
                             } else {
-                              alert(result.message || 'Failed to update status');
+                              toast.error(result.message || 'Failed to update status');
                             }
                           } catch (err) {
                             console.error('Update status failed:', err);
-                            alert('Failed to update status');
+                            toast.error('Failed to update status');
                           } finally {
                             setActing(false);
                           }

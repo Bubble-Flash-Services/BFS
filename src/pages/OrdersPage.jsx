@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+const API = import.meta.env.VITE_API_URL || window.location.origin;
 import { useAuth } from '../components/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Package, Calendar, DollarSign, MapPin, Star, Eye, ArrowLeft, RefreshCw, CheckCircle, X } from 'lucide-react';
@@ -42,7 +43,7 @@ export default function OrdersPage() {
         return;
       }
       
-      const response = await fetch('/api/orders', {
+  const response = await fetch(`${API}/api/orders`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -89,7 +90,7 @@ export default function OrdersPage() {
     try {
       setActing(true);
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/orders/${cancelTargetId}/cancel`, {
+  const res = await fetch(`${API}/api/orders/${cancelTargetId}/cancel`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -307,7 +308,7 @@ export default function OrdersPage() {
     try {
       setReviewSubmitting(true);
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/orders/${reviewTarget._id}/review`, {
+  const res = await fetch(`${API}/api/orders/${reviewTarget._id}/review`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: reviewRating, review: reviewText })

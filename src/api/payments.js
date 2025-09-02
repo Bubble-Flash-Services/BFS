@@ -1,5 +1,6 @@
 // Payment API functions
-const API_BASE_URL = '/api/payments';
+const API = import.meta.env.VITE_API_URL || window.location.origin;
+const API_BASE_URL = `${API}/api/payments`;
 
 export const createRazorpayOrder = async (token, orderData) => {
   try {

@@ -190,7 +190,7 @@ const AdvertisementManagement = () => {
     if (ad.mediaType === 'image' && ad.imageUrl) {
       return (
         <img 
-          src={`http://localhost:5000${ad.imageUrl}`} 
+          src={`${(import.meta.env.VITE_API_URL || window.location.origin)}${ad.imageUrl}`} 
           alt={ad.title}
           className="w-full h-24 object-cover rounded"
         />

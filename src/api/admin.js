@@ -1,4 +1,5 @@
-const API_BASE_URL = '/api/adminNew';
+const API = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+const API_BASE_URL = `${API}/api/adminNew`;
 
 // Get dashboard statistics
 export const getDashboardStats = async () => {
@@ -28,7 +29,7 @@ export const getCurrentCustomers = async () => {
   try {
   const token = localStorage.getItem('adminToken');
   // This endpoint doesn't exist under adminNew; keep legacy path under /api/admin
-  const response = await fetch(`/api/admin/dashboard/current-customers`, {
+  const response = await fetch(`${API}/api/admin/dashboard/current-customers`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -52,7 +53,7 @@ export const getMonthlyData = async () => {
   try {
   const token = localStorage.getItem('adminToken');
   // This endpoint doesn't exist under adminNew; keep legacy path under /api/admin
-  const response = await fetch(`/api/admin/dashboard/monthly-data`, {
+  const response = await fetch(`${API}/api/admin/dashboard/monthly-data`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

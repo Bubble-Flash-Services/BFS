@@ -1,5 +1,5 @@
 // API helpers for order operations
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
 
 // Order operations
 export async function createOrder(token, data) {

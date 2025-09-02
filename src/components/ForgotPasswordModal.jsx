@@ -15,7 +15,8 @@ export default function ForgotPasswordModal({ onClose }) {
     setError('');
     setMessage('');
     try {
-      const res = await fetch('/api/auth/forgot-password', {
+      const API = import.meta.env.VITE_API_URL || window.location.origin;
+      const res = await fetch(`${API}/api/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -39,7 +40,8 @@ export default function ForgotPasswordModal({ onClose }) {
     setError('');
     setMessage('');
     try {
-      const res = await fetch('/api/auth/reset-password', {
+      const API = import.meta.env.VITE_API_URL || window.location.origin;
+      const res = await fetch(`${API}/api/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, resetToken, password: newPassword })

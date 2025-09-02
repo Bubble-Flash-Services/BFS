@@ -1,15 +1,16 @@
 // API helpers for cart operations
+const API = import.meta.env.VITE_API_URL || window.location.origin;
 
 // Cart operations
 export async function getCart(token) {
-  const res = await fetch('/api/cart', {
+  const res = await fetch(`${API}/api/cart`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.json();
 }
 
 export async function addToCart(token, data) {
-  const res = await fetch('/api/cart', {
+  const res = await fetch(`${API}/api/cart`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
@@ -21,7 +22,7 @@ export async function addToCart(token, data) {
 }
 
 export async function updateCartItem(token, itemId, data) {
-  const res = await fetch(`/api/cart/${itemId}`, {
+  const res = await fetch(`${API}/api/cart/${itemId}`, {
     method: 'PUT',
     headers: { 
       'Content-Type': 'application/json',
@@ -33,7 +34,7 @@ export async function updateCartItem(token, itemId, data) {
 }
 
 export async function removeFromCart(token, itemId) {
-  const res = await fetch(`/api/cart/${itemId}`, {
+  const res = await fetch(`${API}/api/cart/${itemId}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -41,7 +42,7 @@ export async function removeFromCart(token, itemId) {
 }
 
 export async function clearCart(token) {
-  const res = await fetch('/api/cart', {
+  const res = await fetch(`${API}/api/cart`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -50,7 +51,7 @@ export async function clearCart(token) {
 
 // Sync localStorage cart to database
 export async function syncCartToDatabase(token, cartItems) {
-  const res = await fetch('/api/cart/sync', {
+  const res = await fetch(`${API}/api/cart/sync`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',

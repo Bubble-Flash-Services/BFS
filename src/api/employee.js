@@ -1,5 +1,6 @@
 // Simple wrapper for Employee API calls using the employeeToken from localStorage
 
+const API = import.meta.env.VITE_API_URL || window.location.origin;
 const getAuthHeaders = () => {
   const token = localStorage.getItem('employeeToken');
   return {
@@ -9,7 +10,7 @@ const getAuthHeaders = () => {
 };
 
 export const employeeLoginMobile = async (phone) => {
-  const res = await fetch('/api/employee/auth/login-mobile', {
+  const res = await fetch(`${API}/api/employee/auth/login-mobile`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ phone }),
@@ -18,7 +19,7 @@ export const employeeLoginMobile = async (phone) => {
 };
 
 export const getEmployeeDashboard = async () => {
-  const res = await fetch('/api/employee/dashboard', { headers: getAuthHeaders() });
+  const res = await fetch(`${API}/api/employee/dashboard`, { headers: getAuthHeaders() });
   if (res.status === 401) {
     let body = {};
     try { body = await res.json(); } catch { body = { success: false, code: 'TOKEN_INVALID' }; }
@@ -33,7 +34,7 @@ export const getEmployeeDashboard = async () => {
 
 export const getAssignments = async ({ page = 1, limit = 10, status = 'all', dateFilter = 'all', search = '' } = {}) => {
   const params = new URLSearchParams({ page, limit, status, dateFilter, search });
-  const res = await fetch(`/api/employee/assignments?${params.toString()}`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API}/api/employee/assignments?${params.toString()}`, { headers: getAuthHeaders() });
   if (res.status === 401) {
     let body = {};
     try { body = await res.json(); } catch { body = { success: false, code: 'TOKEN_INVALID' }; }
@@ -48,7 +49,7 @@ export const getAssignments = async ({ page = 1, limit = 10, status = 'all', dat
 
 export const getCompletedTasks = async ({ page = 1, limit = 10, dateFilter = 'all', ratingFilter = 'all', search = '' } = {}) => {
   const params = new URLSearchParams({ page, limit, dateFilter, ratingFilter, search });
-  const res = await fetch(`/api/employee/completed?${params.toString()}`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API}/api/employee/completed?${params.toString()}`, { headers: getAuthHeaders() });
   if (res.status === 401) {
     let body = {};
     try { body = await res.json(); } catch { body = { success: false, code: 'TOKEN_INVALID' }; }
@@ -62,7 +63,7 @@ export const getCompletedTasks = async ({ page = 1, limit = 10, dateFilter = 'al
 };
 
 export const getAssignmentDetails = async (assignmentId) => {
-  const res = await fetch(`/api/employee/assignments/${assignmentId}/details`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API}/api/employee/assignments/${assignmentId}/details`, { headers: getAuthHeaders() });
   if (res.status === 401) {
     let body = {};
     try { body = await res.json(); } catch { body = { success: false, code: 'TOKEN_INVALID' }; }
@@ -76,7 +77,7 @@ export const getAssignmentDetails = async (assignmentId) => {
 };
 
 export const updateAssignmentStatus = async (assignmentId, status, actualDuration) => {
-  const res = await fetch(`/api/employee/assignments/${assignmentId}/status`, {
+  const res = await fetch(`${API}/api/employee/assignments/${assignmentId}/status`, {
     method: 'PATCH',
     headers: getAuthHeaders(),
     body: JSON.stringify({ status, actualDuration }),
@@ -101,7 +102,7 @@ export const uploadAttendanceSelfie = async (fileOrDataUri) => {
   } else {
     form.append('image', fileOrDataUri);
   }
-  const res = await fetch('/api/employee/attendance/selfie', {
+  const res = await fetch(`${API}/api/employee/attendance/selfie`, {
     method: 'POST',
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: form,
@@ -119,7 +120,7 @@ export const uploadAttendanceSelfie = async (fileOrDataUri) => {
 };
 
 export const getAttendanceStatus = async () => {
-  const res = await fetch('/api/employee/attendance/status', { headers: getAuthHeaders() });
+  const res = await fetch(`${API}/api/employee/attendance/status`, { headers: getAuthHeaders() });
   if (res.status === 401) {
     let body = {};
     try { body = await res.json(); } catch { body = { success: false, code: 'TOKEN_INVALID' }; }
@@ -137,7 +138,7 @@ export const uploadTaskImages = async (orderId, filesOrData) => {
   const form = new FormData();
   if (filesOrData.before) form.append('before', filesOrData.before);
   if (filesOrData.after) form.append('after', filesOrData.after);
-  const res = await fetch(`/api/employee/tasks/${orderId}/images`, {
+  const res = await fetch(`${API}/api/employee/tasks/${orderId}/images`, {
     method: 'POST',
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: form,
@@ -157,7 +158,7 @@ export const uploadTaskImages = async (orderId, filesOrData) => {
 export const completeTask = async (orderId, payload) => {
   const hasBody = payload && Object.keys(payload).length > 0;
   const headers = getAuthHeaders();
-  const res = await fetch(`/api/employee/tasks/${orderId}/complete`, {
+  const res = await fetch(`${API}/api/employee/tasks/${orderId}/complete`, {
     method: 'POST',
     headers,
     body: hasBody ? JSON.stringify(payload) : undefined,
@@ -175,7 +176,7 @@ export const completeTask = async (orderId, payload) => {
 };
 
 export const getEmployeeProfile = async () => {
-  const res = await fetch('/api/employee/profile', { headers: getAuthHeaders() });
+  const res = await fetch(`${API}/api/employee/profile`, { headers: getAuthHeaders() });
   if (res.status === 401) {
     let body = {};
     try { body = await res.json(); } catch { body = { success: false, code: 'TOKEN_INVALID' }; }
@@ -189,7 +190,7 @@ export const getEmployeeProfile = async () => {
 };
 
 export const updateEmployeeProfile = async (payload) => {
-  const res = await fetch('/api/employee/profile', {
+  const res = await fetch(`${API}/api/employee/profile`, {
     method: 'PUT',
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
@@ -211,7 +212,7 @@ export const getEmployeeSchedule = async ({ startDate, endDate } = {}) => {
   if (startDate) params.set('startDate', startDate);
   if (endDate) params.set('endDate', endDate);
   const query = params.toString();
-  const res = await fetch(`/api/employee/schedule${query ? `?${query}` : ''}`, { headers: getAuthHeaders() });
+  const res = await fetch(`${API}/api/employee/schedule${query ? `?${query}` : ''}`, { headers: getAuthHeaders() });
   if (res.status === 401) {
     let body = {};
     try { body = await res.json(); } catch { body = { success: false, code: 'TOKEN_INVALID' }; }

@@ -1,5 +1,5 @@
 // API helpers for services, packages, and add-ons
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
 
 // Service Categories
 export async function getServiceCategories() {

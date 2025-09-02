@@ -28,7 +28,8 @@ const EmployeeLogin = () => {
     setError('');
 
     try {
-      const response = await fetch('/api/admin/auth/employee/login', {
+  const API = import.meta.env.VITE_API_URL || window.location.origin;
+  const response = await fetch(`${API}/api/admin/auth/employee/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

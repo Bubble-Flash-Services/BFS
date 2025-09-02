@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+const API_URL = `${API}/api`;
 
 // Configure axios defaults
 axios.defaults.withCredentials = true;

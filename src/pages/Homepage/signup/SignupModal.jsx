@@ -144,7 +144,7 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
             </form>
         </div>
         <a
-          href="http://localhost:5000/api/auth/google"
+          href={(import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/google'}
           className="flex items-center gap-2 border border-black rounded-lg px-4 sm:px-6 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center mt-4"
         >
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6" />

@@ -96,7 +96,7 @@ const DynamicAdvertisementSlider = ({ serviceType = 'car_wash', className = '' }
   const getAdBackground = (ad) => {
     if (ad.mediaType === 'image' && ad.imageUrl) {
       return {
-        backgroundImage: `url(http://localhost:5000${ad.imageUrl})`,
+        backgroundImage: `url(${(import.meta.env.VITE_API_URL || window.location.origin)}${ad.imageUrl})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'

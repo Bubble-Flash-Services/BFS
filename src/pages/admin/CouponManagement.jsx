@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, RefreshCw, Calendar, Percent, DollarSign, Tag, Users, Clock, Target, X } from 'lucide-react';
 import AdminLayout from '../../components/AdminLayout';
+import toast from 'react-hot-toast';
+
+const API = import.meta.env.VITE_API_URL || window.location.origin;
 
 const CouponManagement = () => {
   const [coupons, setCoupons] = useState([]);
@@ -61,7 +64,7 @@ const CouponManagement = () => {
         setLoading(true);
       }
 
-      const response = await fetch('/api/adminNew/coupons', {
+  const response = await fetch(`${API}/api/adminNew/coupons`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -190,7 +193,7 @@ const CouponManagement = () => {
     }
 
     try {
-      const response = await fetch(`/api/adminNew/coupons/${couponId}`, {
+      const response = await fetch(`${API}/api/adminNew/coupons/${couponId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
@@ -201,13 +204,13 @@ const CouponManagement = () => {
 
       if (result.success) {
         setCoupons(coupons.filter(coupon => coupon._id !== couponId));
-        alert('Coupon deleted successfully!');
+        toast.success('Coupon deleted successfully');
       } else {
-        alert('Failed to delete coupon: ' + result.message);
+        toast.error('Failed to delete coupon: ' + result.message);
       }
     } catch (error) {
       console.error('Error deleting coupon:', error);
-      alert('Failed to delete coupon');
+      toast.error('Failed to delete coupon');
     }
   };
 
@@ -240,8 +243,8 @@ const CouponManagement = () => {
       };
 
       const url = editingCoupon 
-        ? `/api/adminNew/coupons/${editingCoupon._id}`
-        : '/api/adminNew/coupons';
+        ? `${API}/api/adminNew/coupons/${editingCoupon._id}`
+        : `${API}/api/adminNew/coupons`;
       
       const method = editingCoupon ? 'PUT' : 'POST';
 
@@ -257,21 +260,21 @@ const CouponManagement = () => {
       const result = await response.json();
 
       if (result.success) {
-        alert(`Coupon ${editingCoupon ? 'updated' : 'created'} successfully!`);
+        toast.success(`Coupon ${editingCoupon ? 'updated' : 'created'} successfully`);
         setShowCreateModal(false);
         fetchCoupons();
       } else {
-        alert(`Failed to ${editingCoupon ? 'update' : 'create'} coupon: ` + result.message);
+        toast.error(`Failed to ${editingCoupon ? 'update' : 'create'} coupon: ` + result.message);
       }
     } catch (error) {
       console.error('Error saving coupon:', error);
-      alert('Failed to save coupon');
+      toast.error('Failed to save coupon');
     }
   };
 
   const toggleCouponStatus = async (coupon) => {
     try {
-      const response = await fetch(`/api/adminNew/coupons/${coupon._id}`, {
+  const response = await fetch(`${API}/api/adminNew/coupons/${coupon._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -285,11 +288,11 @@ const CouponManagement = () => {
       if (result.success) {
         fetchCoupons();
       } else {
-        alert('Failed to toggle coupon status');
+        toast.error('Failed to toggle coupon status');
       }
     } catch (error) {
       console.error('Error toggling coupon status:', error);
-      alert('Failed to toggle coupon status');
+      toast.error('Failed to toggle coupon status');
     }
   };
 

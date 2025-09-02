@@ -53,7 +53,8 @@ export default function CartPage() {
       const token = localStorage.getItem('token');
       const cartTotal = getCartTotal();
       
-      const response = await fetch(`/api/coupons?orderAmount=${cartTotal}&userId=${user?.id}`, {
+  const API = import.meta.env.VITE_API_URL || window.location.origin;
+  const response = await fetch(`${API}/api/coupons?orderAmount=${cartTotal}&userId=${user?.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -82,7 +83,7 @@ export default function CartPage() {
         userId: user?.id
       });
 
-      const response = await fetch('/api/coupons/validate', {
+  const response = await fetch(`${API}/api/coupons/validate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,11 +106,10 @@ export default function CartPage() {
         });
         setCouponCode(coupon.code);
         setShowCouponSection(false);
-        console.log('✅ Coupon applied successfully:', {
+  console.log('✅ Coupon applied successfully:', {
           code: coupon.code,
           discountAmount: result.data.discountAmount
         });
-        alert(`Coupon ${coupon.code} applied successfully! You saved ₹${result.data.discountAmount}`);
         toast.success(`Coupon ${coupon.code} applied! You saved ₹${result.data.discountAmount}`);
       } else {
         console.error('❌ Coupon validation failed:', result);
@@ -140,7 +140,7 @@ export default function CartPage() {
         userId: user?.id
       });
 
-      const response = await fetch('/api/coupons/validate', {
+  const response = await fetch(`${API}/api/coupons/validate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

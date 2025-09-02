@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Eye, Save, X, User, Phone, MapPin, Calendar, RefreshCw, Star } from 'lucide-react';
 import AdminLayout from '../../components/AdminLayout';
 
+// Inject API base for production compatibility
+const API = import.meta.env.VITE_API_URL || window.location.origin;
+
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
   const [unassignedBookings, setUnassignedBookings] = useState([]);
@@ -48,7 +51,7 @@ const EmployeeManagement = () => {
       setLoading(true);
       setError(null);
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('/api/adminNew/employees', {
+      const response = await fetch(`${API}/api/adminNew/employees`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -79,7 +82,7 @@ const EmployeeManagement = () => {
   const fetchUnassignedBookings = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('/api/adminNew/bookings/unassigned', {
+      const response = await fetch(`${API}/api/adminNew/bookings/unassigned`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -136,8 +139,8 @@ const EmployeeManagement = () => {
     try {
       const token = localStorage.getItem('adminToken');
       const url = editingEmployee
-        ? `/api/adminNew/employees/${editingEmployee._id}`
-        : '/api/adminNew/employees';
+        ? `${API}/api/adminNew/employees/${editingEmployee._id}`
+        : `${API}/api/adminNew/employees`;
 
       const method = editingEmployee ? 'PUT' : 'POST';
 
@@ -178,7 +181,7 @@ const EmployeeManagement = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`/api/adminNew/employees/${employeeId}`, {
+      const response = await fetch(`${API}/api/adminNew/employees/${employeeId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -217,7 +220,7 @@ const EmployeeManagement = () => {
 
       setAssigning(true);
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`/api/adminNew/bookings/${selectedBooking._id}/assign`, {
+      const response = await fetch(`${API}/api/adminNew/bookings/${selectedBooking._id}/assign`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -280,7 +283,7 @@ const EmployeeManagement = () => {
     setShowDetailsModal(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`/api/adminNew/employees/${emp._id}/details`, {
+      const res = await fetch(`${API}/api/adminNew/employees/${emp._id}/details`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await res.json();
