@@ -448,7 +448,7 @@ router.get('/employees/:employeeId/details', authenticateAdmin, requirePermissio
       rating: o.rating || null,
       review: o.review || '',
       address: o.serviceAddress?.fullAddress || '',
-      items: (o.items || []).map(it => ({ name: it.serviceName, qty: it.quantity, price: it.price }))
+  items: (o.items || []).map(it => ({ name: it.serviceName, qty: it.quantity, price: it.price, image: it.image || null }))
     }));
 
     res.json({ success: true, data: { employee, attendance, tasks } });
@@ -811,7 +811,7 @@ router.get('/bookings/unassigned', authenticateAdmin, requirePermission('booking
     const [unassignedBookings, totalUnassigned] = await Promise.all([
       Order.find(filter)
         .populate('userId', 'name email phone')
-        .populate('items.serviceId', 'name')
+        .populate('items.serviceId', 'name image')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),

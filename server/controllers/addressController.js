@@ -1,5 +1,6 @@
 import Address from '../models/Address.js';
 import addressService from '../services/addressService.js';
+import { bangalorePincodes } from '../utils/bangalorePincodes.js';
 
 // Get user addresses
 export const getUserAddresses = async (req, res) => {
@@ -141,13 +142,22 @@ export const addAddress = async (req, res) => {
       isDefault
     } = req.body;
 
-    // Validate address
+  // Validate address
     const validation = addressService.validateAddress({
       fullAddress,
       latitude,
       longitude,
       pincode
     });
+    // Enforce serviceable area (unless DEV_MODE)
+    if (process.env.DEV_MODE !== 'true') {
+      if (!pincode || !bangalorePincodes.includes(pincode)) {
+        return res.status(400).json({
+          success: false,
+          message: 'We currently serve only Bangalore areas — coming soon to your area!'
+        });
+      }
+    }
 
     if (!validation.isValid) {
       return res.status(400).json({
@@ -218,6 +228,17 @@ export const updateAddress = async (req, res) => {
         address[key] = updateData[key];
       }
     });
+
+    // Enforce serviceable area on update (unless DEV_MODE)
+    if (process.env.DEV_MODE !== 'true') {
+      const pin = address.pincode || updateData.pincode;
+      if (!pin || !bangalorePincodes.includes(pin)) {
+        return res.status(400).json({
+          success: false,
+          message: 'We currently serve only Bangalore areas — coming soon to your area!'
+        });
+      }
+    }
 
     await address.save();
 

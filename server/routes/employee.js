@@ -354,6 +354,7 @@ router.get('/assignments/:assignmentId/details', authenticateEmployee, async (re
         serviceId: it.serviceId,
         packageId: it.packageId,
         serviceName: it.serviceName,
+        image: it.image || null,
         packageName: it.packageName,
         vehicleType: it.vehicleType,
         quantity: it.quantity,

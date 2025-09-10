@@ -10,7 +10,7 @@ const bikeCategories = [
  
   {
     name: 'Cruiser Bikes',
-    image: '/bike/bike3.png',
+    image: '/bike/cruiser/pexels-sahil-dethe-590388386-17266142.png',
     category: 'cruiser'
   },
    {

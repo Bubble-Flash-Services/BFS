@@ -182,10 +182,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                   <span className="font-medium">- {currency(pricing.discountAmount)}</span>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span>Service charge</span>
-                <span className="font-medium">{pricing.serviceCharge ? currency(pricing.serviceCharge) : 'FREE'}</span>
-              </div>
+              {/* Service charge removed as per request */}
               <div className="flex justify-between pt-2 border-t text-base">
                 <span className="font-semibold">Total</span>
                 <span className="font-bold">{currency(pricing.totalAmount || 0)}</span>

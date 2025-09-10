@@ -57,7 +57,7 @@ export default function Privacy() {
         <p>
           Address: 1, 129, Thukaram, Vasanthapura Main Road, Sri Ganesha Darshan Hotel, Subramanyapura,
           Bengaluru, Karnataka, 560061.
-          <br />Email: support@bubbleflash.com, web_bfsnow@outlook.com
+          <br />Email: support@bubbleflashservices.in, web_bfsnow@outlook.com
           <br />Phone: 9591572775
         </p>
 

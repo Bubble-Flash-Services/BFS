@@ -4,6 +4,7 @@ import { CartProvider } from './components/CartContext';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import ScrollToTop from './components/ScrollToTop';
+import GlobalBackButton from './components/GlobalBackButton';
 import HeroSection from './pages/Homepage/HeroSection';
 import Footer from './components/Footer';
 // Placeholder imports for new pages
@@ -28,6 +29,7 @@ import Shipping from './pages/policies/Shipping';
 import Refund from './pages/policies/Refund';
 import GoogleSuccess from './pages/GoogleSuccess';
 import ContactPage from './pages/contact/ContactPage';
+import TeamPage from './pages/team/TeamPage';
 import ProfilePage from './pages/ProfilePage';
 import OrdersPage from './pages/OrdersPage';
 import AddressesPage from './pages/AddressesPage';
@@ -55,6 +57,7 @@ function AppContent() {
   return (
     <div>
       <ScrollToTop />
+  <GlobalBackButton />
       {!isAdminRoute && !isEmployeeRoute && <Header />}
       <Routes>
         <Route path="/" element={
@@ -85,6 +88,7 @@ function AppContent() {
         <Route path="/addresses" element={<AddressesPage />} />
         <Route path="/google-success" element={<GoogleSuccess />} />
         <Route path="/contact" element={<ContactPage />} />
+  <Route path="/team" element={<TeamPage />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="/admin/dashboard" element={

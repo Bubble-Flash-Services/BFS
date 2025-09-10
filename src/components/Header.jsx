@@ -154,6 +154,12 @@ export default function Header() {
               >
                 Services
               </button>
+              <button
+                onClick={() => { navigate('/team'); setMobileMenuOpen(false);} }
+                className="text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
+              >
+                Team
+              </button>
               <button 
                 onClick={() => handleNavigation('contact')} 
                 className="text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
@@ -274,6 +280,12 @@ export default function Header() {
               className="block w-full text-left text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
             >
               Services
+            </button>
+            <button 
+              onClick={() => { navigate('/team'); setMobileMenuOpen(false);} }
+              className="block w-full text-left text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
+            >
+              Team
             </button>
             <button 
               onClick={() => handleNavigation('contact')} 

@@ -370,10 +370,7 @@ export default function CartPage() {
                     </div>
                   )}
                   
-                  <div className="flex justify-between text-gray-600">
-                    <span>Service charge</span>
-                    <span className="text-green-600">FREE</span>
-                  </div>
+                  {/* Service charge removed as per request */}
                   
                   <hr className="border-gray-200" />
                   
@@ -417,29 +414,6 @@ export default function CartPage() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-                  <span className="text-sm">Discount (10% on orders above ₹500):</span>
-                  <span className="text-sm font-medium">-₹{calculateDiscount()}</span>
-                </div>
-              )}
-              <div className="flex justify-between items-center border-t pt-2">
-                <span className="text-xl font-bold text-gray-900">Total:</span>
-                <span className="text-2xl font-bold text-green-600">
-                  ₹{getFinalTotal()}
-                </span>
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <button 
-                onClick={handleProceedToCheckout}
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-              >
-                Proceed to Checkout
-              </button>
             </div>
           </div>
         </div>

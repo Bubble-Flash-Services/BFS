@@ -17,8 +17,11 @@ export default function ContactPage() {
             <div>+91 9980123452</div>
           </div>
           <div>
-            <div className="font-semibold">Email</div>
-            <div>hello@bubbleflash.in</div>
+          <div className="font-semibold">Email</div>
+          <div
+            className="underline cursor-pointer"
+            onClick={() => window.open('https://outlook.live.com/mail/0/deeplink/compose?to=web_bfsnow@oulook.com&subject=Inquiry%20from%20Bubble%20Flash%20Website', '_blank')}
+          >Info@bubbleflashservices.in</div>
           </div>
           <div>
             <div className="font-semibold">Business Hours</div>

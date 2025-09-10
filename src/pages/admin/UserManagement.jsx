@@ -380,7 +380,7 @@ const UserManagement = () => {
                   <div className="flex justify-between"><span className="text-gray-500">Bookings</span><span className="text-gray-800">{u.totalBookings}</span></div>
                   <div className="flex justify-between"><span className="text-gray-500">Total Spent</span><span className="text-gray-800">₹{u.totalSpent.toLocaleString()}</span></div>
                 </div>
-                <div className="mt-3 text-xs text-gray-600 line-clamp-2">{u.location}</div>
+                <div className="mt-3 text-xs text-gray-600 break-words line-clamp-2">{u.location}</div>
                 <div className="mt-4 flex gap-3">
                   <button onClick={() => handleViewUser(u.id)} className="px-3 py-2 rounded border text-blue-600 border-blue-200">View</button>
                   <button onClick={() => handleEditUser(u.id)} className="px-3 py-2 rounded border text-green-600 border-green-200">Edit</button>
@@ -433,8 +433,8 @@ const UserManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{user.phone}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{user.location}</div>
+                    <td className="px-6 py-4 align-top">
+                      <div className="max-w-xs md:max-w-sm lg:max-w-md text-sm text-gray-900 break-words line-clamp-2">{user.location}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{user.joinedDate}</div>

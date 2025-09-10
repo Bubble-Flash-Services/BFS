@@ -59,16 +59,21 @@ const Footer = () => {
           </div>
           <div className="text-gray-500 text-sm mb-6">
             © 2025 BFS Bubble Flash Services.<br/>
-            support@bubbleflash.com
+            <button
+              onClick={() => window.open('https://outlook.live.com/mail/0/deeplink/compose?to=web_bfsnow@oulook.com&subject=Inquiry%20from%20Bubble%20Flash%20Website', '_blank')}
+              className="underline hover:text-[#1F3C88] transition-colors"
+              type="button"
+            >support@bubbleflashservices.in</button>
           </div>
           <div className="flex items-center gap-3">
-            <a 
-              href="mailto:support@bubbleflash.com" 
-              aria-label="Email support@bubbleflash.com"
+            <button
+              onClick={() => window.open('https://outlook.live.com/mail/0/deeplink/compose?to=web_bfsnow@oulook.com&subject=Inquiry%20from%20Bubble%20Flash%20Website', '_blank')}
+              aria-label="Email support@bubbleflashservices.in"
               className="bg-[#1F3C88] p-2 rounded-full hover:bg-[#2D5AA0] transition-colors duration-300 text-white"
+              type="button"
             >
               <EmailIcon />
-            </a>
+            </button>
           </div>
         </div>
         {/* Columns */}

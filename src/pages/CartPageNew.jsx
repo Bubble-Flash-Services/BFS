@@ -362,10 +362,7 @@ export default function CartPage() {
                     </div>
                   )}
                   
-                  <div className="flex justify-between text-gray-600">
-                    <span>Service charge</span>
-                    <span className="text-green-600">FREE</span>
-                  </div>
+                  {/* Service charge removed as per request */}
                   
                   <hr className="border-gray-200" />
                   

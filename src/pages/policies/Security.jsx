@@ -23,7 +23,7 @@ export default function Security() {
 
         <h2>Responsible Disclosure</h2>
         <p>
-          If you believe you have found a security issue, please contact us at support@bubbleflash.com
+          If you believe you have found a security issue, please contact us at support@bubbleflashservices.in
           with details. Do not publicly disclose issues until we have had a chance to investigate.
         </p>
       </div>

@@ -181,6 +181,7 @@ export default function BikeWashDeals() {
 
   const categoryKey = category?.toLowerCase().replace(/\s+/g, '-').replace('&', '');
   const dealData = bikeWashPackages[categoryKey] || bikeWashPackages.commuter;
+  const isLuxury = categoryKey === 'sports';
 
   // Advertisement data
   const adBanners = [
@@ -539,14 +540,21 @@ export default function BikeWashDeals() {
   };
 
   return (
-    <section className="py-16 bg-gray-50 min-h-screen">
+    <section
+      className={
+        isLuxury
+          ? "py-16 min-h-screen bg-[#0a0a0a] text-white"
+          : "py-16 bg-gray-50 min-h-screen"
+      }
+      style={isLuxury ? { fontFamily: 'Montserrat, ui-sans-serif, system-ui' } : undefined}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Advertisement Banner */}
         <div className="mb-12">
-          <div className="relative overflow-hidden rounded-2xl shadow-lg">
+          <div className={`relative overflow-hidden rounded-2xl shadow-lg h-48 ${isLuxury ? 'bg-black/60 ring-1 ring-[#d4af37]/30' : ''}`}>
             <div
-              className="flex transition-transform duration-500 ease-in-out"
+              className={`flex transition-transform duration-500 ease-in-out ${isLuxury ? 'bg-gradient-to-r from-black/60 to-black/30' : ''}`}
               style={{
                 transform: `translateX(-${adSlide * 100}%)`,
               }}
@@ -554,12 +562,12 @@ export default function BikeWashDeals() {
               {adBanners.map((ad) => (
                 <div
                   key={ad.id}
-                  className={`flex-shrink-0 w-full bg-gradient-to-r ${ad.bgColor} text-white p-8 md:p-12 text-center`}
+                  className={`flex-shrink-0 w-full ${isLuxury ? 'bg-black text-[#d4af37]' : 'bg-gradient-to-r ' + ad.bgColor + ' text-white'} p-8 md:p-12 text-center`}
                 >
-                  <h2 className="text-2xl md:text-4xl font-bold mb-2">
+                  <h2 className={`text-2xl md:text-4xl font-bold mb-2 ${isLuxury ? "font-['Playfair Display'] text-[#d4af37]" : ''}`}>
                     {ad.title}
                   </h2>
-                  <p className="text-lg md:text-xl opacity-90">
+                  <p className={`text-lg md:text-xl opacity-90 ${isLuxury ? 'text-white/80' : ''}`}>
                     {ad.subtitle}
                   </p>
                 </div>
@@ -573,8 +581,8 @@ export default function BikeWashDeals() {
                   key={index}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     index === adSlide 
-                      ? 'bg-white shadow-lg' 
-                      : 'bg-white/50 hover:bg-white/70'
+                      ? (isLuxury ? 'bg-[#d4af37]' : 'bg-white shadow-lg')
+                      : (isLuxury ? 'bg-white/30 hover:bg-white/50' : 'bg-white/50 hover:bg-white/70')
                   }`}
                   onClick={() => setAdSlide(index)}
                 />
@@ -585,16 +593,22 @@ export default function BikeWashDeals() {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-block bg-green-500 text-white px-6 py-2 rounded-full text-sm font-semibold mb-6">
-            BIKE WASH COMBOS
-          </div>
+          {!isLuxury && (
+            <div className="inline-block bg-green-500 text-white px-6 py-2 rounded-full text-sm font-semibold mb-6">
+              BIKE WASH COMBOS
+            </div>
+          )}
           
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+          <h1
+            className={`text-3xl md:text-4xl font-bold mb-4 ${
+              isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : "text-gray-800"
+            }`}
+          >
             {dealData.title}
           </h1>
           
           {dealData.subtitle && (
-            <p className="text-lg text-gray-600 mb-6">
+            <p className={`text-lg mb-6 ${isLuxury ? 'text-white/80' : 'text-gray-600'}`}>
               {dealData.subtitle}
             </p>
           )}
@@ -603,40 +617,51 @@ export default function BikeWashDeals() {
         {/* Desktop Grid Layout */}
         <div className="hidden md:grid md:grid-cols-3 gap-8">
           {dealData.packages.map((pkg) => (
-            <div key={pkg.id} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow h-full">
+            <div
+              key={pkg.id}
+              className={
+                isLuxury
+                  ? "rounded-2xl overflow-hidden h-full bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]"
+                  : "bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow h-full"
+              }
+            >
               <div className="p-6 h-full flex flex-col">
-                <div className="w-full h-48 bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                <div className={`${isLuxury ? 'w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden ring-1 ring-[#d4af37]/30 bg-black/30' : 'w-full h-48 bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden'}`}>
                   <img 
                     src={pkg.image} 
                     alt={pkg.name} 
                     className="max-w-full max-h-full object-contain"
                   />
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3 min-h-[3rem]">
+                <h3 className={`text-xl font-bold mb-3 min-h-[3rem] ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
                   {pkg.name}
                 </h3>
                 {pkg.description && (
-                  <p className="text-gray-600 text-sm mb-4 italic">
+                  <p className={`${isLuxury ? 'text-white/80 italic' : 'text-gray-600'} text-sm mb-4 italic`}>
                     {pkg.description}
                   </p>
                 )}
                 <div className="mb-4">
-                  <h4 className="font-semibold text-gray-700 mb-2">Included Services:</h4>
+                  <h4 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Included Services:</h4>
                   <ul className="space-y-2 mb-4 flex-grow">
                     {pkg.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
-                        <span className="text-green-500 mr-2 text-lg leading-none mt-1">•</span>
-                        <span className="text-gray-600 text-sm">{feature}</span>
+                        <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-lg leading-none mt-1`}>•</span>
+                        <span className={`${isLuxury ? 'text-white/90' : 'text-gray-600'} text-sm`}>{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div className="text-center mt-auto">
-                  <div className="text-2xl font-bold text-green-500 mb-4">
+                  <div className={`text-2xl font-bold mb-4 ${isLuxury ? 'text-[#d4af37]' : 'text-green-500'}`}>
                     {pkg.price}
                   </div>
                   <button 
-                    className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                    className={
+                      isLuxury
+                        ? "w-full bg-black border border-[#d4af37] text-[#d4af37] font-semibold py-3 px-6 rounded-lg hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition"
+                        : "w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                    }
                     onClick={() => handleBookNow(pkg)}
                   >
                     Book Now
@@ -695,37 +720,41 @@ export default function BikeWashDeals() {
                   key={pkg.id}
                   className="flex-shrink-0 w-full px-4"
                 >
-                  <div className="bg-white rounded-2xl overflow-hidden shadow-lg max-w-sm mx-auto h-full">
+                  <div className={`${isLuxury ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]' : 'bg-white shadow-lg'} rounded-2xl overflow-hidden max-w-sm mx-auto h-full`}>
                     <div className="p-6 h-full flex flex-col">
-                      <div className="w-full h-48 bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                      <div className={`${isLuxury ? 'w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden ring-1 ring-[#d4af37]/30 bg-black/30' : 'w-full h-48 bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden'}`}>
                         <img 
                           src={pkg.image} 
                           alt={pkg.name} 
                           className="max-w-full max-h-full object-contain"
                         />
                       </div>
-                      <h3 className="text-xl font-bold text-gray-800 mb-3 min-h-[3rem]">
+                      <h3 className={`text-xl font-bold mb-3 min-h-[3rem] ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
                         {pkg.name}
                       </h3>
                       {pkg.description && (
-                        <p className="text-gray-600 text-sm mb-4 italic">
+                        <p className={`${isLuxury ? 'text-white/80 italic' : 'text-gray-600'} text-sm mb-4 italic`}>
                           {pkg.description}
                         </p>
                       )}
                       <ul className="space-y-2 mb-6 flex-grow">
                         {pkg.features.map((feature, index) => (
                           <li key={index} className="flex items-start">
-                            <span className="text-green-500 mr-2 text-lg leading-none">•</span>
-                            <span className="text-gray-600 text-sm">{feature}</span>
+                            <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-lg leading-none`}>•</span>
+                            <span className={`${isLuxury ? 'text-white/90' : 'text-gray-600'} text-sm`}>{feature}</span>
                           </li>
                         ))}
                       </ul>
                       <div className="text-center mt-auto">
-                        <div className="text-2xl font-bold text-green-500 mb-4">
+                        <div className={`text-2xl font-bold mb-4 ${isLuxury ? 'text-[#d4af37]' : 'text-green-500'}`}>
                           {pkg.price}
                         </div>
                         <button 
-                          className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                          className={
+                            isLuxury
+                              ? "w-full bg-black border border-[#d4af37] text-[#d4af37] font-semibold py-3 px-6 rounded-lg hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition"
+                              : "w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                          }
                           onClick={() => handleBookNow(pkg)}
                         >
                           Book Now
@@ -819,8 +848,8 @@ export default function BikeWashDeals() {
                       onClick={() => setModalCurrentSlide(index)}
                       className={`w-3 h-3 rounded-full transition-all duration-200 ${
                         index === modalCurrentSlide 
-                          ? 'bg-blue-600 scale-125' 
-                          : 'bg-gray-400 hover:bg-gray-500'
+                          ? (isLuxury ? 'bg-[#d4af37] scale-125' : 'bg-blue-600 scale-125') 
+                          : (isLuxury ? 'bg-white/30 hover:bg-white/50' : 'bg-gray-400 hover:bg-gray-500')
                       }`}
                     />
                   ))}
@@ -829,13 +858,17 @@ export default function BikeWashDeals() {
 
               {/* Service Types Display */}
               <div className="px-6 py-4 border-b border-gray-200">
-                <div className="flex justify-between text-sm text-gray-600">
+                <div className={`flex justify-between text-sm ${isLuxury ? 'text-white/80' : 'text-gray-600'}`}>
                   {bikeWashDetails.slides.map((slide, index) => (
                     <button
                       key={slide.id}
                       onClick={() => setModalCurrentSlide(index)}
-                      className={`transition-colors duration-200 hover:text-blue-500 cursor-pointer ${
-                        index === modalCurrentSlide ? 'text-blue-600 font-semibold' : ''
+                      className={`transition-colors duration-200 cursor-pointer ${
+                        isLuxury ? 'hover:text-[#d4af37]' : 'hover:text-blue-500'
+                      } ${
+                        index === modalCurrentSlide 
+                          ? (isLuxury ? 'text-[#d4af37] font-semibold' : 'text-blue-600 font-semibold')
+                          : ''
                       }`}
                     >
                       {slide.title}
@@ -881,7 +914,7 @@ export default function BikeWashDeals() {
                             id={`addon-${addon.id}`}
                             checked={selectedAddons.find(item => item.id === addon.id)}
                             onChange={() => handleAddonToggle(addon)}
-                            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            className={`w-5 h-5 border-gray-300 rounded ${isLuxury ? 'text-[#d4af37] focus:ring-[#d4af37]' : 'text-blue-600 focus:ring-blue-500'}`}
                           />
                           <label htmlFor={`addon-${addon.id}`} className="ml-3 text-gray-800 font-medium">
                             {addon.name}
@@ -905,8 +938,8 @@ export default function BikeWashDeals() {
                   </div>
                   <div className="border-t pt-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-blue-600">Total</span>
-                      <span className="text-xl font-bold text-blue-600">₹{calculateTotal()}</span>
+                      <span className={`text-lg font-semibold ${isLuxury ? 'text-[#d4af37]' : 'text-blue-600'}`}>Total</span>
+                      <span className={`text-xl font-bold ${isLuxury ? 'text-[#d4af37]' : 'text-blue-600'}`}>₹{calculateTotal()}</span>
                     </div>
                   </div>
                 </div>
@@ -921,7 +954,11 @@ export default function BikeWashDeals() {
                   </button>
                   <button 
                     onClick={handleBuyNow}
-                    className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                    className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-colors ${
+                      isLuxury
+                        ? 'bg-black border border-[#d4af37] text-[#d4af37] hover:bg-[#0f0f0f]'
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                    }`}
                   >
                     Buy Now
                   </button>
@@ -943,49 +980,49 @@ export default function BikeWashDeals() {
 
       {/* Requirements Notice (water & power) */}
       <div className="max-w-6xl mx-auto px-4">
-        <p className="text-red-600 text-center font-semibold">
+        <p className={`${isLuxury ? 'text-[#d4af37] italic font-semibold text-center' : 'text-red-600 text-center font-semibold'}`}>
           Note: For every wash, please ensure 2 buckets of water and a power supply are available at the service location.
         </p>
       </div>
 
       {/* Service Availability Information */}
       <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 border border-green-200">
+        <div className={`${isLuxury ? 'bg-black/60 border border-[#d4af37]/30' : 'bg-gradient-to-r from-green-50 to-blue-50 border border-green-200'} rounded-xl p-8`}>
           <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Service Availability</h3>
-            <div className="w-20 h-1 bg-green-500 mx-auto rounded"></div>
+            <h3 className={`text-2xl font-bold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-800'}`}>Service Availability</h3>
+            {!isLuxury && <div className="w-20 h-1 bg-green-500 mx-auto rounded"></div>}
           </div>
           
           <div className="grid md:grid-cols-2 gap-8">
             {/* Free Service */}
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-green-100">
+            <div className={`${isLuxury ? 'bg-black/50 border border-[#d4af37]/20' : 'bg-white border border-green-100'} rounded-lg p-6 shadow-sm`}>
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white font-bold text-lg">✓</span>
+                <div className={`${isLuxury ? 'w-8 h-8 bg-black border border-[#d4af37]/40' : 'w-8 h-8 bg-green-500'} rounded-full flex items-center justify-center mr-3`}>
+                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-white'} font-bold text-lg`}>✓</span>
                 </div>
-                <h4 className="text-xl font-bold text-green-700">Free Service</h4>
+                <h4 className={`text-xl font-bold ${isLuxury ? 'text-[#d4af37]' : 'text-green-700'}`}>Free Service</h4>
               </div>
-              <p className="text-gray-600 text-lg">
-                Free within <span className="font-semibold text-green-600">5 km radius</span>
+              <p className={`${isLuxury ? 'text-white/80' : 'text-gray-600'} text-lg`}>
+                Free within <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-600'} font-semibold`}>5 km radius</span>
               </p>
             </div>
 
             {/* Extra Charges */}
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-orange-100">
+            <div className={`${isLuxury ? 'bg-black/50 border border-[#d4af37]/20' : 'bg-white border border-orange-100'} rounded-lg p-6 shadow-sm`}>
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white font-bold text-lg">₹</span>
+                <div className={`${isLuxury ? 'w-8 h-8 bg-black border border-[#d4af37]/40' : 'w-8 h-8 bg-orange-500'} rounded-full flex items-center justify-center mr-3`}>
+                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-white'} font-bold text-lg`}>₹</span>
                 </div>
-                <h4 className="text-xl font-bold text-orange-700">Extra Charges</h4>
+                <h4 className={`text-xl font-bold ${isLuxury ? 'text-[#d4af37]' : 'text-orange-700'}`}>Extra Charges</h4>
               </div>
-              <div className="space-y-2 text-gray-600">
+              <div className={`${isLuxury ? 'text-white/80' : 'text-gray-600'} space-y-2`}>
                 <div className="flex justify-between">
                   <span>5–10 km</span>
-                  <span className="font-semibold text-orange-600">₹50</span>
+                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-orange-600'} font-semibold`}>₹50</span>
                 </div>
                 <div className="flex justify-between">
                   <span>10–15 km</span>
-                  <span className="font-semibold text-orange-600">₹100</span>
+                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-orange-600'} font-semibold`}>₹100</span>
                 </div>
               </div>
             </div>

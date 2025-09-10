@@ -8,9 +8,10 @@
     "dev": "nodemon app.js",
     "seed": "node seedDatabase.js",
     "seed:dev": "nodemon seedDatabase.js",
-    "seed:admin": "node seedAdminEmployee.js",
+  "seed:admin": "node seedAdminEmployee.js",
   "migrate": "node scripts/migrateDatabase.js",
-    "test:routes": "node test-routes.js"
+  "test:routes": "node test-routes.js",
+  "test:telegram": "node scripts/testTelegram.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

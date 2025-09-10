@@ -71,11 +71,22 @@ export default function AddressesPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+    // Client-side availability check
+    try {
+      const availability = await addressAPI.checkServiceAvailability(formData.pincode);
+      if (!availability?.success || availability.available === false) {
+        const msg = availability?.message || 'We currently serve only Bangalore areas — coming soon to your area!';
+        setErrors(prev => ({ ...prev, pincode: msg }));
+        return;
+      }
+    } catch (_) {
+      // If check fails for network reasons, proceed; server will enforce
+    }
     
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
-      let response;
+  let response;
       if (editingAddress) {
         response = await addressAPI.updateAddress(editingAddress._id, formData);
       } else {

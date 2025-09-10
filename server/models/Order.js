@@ -25,6 +25,10 @@ const orderSchema = new mongoose.Schema({
       type: String,
       required: true
     },
+  // Optional helpful display fields preserved from cart
+  image: { type: String, maxlength: 500 },
+  type: { type: String, maxlength: 50 },
+  category: { type: String, maxlength: 100 },
     packageName: String,
     quantity: {
       type: Number,

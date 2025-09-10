@@ -7,6 +7,8 @@ import Service from '../models/Service.js';
 import Package from '../models/Package.js';
 import AddOn from '../models/AddOn.js';
 import mongoose from 'mongoose';
+import { broadcastToAdmins, formatOrderMessage } from '../services/telegramService.js';
+import { bangalorePincodes } from '../utils/bangalorePincodes.js';
 
 // Create new order
 export const createOrder = async (req, res) => {
@@ -22,6 +24,17 @@ export const createOrder = async (req, res) => {
     } = req.body;
 
     console.log('📋 Creating order with items:', items);
+
+    // Enforce serviceable area at checkout (unless DEV_MODE)
+    if (process.env.DEV_MODE !== 'true') {
+      const pin = serviceAddress?.pincode;
+      if (!pin || !/^\d{6}$/.test(pin) || !bangalorePincodes.includes(pin)) {
+        return res.status(400).json({
+          success: false,
+          message: 'We currently serve only Bangalore areas — coming soon to your area!'
+        });
+      }
+    }
 
     let orderItems = [];
     let subtotal = 0;
@@ -88,7 +101,7 @@ export const createOrder = async (req, res) => {
         }
 
         // Use cart data directly, do NOT override with database values
-        const price = item.price || service.basePrice;
+  const price = item.price || service.basePrice;
         const packageName = item.packageName || item.name || packageData?.name || 'Custom Package';
         
         // REMOVED: Database override logic that was replacing cart prices/names
@@ -122,6 +135,9 @@ export const createOrder = async (req, res) => {
           serviceId: service._id,
           packageId: packageData?._id,
           serviceName: item.serviceName || service.name,  // Use cart name first, then fallback
+          image: item.image || item.img || service.image || '',
+          type: item.type || '',
+          category: item.category || '',
           packageName: packageName,
           quantity: item.quantity || 1,
           price: price,
@@ -221,6 +237,25 @@ export const createOrder = async (req, res) => {
     });
 
     await order.save();
+
+    // Fetch user to enrich telegram notification
+    let userDoc = null;
+    try {
+      userDoc = await User.findById(req.user.id).lean();
+    } catch (e) {
+      console.warn('⚠️ Could not fetch user for telegram message:', e.message);
+    }
+
+    // Fire-and-forget Telegram notification (don't block response)
+    (async () => {
+      try {
+        const message = formatOrderMessage(order.toObject(), userDoc);
+        await broadcastToAdmins(message);
+        console.log('📨 Telegram notification sent for order', order.orderNumber);
+      } catch (notifyErr) {
+        console.error('Telegram notify error:', notifyErr.message);
+      }
+    })();
 
     // Clear cart if items were from cart
     if (!items || items.length === 0) {

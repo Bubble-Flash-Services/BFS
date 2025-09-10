@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+const API = import.meta.env.VITE_API_URL || window.location.origin;
+
 const FAQS = [
 	{
 		question: "How do I request a laundry pickup?",
@@ -59,6 +61,41 @@ export default function ServicesPage() {
 	const [visibleCount, setVisibleCount] = useState(4);
 	const [carousel, setCarousel] = useState(testimonials);
 
+	// Callback form state
+	const [cbName, setCbName] = useState("");
+	const [cbPhone, setCbPhone] = useState("");
+	const [cbEmail, setCbEmail] = useState("");
+	const [cbMessage, setCbMessage] = useState("");
+	const [cbSending, setCbSending] = useState(false);
+
+	const handleCallbackSubmit = async (e) => {
+		e.preventDefault();
+		if (!cbName.trim() || !cbPhone.trim()) {
+			alert("Please enter your name and phone number");
+			return;
+		}
+		try {
+			setCbSending(true);
+			const res = await fetch(`${API}/api/callback`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name: cbName, phone: cbPhone, email: cbEmail, message: cbMessage, source: 'services' })
+			});
+			const result = await res.json().catch(()=>({success:false}));
+			if (res.ok && result?.success) {
+				alert("Thanks! We'll call you back shortly.");
+				setCbName(""); setCbPhone(""); setCbEmail(""); setCbMessage("");
+			} else {
+				alert(result?.message || 'Failed to send request. Please try WhatsApp.');
+			}
+		} catch (err) {
+			console.error('callback submit failed:', err);
+			alert('Network error. Please try again.');
+		} finally {
+			setCbSending(false);
+		}
+	};
+
 	// Responsive visibleCount
 	useEffect(() => {
 		function handleResize() {
@@ -94,12 +131,15 @@ export default function ServicesPage() {
 						<img src="/services/callback.svg" alt="Callback" className="w-4 h-4" />
 						<span className="text-lg font-semibold">Request a callback</span>
 					</div>
-					<form className="w-full flex flex-col gap-4">
+					<form className="w-full flex flex-col gap-4" onSubmit={handleCallbackSubmit}>
 						<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
 							<span className="text-lg"><img src="/services/name.svg" alt="Callback" className="w-4 h-4" /></span>
 							<input
 								className="bg-transparent outline-none flex-1"
 								placeholder="Enter your name"
+								value={cbName}
+								onChange={(e)=>setCbName(e.target.value)}
+								required
 							/>
 						</div>
 						<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
@@ -107,6 +147,10 @@ export default function ServicesPage() {
 							<input
 								className="bg-transparent outline-none flex-1"
 								placeholder="Enter your mobile no"
+								value={cbPhone}
+								onChange={(e)=>setCbPhone(e.target.value)}
+								pattern="[0-9+\-\s]{8,15}"
+								required
 							/>
 						</div>
 						<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
@@ -114,19 +158,26 @@ export default function ServicesPage() {
 							<input
 								className="bg-transparent outline-none flex-1"
 								placeholder="Enter your email"
+								type="email"
+								value={cbEmail}
+								onChange={(e)=>setCbEmail(e.target.value)}
 							/>
 						</div>
 						<textarea
 							className="border rounded-xl px-3 py-2 bg-white min-h-[60px] outline-none"
 							placeholder="Enter your message......"
+							value={cbMessage}
+							onChange={(e)=>setCbMessage(e.target.value)}
 						/>
 						<div className="text-pink-600 text-sm">
 							We are operating between 9 AM - 8 PM
 						</div>
 						<button
 							type="submit"
-							className="bg-[#d14fff] text-white rounded-xl px-2 py-2 font-semibold mt-2"						>
-							Call me
+							className="bg-[#d14fff] text-white rounded-xl px-2 py-2 font-semibold mt-2 disabled:opacity-60"
+							disabled={cbSending}
+						>
+							{cbSending ? 'Sending...' : 'Call me'}
 						</button>
 					</form>
 				</div>
@@ -186,7 +237,10 @@ export default function ServicesPage() {
 								</div>
 								<div>
 									<div className="font-semibold">Email</div>
-									<div>hello@bubbleflash.in</div>
+									<div
+										className="underline cursor-pointer"
+										onClick={(e) => { e.stopPropagation(); window.open('https://outlook.live.com/mail/0/deeplink/compose?to=web_bfsnow@oulook.com&subject=Inquiry%20from%20Bubble%20Flash%20Website', '_blank'); }}
+									>Info@bubbleflashservices.in</div>
 								</div>
 								<div>
 									<div className="font-semibold">Business Hours</div>

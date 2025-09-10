@@ -5,6 +5,7 @@ import { useAuth } from '../components/AuthContext';
 import { Trash2, Plus, Minus, ShoppingBag, X, MapPin, Phone, Calendar, CreditCard, Sparkles, ArrowRight, CheckCircle, Clock } from 'lucide-react';
 import AddressAutocomplete from '../components/AddressAutocomplete';
 import RazorpayPayment from '../components/RazorpayPayment';
+import { addressAPI } from '../api/address';
 import { createOrder } from '../api/orders';
 import toast from 'react-hot-toast';
 
@@ -17,6 +18,7 @@ export default function CartPage() {
   const { user, loading } = useAuth();
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('');
+  const [hasLiveLocation, setHasLiveLocation] = useState(false);
   const [alternateLocation, setAlternateLocation] = useState('');
   const [useAlternateLocation, setUseAlternateLocation] = useState(false);
   const [pickupDate, setPickupDate] = useState('');
@@ -32,17 +34,36 @@ export default function CartPage() {
   const [couponLoading, setCouponLoading] = useState(false);
   const [showCouponSection, setShowCouponSection] = useState(false);
 
-  // Auto-populate user data when component mounts
+  // Try to get live location first; fallback to profile address if unavailable
+  useEffect(() => {
+    const getLiveLocation = async () => {
+      try {
+        if (!navigator.geolocation) throw new Error('Geolocation not supported');
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost') throw new Error('HTTPS required');
+
+        const result = await addressAPI.getCurrentAddress();
+        if (result.success && !selectedLocation) {
+          setSelectedLocation(result.data.fullAddress);
+          setAddressData(result.data);
+          setHasLiveLocation(true);
+        }
+      } catch (_) {
+        // ignore and fallback in next effect
+      }
+    };
+    getLiveLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-populate from profile only if we don't already have a live/user-selected address
   useEffect(() => {
     if (user && !loading) {
-      if (user.phone && !phoneNumber) {
-        setPhoneNumber(user.phone);
-      }
-      if (user.address && !selectedLocation) {
+      if (user.phone && !phoneNumber) setPhoneNumber(user.phone);
+      if (user.address && !selectedLocation && !hasLiveLocation) {
         setSelectedLocation(user.address);
       }
     }
-  }, [user, loading]);
+  }, [user, loading, phoneNumber, selectedLocation, hasLiveLocation]);
 
   // Fetch available coupons
   useEffect(() => {
@@ -278,7 +299,7 @@ export default function CartPage() {
     if (user) {
       setPhoneNumber(user.phone || '');
       // Auto-populate address from user profile if available
-      if (user.address && !selectedLocation) {
+      if (user.address && !selectedLocation && !hasLiveLocation) {
         setSelectedLocation(user.address);
       }
     }
@@ -287,7 +308,14 @@ export default function CartPage() {
     const storedBooking = localStorage.getItem('pendingBooking');
     if (storedBooking) {
       const data = JSON.parse(storedBooking);
-      setSelectedLocation(data.address || user?.address || '');
+      // Respect an already chosen/live address; only fill if empty
+      if (!selectedLocation) {
+        if (data.address) {
+          setSelectedLocation(data.address);
+        } else if (user?.address && !hasLiveLocation) {
+          setSelectedLocation(user.address);
+        }
+      }
       setPickupDate(data.pickupDate || '');
       setPhoneNumber(data.phoneNumber || user?.phone || '');
     }
@@ -320,12 +348,26 @@ export default function CartPage() {
     setPlacingOrder(true);
 
     try {
+      // Check service availability by pincode before creating order
+      const pinToCheck = (addressData?.pincode || '').trim();
+      if (pinToCheck && /^\d{6}$/.test(pinToCheck)) {
+        const availability = await addressAPI.checkServiceAvailability(pinToCheck);
+        if (!availability?.success || availability.available === false) {
+          toast.error(availability?.message || 'We currently serve only Bangalore areas — coming soon to your area!');
+          setPlacingOrder(false);
+          return;
+        }
+      }
+
       // Prepare order data for backend
       const orderData = {
         items: cartItems.map(item => ({
           serviceId: item.serviceId || item.id,
           packageId: item.packageId,
           serviceName: item.serviceName || item.title || item.name,
+            image: item.image || item.img,
+            type: item.type,
+            category: item.category,
           packageName: item.packageName || item.plan,
           quantity: item.quantity || 1,
           price: item.packageDetails?.basePrice || item.basePrice || item.price,
@@ -827,10 +869,7 @@ export default function CartPage() {
                     <span>₹{getCartTotal()}</span>
                   </div>
                   
-                  <div className="flex justify-between text-gray-600">
-                    <span>Service charge</span>
-                    <span className="text-green-600">FREE</span>
-                  </div>
+                  {/* Service charge removed as per request */}
 
                   {/* Coupon Section */}
                   <div className="space-y-3">

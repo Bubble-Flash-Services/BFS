@@ -61,7 +61,7 @@ const helmetWashPackages = {
       {
         id: 4,
         name: "Sport Clean",
-        image: "/helmet/commuter & midsize/aiease_1755850674727.jpg",
+        image: "/helmet/midsize/midsize1.jpg",
         price: "₹199",
         description: "Performance Helmet Care",
         features: [
@@ -74,7 +74,7 @@ const helmetWashPackages = {
       {
         id: 5,
         name: "Race Ready",
-        image: "/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg",
+        image: "/helmet/midsize/midsize2.jpg",
         price: "₹249",
         description: "Competition Grade Cleaning",
         features: [
@@ -88,7 +88,7 @@ const helmetWashPackages = {
       {
         id: 6,
         name: "Champion Shield",
-        image: "/helmet/commuter & midsize/DeWatermark.ai_1755851413119.jpeg",
+        image: "/helmet/midsize/midsize1.jpg",
         price: "₹299",
         description: "Ultimate Racing Protection",
         features: [

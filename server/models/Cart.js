@@ -64,7 +64,7 @@ const cartSchema = new mongoose.Schema({
     }],
     vehicleType: {
       type: String,
-      enum: ['car', 'bike', 'suv', 'hatchback', 'sedan']
+  enum: ['all', 'car', 'bike', 'suv', 'hatchback', 'sedan', 'commuter', 'cruiser', 'sports', 'scooter', 'motorbike']
     },
     specialInstructions: {
       type: String,

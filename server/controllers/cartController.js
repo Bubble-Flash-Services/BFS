@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 export const getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ userId: req.user.id })
-      .populate('items.serviceId', 'name basePrice')
+      .populate('items.serviceId', 'name basePrice image')
       .populate('items.packageId', 'name price features')
       .populate('items.addOns.addOnId', 'name price');
 
@@ -49,14 +49,17 @@ export const addToCart = async (req, res) => {
       vehicleType,
       specialInstructions,
       serviceName,
-      price: customPrice
+  price: customPrice,
+  type,
+  category,
+  image
     } = req.body;
 
     let service = null;
     let actualServiceId = serviceId;
 
     // Check if serviceId is a valid ObjectId or a custom ID
-    if (mongoose.Types.ObjectId.isValid(serviceId)) {
+    if (serviceId && mongoose.Types.ObjectId.isValid(serviceId)) {
       // Valid ObjectId - find by ID
       service = await Service.findById(serviceId);
     } else {
@@ -72,21 +75,62 @@ export const addToCart = async (req, res) => {
       }
       
       if (!service) {
-        // Fallback: find a default service based on category
-        const categoryMap = {
-          'bikewash': 'Basic Bike Wash',
-          'carwash': 'Basic Car Wash',
-          'helmet': 'Basic Helmet Wash',
-          'laundry': 'Basic Laundry'
-        };
-        
-        const category = Object.keys(categoryMap).find(cat => serviceId.includes(cat));
-        const fallbackServiceName = category ? categoryMap[category] : 'Basic Car Wash';
-        
-        service = await Service.findOne({ name: fallbackServiceName });
-        if (service) {
-          actualServiceId = service._id;
-          console.log(`⚠️ Using fallback service: ${fallbackServiceName} (${service._id})`);
+        // Special handling for accessories
+        const isAccessory = (type && /accessor/i.test(type)) || (category && /accessor/i.test(category)) || (serviceName && /accessor/i.test(serviceName));
+  if (isAccessory && process.env.ALLOW_ACCESSORY_AUTOCREATE !== 'false') {
+          try {
+            // Ensure an Accessories category exists
+            const ServiceCategory = (await import('../models/ServiceCategory.js')).default;
+            let accessoriesCat = await ServiceCategory.findOne({ name: { $regex: '^Car Accessories$', $options: 'i' } });
+            if (!accessoriesCat) {
+              accessoriesCat = await ServiceCategory.create({ name: 'Car Accessories', description: 'Car care accessories', image: '/car accessories/towels.jpg', icon: '🧼' });
+            }
+
+            // Create or find a specific accessory service
+            let accessoryName = serviceName || 'Accessory Item';
+            if (!/^Accessory\s*:/i.test(accessoryName)) {
+              accessoryName = `Accessory: ${accessoryName}`;
+            }
+            service = await Service.findOne({ name: accessoryName });
+            if (!service) {
+              service = await Service.create({
+                categoryId: accessoriesCat._id,
+                name: accessoryName,
+                description: 'Accessory item',
+                basePrice: customPrice || 0,
+                estimatedDuration: 0,
+                image: image || '/car accessories/towels.jpg',
+                features: [],
+                isActive: true
+              });
+            } else if (customPrice && service.basePrice !== customPrice) {
+              // Keep service basePrice roughly aligned so future cart loads make sense (best-effort)
+              service.basePrice = customPrice;
+              if (image && service.image !== image) service.image = image;
+              await service.save();
+            }
+            actualServiceId = service._id;
+            console.log(`🧩 Using accessory service ${service.name} (${service._id})`);
+          } catch (accErr) {
+            console.error('Accessory service handling failed:', accErr.message);
+          }
+        }
+
+        // Fallback: find a default service based on category keywords
+        if (!service) {
+          const categoryMap = {
+            'bikewash': 'Basic Bike Wash',
+            'carwash': 'Basic Car Wash',
+            'helmet': 'Basic Helmet Wash',
+            'laundry': 'Basic Laundry'
+          };
+          const key = serviceId ? Object.keys(categoryMap).find(cat => serviceId.includes(cat)) : null;
+          const fallbackServiceName = key ? categoryMap[key] : 'Basic Car Wash';
+          service = await Service.findOne({ name: fallbackServiceName });
+          if (service) {
+            actualServiceId = service._id;
+            console.log(`⚠️ Using fallback service: ${fallbackServiceName} (${service._id})`);
+          }
         }
       }
     }
@@ -147,6 +191,10 @@ export const addToCart = async (req, res) => {
     // Use custom price if provided, otherwise use calculated price
     const finalPrice = customPrice || price;
 
+    // Normalize vehicleType to allowed values
+    const allowedVehicleTypes = new Set(['all','car','bike','suv','hatchback','sedan','commuter','cruiser','sports','scooter','motorbike']);
+    const normalizedVehicleType = allowedVehicleTypes.has((vehicleType || '').toLowerCase()) ? (vehicleType || '').toLowerCase() : 'all';
+
     const cartItem = {
       serviceId: actualServiceId, // Use the actual MongoDB ObjectId
       packageId: packageId || null,
@@ -154,7 +202,7 @@ export const addToCart = async (req, res) => {
       price: finalPrice,
       addOns: processedAddOns,
       laundryItems,
-      vehicleType,
+      vehicleType: normalizedVehicleType,
       specialInstructions
     };
 
@@ -181,7 +229,7 @@ export const addToCart = async (req, res) => {
 
     // Populate cart for response
     await cart.populate([
-      { path: 'items.serviceId', select: 'name basePrice' },
+      { path: 'items.serviceId', select: 'name basePrice image' },
       { path: 'items.packageId', select: 'name price features' },
       { path: 'items.addOns.addOnId', select: 'name price' }
     ]);
@@ -242,7 +290,7 @@ export const updateCartItem = async (req, res) => {
     await cart.save();
 
     await cart.populate([
-      { path: 'items.serviceId', select: 'name basePrice' },
+      { path: 'items.serviceId', select: 'name basePrice image' },
       { path: 'items.packageId', select: 'name price features' },
       { path: 'items.addOns.addOnId', select: 'name price' }
     ]);
@@ -287,7 +335,7 @@ export const removeFromCart = async (req, res) => {
     await cart.save();
 
     await cart.populate([
-      { path: 'items.serviceId', select: 'name basePrice' },
+      { path: 'items.serviceId', select: 'name basePrice image' },
       { path: 'items.packageId', select: 'name price features' },
       { path: 'items.addOns.addOnId', select: 'name price' }
     ]);
@@ -358,32 +406,77 @@ export const syncCartToDatabase = async (req, res) => {
     const cart = new Cart({ userId: req.user.id, items: [] });
 
     for (const item of items) {
-      // Validate and process each item
+      // Resolve matching service
+      let service = null;
+      const candidateId = item.serviceId || item.id;
+      if (candidateId && mongoose.Types.ObjectId.isValid(candidateId)) {
+        service = await Service.findById(candidateId);
+      }
+      if (!service && (item.serviceName || item.name)) {
+        service = await Service.findOne({ name: item.serviceName || item.name });
+      }
+
+      // Handle accessories: create service entry if missing
+  if (!service && process.env.ALLOW_ACCESSORY_AUTOCREATE !== 'false') {
+        const isAccessory = (item.type && /accessor/i.test(item.type)) || (item.category && /accessor/i.test(item.category)) || (item.serviceName && /accessor/i.test(item.serviceName));
+        if (isAccessory) {
+          try {
+            const ServiceCategory = (await import('../models/ServiceCategory.js')).default;
+            let accessoriesCat = await ServiceCategory.findOne({ name: { $regex: '^Car Accessories$', $options: 'i' } });
+            if (!accessoriesCat) {
+              accessoriesCat = await ServiceCategory.create({ name: 'Car Accessories', description: 'Car care accessories', image: '/car accessories/towels.jpg', icon: '🧼' });
+            }
+            let accessoryName = item.serviceName || item.name || 'Accessory Item';
+            if (!/^Accessory\s*:/i.test(accessoryName)) {
+              accessoryName = `Accessory: ${accessoryName}`;
+            }
+            service = await Service.findOne({ name: accessoryName });
+            if (!service) {
+              service = await Service.create({
+                categoryId: accessoriesCat._id,
+                name: accessoryName,
+                description: 'Accessory item',
+                basePrice: item.price || 0,
+                estimatedDuration: 0,
+                image: item.image || item.img || '/car accessories/towels.jpg',
+                features: [],
+                isActive: true
+              });
+            }
+          } catch (err) {
+            console.warn('Accessory resolution failed during sync:', err.message);
+          }
+        }
+      }
+
+      // Ultimate fallback to any existing default service
+      if (!service) {
+        const fallbacks = ['Basic Car Wash', 'Basic Bike Wash', 'Wash & Fold', 'Dry Cleaning'];
+        service = await Service.findOne({ name: { $in: fallbacks } });
+      }
+      if (!service) {
+        console.warn('No resolvable service for item, skipping:', item);
+        continue;
+      }
+
+      const allowedVehicleTypes = new Set(['all','car','bike','suv','hatchback','sedan','commuter','cruiser','sports','scooter','motorbike']);
+      const normalizedVehicleType = allowedVehicleTypes.has((item.vehicleType || '').toLowerCase()) ? (item.vehicleType || '').toLowerCase() : 'all';
+
       const processedItem = {
-        serviceId: item.serviceId || item.id,
+        serviceId: service._id,
         packageId: item.packageId || null,
         quantity: item.quantity || 1,
-        price: item.packageDetails?.basePrice || item.basePrice || item.price,
+        price: item.packageDetails?.basePrice || item.basePrice || item.price || service.basePrice,
         addOns: (item.addOns || item.packageDetails?.addons || []).map(addon => ({
           ...addon,
           quantity: addon.quantity || 1
         })),
         laundryItems: item.laundryItems || [],
-        vehicleType: item.vehicleType || 'all',
+        vehicleType: normalizedVehicleType,
         specialInstructions: item.specialInstructions || ''
       };
 
-      // Validate serviceId exists
-      try {
-        const service = await Service.findById(processedItem.serviceId);
-        if (service) {
-          cart.items.push(processedItem);
-        } else {
-          console.warn(`Service not found for ID: ${processedItem.serviceId}, skipping item`);
-        }
-      } catch (error) {
-        console.warn(`Invalid service ID: ${processedItem.serviceId}, skipping item`);
-      }
+      cart.items.push(processedItem);
     }
 
     // Calculate totals
@@ -401,7 +494,7 @@ export const syncCartToDatabase = async (req, res) => {
 
     // Populate the saved cart for response
     const populatedCart = await Cart.findOne({ userId: req.user.id })
-      .populate('items.serviceId', 'name basePrice')
+      .populate('items.serviceId', 'name basePrice image')
       .populate('items.packageId', 'name price features')
       .populate('items.addOns.addOnId', 'name price');
 

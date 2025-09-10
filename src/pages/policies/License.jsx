@@ -29,7 +29,7 @@ export default function License() {
 
         <h2>Contact</h2>
         <p>
-          For licensing questions, contact support@bubbleflash.com.
+          For licensing questions, contact support@bubbleflashservices.in.
         </p>
       </div>
     </div>

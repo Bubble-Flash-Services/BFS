@@ -107,8 +107,8 @@ export function CartProvider({ children }) {
           vehicleType: item.vehicleType,
           specialInstructions: item.specialInstructions,
           // Add image handling
-          img: item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
-          image: item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
+          img: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
+          image: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
           // Add other properties as needed
           category: item.category,
           description: item.description,
@@ -276,8 +276,8 @@ export function CartProvider({ children }) {
           vehicleType: item.vehicleType,
           specialInstructions: item.specialInstructions,
           // Add image handling
-          img: item.image || item.img || getDefaultServiceImage(item.serviceId?.name || item.name),
-          image: item.image || item.img || getDefaultServiceImage(item.serviceId?.name || item.name)
+          img: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceId?.name || item.name),
+          image: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceId?.name || item.name)
         })));
       }
     } catch (error) {
@@ -380,7 +380,10 @@ export function CartProvider({ children }) {
           price: product.price,
           addOns: product.addOns || [],
           vehicleType: product.vehicleType,
-          specialInstructions: product.specialInstructions
+          specialInstructions: product.specialInstructions,
+          type: product.type,
+          category: product.category,
+          image: product.image || product.img
         };
         
         const response = await cartApi.addToCart(token, cartData);

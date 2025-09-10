@@ -9,6 +9,8 @@ import { useAuth } from '../../components/AuthContext';
 import { useCart } from '../../components/CartContext';
 import { addressAPI } from '../../api/address';
 
+const API = import.meta.env.VITE_API_URL || window.location.origin;
+
 const FAQS = [
 	{
 		question: 'How do I request a laundry pickup?',
@@ -76,6 +78,47 @@ export default function HeroSection() {
 	const [phoneNumber, setPhoneNumber] = useState('');
 	const [fullAddress, setFullAddress] = useState('');
 	const [addressData, setAddressData] = useState(null); // Store complete address data
+
+	// Callback form state
+	const [cbName, setCbName] = useState('');
+	const [cbPhone, setCbPhone] = useState('');
+	const [cbEmail, setCbEmail] = useState('');
+	const [cbMessage, setCbMessage] = useState('');
+	const [cbSending, setCbSending] = useState(false);
+
+	const handleCallbackSubmit = async (e) => {
+		e.preventDefault();
+		if (!cbName.trim() || !cbPhone.trim()) {
+			alert('Please enter your name and phone number');
+			return;
+		}
+		try {
+			setCbSending(true);
+			const res = await fetch(`${API}/api/callback`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name: cbName,
+					phone: cbPhone,
+					email: cbEmail,
+					message: cbMessage,
+					source: 'homepage'
+				})
+			});
+			const result = await res.json().catch(()=>({success:false}));
+			if (res.ok && result?.success) {
+				alert('Thanks! We\'ll call you back shortly.');
+				setCbName(''); setCbPhone(''); setCbEmail(''); setCbMessage('');
+			} else {
+				alert(result?.message || 'Failed to send request. Please try WhatsApp.');
+			}
+		} catch (err) {
+			console.error('callback submit failed:', err);
+			alert('Network error. Please try again.');
+		} finally {
+			setCbSending(false);
+		}
+	};
 
 	// Auto-populate form fields from user profile
 	useEffect(() => {
@@ -224,86 +267,153 @@ export default function HeroSection() {
 	// Car wash accessories data
 	const accessories = [
 		{
-			img: '/aboutus/car-spray.png',
-			title: 'car spray',
-			price: 99,
-			oldPrice: 150,
-			offer: '50%offer',
-			stars: 3,
-			tag: '₹ 99 only',
+			img: '/car accessories/air freshner.jpg',
+			title: 'Air Freshener',
+			price: 149,
+			oldPrice: 199,
+			offer: '25%off',
+			stars: 4,
+			tag: '₹ 149 only',
+		},
+		// Car Cover split into three variants (same image)
+		{
+			img: '/car accessories/car cover.jpg',
+			title: 'Car Cover (Basic)',
+			price: 999,
+			oldPrice: 1299,
+			offer: '23%off',
+			stars: 4,
+			tag: '₹ 999 only',
 		},
 		{
-			img: '/car/car2.png',
-			title: 'Microfiber Towel',
-			price: 120,
-			oldPrice: 200,
-			offer: '40%offer',
+			img: '/car accessories/car cover.jpg',
+			title: 'Car Cover (Premium)',
+			price: 1699,
+			oldPrice: 1999,
+			offer: '15%off',
+			stars: 4,
+			tag: '₹ 1699 only',
+		},
+		{
+			img: '/car accessories/car cover.jpg',
+			title: 'Car Cover (Luxury)',
+			price: 2229,
+			oldPrice: 2599,
+			offer: '14%off',
+			stars: 4,
+			tag: '₹ 2229 only',
+		},
+		{
+			img: '/car accessories/car washing gloves.jpg',
+			title: 'Washing Gloves',
+			price: 199,
+			oldPrice: 299,
+			offer: '33%off',
+			stars: 4,
+			tag: '₹ 199 only',
+		},
+		{
+			img: '/car accessories/degreasers.jpg',
+			title: 'Degreaser',
+			price: 249,
+			oldPrice: 349,
+			offer: '28%off',
+			stars: 4,
+			tag: '₹ 249 only',
+		},
+		{
+			img: '/car accessories/drying towel.jpg',
+			title: 'Drying Towels',
+			price: 1399,
+			oldPrice: 1599,
+			offer: '13%off',
+			stars: 4,
+			tag: '₹ 1399 only',
+		},
+		{
+			img: '/car accessories/foot paper.jpg',
+			title: 'Paper Mat (each)',
+			price: 5,
+			oldPrice: 10,
+			offer: '50%off',
 			stars: 3,
+			tag: '₹ 5 only',
+		},
+		// Mobile Holder split (same image)
+		{
+			img: '/car accessories/mobile stand.jpg',
+			title: 'Mobile Holder (Basic)',
+			price: 249,
+			oldPrice: 299,
+			offer: '17%off',
+			stars: 4,
+			tag: '₹ 249 only',
+		},
+		{
+			img: '/car accessories/mobile stand.jpg',
+			title: 'Mobile Holder (Premium)',
+			price: 369,
+			oldPrice: 449,
+			offer: '18%off',
+			stars: 4,
+			tag: '₹ 369 only',
+		},
+		{
+			img: '/car accessories/Sprays.jpg',
+			title: 'Spray Bottle',
+			price: 129,
+			oldPrice: 199,
+			offer: '35%off',
+			stars: 4,
+			tag: '₹ 129 only',
+		},
+		{
+			img: '/car accessories/tissue box.jpg',
+			title: 'Tissue Box',
+			price: 159,
+			oldPrice: 220,
+			offer: '28%off',
+			stars: 4,
+			tag: '₹ 159 only',
+		},
+		// Add Microfiber Cloth
+		{
+			img: '/car accessories/towels.jpg',
+			title: 'Microfiber Cloth',
+			price: 120,
+			oldPrice: 149,
+			offer: '19%off',
+			stars: 4,
 			tag: '₹ 120 only',
 		},
+		// Bike Cover split into three variants (same image)
 		{
-			img: '/car/car3.png',
-			title: 'Car Shampoo',
-			price: 80,
-			oldPrice: 160,
-			offer: '50%offer',
-			stars: 3,
-			tag: '₹ 80 only',
+			img: '/car accessories/bike cover.jpg',
+			title: 'Bike Cover (Basic)',
+			price: 299,
+			oldPrice: 349,
+			offer: '14%off',
+			stars: 4,
+			tag: '₹ 299 only',
 		},
 		{
-			img: '/car/car1.png',
-			title: 'Tyre Cleaner',
-			price: 110,
-			oldPrice: 220,
-			offer: '50%offer',
-			stars: 3,
-			tag: '₹ 110 only',
+			img: '/car accessories/bike cover.jpg',
+			title: 'Bike Cover (Premium)',
+			price: 399,
+			oldPrice: 469,
+			offer: '15%off',
+			stars: 4,
+			tag: '₹ 399 only',
 		},
 		{
-			img: '/car/car2.png',
-			title: 'Glass Cleaner',
-			price: 90,
-			oldPrice: 180,
-			offer: '50%offer',
-			stars: 3,
-			tag: '₹ 90 only',
-		},
-		{
-			img: '/car/car3.png',
-			title: 'Dashboard Polish',
-			price: 150,
-			oldPrice: 300,
-			offer: '50%offer',
-			stars: 3,
-			tag: '₹ 150 only',
-		},
-		{
-			img: '/car/car1.png',
-			title: 'Foam Sprayer',
-			price: 180,
-			oldPrice: 360,
-			offer: '50%offer',
-			stars: 3,
-			tag: '₹ 180 only',
-		},
-		{
-			img: '/car/car2.png',
-			title: 'Wheel Brush',
-			price: 70,
-			oldPrice: 140,
-			offer: '50%offer',
-			stars: 3,
-			tag: '₹ 70 only',
-		},
-		{
-			img: '/car/car3.png',
-			title: 'Leather Cleaner',
-			price: 200,
-			oldPrice: 400,
-			offer: '50%offer',
-			stars: 3,
-			tag: '₹ 200 only',
-		},
+			img: '/car accessories/bike cover.jpg',
+			title: 'Bike Cover (Luxury)',
+			price: 699,
+			oldPrice: 799,
+			offer: '13%off',
+			stars: 4,
+			tag: '₹ 699 only',
+		}
 	];
 
 	// Navigation for accessories slider: use car-wash style sliding
@@ -376,12 +486,15 @@ export default function HeroSection() {
 		
 		const cartItem = {
 			id: `accessory-${item.title}-${Date.now()}`,
-			title: item.title,
+			name: item.title,
+			serviceName: `Accessory: ${item.title}`,
 			price: item.price,
 			oldPrice: item.oldPrice,
 			offer: item.offer,
-			stars: item.stars,
-			img: item.img
+			img: item.img,
+			image: item.img,
+			type: 'accessory',
+			category: 'Car Accessories'
 		};
 		
 		addToCart(cartItem);
@@ -395,7 +508,7 @@ export default function HeroSection() {
 		setAddressData(selectedAddress);
 	};
 
-	const handleBookService = () => {
+	const handleBookService = async () => {
 		// Validate all required fields
 		if (!selectedCategory) {
 			alert('Please select a service category');
@@ -412,6 +525,28 @@ export default function HeroSection() {
 		if (!fullAddress || !selectedLocation) {
 			alert('Please enter your location');
 			return;
+		}
+
+		// Optional: Check Bangalore service availability using pincode when possible
+		try {
+			let pinToCheck = null;
+			if (addressData?.pincode) {
+				pinToCheck = addressData.pincode;
+			} else if (typeof fullAddress === 'string') {
+				const match = fullAddress.match(/\b\d{6}\b/);
+				if (match) pinToCheck = match[0];
+			}
+
+			if (pinToCheck && /^\d{6}$/.test(pinToCheck)) {
+				const availability = await addressAPI.checkServiceAvailability(pinToCheck);
+				if (availability && availability.success && availability.available === false) {
+					alert(availability.message || 'We currently serve only Bangalore pincodes — coming soon to your area!');
+					return;
+				}
+			}
+		} catch (err) {
+			console.error('Availability check failed:', err);
+			// Fail open to not block booking UI — server validates again during order/address
 		}
 
 		// Store booking data in localStorage for the service page to use
@@ -538,7 +673,7 @@ export default function HeroSection() {
 								{/* Offers Grid */}
 								<div className="grid grid-cols-2 gap-4 mb-6">
 									<div className="bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-3">
-										<div className="text-2xl font-bold text-yellow-300">50%</div>
+										<div className="text-2xl font-bold text-yellow-300">20%</div>
 										<div className="text-sm">OFF First Order</div>
 									</div>
 									<div className="bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-3">
@@ -579,12 +714,12 @@ export default function HeroSection() {
 									}}
 									className="w-full bg-white text-blue-600 font-bold py-3 px-6 rounded-xl hover:bg-gray-100 transition-colors duration-200 mb-4"
 								>
-									Book Now & Save 50%!
+									Book Now & Save 20%!
 								</motion.button>
 
 								{/* Validity */}
 								<p className="text-sm text-white text-opacity-80">
-									Valid till Dec 31, 2025 • Limited time offer
+									Valid for 3 days • Limited time offer
 								</p>
 							</div>
 						</motion.div>
@@ -626,7 +761,7 @@ export default function HeroSection() {
 							</motion.div>
 							<div className="flex items-center space-x-4 text-sm sm:text-base">
 								<span className="bg-white bg-opacity-20 px-3 py-1 rounded-full font-semibold">
-									50% OFF First Order
+									10% OFF First Order
 								</span>
 								<span className="bg-white bg-opacity-20 px-3 py-1 rounded-full font-semibold">
 									FREE Delivery
@@ -784,6 +919,9 @@ export default function HeroSection() {
 									<p className="text-gray-600 text-center mb-8">
 										Quick & Easy booking in 3 steps
 									</p>
+									<div className="text-center text-sm text-[#1F3C88] bg-[#FFFBF0] border border-[#FFE08A] rounded-lg px-3 py-2 mb-6">
+										Currently serving Bangalore pincodes only — other cities coming soon.
+									</div>
 								</motion.div>
 
 								<div className="space-y-6">
@@ -1486,17 +1624,6 @@ export default function HeroSection() {
 													{item.title}
 												</motion.h3>
 
-												{/* Rating */}
-												<motion.div
-													initial={{ opacity: 0, y: 10 }}
-													whileInView={{ opacity: 1, y: 0 }}
-													transition={{ delay: 0.5 + globalIdx * 0.05 }}
-													className="flex justify-center items-center mb-3"
-												>
-													{[...Array(item.stars)].map((_, i) => (
-														<span key={i} className="text-[#FFB400] text-sm md:text-base">★</span>
-													))}
-												</motion.div>
 
 												{/* Price */}
 												<motion.div
@@ -1613,7 +1740,7 @@ export default function HeroSection() {
 							/>
 							<span className="text-lg font-semibold bg-gradient-to-r from-[#1F3C88] to-[#FFB400] bg-clip-text text-transparent">Request a callback</span>
 						</motion.div>
-						<form className="w-full flex flex-col gap-4">
+						<form className="w-full flex flex-col gap-4" onSubmit={handleCallbackSubmit}>
 							<motion.div
 								initial={{ opacity: 0, x: -20 }}
 								whileInView={{ opacity: 1, x: 0 }}
@@ -1632,6 +1759,9 @@ export default function HeroSection() {
 								<input
 									className="bg-transparent outline-none flex-1 placeholder:text-gray-400"
 									placeholder="Enter your name"
+									value={cbName}
+									onChange={(e)=>setCbName(e.target.value)}
+									required
 								/>
 							</motion.div>
 							<motion.div
@@ -1652,6 +1782,10 @@ export default function HeroSection() {
 								<input
 									className="bg-transparent outline-none flex-1 placeholder:text-gray-400"
 									placeholder="Enter your mobile no"
+									value={cbPhone}
+									onChange={(e)=>setCbPhone(e.target.value)}
+									pattern="[0-9+\-\s]{8,15}"
+									required
 								/>
 							</motion.div>
 							<motion.div
@@ -1672,6 +1806,9 @@ export default function HeroSection() {
 								<input
 									className="bg-transparent outline-none flex-1 placeholder:text-gray-400"
 									placeholder="Enter your email"
+									type="email"
+									value={cbEmail}
+									onChange={(e)=>setCbEmail(e.target.value)}
 								/>
 							</motion.div>
 							<motion.textarea
@@ -1681,6 +1818,8 @@ export default function HeroSection() {
 								transition={{ delay: 0.7, duration: 0.6 }}
 								className="border-2 border-[#FFB400] border-opacity-30 rounded-xl px-3 py-2 bg-white min-h-[60px] outline-none placeholder:text-gray-400 hover:border-opacity-60 focus:border-opacity-80 transition-all duration-300"
 								placeholder="Enter your message......"
+								value={cbMessage}
+								onChange={(e)=>setCbMessage(e.target.value)}
 							/>
 							<motion.div
 								initial={{ opacity: 0, y: 10 }}
@@ -1699,9 +1838,10 @@ export default function HeroSection() {
 								whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(209, 79, 255, 0.3)" }}
 								whileTap={{ scale: 0.95 }}
 								type="submit"
-								className="bg-gradient-to-r from-[#d14fff] to-[#9333ea] text-white rounded-xl px-2 py-2 font-semibold mt-2 shadow-lg hover:shadow-xl transition-all duration-300"
-							>
-								Call me
+								className="bg-gradient-to-r from-[#d14fff] to-[#9333ea] text-white rounded-xl px-2 py-2 font-semibold mt-2 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60"
+								disabled={cbSending}
+						>
+							{cbSending ? 'Sending...' : 'Call me'}
 							</motion.button>
 						</form>
 					</motion.div>
@@ -1844,7 +1984,10 @@ export default function HeroSection() {
 									</div>
 									<div>
 										<div className="font-semibold text-purple-700">Email</div>
-										<div>hello@bubbleflash.in</div>
+										<div
+											className="underline cursor-pointer"
+											onClick={() => window.open('https://outlook.live.com/mail/0/deeplink/compose?to=web_bfsnow@oulook.com&subject=Inquiry%20from%20Bubble%20Flash%20Website', '_blank')}
+										>Info@bubbleflashservices.in</div>
 									</div>
 									<div>
 										<div className="font-semibold text-purple-700">Business Hours</div>
@@ -1922,7 +2065,7 @@ export default function HeroSection() {
 									transition={{ delay: 0.4, duration: 0.6 }}
 									className="text-3xl font-bold mb-6 text-center text-green-600"
 								>
-									₹199
+									₹249
 								</motion.div>
 								<motion.ul
 									initial={{ opacity: 0, y: 30 }}
@@ -2498,12 +2641,12 @@ export default function HeroSection() {
 											</svg>
 										),
 										title: "Email for Inquiries",
-										main: "hello@bubbleflash.in",
+										main: "Info@bubbleflashservices.in",
 										sub: "Quick response within 2 hours guaranteed",
 										color: "from-purple-400 to-pink-500",
 										delay: 0.3,
 										action: () => {
-											window.open("mailto:hello@bubbleflash.in?subject=Service Inquiry&body=Hello, I would like to inquire about your services.", "_self");
+											window.open('https://outlook.live.com/mail/0/deeplink/compose?to=web_bfsnow@oulook.com&subject=Service%20Inquiry&body=Hello,%20I%20would%20like%20to%20inquire%20about%20your%20services.', '_blank');
 										}
 									},
 									{

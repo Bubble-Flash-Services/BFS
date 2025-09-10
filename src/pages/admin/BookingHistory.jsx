@@ -18,6 +18,184 @@ const BookingHistory = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [acting, setActing] = useState(false);
 
+  // Build and download invoice HTML similar to OrdersPage
+  const handleDownloadInvoice = (booking) => {
+    if (!booking) return;
+    if ((booking.status || '').toLowerCase() === 'cancelled') return;
+    const logoUrl = '/logo.png';
+    const dateFmt = (d) => {
+      try { return new Date(d).toLocaleString(); } catch { return ''; }
+    };
+    const customerName = booking.customerName || '';
+    const customerPhone = booking.phone || '';
+
+    const getItemGroup = (item) => {
+      const type = (item?.type || '').toLowerCase();
+      const label = ((item?.serviceName || '') + ' ' + (item?.vehicleType || '')).toLowerCase();
+      if (type.includes('car')) return 'Car';
+      if (type.includes('bike')) return 'Bike';
+      if (type.includes('helmet')) return 'Helmet';
+      if (/hatch|sedan|suv|mid\s*-\s*suv|luxur/.test(label)) return 'Car';
+      if (/scooter|motorbike|cruiser|bike/.test(label)) return 'Bike';
+      if (/helmet/.test(label)) return 'Helmet';
+      return 'Others';
+    };
+
+    const orderGroups = ['Car','Bike','Helmet','Others'];
+    const items = booking.items || [];
+    const itemsByGroup = {};
+    items.forEach((it) => {
+      const g = getItemGroup(it);
+      if (!itemsByGroup[g]) itemsByGroup[g] = [];
+      itemsByGroup[g].push(it);
+    });
+
+    let rowIndex = 0;
+    const itemsRows = orderGroups.flatMap((gk) => {
+      const arr = itemsByGroup[gk] || [];
+      if (!arr.length) return [];
+      const headerRow = `
+        <tr>
+          <td colspan="5" style="background:#f3f4f6;font-weight:700">${gk}</td>
+        </tr>`;
+      const rows = arr.map((item) => {
+        const addOns = item.addOns || [];
+        const baseTotal = (item.price || 0) * (item.quantity || 1);
+        const laundryTotal = (item.laundryItems || []).reduce((s,l)=> s + (l.pricePerItem || 0) * (l.quantity || 1), 0);
+        const itemRowTotal = baseTotal + laundryTotal; // exclude add-ons here; they will be separate rows
+        const mainRow = `
+        <tr>
+          <td>${++rowIndex}</td>
+          <td>
+            <div><strong>${item.serviceName || item.serviceId?.name || 'Service'}</strong></div>
+            <div style="color:#555">${item.packageName || 'Custom Package'}</div>
+            ${Array.isArray(item.includedFeatures) && item.includedFeatures.length ? `<div style="margin-top:6px"><em>Included:</em><ul>${item.includedFeatures.map(f => `<li>${f}</li>`).join('')}</ul></div>` : ''}
+            ${item.planDetails ? [
+              ['Each Wash Includes', item.planDetails.washIncludes],
+              ['Weekly Includes', item.planDetails.weeklyIncludes],
+              ['Bi-Weekly Includes', item.planDetails.biWeeklyIncludes],
+              ['Monthly Bonuses', item.planDetails.monthlyBonuses],
+              ['Premium Extras', item.planDetails.platinumExtras],
+            ].map(([label, arr]) => Array.isArray(arr) && arr.length ? `<div style=\"margin-top:4px\"><em>${label}:</em><ul>${arr.map(x => `<li>${x}</li>`).join('')}</ul></div>` : '').join('') : ''}
+          </td>
+          <td>${item.quantity || 1}</td>
+          <td>₹${item.price || 0}</td>
+          <td>₹${itemRowTotal}</td>
+        </tr>`;
+        const addOnRows = addOns.map(a => `
+        <tr>
+          <td></td>
+          <td style="padding-left:18px">+ Add-on: ${a.name}</td>
+          <td>${a.quantity || 1}</td>
+          <td>₹${a.price || 0}</td>
+          <td>₹${(a.price || 0) * (a.quantity || 1)}</td>
+        </tr>`).join('');
+        return mainRow + addOnRows;
+      });
+      return [headerRow, ...rows];
+    }).join('');
+
+    // Totals
+    const computedSubtotal = items.reduce((sum, it) => {
+      const base = (it.price || 0) * (it.quantity || 1);
+      const add = (it.addOns || []).reduce((s, a) => s + (a.price || 0) * (a.quantity || 1), 0);
+      const laundry = (it.laundryItems || []).reduce((s, l) => s + (l.pricePerItem || 0) * (l.quantity || 1), 0);
+      return sum + base + add + laundry;
+    }, 0);
+    const subtotal = booking.subtotal ?? computedSubtotal;
+    const discount = Number(booking.discountAmount) || 0;
+    const total = booking.amount ?? Math.max(0, subtotal - discount);
+
+    const html = `
+<!doctype html><html><head><meta charset="utf-8"/>
+<title>Invoice ${booking.id}</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;color:#111;padding:24px}
+  .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand img{height:40px}
+  .muted{color:#666}
+  table{width:100%;border-collapse:collapse;margin-top:12px}
+  th,td{border:1px solid #e5e7eb;padding:8px;vertical-align:top}
+  th{background:#f8fafc;text-align:left}
+  .totals{margin-top:12px;float:right}
+  .totals div{display:flex;justify-content:space-between;gap:24px}
+  @media print{button{display:none}}
+  ul{margin:4px 0 0 16px;}
+  .addr{max-width:720px;white-space:pre-wrap}
+  .badge{display:inline-block;padding:2px 8px;border-radius:12px;border:1px solid #e5e7eb;margin-left:6px;color:#111}
+  .badge.yellow{background:#fef9c3;border-color:#fde047}
+  .badge.green{background:#dcfce7;border-color:#86efac}
+  .badge.gray{background:#f3f4f6;border-color:#e5e7eb}
+</style></head><body>
+  <div class="header">
+    <div class="brand">
+      <img src="${logoUrl}" alt="BFS Logo"/>
+      <div>
+        <div style="font-weight:700">Bubble Flash Services</div>
+        <div class="muted">Order Invoice</div>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div><strong>Order:</strong> ${booking.id}</div>
+      <div class="muted">${dateFmt(booking.bookingDate)}</div>
+    </div>
+  </div>
+  <div>
+    <div><strong>Name:</strong> ${customerName}</div>
+    <div><strong>Phone:</strong> ${customerPhone}</div>
+    <div class="addr"><strong>Address:</strong> ${booking.serviceAddress?.fullAddress || ''}</div>
+    ${booking.scheduledDate ? `<div><strong>Scheduled:</strong> ${dateFmt(booking.scheduledDate)} ${booking.scheduledTimeSlot ? '('+booking.scheduledTimeSlot+')' : ''}</div>` : ''}
+    <div><strong>Status:</strong> ${(booking.status || '').toUpperCase()}<span class="badge ${booking.paymentStatus==='completed'?'green':(booking.paymentStatus==='pending'?'yellow':'gray')}">Payment: ${booking.paymentStatus || 'pending'}</span></div>
+  </div>
+  <table>
+    <thead><tr><th>#</th><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+    <tbody>${itemsRows}</tbody>
+  </table>
+  <div class="totals">
+    <div><span>Subtotal</span><span>₹${subtotal}</span></div>
+    ${discount ? `<div><span>Discount${booking.couponCode ? ' ('+booking.couponCode+')' : ''}</span><span>-₹${discount}</span></div>` : ''}
+    <div style="font-weight:700;border-top:1px solid #e5e7eb;margin-top:8px;padding-top:8px"><span>Total</span><span>₹${total}</span></div>
+  </div>
+  <div style="clear:both;margin-top:48px" class="muted">Thank you for choosing Bubble Flash Services.</div>
+  <button onclick="window.print()" style="margin-top:16px;padding:8px 12px;border:1px solid #ddd;border-radius:6px;background:#fff">Print / Save PDF</button>
+</body></html>`;
+
+    // Try opening in a new tab
+    let opened = false;
+    try {
+      const w = window.open('', '_blank');
+      if (w && w.document) {
+        w.document.open();
+        w.document.write(html);
+        w.document.close();
+        opened = true;
+      }
+    } catch {}
+    if (opened) return;
+    // Fallback: Blob download
+    try {
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice-${booking.id}.html`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 1000);
+      opened = true;
+    } catch {}
+    if (opened) return;
+    // Fallback: data URL
+    try {
+      const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+      window.location.href = dataUrl;
+    } catch {}
+  };
+
   // Function to fetch bookings from backend
   const fetchBookings = async (isRefresh = false) => {
     try {
@@ -554,7 +732,7 @@ const BookingHistory = () => {
                   )}
                 </div>
                 <div className="mt-3 grid grid-cols-1 gap-2 text-sm">
-                  <div className="flex justify-between"><span className="text-gray-500">Location</span><span className="text-gray-800 text-right ml-3 flex-1 line-clamp-2">{b.location}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-500">Location</span><span className="text-gray-800 text-right ml-3 flex-1 break-words line-clamp-2">{b.location}</span></div>
                   <div className="flex justify-between"><span className="text-gray-500">Booked</span><span className="text-gray-800">{b.bookingDate}</span></div>
                   {b.completedDate && <div className="flex justify-between"><span className="text-gray-500">Completed</span><span className="text-gray-800">{b.completedDate}</span></div>}
                   <div className="flex justify-between"><span className="text-gray-500">Status</span><span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(b.status)}`}>{b.status}</span></div>
@@ -637,8 +815,8 @@ const BookingHistory = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{booking.location}</div>
+                    <td className="px-6 py-4 align-top">
+                      <div className="max-w-xs md:max-w-sm lg:max-w-md text-sm text-gray-900 break-words line-clamp-2">{booking.location}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{booking.bookingDate}</div>
@@ -709,6 +887,13 @@ const BookingHistory = () => {
                       >
                         <Eye className="h-4 w-4" />
                       </button>
+                      <button
+                        onClick={() => handleDownloadInvoice(booking)}
+                        className="text-green-600 hover:text-green-900 p-1 ml-2"
+                        title="Download Invoice"
+                      >
+                        <Download className="h-4 w-4" />
+                      </button>
                       {/* Cancel action removed; status managed via dropdown */}
                     </td>
                   </tr>
@@ -736,12 +921,22 @@ const BookingHistory = () => {
                   <h2 className="text-2xl font-bold text-white">Booking Details</h2>
                   <p className="text-blue-100">#{selectedBooking.id}</p>
                 </div>
-                <button
-                  onClick={closeDetailModal}
-                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
-                >
-                  <XCircle className="w-6 h-6 text-white" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleDownloadInvoice(selectedBooking)}
+                    className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-sm flex items-center gap-1"
+                    title="Download Invoice"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download
+                  </button>
+                  <button
+                    onClick={closeDetailModal}
+                    className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                  >
+                    <XCircle className="w-6 h-6 text-white" />
+                  </button>
+                </div>
               </div>
 
               {/* Modal Content */}
@@ -1017,10 +1212,7 @@ const BookingHistory = () => {
                             </div>
                           )}
                           
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Service charge</span>
-                            <span className="text-green-600 font-medium">FREE</span>
-                          </div>
+                          {/* Service charge removed as per request */}
                           
                           <div className="border-t pt-3">
                             <div className="flex items-center justify-between text-xl font-bold">

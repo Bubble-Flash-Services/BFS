@@ -2,6 +2,21 @@
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const addressAPI = {
+  // Check service availability for a pincode
+  checkServiceAvailability: async (pincode) => {
+    try {
+      const response = await fetch(`${API_BASE}/addresses/check-service`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pincode })
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Check service availability error:', error);
+      return { success: false, available: false, message: 'Failed to check service availability' };
+    }
+  },
   // Reverse geocode coordinates to address
   reverseGeocode: async (latitude, longitude) => {
     try {

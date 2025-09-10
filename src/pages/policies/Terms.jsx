@@ -41,7 +41,7 @@ export default function Terms() {
 
         <h2>Contact</h2>
         <p>
-          Email: support@bubbleflash.com, web_bfsnow@outlook.com<br />
+          Email: support@bubbleflashservices.in, web_bfsnow@outlook.com<br />
           Phone: 9591572775
         </p>
       </div>
