@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { Calendar, Phone, MapPin, ChevronDown, ArrowRight, Star, Shield, Clock, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -480,10 +481,10 @@ export default function HeroSection() {
 
 	const handleAddToCart = (item) => {
 		if (!user) {
-			alert('Please login to add items to cart');
+			toast.error('Please login to add items to cart');
 			return;
 		}
-		
+
 		const cartItem = {
 			id: `accessory-${item.title}-${Date.now()}`,
 			name: item.title,
@@ -496,9 +497,9 @@ export default function HeroSection() {
 			type: 'accessory',
 			category: 'Car Accessories'
 		};
-		
+
 		addToCart(cartItem);
-		alert(`${item.title} added to cart!`);
+		toast.success(`${item.title} added to cart`);
 	};
 
 	// Handle address selection from autocomplete
@@ -1563,7 +1564,6 @@ export default function HeroSection() {
 																	viewport={{ once: true }}
 																	whileHover={{ scale: 1.05, y: -10, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
 																	whileTap={{ scale: 0.95 }}
-																	onClick={() => handleAddToCart(item)}
 																	className="relative bg-white rounded-2xl p-4 md:p-6 cursor-pointer shadow-lg backdrop-blur-sm border border-gray-200 hover:shadow-xl transition-all duration-300 group overflow-hidden w-full md:w-1/3 lg:w-1/3"
 																>
 											{/* Gradient Overlay on Hover */}
@@ -1650,6 +1650,7 @@ export default function HeroSection() {
 														whileHover={{ scale: 1.05 }}
 														whileTap={{ scale: 0.95 }}
 														className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-3 md:px-4 py-2 md:py-3 rounded-lg font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-md hover:shadow-lg text-xs md:text-sm"
+														onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }}
 													>
 														Add to Cart
 														<motion.div
