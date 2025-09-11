@@ -30,44 +30,40 @@ const FAQS = [
 	},
 ];
 
+// Updated real client reviews (all 5 stars) – avatar shows first letter of name
 const testimonials = [
-	{
-		name: 'Michael brown',
-		img: 'https://randomuser.me/api/portraits/men/32.jpg',
-		stars: 4,
-		text: 'Really impressed with the car wash service at Bubble Flash Car Wash! The team was professional, friendly, and detailed in their work. My car looked spotless afterward.',
-	},
-	{
-		name: 'Meera goyal',
-		img: 'https://randomuser.me/api/portraits/women/44.jpg',
-		stars: 5,
-		text: 'Tried Bubble Flash Laundry for the first time and was genuinely impressed! My clothes came back fresh, neatly folded, and smelled amazing. The pickup and delivery were smooth and right on time.',
-	},
-	{
-		name: 'Rahul Sharma',
-		img: 'https://randomuser.me/api/portraits/men/45.jpg',
-		stars: 5,
-		text: 'Excellent bike cleaning! My bike looks brand new. Fast service and very convenient.',
-	},
-	{
-		name: 'Priya Singh',
-		img: 'https://randomuser.me/api/portraits/women/65.jpg',
-		stars: 4,
-		text: 'The laundry service is top-notch. Pickup and delivery were on time, and the clothes were perfectly cleaned.',
-	},
-	{
-		name: 'Amit Verma',
-		img: 'https://randomuser.me/api/portraits/men/77.jpg',
-		stars: 5,
-		text: 'Very happy with the car wash. Staff is polite and the process is hassle-free.',
-	},
-	{
-		name: 'Sneha Patel',
-		img: 'https://randomuser.me/api/portraits/women/32.jpg',
-		stars: 5,
-		text: 'Affordable and reliable laundry service. Highly recommended!',
-	},
+	{ name: 'Keerthana N M', text: 'I recently had my bike washed at my doorstep and was thoroughly impressed! Quick, efficient and sparkling clean. Friendly staff made the whole experience smooth.' },
+	{ name: 'Ankitha N Raj', text: 'Deluxe Car Wash + Bike Wash – both done meticulously. Sparkling results and very reasonable pricing.' },
+	{ name: 'Anusha HG', text: 'Took the ₹199 Basic Car Wash – great experience, clean finish and super value for money.' },
+	{ name: 'Nurayne Raja', text: 'Fantastic bike wash! Quick, efficient and spotless for just ₹89. Great value.' },
+	{ name: 'Mehta Vidhan', text: 'These guys cleaned my car just like new. Very affordable car & bike washing in Bangalore.' },
+	{ name: 'Raghu Narasimhan', text: 'Excellent and neat work by the staff. I book them regularly every 2 months.' },
+	{ name: 'Ali Yawar Hayat', text: 'Very good and professional doorstep service.' },
+	{ name: 'Chhotu Kumar', text: 'Mind‑blowing car wash! Convenient, affordable (₹199) and my car looks brand new.' },
+	{ name: 'Sudhir S Kamath', text: 'Excellent wash. Neat, clean and very cooperative staff (special mention: Chetan).'},
+	{ name: 'Mohammed Parveez', text: 'Chetan cleaned the vehicle professionally and was very polite.' },
+	{ name: 'Jyothika Reddy', text: 'Great job on my car wash. Definitely give them a chance.' },
+	{ name: 'Shankar Shani', text: 'Excellent service. Just ₹199 and my car looks new. Already referred friends.' },
+	{ name: 'Nathalia Helen Lobo', text: 'Wonderful, simple service – sparkling car. Very satisfied.' },
+	{ name: 'Imran Pasha', text: 'Best doorstep service. Very reasonable and they covered every part. Got 3 bikes serviced.' },
+	{ name: 'Global Traders', text: 'Just ₹89 for bike wash at home – unbelievable. Highly recommend. Friendly staff.' },
+	{ name: 'Zabeeulla Baig', text: 'Tried twice – excellent service, loved it.' },
+	{ name: 'H B', text: 'Excellent service. Polite staff & reasonable charges.' },
+	{ name: 'Srinidhi', text: 'Mind‑blowing bike wash! Affordable (₹89) and results are amazing.' },
+	{ name: 'Kiran Kumar K', text: 'Very good experience. They arrived on time and did excellent work.' },
+	{ name: 'S Wazarat Ali', text: 'Very good.' },
+	{ name: 'Parsu Nadhan', text: 'Wonderful service.' },
+	{ name: 'Karthik C', text: 'Best service.' },
+	{ name: 'Sivasankar Sankar', text: 'Best service.' },
+	{ name: 'Kutti Reddy', text: 'Highly recommend. Excellent work. Fully satisfied.' },
+	{ name: 'Muralidharan Reddy', text: 'Excellent work. Value for money.' }
+].map(r => ({ ...r, stars: 5 }));
+
+const AVATAR_COLORS = [
+	'bg-blue-600', 'bg-indigo-600', 'bg-rose-600', 'bg-emerald-600', 'bg-amber-600', 'bg-purple-600', 'bg-cyan-600'
 ];
+
+const getInitial = (name='?') => name.trim()[0]?.toUpperCase() || '?';
 
 export default function HeroSection() {
 	const { user } = useAuth();
@@ -435,6 +431,9 @@ export default function HeroSection() {
 		startTime.current = Date.now();
 	};
 
+	// Helper to build stable IDs for accessories (prevents merging into first item on some devices)
+	const accessorySlug = (title='') => title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
 	const handleTouchMove = (e) => {
 		if (!isMobile || !isDragging.current) return;
 		e.preventDefault();
@@ -485,8 +484,12 @@ export default function HeroSection() {
 			return;
 		}
 
+		// Build stable ID so repeated adds increase quantity; distinct products stay distinct
+		const slug = accessorySlug(item.title);
+		const baseId = `accessory-${slug}`;
 		const cartItem = {
-			id: `accessory-${item.title}-${Date.now()}`,
+			id: baseId,
+			serviceId: baseId, // send to backend so each accessory becomes its own service entry
 			name: item.title,
 			serviceName: `Accessory: ${item.title}`,
 			price: item.price,
@@ -2409,39 +2412,33 @@ export default function HeroSection() {
 						>
 							{carousel
 								.slice(0, visibleCount)
-								.map((t, idx) => (
-									<div
-										key={idx}
-										className="bg-white rounded-xl border shadow-sm p-4 sm:p-5 md:p-6 min-w-[220px] sm:min-w-[280px] md:min-w-[340px] max-w-[380px] flex flex-col"
-									>
-										<div className="flex items-center gap-3 mb-2">
-											<img
-												src={t.img}
-												alt={t.name}
-												className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border"
-											/>
-											<div>
-												<div className="font-serif font-bold">{t.name}</div>
-												<div className="text-xs font-serif text-gray-500">
-													{t.name}
+								.map((t, idx) => {
+									const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+									return (
+										<div
+											key={idx}
+											className="bg-white rounded-xl border shadow-sm p-4 sm:p-5 md:p-6 min-w-[220px] sm:min-w-[280px] md:min-w-[340px] max-w-[380px] flex flex-col"
+										>
+											<div className="flex items-center gap-3 mb-2">
+												<div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white font-semibold ${color}`}>
+													{getInitial(t.name)}
+												</div>
+												<div>
+													<div className="font-serif font-bold leading-snug max-w-[180px] truncate" title={t.name}>{t.name}</div>
+													<div className="text-xs font-serif text-gray-500">Verified Customer</div>
+												</div>
+												<div className="flex ml-auto gap-1">
+													{[...Array(5)].map((_, i) => (
+														<span key={i} className="text-yellow-400 text-lg">★</span>
+													))}
 												</div>
 											</div>
-											<div className="flex ml-auto gap-1">
-												{[...Array(t.stars)].map((_, i) => (
-													<span
-														key={i}
-														className="text-yellow-400 text-lg"
-													>
-														★
-													</span>
-												))}
+											<div className="text-gray-700 text-sm sm:text-base mt-2 leading-relaxed line-clamp-5">
+												“{t.text}”
 											</div>
 										</div>
-										<div className="text-gray-700 text-base mt-2">
-											“{t.text}”
-										</div>
-									</div>
-								))}
+									);
+								})}
 						</div>
 					</div>
 				</div>

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import FullBodyCheckup from '../../../components/FullBodyCheckup';
 import { useParams, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { useCart } from '../../../components/CartContext';
@@ -651,6 +652,23 @@ export default function CarWashDeals() {
   const dealData = carWashPackages[categoryKey] || carWashPackages.hatchbacks;
   const isLuxury = categoryKey === 'luxuries';
 
+  // Helper to pick a representative image per category (used for monthly plans)
+  const getCategoryBaseImage = () => {
+    switch (categoryKey) {
+      case 'sedans':
+        return '/car/sedan/sedansimage.jpg';
+      case 'suv':
+        return '/car/suv/suvimages.png';
+      case 'midsuv':
+        return '/car/suv/pexels-eng_hk-2153621871-33018219.png';
+      case 'luxuries':
+        return '/car/sedan/luxury_sedan.png';
+      case 'hatchbacks':
+      default:
+        return '/car/hatchback/car1.png';
+    }
+  };
+
   // Car wash details for booking modal
   const carWashDetails = {
     slides: [
@@ -980,7 +998,7 @@ export default function CarWashDeals() {
       name: selectedPackage.name,
       serviceName: selectedPackage.name,
   packageName: selectedPackage.name,
-      image: selectedPackage.image || "/car/car1.png",
+  image: selectedPackage.image || getCategoryBaseImage(),
       price: totalPrice,
       category: getCategoryDisplayName(),
       type: selectedPackage.type || 'car-wash',
@@ -1640,7 +1658,8 @@ export default function CarWashDeals() {
                             monthlyBonuses: plan.monthlyBonuses || [],
                             platinumExtras: plan.platinumExtras || [],
                             type: 'monthly_plan',
-                            image: "/car/car1.png" // Default image for monthly plans
+                            // Use category specific representative image (avoid always showing hatchback)
+                            image: getCategoryBaseImage()
                           };
                           handleBookNow(planPackage);
                         }}
@@ -1799,7 +1818,8 @@ export default function CarWashDeals() {
                                   monthlyBonuses: plan.monthlyBonuses || [],
                                   platinumExtras: plan.platinumExtras || [],
                                   type: 'monthly_plan',
-                                  image: "/car/car1.png" // Default image for monthly plans
+                                  // Use category specific representative image
+                                  image: getCategoryBaseImage()
                                 };
                                 handleBookNow(planPackage);
                               }}
@@ -1915,7 +1935,7 @@ export default function CarWashDeals() {
                 {carWashDetails.slides.map((slide, index) => (
                   <div key={slide.id} className="flex-shrink-0 w-full h-full flex items-center justify-center p-8">
                     <img 
-                      src={selectedPackage?.image || "/car/car1.png"} 
+                      src={selectedPackage?.image || getCategoryBaseImage()} 
                       alt={slide.title}
                       className="w-full h-full object-contain pointer-events-none"
                     />
@@ -2051,6 +2071,17 @@ export default function CarWashDeals() {
           onLogin={handleLoginSuccess}
         />
       )}
+      {/* Full Body Checkup (Car) */}
+      <section className="bg-gradient-to-br from-white via-gray-50 to-blue-50 py-16 px-4 md:px-10 mt-16 rounded-2xl">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold font-serif bg-gradient-to-r from-blue-700 to-amber-500 bg-clip-text text-transparent mb-4">BFS Full Body Car Checkup</h2>
+            <p className="text-gray-600 max-w-3xl mx-auto text-lg">Complimentary visual health assessment done alongside selected wash packages. Helps you stay ahead on safety &amp; maintenance.</p>
+          </div>
+          <FullBodyCheckup type="car" />
+          <div className="mt-10 text-center text-xs text-gray-500">Disclaimer: Visual inspection only. For mechanical faults please consult an authorized service center.</div>
+        </div>
+      </section>
     </section>
   );
 }

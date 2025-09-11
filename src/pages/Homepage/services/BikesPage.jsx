@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FullBodyCheckup from '../../../components/FullBodyCheckup';
 
 const bikeCategories = [
   {
@@ -220,6 +221,17 @@ export default function BikesPage() {
           </div>
         </div>
       </div>
+      {/* Full Body Bike Checkup Section */}
+      <section className="bg-gradient-to-br from-white via-gray-50 to-amber-50 py-16 px-4 md:px-10 mt-20 rounded-2xl">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold font-serif bg-gradient-to-r from-amber-600 to-blue-600 bg-clip-text text-transparent mb-4">BFS Full Body Bike Checkup</h2>
+            <p className="text-gray-600 max-w-3xl mx-auto text-lg">Quick visual checkpoint list we cover during premium bike wash packages to highlight safety or wear issues early.</p>
+          </div>
+          <FullBodyCheckup type="bike" />
+          <div className="mt-10 text-center text-xs text-gray-500">Disclaimer: Visual inspection only. For mechanical tuning please visit a certified workshop.</div>
+        </div>
+      </section>
     </section>
   );
 }
