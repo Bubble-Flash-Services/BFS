@@ -261,7 +261,7 @@ export default function HeroSection() {
 	const categories = ['Car Wash', 'Bike Wash', 'Laundry Service', 'Helmet'];
 	const locations = [fullAddress || 'Bengaluru, India', 'Chennai, India'];
 
-	// Car wash accessories data (with precomputed slug for stable keys)
+	// Car wash accessories data
 	const accessories = [
 		{
 			img: '/car accessories/air freshner.jpg',
@@ -411,7 +411,7 @@ export default function HeroSection() {
 			stars: 4,
 			tag: '₹ 699 only',
 		}
-	].map(a => ({ ...a, slug: a.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') }));
+	];
 
 	// Navigation for accessories slider: use car-wash style sliding
 	// Desktop shows 3 products per slide; Mobile shows 1 per slide
@@ -433,7 +433,6 @@ export default function HeroSection() {
 
 	// Helper to build stable IDs for accessories (prevents merging into first item on some devices)
 	const accessorySlug = (title='') => title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-	const lastSwipeAt = useRef(0);
 
 	const handleTouchMove = (e) => {
 		if (!isMobile || !isDragging.current) return;
@@ -455,7 +454,6 @@ export default function HeroSection() {
 		if (!isMobile || !isDragging.current) return;
 		isDragging.current = false;
 		setIsDraggingState(false);
-		lastSwipeAt.current = Date.now();
 		
 		const endX = e.changedTouches[0].pageX;
 		const diffX = startX.current - endX;
@@ -490,8 +488,6 @@ export default function HeroSection() {
 				item = accessories.find(a => accessorySlug(a.title) === slugAttr) || accessories[0];
 			}
 		}
-		// Guard: ignore taps immediately after a swipe gesture (avoid accidental adds)
-		if (Date.now() - lastSwipeAt.current < 120) return;
 		if (!item) return;
 		if (!user) {
 			toast.error('Please login to add items to cart');
@@ -1572,7 +1568,7 @@ export default function HeroSection() {
 															const globalIdx = slideIndex * cardsPerSlide + idx;
 															return (
 																<motion.div
-																	key={item.slug}
+																	key={`${slideIndex}-${idx}`}
 																	initial={{ opacity: 0, y: 50, scale: 0.9 }}
 																	whileInView={{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 100, damping: 15, delay: globalIdx * 0.05 } }}
 																	viewport={{ once: true }}
@@ -1664,7 +1660,7 @@ export default function HeroSection() {
 														whileHover={{ scale: 1.05 }}
 														whileTap={{ scale: 0.95 }}
 														data-slug={accessorySlug(item.title)}
-														className={`inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-3 md:px-4 py-2 md:py-3 rounded-lg font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-md hover:shadow-lg text-xs md:text-sm ${isDraggingState ? 'pointer-events-none opacity-70' : ''}`}
+														className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-3 md:px-4 py-2 md:py-3 rounded-lg font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-md hover:shadow-lg text-xs md:text-sm"
 														onClick={(e) => { e.stopPropagation(); handleAddToCart(e); }}
 													>
 														Add to Cart
