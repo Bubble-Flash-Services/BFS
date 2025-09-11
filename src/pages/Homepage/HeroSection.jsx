@@ -34,8 +34,8 @@ const FAQS = [
 const testimonials = [
 	{ name: 'Keerthana N M', text: 'I recently had my bike washed at my doorstep and was thoroughly impressed! Quick, efficient and sparkling clean. Friendly staff made the whole experience smooth.' },
 	{ name: 'Ankitha N Raj', text: 'Deluxe Car Wash + Bike Wash – both done meticulously. Sparkling results and very reasonable pricing.' },
-	{ name: 'Anusha HG', text: 'Took the ₹199 Basic Car Wash – great experience, clean finish and super value for money.' },
-	{ name: 'Nurayne Raja', text: 'Fantastic bike wash! Quick, efficient and spotless for just ₹89. Great value.' },
+	{ name: 'Anusha HG', text: 'Took the ₹249 Basic Car Wash – great experience, clean finish and super value for money.' },
+	{ name: 'Nurayne Raja', text: 'Fantastic bike wash! Quick, efficient and spotless for just ₹99. Great value.' },
 	{ name: 'Mehta Vidhan', text: 'These guys cleaned my car just like new. Very affordable car & bike washing in Bangalore.' },
 	{ name: 'Raghu Narasimhan', text: 'Excellent and neat work by the staff. I book them regularly every 2 months.' },
 	{ name: 'Ali Yawar Hayat', text: 'Very good and professional doorstep service.' },
@@ -46,7 +46,7 @@ const testimonials = [
 	{ name: 'Shankar Shani', text: 'Excellent service. Just ₹199 and my car looks new. Already referred friends.' },
 	{ name: 'Nathalia Helen Lobo', text: 'Wonderful, simple service – sparkling car. Very satisfied.' },
 	{ name: 'Imran Pasha', text: 'Best doorstep service. Very reasonable and they covered every part. Got 3 bikes serviced.' },
-	{ name: 'Global Traders', text: 'Just ₹89 for bike wash at home – unbelievable. Highly recommend. Friendly staff.' },
+	{ name: 'Global Traders', text: 'Just ₹99 for bike wash at home – unbelievable. Highly recommend. Friendly staff.' },
 	{ name: 'Zabeeulla Baig', text: 'Tried twice – excellent service, loved it.' },
 	{ name: 'H B', text: 'Excellent service. Polite staff & reasonable charges.' },
 	{ name: 'Srinidhi', text: 'Mind‑blowing bike wash! Affordable (₹89) and results are amazing.' },
@@ -478,18 +478,26 @@ export default function HeroSection() {
 		}
 	};
 
-	const handleAddToCart = (item) => {
+	const handleAddToCart = (itemOrEvent) => {
+		// Support being called with event (from delegated click) or direct item
+		let item = itemOrEvent;
+		if (itemOrEvent?.currentTarget && !itemOrEvent.title) {
+			const el = itemOrEvent.currentTarget;
+			const slugAttr = el.getAttribute('data-slug');
+			if (slugAttr) {
+				item = accessories.find(a => accessorySlug(a.title) === slugAttr) || accessories[0];
+			}
+		}
+		if (!item) return;
 		if (!user) {
 			toast.error('Please login to add items to cart');
 			return;
 		}
-
-		// Build stable ID so repeated adds increase quantity; distinct products stay distinct
 		const slug = accessorySlug(item.title);
 		const baseId = `accessory-${slug}`;
 		const cartItem = {
 			id: baseId,
-			serviceId: baseId, // send to backend so each accessory becomes its own service entry
+			serviceId: baseId,
 			name: item.title,
 			serviceName: `Accessory: ${item.title}`,
 			price: item.price,
@@ -500,7 +508,6 @@ export default function HeroSection() {
 			type: 'accessory',
 			category: 'Car Accessories'
 		};
-
 		addToCart(cartItem);
 		toast.success(`${item.title} added to cart`);
 	};
@@ -1652,8 +1659,9 @@ export default function HeroSection() {
 													<motion.button
 														whileHover={{ scale: 1.05 }}
 														whileTap={{ scale: 0.95 }}
+														data-slug={accessorySlug(item.title)}
 														className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-3 md:px-4 py-2 md:py-3 rounded-lg font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-md hover:shadow-lg text-xs md:text-sm"
-														onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }}
+														onClick={(e) => { e.stopPropagation(); handleAddToCart(e); }}
 													>
 														Add to Cart
 														<motion.div
