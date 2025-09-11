@@ -82,6 +82,23 @@ const cartSchema = new mongoose.Schema({
     required: true,
     min: 0,
     default: 0
+  },
+  // Tax / GST fields
+  subtotalAmount: {
+    type: Number,
+    required: true,
+    min: 0,
+    default: 0
+  },
+  taxRate: {
+    type: Number,
+    default: 0.18 // 18% GST
+  },
+  taxAmount: {
+    type: Number,
+    required: true,
+    min: 0,
+    default: 0
   }
 }, {
   timestamps: true
@@ -113,8 +130,15 @@ cartSchema.pre('save', function(next) {
     totalItems += item.quantity;
   });
 
-  this.totalAmount = totalAmount;
+  // Store raw subtotal before tax
+  this.subtotalAmount = totalAmount;
   this.totalItems = totalItems;
+
+  // Compute tax & grand total
+  const taxRate = typeof this.taxRate === 'number' ? this.taxRate : 0.18;
+  const taxAmount = parseFloat((this.subtotalAmount * taxRate).toFixed(2));
+  this.taxAmount = taxAmount;
+  this.totalAmount = parseFloat((this.subtotalAmount + taxAmount).toFixed(2));
   next();
 });
 

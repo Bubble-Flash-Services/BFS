@@ -102,6 +102,15 @@ const orderSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  taxRate: {
+    type: Number,
+    default: 0.18
+  },
+  taxAmount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
   discountAmount: {
     type: Number,
     default: 0,

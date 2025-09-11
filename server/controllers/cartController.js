@@ -23,6 +23,24 @@ export const getCart = async (req, res) => {
       });
     }
 
+    // Ensure tax fields exist (for older carts before schema change)
+    if (cart && (cart.taxAmount === undefined || cart.subtotalAmount === undefined)) {
+      const plain = cart.toObject();
+      const subtotal = plain.items.reduce((sum, item) => {
+        let itemTotal = item.price * item.quantity;
+        if (item.addOns) item.addOns.forEach(a => itemTotal += a.price * a.quantity);
+        if (item.laundryItems) item.laundryItems.forEach(l => itemTotal += l.pricePerItem * l.quantity);
+        return sum + itemTotal;
+      }, 0);
+      const taxRate = 0.18;
+      const taxAmount = parseFloat((subtotal * taxRate).toFixed(2));
+      plain.subtotalAmount = subtotal;
+      plain.taxRate = taxRate;
+      plain.taxAmount = taxAmount;
+      plain.totalAmount = parseFloat((subtotal + taxAmount).toFixed(2));
+      return res.json({ success: true, data: plain });
+    }
+
     res.json({
       success: true,
       data: cart
@@ -488,7 +506,11 @@ export const syncCartToDatabase = async (req, res) => {
       totalAmount += itemTotal + addOnsTotal + laundryTotal;
     });
 
-    cart.totalAmount = totalAmount;
+  cart.subtotalAmount = totalAmount;
+  const taxRate = 0.18;
+  cart.taxRate = taxRate;
+  cart.taxAmount = parseFloat((cart.subtotalAmount * taxRate).toFixed(2));
+  cart.totalAmount = parseFloat((cart.subtotalAmount + cart.taxAmount).toFixed(2));
 
     await cart.save();
 

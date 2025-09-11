@@ -241,22 +241,27 @@ export default function CartPage() {
   };
 
   // Calculate final total with coupon discount
-  const getFinalTotal = () => {
+  const GST_RATE = 0.18;
+  const getTaxableSubtotal = () => {
     const subtotal = getCartTotal();
     const discount = appliedCoupon ? appliedCoupon.discountAmount : 0;
-    const finalTotal = Math.max(subtotal - discount, 0);
-    
-    console.log('💰 Final total calculation:', {
-      subtotal,
-      appliedCoupon: appliedCoupon ? {
-        code: appliedCoupon.code,
-        discountAmount: appliedCoupon.discountAmount
-      } : null,
-      discount,
-      finalTotal
+    return Math.max(subtotal - discount, 0);
+  };
+
+  const getGstAmount = () => {
+    return parseFloat((getTaxableSubtotal() * GST_RATE).toFixed(2));
+  };
+
+  const getFinalTotal = () => {
+    const total = getTaxableSubtotal() + getGstAmount();
+    console.log('💰 Final total calculation with GST:', {
+      subtotal: getCartTotal(),
+      discount: appliedCoupon ? appliedCoupon.discountAmount : 0,
+      taxable: getTaxableSubtotal(),
+      gst: getGstAmount(),
+      total
     });
-    
-    return finalTotal;
+    return total.toFixed(2);
   };
 
   const getDiscountAmount = () => {
@@ -400,8 +405,10 @@ export default function CartPage() {
   scheduledTimeSlot: selectedTimeSlot,
         paymentMethod: selectedPayment === 'cod' ? 'cash' : selectedPayment,
         customerNotes: `Phone: ${phoneNumber}`,
-        subtotal: getCartTotal(),
-        discountAmount: getDiscountAmount(),
+  subtotal: getCartTotal(),
+  taxRate: 0.18,
+  taxAmount: getGstAmount(),
+  discountAmount: getDiscountAmount(),
         couponCode: appliedCoupon?.code || null,
         totalAmount: getFinalTotal()
       };
@@ -867,6 +874,20 @@ export default function CartPage() {
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal ({cartItems.length} items)</span>
                     <span>₹{getCartTotal()}</span>
+                  </div>
+                  {appliedCoupon && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Coupon Discount</span>
+                      <span className="text-green-600">-₹{appliedCoupon.discountAmount}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-gray-600">
+                    <span>Taxable Amount</span>
+                    <span>₹{getTaxableSubtotal()}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>GST (18%)</span>
+                    <span>₹{getGstAmount()}</span>
                   </div>
                   
                   {/* Service charge removed as per request */}

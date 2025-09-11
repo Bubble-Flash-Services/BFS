@@ -210,7 +210,11 @@ export const createOrder = async (req, res) => {
       await coupon.save();
     }
 
-    const totalAmount = subtotal - discountAmount;
+  // Compute GST at 18% on (subtotal - discount)
+  const taxableBase = Math.max(subtotal - discountAmount, 0);
+  const taxRate = 0.18;
+  const taxAmount = parseFloat((taxableBase * taxRate).toFixed(2));
+  const totalAmount = parseFloat((taxableBase + taxAmount).toFixed(2));
 
     // Generate order number
     const timestamp = Date.now().toString();
@@ -225,7 +229,9 @@ export const createOrder = async (req, res) => {
       serviceAddress,
       scheduledDate: new Date(scheduledDate),
       scheduledTimeSlot,
-      subtotal,
+  subtotal,
+  taxRate,
+  taxAmount,
       discountAmount,
       couponCode: couponCode?.toUpperCase(),
       totalAmount,
