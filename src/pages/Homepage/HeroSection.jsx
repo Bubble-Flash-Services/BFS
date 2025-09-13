@@ -136,7 +136,6 @@ export default function HeroSection() {
 	const [visibleCount, setVisibleCount] = useState(4);
 	const [carousel, setCarousel] = useState(testimonials);
 	const [accessorySlide, setAccessorySlide] = useState(0);
-	const [isDraggingState, setIsDraggingState] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
 	const accessorySliderRef = useRef(null);
 	
@@ -182,7 +181,6 @@ export default function HeroSection() {
 		localStorage.setItem('launchAdShown', new Date().toDateString());
 	};
 	const startX = useRef(0);
-	const startTime = useRef(0);
 	const isDragging = useRef(false);
 
 	useEffect(() => {
@@ -422,13 +420,11 @@ export default function HeroSection() {
 	const handlePrev = () => setAccessorySlide(s => Math.max(0, s - 1));
 	const handleNext = () => setAccessorySlide(s => Math.min(totalSlides - 1, s + 1));
 
-	// Enhanced touch handlers for mobile dragging
+	// Touch handlers for mobile dragging (match BikeWashDeals mobile behavior)
 	const handleTouchStart = (e) => {
 		if (!isMobile) return;
 		isDragging.current = true;
-		setIsDraggingState(true);
 		startX.current = e.touches[0].pageX;
-		startTime.current = Date.now();
 	};
 
 	// Helper to build stable IDs for accessories (prevents merging into first item on some devices)
@@ -437,43 +433,21 @@ export default function HeroSection() {
 	const handleTouchMove = (e) => {
 		if (!isMobile || !isDragging.current) return;
 		e.preventDefault();
-		
-		const currentX = e.touches[0].pageX;
-		const diffX = startX.current - currentX;
-		const movePercent = (diffX / window.innerWidth) * 100;
-		
-		// Apply temporary transform for visual feedback
-		const container = e.currentTarget.querySelector('.slider-container');
-		if (container) {
-			const currentTransform = -accessorySlide * 100; // group-based translate like car wash
-			container.style.transform = `translateX(${currentTransform - movePercent}%)`;
-		}
 	};
 
 	const handleTouchEnd = (e) => {
 		if (!isMobile || !isDragging.current) return;
 		isDragging.current = false;
-		setIsDraggingState(false);
 		
 		const endX = e.changedTouches[0].pageX;
 		const diffX = startX.current - endX;
 		const threshold = 50;
-		const swipeSpeed = Math.abs(diffX) / (Date.now() - startTime.current);
 		
-		// Reset transform
-		const container = e.currentTarget.querySelector('.slider-container');
-		if (container) {
-			container.style.transform = '';
-		}
-		
-		// Determine direction and trigger slide change
-		if (Math.abs(diffX) > threshold || swipeSpeed > 0.5) {
-			if (diffX > 0) {
-				// Swipe left - go to next (with infinite loop)
-				handleNext();
-			} else {
-				// Swipe right - go to previous (with infinite loop)
-				handlePrev();
+		if (Math.abs(diffX) > threshold) {
+			if (diffX > 0 && accessorySlide < totalSlides - 1) {
+				setAccessorySlide(s => Math.min(totalSlides - 1, s + 1));
+			} else if (diffX < 0 && accessorySlide > 0) {
+				setAccessorySlide(s => Math.max(0, s - 1));
 			}
 		}
 	};
@@ -1547,23 +1521,22 @@ export default function HeroSection() {
 								</button>
 
 								{/* Cards Container */}
-								<div className="overflow-hidden flex-1 max-w-5xl"
-									onTouchStart={handleTouchStart}
-									onTouchMove={handleTouchMove}
-									onTouchEnd={handleTouchEnd}
-								>
+								<div className="overflow-hidden flex-1 max-w-5xl">
 									<motion.div
-										className={`flex slider-container ${isDraggingState ? 'transition-none' : 'transition-transform duration-500 ease-out'}`}
+										className={`flex slider-container transition-transform duration-300 ease-in-out`}
 										style={{
-											transform: `translateX(-${accessorySlide * 100}%)`,
+											transform: `translateX(-${accessorySlide * (isMobile ? 85 : 100)}%)`,
 											touchAction: 'pan-y pinch-zoom',
 										}}
+										onTouchStart={handleTouchStart}
+										onTouchMove={handleTouchMove}
+										onTouchEnd={handleTouchEnd}
 									>
 										{Array.from({ length: totalSlides }, (_, slideIndex) => {
 											const group = accessories.slice(slideIndex * cardsPerSlide, slideIndex * cardsPerSlide + cardsPerSlide);
 											return (
-												<div key={`slide-${slideIndex}`} className="flex-shrink-0 w-full">
-													<div className="flex gap-3 md:gap-4">
+												<div key={`slide-${slideIndex}`} className="flex-shrink-0 w-[85%] md:w-full">
+													<div className="flex gap-0 md:gap-4">
 														{group.map((item, idx) => {
 															const globalIdx = slideIndex * cardsPerSlide + idx;
 															return (
