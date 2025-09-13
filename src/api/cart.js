@@ -1,5 +1,22 @@
 // API helpers for cart operations
-const API = import.meta.env.VITE_API_URL || window.location.origin;
+function resolveApiBase() {
+  const cfg = import.meta.env.VITE_API_URL;
+  // If explicitly provided and looks like a full URL
+  if (cfg && /^https?:\/\//i.test(cfg)) return cfg.replace(/\/$/, '');
+  // If provided as just a port like ":5000" or "5000", normalize it
+  if (cfg && (/^:\d+$/.test(cfg) || /^\d+$/.test(cfg))) {
+    const port = cfg.replace(/^:/, '');
+    return `${window.location.protocol}//${window.location.hostname}:${port}`;
+  }
+  // If provided as a bare host (e.g., "api.myhost.com"), add protocol
+  if (cfg && /^[\w.-]+(:\d+)?$/.test(cfg)) {
+    return `${window.location.protocol}//${cfg}`;
+  }
+  // Default to current origin
+  return window.location.origin.replace(/\/$/, '');
+}
+
+const API = resolveApiBase();
 
 // Cart operations
 export async function getCart(token) {

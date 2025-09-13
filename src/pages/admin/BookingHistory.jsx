@@ -825,13 +825,60 @@ const BookingHistory = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {/* Payment Status (only Completed or Pending) */}
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        (booking.paymentStatus === 'completed') ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {(booking.paymentStatus === 'completed') ? 'completed' : 'pending'}
-                      </span>
-                      <div className="text-sm text-gray-900 mt-1">₹{booking.amount}</div>
+                      {/* Payment Status dropdown positioned above amount */}
+                      <div className="flex flex-col items-start">
+                        <select
+                          value={booking.paymentStatus || 'pending'}
+                          onChange={async (e) => {
+                            const newPayStatus = e.target.value;
+                            try {
+                              setActing(true);
+                              const res = await fetch(`${API}/api/adminNew/bookings/${booking.id}/payment`, {
+                                method: 'PUT',
+                                headers: {
+                                  'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+                                  'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ paymentStatus: newPayStatus })
+                              });
+                              const result = await res.json();
+                              if (res.ok && result.success) {
+                                const bUpd = result.booking;
+                                const patch = {
+                                  paymentStatus: bUpd?.paymentStatus ?? newPayStatus,
+                                  amount: bUpd?.totalAmount ?? booking.amount,
+                                  completedDate: (bUpd?.actualEndTime ? new Date(bUpd.actualEndTime).toISOString().split('T')[0] : booking.completedDate),
+                                  status: bUpd?.orderStatus ?? booking.status
+                                };
+                                setBookings(prev => prev.map(b => b.id === booking.id ? { ...b, ...patch } : b));
+                                setFilteredBookings(prev => prev.map(b => b.id === booking.id ? { ...b, ...patch } : b));
+                                if (selectedBooking && selectedBooking.id === booking.id) setSelectedBooking({ ...selectedBooking, ...patch });
+                                toast.success('Payment status updated');
+                              } else {
+                                toast.error(result.message || 'Failed to update payment status');
+                              }
+                            } catch (err) {
+                              console.error('Update payment status failed:', err);
+                              toast.error('Failed to update payment status');
+                            } finally {
+                              setActing(false);
+                            }
+                          }}
+                          className={`text-xs font-semibold rounded-full px-2 py-1 border ${
+                            (booking.paymentStatus === 'completed') ? 'bg-green-100 text-green-800 border-green-200' :
+                            (booking.paymentStatus === 'failed' ? 'bg-red-100 text-red-800 border-red-200' :
+                            (booking.paymentStatus === 'refunded' ? 'bg-gray-200 text-gray-800 border-gray-300' :
+                            (booking.paymentStatus === 'processing' ? 'bg-yellow-50 text-yellow-800 border-yellow-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200')))
+                          }`}
+                        >
+                          <option value="pending">pending</option>
+                          <option value="processing">processing</option>
+                          <option value="completed">completed</option>
+                          <option value="failed">failed</option>
+                          <option value="refunded">refunded</option>
+                        </select>
+                        <div className="text-sm text-gray-900 mt-1">₹{booking.amount}</div>
+                      </div>
                     </td>
                     {/* Order Status column: dropdown to set Completed/Pending/Cancelled */}
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -893,6 +940,39 @@ const BookingHistory = () => {
                         title="Download Invoice"
                       >
                         <Download className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const confirmDelete = window.confirm(`Delete booking ${booking.id}? This action cannot be undone.`);
+                          if (!confirmDelete) return;
+                          try {
+                            setActing(true);
+                            const res = await fetch(`${API}/api/adminNew/bookings/${booking.id}`, {
+                              method: 'DELETE',
+                              headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                              }
+                            });
+                            const result = await res.json();
+                            if (res.ok && result.success) {
+                              setBookings(prev => prev.filter(b => b.id !== booking.id));
+                              setFilteredBookings(prev => prev.filter(b => b.id !== booking.id));
+                              if (selectedBooking && selectedBooking.id === booking.id) setSelectedBooking(null);
+                              toast.success('Booking deleted');
+                            } else {
+                              toast.error(result.message || 'Failed to delete booking');
+                            }
+                          } catch (err) {
+                            console.error('Delete booking failed:', err);
+                            toast.error('Failed to delete booking');
+                          } finally {
+                            setActing(false);
+                          }
+                        }}
+                        className="text-red-600 hover:text-red-900 p-1 ml-2"
+                        title="Delete Booking"
+                      >
+                        <X className="h-4 w-4" />
                       </button>
                       {/* Cancel action removed; status managed via dropdown */}
                     </td>

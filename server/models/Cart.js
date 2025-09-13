@@ -12,6 +12,22 @@ const cartSchema = new mongoose.Schema({
       ref: 'Service',
       required: true
     },
+    // UI display fields (not required to resolve DB service):
+    name: { type: String }, // alias for serviceName for FE compatibility
+    serviceName: { type: String },
+    image: { type: String },
+    packageName: { type: String },
+    packageDetails: { type: mongoose.Schema.Types.Mixed }, // carries basePrice, addons, features, etc.
+    includedFeatures: [{ type: String }],
+    // Classification fields to keep grouping consistent on FE
+    type: { type: String }, // e.g., 'car-wash', 'bike-wash', 'helmet-wash', 'monthly_plan', 'accessory'
+    category: { type: String }, // e.g., 'Sedans', 'Hatchbacks', 'Helmet Wash'
+    // Non-DB add-ons coming from UI (no AddOnId)
+    uiAddOns: [{
+      name: { type: String },
+      price: { type: Number, min: 0 },
+      quantity: { type: Number, min: 1, default: 1 }
+    }],
     packageId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Package'
@@ -123,6 +139,13 @@ cartSchema.pre('save', function(next) {
     if (item.laundryItems && item.laundryItems.length > 0) {
       item.laundryItems.forEach(laundryItem => {
         itemTotal += laundryItem.pricePerItem * laundryItem.quantity;
+      });
+    }
+
+    // Add UI-only add-ons cost
+    if (item.uiAddOns && item.uiAddOns.length > 0) {
+      item.uiAddOns.forEach(ui => {
+        itemTotal += (ui.price || 0) * (ui.quantity || 1);
       });
     }
 

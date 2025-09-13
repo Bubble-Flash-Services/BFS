@@ -421,15 +421,16 @@ export default function BikeWashDeals() {
       
       const cartItem = {
         id: `bikewash-${selectedPackage.id}-${Date.now()}`,
-  name: selectedPackage.name,
+        serviceId: `bikewash-${selectedPackage.id}`,
+        name: selectedPackage.name,
         image: selectedPackage.image,
         price: totalPrice,
         category: getCategoryDisplayName(),
         type: 'bike-wash',
-  serviceName: getCategoryDisplayName(),
-  packageName: selectedPackage.name,
-  includedFeatures: selectedPackage.features,
-  vehicleType: categoryKey,
+        serviceName: getCategoryDisplayName(),
+        packageName: selectedPackage.name,
+        includedFeatures: selectedPackage.features,
+        vehicleType: categoryKey,
         packageDetails: {
           basePrice: packagePrice,
           addons: selectedAddons,
@@ -453,15 +454,16 @@ export default function BikeWashDeals() {
       
       const cartItem = {
         id: `bikewash-${selectedPackage.id}-${Date.now()}`,
-  name: selectedPackage.name,
+        serviceId: `bikewash-${selectedPackage.id}`,
+        name: selectedPackage.name,
         image: selectedPackage.image,
         price: totalPrice,
         category: getCategoryDisplayName(),
         type: 'bike-wash',
-  serviceName: getCategoryDisplayName(),
-  packageName: selectedPackage.name,
-  includedFeatures: selectedPackage.features,
-  vehicleType: categoryKey,
+        serviceName: getCategoryDisplayName(),
+        packageName: selectedPackage.name,
+        includedFeatures: selectedPackage.features,
+        vehicleType: categoryKey,
         packageDetails: {
           basePrice: packagePrice,
           addons: selectedAddons,

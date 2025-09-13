@@ -994,7 +994,7 @@ export default function CarWashDeals() {
 
     return {
       id: `carwash-${selectedPackage.id}-${Date.now()}`,
-      serviceId: selectedPackage.id,
+      serviceId: `carwash-${selectedPackage.id}`,
       name: selectedPackage.name,
       serviceName: selectedPackage.name,
   packageName: selectedPackage.name,
@@ -1003,7 +1003,8 @@ export default function CarWashDeals() {
       category: getCategoryDisplayName(),
       type: selectedPackage.type || 'car-wash',
       vehicleType: category || 'hatchbacks',
-      packageId: selectedPackage.id,
+  // Do not send numeric packageId to backend (not a valid ObjectId)
+  // packageId intentionally omitted unless backed by DB
       addOns: selectedAddons, // Use addOns instead of addons
     packageDetails: {
         basePrice: packagePrice,

@@ -44,38 +44,43 @@ export const createOrder = async (req, res) => {
       for (const item of items) {
         console.log('🔍 Processing item:', item);
         
-        let service, packageData;
+  let service, packageData;
         // Helper: only accept 24-char hex strings as valid ObjectIds
         const isValidObjectIdString = (v) => typeof v === 'string' && /^[0-9a-fA-F]{24}$/.test(v);
         
         // Try to find service by ID first (for real database IDs)
         if (item.serviceId) {
-          if (isValidObjectIdString(item.serviceId)) {
+          if (typeof item.serviceId === 'object' && item.serviceId._id && isValidObjectIdString(String(item.serviceId._id))) {
+            service = await Service.findById(item.serviceId._id);
+          } else if (isValidObjectIdString(item.serviceId)) {
             service = await Service.findById(item.serviceId);
           } else {
-            console.log(`⚠️ Invalid service ID: ${item.serviceId}, skipping ID lookup`);
+            console.log(`ℹ️ Non-ObjectId serviceId provided: ${typeof item.serviceId === 'object' ? '[object]' : item.serviceId}, proceeding by name`);
           }
         }
         
-        // If no service found by ID, try to find by service type and name
+        // If no service found by ID, try to find by provided serviceName first, then type
         if (!service) {
-          // Map cart types to service names
-          const serviceTypeMapping = {
-            'bike-wash': 'Basic Bike Wash',
-            'car-wash': 'Basic Car Wash',
-            'laundry': 'Laundry Service'
-          };
-          
-          const serviceName = serviceTypeMapping[item.type] || item.serviceName || 'Basic Car Wash';
-          service = await Service.findOne({ name: { $regex: serviceName, $options: 'i' } });
-          
-          console.log(`🔍 Found service by name "${serviceName}":`, !!service);
+          if (item.serviceName) {
+            service = await Service.findOne({ name: { $regex: item.serviceName, $options: 'i' } });
+            console.log(`🔍 Found service by name "${item.serviceName}":`, !!service);
+          }
+          if (!service) {
+            const serviceTypeMapping = {
+              'bike-wash': 'Basic Bike Wash',
+              'car-wash': 'Basic Car Wash',
+              'laundry': 'Laundry Service'
+            };
+            const mapped = serviceTypeMapping[item.type] || 'Basic Car Wash';
+            service = await Service.findOne({ name: { $regex: mapped, $options: 'i' } });
+            console.log(`🔍 Found service by mapped type "${mapped}":`, !!service);
+          }
         }
 
         if (!service) {
           // Fallback to first available service
           service = await Service.findOne();
-          console.log('⚠️ Using fallback service:', service?.name);
+          console.log('ℹ️ Using generic fallback service:', service?.name);
         }
 
         if (!service) {

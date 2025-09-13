@@ -786,6 +786,63 @@ router.put('/bookings/:bookingId/status', authenticateAdmin, requirePermission('
   }
 });
 
+// Update booking payment status (admin) - pending | processing | completed | failed | refunded
+router.put('/bookings/:bookingId/payment', authenticateAdmin, requirePermission('bookings'), async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { paymentStatus } = req.body || {};
+    const allowed = ['pending', 'processing', 'completed', 'failed', 'refunded'];
+    if (!allowed.includes((paymentStatus || '').toLowerCase())) {
+      return res.status(400).json({ success: false, message: 'Invalid payment status. Use pending, processing, completed, failed, or refunded.' });
+    }
+
+    // Find by ObjectId or orderNumber
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(bookingId);
+    const order = isObjectId ? await Order.findById(bookingId) : await Order.findOne({ orderNumber: bookingId });
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    const newStatus = paymentStatus.toLowerCase();
+    order.paymentStatus = newStatus;
+    if (newStatus === 'completed') {
+      order.paidAt = new Date();
+      // If order not yet confirmed, confirm it on successful payment
+      if (!order.orderStatus || order.orderStatus === 'pending') {
+        order.orderStatus = 'confirmed';
+        if (!order.status || order.status === 'assigned') order.status = 'assigned';
+      }
+    } else {
+      // Clear paidAt for non-completed states to avoid confusion
+      order.paidAt = undefined;
+    }
+
+    await order.save();
+
+    res.json({ success: true, message: 'Payment status updated', booking: order });
+  } catch (error) {
+    console.error('Admin update payment status error:', error);
+    res.status(500).json({ success: false, message: 'Failed to update payment status' });
+  }
+});
+
+// Delete a booking (admin)
+router.delete('/bookings/:bookingId', authenticateAdmin, requirePermission('bookings'), async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(bookingId);
+    const order = isObjectId ? await Order.findById(bookingId) : await Order.findOne({ orderNumber: bookingId });
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+    await order.deleteOne();
+    res.json({ success: true, message: 'Booking deleted successfully', orderNumber: order.orderNumber });
+  } catch (error) {
+    console.error('Admin delete booking error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete booking' });
+  }
+});
+
 // Get unassigned bookings
 router.get('/bookings/unassigned', authenticateAdmin, requirePermission('bookings'), async (req, res) => {
   try {

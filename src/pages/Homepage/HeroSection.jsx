@@ -470,7 +470,7 @@ export default function HeroSection() {
 		const slug = accessorySlug(item.title);
 		const baseId = `accessory-${slug}`;
 		const cartItem = {
-			id: baseId,
+			id: `${baseId}-${Date.now()}`,
 			serviceId: baseId,
 			name: item.title,
 			serviceName: `Accessory: ${item.title}`,
@@ -480,7 +480,12 @@ export default function HeroSection() {
 			img: item.img,
 			image: item.img,
 			type: 'accessory',
-			category: 'Car Accessories'
+			category: 'Car Accessories',
+			// UI display fields so cart shows details
+			packageName: item.title,
+			packageDetails: { basePrice: item.price, addons: [], features: [] },
+			includedFeatures: [],
+			uiAddOns: []
 		};
 		addToCart(cartItem);
 		toast.success(`${item.title} added to cart`);

@@ -271,14 +271,25 @@ export default function CartPage() {
   // Normalize item into high-level group for cart sections
   const getItemGroup = (item) => {
     const type = (item.type || '').toLowerCase();
-    const categoryText = ((item.category || item.serviceName || '') + ' ' + (item.vehicleType || '')).toLowerCase();
-    if (type.includes('car')) return 'Car';
+    const categoryField = (item.category || '').toLowerCase();
+    const nameField = ((item.serviceName || item.name || '') + ' ' + (item.vehicleType || '')).toLowerCase();
+
+    // Prefer explicit type classification
+    if (type.includes('car') || type.includes('monthly')) return 'Car';
     if (type.includes('bike')) return 'Bike';
     if (type.includes('helmet')) return 'Helmet';
     if (type.includes('laundry') || item.laundryDetails) return 'Laundry';
-    if (/hatch|sedan|suv|mid\s*-\s*suv|luxur/.test(categoryText)) return 'Car';
-    if (/scooter|motorbike|cruiser|bike/.test(categoryText)) return 'Bike';
-    if (/helmet/.test(categoryText)) return 'Helmet';
+
+    // Then use category derived on server/client
+    if (/(car|car wash|hatch|sedan|suv|luxur)/.test(categoryField)) return 'Car';
+    if (/(bike|bike wash|scooter|motorbike|cruiser)/.test(categoryField)) return 'Bike';
+    if (/helmet/.test(categoryField)) return 'Helmet';
+    if (/(laundry|wash & fold|dry clean|ironing)/.test(categoryField)) return 'Laundry';
+
+    // Fallback to combined name + vehicleType keywords
+    if (/helmet/.test(nameField)) return 'Helmet';
+    if (/scooter|motorbike|cruiser|bike/.test(nameField)) return 'Bike';
+    if (/hatch|sedan|suv|mid\s*-\s*suv|luxur|car/.test(nameField)) return 'Car';
     return 'Others';
   };
 
@@ -784,22 +795,28 @@ export default function CartPage() {
                   )}
 
                   {/* Add-ons Details */}
-                  {item.addOns && item.addOns.length > 0 && !item.packageDetails && (
+                  {(item.addOns && item.addOns.length > 0 && !item.packageDetails) || (item.uiAddOns && item.uiAddOns.length > 0 && !item.packageDetails) ? (
                     <div className="mb-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-100">
                       <h4 className="text-sm font-semibold text-gray-800 mb-2 flex items-center">
                         <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
                         Selected Add-ons
                       </h4>
                       <div className="space-y-1">
-                        {item.addOns.map((addon, idx) => (
+                        {(item.addOns || []).map((addon, idx) => (
                           <div key={idx} className="flex justify-between text-xs">
+                            <span className="text-gray-600">+ {addon.name}</span>
+                            <span className="text-green-600 font-medium">₹{addon.price}</span>
+                          </div>
+                        ))}
+                        {(item.uiAddOns || []).map((addon, idx) => (
+                          <div key={`ui-${idx}`} className="flex justify-between text-xs">
                             <span className="text-gray-600">+ {addon.name}</span>
                             <span className="text-green-600 font-medium">₹{addon.price}</span>
                           </div>
                         ))}
                       </div>
                     </div>
-                  )}
+                  ) : null}
 
                   {/* Laundry Details */}
                   {item.laundryDetails && (

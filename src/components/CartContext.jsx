@@ -36,6 +36,29 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user, token } = useAuth();
+  // Derive a human-friendly category for items coming from server
+  const deriveCategory = (rawItem) => {
+    try {
+      const svcName = (rawItem.serviceId?.name || rawItem.name || '').toLowerCase();
+      const vt = (rawItem.vehicleType || '').toLowerCase();
+      const kind = (rawItem.type || '').toLowerCase();
+      const cat = (rawItem.category || '').toLowerCase();
+      if (kind.includes('accessory') || /accessor/.test(svcName)) return 'Car Accessories';
+      if (kind.includes('helmet')) return 'Helmet';
+      if (kind.includes('bike')) return 'Bike Wash';
+      if (kind.includes('car') || kind.includes('monthly')) return 'Car Wash';
+      if (['bike','commuter','cruiser','sports','scooter','motorbike'].includes(vt)) return 'Bike Wash';
+      if (['car','hatchback','sedan','suv','luxury','luxuries'].includes(vt) || ['suv','sedan','hatchbacks','luxuries'].includes(cat)) return 'Car Wash';
+      if (/(laundry|wash & fold|dry clean|ironing)/i.test(rawItem.serviceId?.name || rawItem.name || '')) return 'Laundry Service';
+      // fallback by keywords
+      if (/bike/i.test(svcName)) return 'Bike Wash';
+      if (/car/i.test(svcName)) return 'Car Wash';
+      return 'Service';
+    } catch {
+      return 'Service';
+    }
+  };
+
 
   console.log('🚀 CartProvider mounted for user:', user?.email || 'guest');
   
@@ -110,7 +133,7 @@ export function CartProvider({ children }) {
           img: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
           image: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
           // Add other properties as needed
-          category: item.category,
+          category: item.category || deriveCategory(item),
           description: item.description,
           packageDetails: item.packageDetails
         }));
@@ -265,20 +288,46 @@ export function CartProvider({ children }) {
       if (response.success && response.data) {
         // Convert backend cart format to frontend format
         const items = response.data.items || [];
-        setCartItems(items.map(item => ({
-          id: item._id || item.serviceId,
-          serviceId: item.serviceId,
-          packageId: item.packageId,
-          name: item.serviceId?.name || item.name,
-          price: item.price,
-          quantity: item.quantity,
-          addOns: item.addOns || [],
-          vehicleType: item.vehicleType,
-          specialInstructions: item.specialInstructions,
-          // Add image handling
-          img: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceId?.name || item.name),
-          image: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceId?.name || item.name)
-        })));
+        setCartItems(items.map(item => {
+          // Normalize add-ons with names
+          const normalizedAddOns = (item.addOns || []).map(a => ({
+            addOnId: a.addOnId?._id || a.addOnId,
+            name: a.addOnId?.name || a.name,
+            price: a.price,
+            quantity: a.quantity || 1
+          }));
+          const uiAddOns = (item.uiAddOns || []).map(u => ({
+            name: u.name,
+            price: u.price,
+            quantity: u.quantity || 1
+          }));
+          const derivedPackageDetails = item.packageDetails || (item.packageId ? {
+            basePrice: item.price,
+            features: item.packageId?.features || [],
+            addons: normalizedAddOns.length ? normalizedAddOns : undefined
+          } : undefined);
+
+          return {
+            id: item._id || item.serviceId,
+            serviceId: item.serviceId,
+            packageId: item.packageId?._id || item.packageId,
+            name: item.serviceName || item.name || item.serviceId?.name,
+            serviceName: item.serviceName || item.name || item.serviceId?.name,
+            packageName: item.packageName || item.packageId?.name,
+            price: item.price,
+            quantity: item.quantity,
+            addOns: normalizedAddOns,
+            uiAddOns,
+            packageDetails: derivedPackageDetails,
+            includedFeatures: item.includedFeatures || derivedPackageDetails?.features || [],
+            vehicleType: item.vehicleType,
+            specialInstructions: item.specialInstructions,
+            // Prefer stored image over populated fallback image
+            img: item.image || item.img || item.serviceId?.image || getDefaultServiceImage(item.serviceName || item.name || item.serviceId?.name),
+            image: item.image || item.img || item.serviceId?.image || getDefaultServiceImage(item.serviceName || item.name || item.serviceId?.name),
+            category: item.category || deriveCategory(item)
+          };
+        }));
       }
     } catch (error) {
       console.error('Error loading cart from server:', error);
@@ -372,13 +421,32 @@ export function CartProvider({ children }) {
     if (user && token) {
       setLoading(true);
       try {
+        // Only send valid addOns with a proper MongoDB ObjectId as addOnId
+        const sanitizeAddOns = (arr) => {
+          const list = Array.isArray(arr) ? arr : [];
+          return list.filter(a => typeof a?.addOnId === 'string' && /^[0-9a-fA-F]{24}$/.test(a.addOnId)).map(a => ({
+            addOnId: a.addOnId,
+            quantity: a.quantity || 1,
+            // Price is looked up on server; include if present, it's ignored otherwise
+            ...(a.price ? { price: a.price } : {})
+          }));
+        };
+
+        const onlyValidObjectId = (v) => (typeof v === 'string' && /^[0-9a-fA-F]{24}$/.test(v)) ? v : undefined;
         const cartData = {
           serviceId: product.serviceId || product.id,
-          serviceName: product.name || product.serviceName, // Add service name for backend lookup
-          packageId: product.packageId,
+          serviceName: product.serviceName || product.name, // Prefer explicit serviceName
+          packageName: product.packageName || product.plan,
+          packageId: onlyValidObjectId(product.packageId) ? product.packageId : undefined,
           quantity: 1,
           price: product.price,
-          addOns: product.addOns || [],
+          addOns: sanitizeAddOns(product.addOns || product.packageDetails?.addons),
+          // Also send UI-only add-ons (no DB id) so server can store and we can display
+          uiAddOns: (product.uiAddOns || product.packageDetails?.addons || [])
+            .filter(a => !a.addOnId) // only UI entries
+            .map(a => ({ name: a.name, price: a.price, quantity: a.quantity || 1 })),
+          packageDetails: product.packageDetails, // carry features/addons/basePrice/monthly fields
+          includedFeatures: product.includedFeatures || product.packageDetails?.features || [],
           vehicleType: product.vehicleType,
           specialInstructions: product.specialInstructions,
           type: product.type,
