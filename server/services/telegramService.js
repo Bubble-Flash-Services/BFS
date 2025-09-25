@@ -137,8 +137,17 @@ export function formatOrderMessage(order, user) {
   lines.push('Order Summary');
   lines.push(`Subtotal: ${currency(order.subtotal)}`);
   if (order.discountAmount) lines.push(`Discount (${order.couponCode}): -${currency(order.discountAmount)}`);
-  const serviceCharge = 0; // Placeholder: adjust if you add service fee logic
-  lines.push(`Service charge: ${serviceCharge ? currency(serviceCharge) : 'FREE'}`);
+  // GST breakdown: always show CGST + SGST split (aligned with invoices)
+  const taxableBase = Math.max((order.subtotal || 0) - (order.discountAmount || 0), 0);
+  const rate = typeof order.taxRate === 'number' ? order.taxRate : 0.18;
+  const computedTax = Number(
+    (typeof order.taxAmount === 'number' ? order.taxAmount : taxableBase * rate).toFixed(2)
+  );
+  const cgst = Number((computedTax / 2).toFixed(2));
+  const sgst = Number((computedTax / 2).toFixed(2));
+  lines.push(`Taxable: ${currency(taxableBase)}`);
+  lines.push(`CGST (9%): ${currency(cgst)}`);
+  lines.push(`SGST (9%): ${currency(sgst)}`);
   lines.push(`Total: ${currency(order.totalAmount)}`);
   lines.push('');
 

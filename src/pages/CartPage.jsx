@@ -240,16 +240,35 @@ export default function CartPage() {
     navigate('/', { state: { scrollTo: 'service-categories' } });
   };
 
-  // Calculate final total with coupon discount
+  // Calculate final total with coupon discount and GST split (CGST/SGST for intra-state, IGST for inter-state)
   const GST_RATE = 0.18;
+  const CGST_RATE = 0.09;
+  const SGST_RATE = 0.09;
+  const IGST_RATE = 0.18;
   const getTaxableSubtotal = () => {
     const subtotal = getCartTotal();
     const discount = appliedCoupon ? appliedCoupon.discountAmount : 0;
     return Math.max(subtotal - discount, 0);
   };
 
+  const isIntraState = () => {
+    try {
+      const stateText = ((addressData?.state || selectedLocation || '') + '').toLowerCase();
+      if (/karnataka/.test(stateText)) return true;
+      // Default to intra-state for Bangalore service area when not explicitly outside
+      return true;
+    } catch {
+      return true;
+    }
+  };
+
+  const getCGSTAmount = () => parseFloat((getTaxableSubtotal() * CGST_RATE).toFixed(2));
+  const getSGSTAmount = () => parseFloat((getTaxableSubtotal() * SGST_RATE).toFixed(2));
+  const getIGSTAmount = () => parseFloat((getTaxableSubtotal() * IGST_RATE).toFixed(2));
   const getGstAmount = () => {
-    return parseFloat((getTaxableSubtotal() * GST_RATE).toFixed(2));
+    return isIntraState()
+      ? parseFloat((getCGSTAmount() + getSGSTAmount()).toFixed(2))
+      : getIGSTAmount();
   };
 
   const getFinalTotal = () => {
@@ -902,10 +921,23 @@ export default function CartPage() {
                     <span>Taxable Amount</span>
                     <span>₹{getTaxableSubtotal()}</span>
                   </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>GST (18%)</span>
-                    <span>₹{getGstAmount()}</span>
-                  </div>
+                  {isIntraState() ? (
+                    <>
+                      <div className="flex justify-between text-gray-600">
+                        <span>CGST (9%)</span>
+                        <span>₹{getCGSTAmount()}</span>
+                      </div>
+                      <div className="flex justify-between text-gray-600">
+                        <span>SGST (9%)</span>
+                        <span>₹{getSGSTAmount()}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex justify-between text-gray-600">
+                      <span>IGST (18%)</span>
+                      <span>₹{getIGSTAmount()}</span>
+                    </div>
+                  )}
                   
                   {/* Service charge removed as per request */}
 

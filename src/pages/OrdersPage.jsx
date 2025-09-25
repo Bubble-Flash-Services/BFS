@@ -234,6 +234,16 @@ export default function OrdersPage() {
   <div class="totals">
     <div><span>Subtotal</span><span>₹${order.subtotal ?? order.totalAmount}</span></div>
     ${order.discountAmount ? `<div><span>Discount${order.couponCode ? ' ('+order.couponCode+')' : ''}</span><span>-₹${order.discountAmount}</span></div>` : ''}
+    ${(() => {
+      const subtotal = (order.subtotal ?? order.totalAmount) || 0;
+      const discount = Number(order.discountAmount) || 0;
+      const taxable = Math.max(0, subtotal - discount);
+      const cgst = (taxable * 0.09).toFixed(2);
+      const sgst = (taxable * 0.09).toFixed(2);
+      return `<div><span>Taxable</span><span>₹${taxable}</span></div>` +
+             `<div><span>CGST (9%)</span><span>₹${cgst}</span></div>` +
+             `<div><span>SGST (9%)</span><span>₹${sgst}</span></div>`;
+    })()}
     <div style="font-weight:700;border-top:1px solid #e5e7eb;margin-top:8px;padding-top:8px"><span>Total</span><span>₹${order.totalAmount}</span></div>
   </div>
   <div style="clear:both;margin-top:48px" class="muted">Thank you for choosing Bubble Flash Services.</div>

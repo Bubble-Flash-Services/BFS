@@ -102,9 +102,13 @@ const BookingHistory = () => {
       const laundry = (it.laundryItems || []).reduce((s, l) => s + (l.pricePerItem || 0) * (l.quantity || 1), 0);
       return sum + base + add + laundry;
     }, 0);
-    const subtotal = booking.subtotal ?? computedSubtotal;
-    const discount = Number(booking.discountAmount) || 0;
-    const total = booking.amount ?? Math.max(0, subtotal - discount);
+  const subtotal = booking.subtotal ?? computedSubtotal;
+  const discount = Number(booking.discountAmount) || 0;
+  // Always show CGST/SGST split (9% + 9%) for clarity on invoice
+  const taxableBase = Math.max(0, subtotal - discount);
+  const cgst = parseFloat((taxableBase * 0.09).toFixed(2));
+  const sgst = parseFloat((taxableBase * 0.09).toFixed(2));
+  const total = booking.amount ?? parseFloat((taxableBase + cgst + sgst).toFixed(2));
 
     const html = `
 <!doctype html><html><head><meta charset="utf-8"/>
@@ -155,6 +159,9 @@ const BookingHistory = () => {
   <div class="totals">
     <div><span>Subtotal</span><span>₹${subtotal}</span></div>
     ${discount ? `<div><span>Discount${booking.couponCode ? ' ('+booking.couponCode+')' : ''}</span><span>-₹${discount}</span></div>` : ''}
+    <div><span>Taxable</span><span>₹${taxableBase}</span></div>
+    <div><span>CGST (9%)</span><span>₹${cgst}</span></div>
+    <div><span>SGST (9%)</span><span>₹${sgst}</span></div>
     <div style="font-weight:700;border-top:1px solid #e5e7eb;margin-top:8px;padding-top:8px"><span>Total</span><span>₹${total}</span></div>
   </div>
   <div style="clear:both;margin-top:48px" class="muted">Thank you for choosing Bubble Flash Services.</div>
