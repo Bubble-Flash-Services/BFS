@@ -217,12 +217,12 @@ export default function Header() {
                         <button
                           className="flex items-center gap-2 w-full text-left px-4 py-3 hover:bg-gray-100 text-gray-700 text-sm border-t border-gray-100"
                           onClick={() => {
-                            setOpenProfile(true);
+                            navigate('/orders');
                             setDropdownOpen(false);
                           }}
                         >
                           <User size={16} />
-                          Edit Profile
+                          My Orders
                         </button>
                         <button
                           className="block w-full text-left px-4 py-3 hover:bg-gray-100 text-gray-700 text-sm border-t border-gray-100"
@@ -317,12 +317,12 @@ export default function Header() {
                   <button
                     className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:text-blue-500 transition-colors bg-transparent border-none cursor-pointer"
                     onClick={() => {
-                      setOpenProfile(true);
+                      navigate('/orders');
                       setMobileMenuOpen(false);
                     }}
                   >
                     <User size={16} />
-                    Edit Profile
+                    My Orders
                   </button>
                   <button
                     className="flex items-center gap-2 w-full text-left px-2 py-2 text-gray-700 hover:text-blue-500 transition-colors bg-transparent border-none cursor-pointer"

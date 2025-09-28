@@ -26,8 +26,9 @@ const BookingHistory = () => {
     const dateFmt = (d) => {
       try { return new Date(d).toLocaleString(); } catch { return ''; }
     };
-    const customerName = booking.customerName || '';
-    const customerPhone = booking.phone || '';
+  const customerName = booking.customerName || '';
+  const phoneFromNotes = booking.customerNotes && /Phone:\s*([^\n]+)/i.exec(booking.customerNotes)?.[1]?.trim();
+  const customerPhone = (booking.phone && booking.phone !== 'N/A') ? booking.phone : (phoneFromNotes || '');
 
     const getItemGroup = (item) => {
       const type = (item?.type || '').toLowerCase();
@@ -230,10 +231,12 @@ const BookingHistory = () => {
       const result = await response.json();
       
       if (result.success) {
-        const formattedBookings = result.data.bookings.map(booking => ({
+        const formattedBookings = result.data.bookings.map(booking => {
+          const phoneFromNotes = booking.customerNotes && /Phone:\s*([^\n]+)/i.exec(booking.customerNotes)?.[1]?.trim();
+          return ({
           id: booking.orderNumber,
           customerName: booking.userId?.name || 'N/A',
-          phone: booking.userId?.phone || 'N/A',
+          phone: booking.userId?.phone || phoneFromNotes || 'N/A',
           email: booking.userId?.email || 'N/A',
           serviceMode: booking.items[0]?.serviceName || 'Mixed Services',
           plan: booking.items[0]?.packageName || 'Custom',
@@ -256,7 +259,7 @@ const BookingHistory = () => {
           scheduledTimeSlot: booking.scheduledTimeSlot,
           rating: booking.rating,
           review: booking.review
-        }));
+        })});
         
         setBookings(formattedBookings);
         setFilteredBookings(formattedBookings);
@@ -1044,7 +1047,7 @@ const BookingHistory = () => {
                       <p className="text-sm text-gray-600">Phone</p>
                       <p className="font-medium text-gray-900 flex items-center">
                         <Phone className="w-4 h-4 mr-1" />
-                        {selectedBooking.phone}
+                        {selectedBooking.phone === 'N/A' && selectedBooking.customerNotes ? (selectedBooking.customerNotes.match(/Phone:\s*([^\n]+)/i)?.[1]?.trim() || 'N/A') : selectedBooking.phone}
                       </p>
                     </div>
                     <div className="md:col-span-2">

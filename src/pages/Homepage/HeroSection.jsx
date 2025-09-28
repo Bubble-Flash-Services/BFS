@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
 import ServiceCategories from './services/ServiceCategories';
+import SigninModal from './signin/SigninModal';
+import SignupModal from './signup/SignupModal';
 import AddressAutocomplete from '../../components/AddressAutocomplete';
 import { useAuth } from '../../components/AuthContext';
 import { useCart } from '../../components/CartContext';
@@ -106,6 +108,10 @@ export default function HeroSection() {
 	const [fullAddress, setFullAddress] = useState('');
 	const [addressData, setAddressData] = useState(null); // Store complete address data
 
+	// Auth modals control
+	const [openSignin, setOpenSignin] = useState(false);
+	const [openSignup, setOpenSignup] = useState(false);
+
 	// Callback form state
 	const [cbName, setCbName] = useState('');
 	const [cbPhone, setCbPhone] = useState('');
@@ -205,6 +211,21 @@ export default function HeroSection() {
 		}
 	}, []);
 
+	// If user just logged in and we have a stored redirect, navigate there
+	useEffect(() => {
+		if (!user) return;
+		try {
+			const raw = localStorage.getItem('postLoginRedirect');
+			if (!raw) return;
+			const data = JSON.parse(raw);
+			// Optional: Expire after 15 minutes
+			if (data?.path && (!data.ts || Date.now() - data.ts < 15 * 60 * 1000)) {
+				navigate(data.path, { replace: true });
+				localStorage.removeItem('postLoginRedirect');
+			}
+		} catch {}
+	}, [user, navigate]);
+
 	// Close launch ad and remember user has seen it
 	const closeLaunchAd = () => {
 		setShowLaunchAd(false);
@@ -220,16 +241,14 @@ export default function HeroSection() {
 				// Check if geolocation is available
 				if (!navigator.geolocation) {
 					console.warn('Geolocation is not supported by this browser');
-					setFullAddress('Bengaluru, India');
-					setSelectedLocation('Bengaluru, India');
+					// Don't prefill any default address
 					return;
 				}
 
 				// Check if we're on HTTPS (required for geolocation in production)
 				if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
 					console.warn('Geolocation requires HTTPS');
-					setFullAddress('Bengaluru, India');
-					setSelectedLocation('Bengaluru, India');
+					// Don't prefill any default address
 					return;
 				}
 
@@ -239,15 +258,10 @@ export default function HeroSection() {
 					setSelectedLocation(result.data.fullAddress);
 					setAddressData(result.data);
 				} else {
-					// Silently handle location errors and use default location
-					// No need to show error messages to users since we have a good fallback
-					setFullAddress('Bengaluru, India');
-					setSelectedLocation('Bengaluru, India');
+					// Silently handle location errors and do not set a default address
 				}
 			} catch (error) {
-				// Silently handle errors and use default location
-				setFullAddress('Bengaluru, India');
-				setSelectedLocation('Bengaluru, India');
+				// Silently handle errors and do not set a default address
 			}
 		};
 
@@ -287,7 +301,7 @@ export default function HeroSection() {
 	}, []);
 
 	const categories = ['Car Wash', 'Bike Wash', 'Laundry Service', 'Helmet'];
-	const locations = [fullAddress || 'Bengaluru, India', 'Chennai, India'];
+	const locations = [fullAddress || '', ''];
 
 	// Car wash accessories data
 	const accessories = [
@@ -989,6 +1003,7 @@ export default function HeroSection() {
 													</button>
 												))}
 											</div>
+											<p className="text-xs text-gray-500 mt-3">You'll enter your pickup/delivery address on the next step (cart/checkout).</p>
 										</motion.div>
 									)}
 
@@ -1001,13 +1016,18 @@ export default function HeroSection() {
 											whileHover={{ scale: 1.02, boxShadow: "0 10px 30px rgba(255, 180, 0, 0.3)" }}
 											whileTap={{ scale: 0.98 }}
 											onClick={() => {
-												if (bookingService === 'Car') {
-													navigate(`/car-wash-deals/${bookingCategory}`);
-												} else if (bookingService === 'Bike') {
-													navigate(`/bike-wash-deals/${bookingCategory}`);
-												} else if (bookingService === 'Helmet') {
-													navigate(`/helmet-wash-deals/${bookingCategory}`);
+												const target = bookingService === 'Car'
+												  ? `/car-wash-deals/${bookingCategory}`
+												  : bookingService === 'Bike'
+													? `/bike-wash-deals/${bookingCategory}`
+													: `/helmet-wash-deals/${bookingCategory}`;
+												if (!user) {
+												  // Save intended path and a tiny context so we can restore after login
+												  localStorage.setItem('postLoginRedirect', JSON.stringify({ path: target, ts: Date.now(), source: 'hero-book' }));
+												  setOpenSignup(true);
+												  return;
 												}
+												navigate(target);
 											}}
 											className="w-full py-4 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
 										>
@@ -2796,6 +2816,37 @@ export default function HeroSection() {
 				</div>
 				{/* ContactPage content end */}
 			</section>
+		{/* Auth Modals */}
+		<SignupModal 
+		  open={openSignup} 
+		  onClose={() => setOpenSignup(false)} 
+		  onSignup={() => setOpenSignup(false)}
+		  onLoginNow={() => {
+			setOpenSignup(false);
+			setOpenSignin(true);
+		  }}
+		/>
+		<SigninModal 
+		  open={openSignin} 
+		  onClose={() => setOpenSignin(false)} 
+		  onSignupNow={() => {
+			setOpenSignin(false);
+			setOpenSignup(true);
+		  }}
+		  onLogin={() => {
+			// After a successful login from modal, perform the stored redirect if exists
+			try {
+			  const raw = localStorage.getItem('postLoginRedirect');
+			  if (raw) {
+				const data = JSON.parse(raw);
+				if (data?.path) {
+				  navigate(data.path, { replace: true });
+				  localStorage.removeItem('postLoginRedirect');
+				}
+			  }
+			} catch {}
+		  }}
+		/>
 		</>
 	);
 }
