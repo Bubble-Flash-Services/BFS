@@ -748,12 +748,12 @@ export default function HeroSection() {
 									}}
 									className="w-full bg-white text-blue-600 font-bold py-3 px-6 rounded-xl hover:bg-gray-100 transition-colors duration-200 mb-4"
 								>
-									Book Now & Save 20%!
+									Book Now & Save 10%!
 								</motion.button>
 
 								{/* Validity */}
 								<p className="text-sm text-white text-opacity-80">
-									Valid for 3 days • Limited time offer
+									• Limited time offer
 								</p>
 							</div>
 						</motion.div>
