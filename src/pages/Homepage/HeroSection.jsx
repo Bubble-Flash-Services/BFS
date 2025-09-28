@@ -80,8 +80,9 @@ function getCategoriesForService(service) {
 		case 'Bike':
 			return [
 				{ value: 'commuter', label: 'Commuter', icon: '/bike/commuter/tvs-ntorq-125-race-edition-matte-white-175501476-vc4uk (1).png' },
-				{ value: 'sports', label: 'Sports', icon: '/bike/sports/pexels-shrinidhi-holla-30444780.png' },
-				{ value: 'cruiser', label: 'Cruiser', icon: '/bike/cruiser/pexels-sahil-dethe-590388386-17266142.png' }
+				{ value: 'cruiser', label: 'Cruiser', icon: '/bike/cruiser/pexels-sahil-dethe-590388386-17266142.png' },
+				{ value: 'sports', label: 'Sports', icon: '/bike/sports/pexels-shrinidhi-holla-30444780.png' }
+				
 			];
 		case 'Helmet':
 			return [
