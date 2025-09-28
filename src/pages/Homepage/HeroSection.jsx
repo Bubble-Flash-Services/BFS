@@ -65,11 +65,41 @@ const AVATAR_COLORS = [
 
 const getInitial = (name='?') => name.trim()[0]?.toUpperCase() || '?';
 
+// Helper: Category options per service for the 2-step booking
+function getCategoriesForService(service) {
+	switch (service) {
+		case 'Car':
+			return [
+				{ value: 'hatchbacks', label: 'Hatchback', icon: '/car/car1.png' },
+				{ value: 'sedans', label: 'Sedan', icon: '/car/car2.png' },
+				{ value: 'suv', label: 'SUV', icon: '/car/car3.png' },
+				{ value: 'luxuries', label: 'Luxury', icon: '/car/suv/luxury_suv.png' }
+			];
+		case 'Bike':
+			return [
+				{ value: 'commuter', label: 'Commuter', icon: '/bike/commuter/tvs-ntorq-125-race-edition-matte-white-175501476-vc4uk (1).png' },
+				{ value: 'sports', label: 'Sports', icon: '/bike/sports/pexels-shrinidhi-holla-30444780.png' },
+				{ value: 'cruiser', label: 'Cruiser', icon: '/bike/cruiser/pexels-sahil-dethe-590388386-17266142.png' }
+			];
+		case 'Helmet':
+			return [
+				{ value: 'commuter', label: 'Commuter Helmets', icon: '/helmet/commuter & midsize/aiease_1755850674727.jpg' },
+				{ value: 'midsize', label: 'Mid-Size Helmets', icon: '/helmet/midsize/midsize1.jpg' },
+				{ value: 'sports-touring', label: 'Sports / Touring Helmets', icon: '/helmet/sports/aiease_1755850623823.jpg' }
+			];
+		default:
+			return [];
+	}
+}
+
 export default function HeroSection() {
 	const { user } = useAuth();
 	const { addToCart } = useCart();
 	const navigate = useNavigate();
 	const [selectedCategory, setSelectedCategory] = useState('');
+	// New minimal 2-step booking state
+	const [bookingService, setBookingService] = useState(''); // Car | Bike | Laundry | Helmet
+	const [bookingCategory, setBookingCategory] = useState(''); // e.g., Sedan, SUV, etc.
 	const [selectedLocation, setSelectedLocation] = useState('');
 	const [pickupDate, setPickupDate] = useState('');
 	const [phoneNumber, setPhoneNumber] = useState('');
@@ -904,10 +934,10 @@ export default function HeroSection() {
 									transition={{ delay: 0.6, duration: 0.6 }}
 								>
 									<h3 className="text-2xl font-bold text-[#1F3C88] mb-2 text-center">
-										Book Your Service
+										 Quickly Book Your Service in 2 Steps
 									</h3>
 									<p className="text-gray-600 text-center mb-8">
-										Quick & Easy booking in 3 steps
+										 Select your service, choose a category, and get your package instantly.
 									</p>
 									<div className="text-center text-sm text-[#1F3C88] bg-[#FFFBF0] border border-[#FFE08A] rounded-lg px-3 py-2 mb-6">
 										Currently serving Bangalore pincodes only — other cities coming soon.
@@ -915,110 +945,75 @@ export default function HeroSection() {
 								</motion.div>
 
 								<div className="space-y-6">
-									{/* Service Category */}
+									{/* Step 1: Choose Service (buttons) */}
 									<motion.div
 										initial={{ opacity: 0, x: -20 }}
 										animate={{ opacity: 1, x: 0 }}
 										transition={{ delay: 0.8, duration: 0.6 }}
 									>
 										<label className="block text-sm font-semibold text-gray-700 mb-2">
-											Select Service
+											Step 1 — Choose Service
 										</label>
-										<div className="relative">
-											<select
-												value={selectedCategory}
-												onChange={(e) => setSelectedCategory(e.target.value)}
-												className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none transition-colors bg-white text-gray-700 font-medium"
-											>
-												<option value="">Choose your service</option>
-												{categories.map((category) => (
-													<option key={category} value={category}>
-														{category}
-													</option>
+										<div className="grid grid-cols-2 gap-3">
+											{['Car', 'Bike', 'Helmet'].map(s => (
+												<button
+													key={s}
+													onClick={() => { setBookingService(s); setBookingCategory(''); }}
+													className={`px-4 py-3 rounded-xl border-2 font-semibold transition-colors ${bookingService === s ? 'border-[#FFB400] text-[#1F3C88] bg-[#FFF6DB]' : 'border-gray-200 text-gray-700 hover:border-[#FFB400]'}`}
+												>
+													{s}
+												</button>
+											))}
+										</div>
+									</motion.div>
+
+									{/* Step 2: Choose Category based on service */}
+									{bookingService && (
+										<motion.div
+											initial={{ opacity: 0, x: -20 }}
+											animate={{ opacity: 1, x: 0 }}
+											transition={{ delay: 0.9, duration: 0.6 }}
+										>
+											<label className="block text-sm font-semibold text-gray-700 mb-2">
+												Step 2 — Choose Category
+											</label>
+											<div className="space-y-2">
+												{getCategoriesForService(bookingService).map(opt => (
+													<button
+														key={opt.value}
+														onClick={() => setBookingCategory(opt.value)}
+														className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-colors ${bookingCategory === opt.value ? 'border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88]' : 'border-gray-200 hover:border-[#FFB400] text-gray-700'}`}
+													>
+														{opt.icon && <img src={opt.icon} alt="" className="w-7 h-7 object-contain rounded" />}
+														<span className="font-medium">{opt.label}</span>
+													</button>
 												))}
-											</select>
-											
-										</div>
-									</motion.div>
-
-									{/* Location */}
-									<motion.div
-										initial={{ opacity: 0, x: -20 }}
-										animate={{ opacity: 1, x: 0 }}
-										transition={{ delay: 0.9, duration: 0.6 }}
-									>
-										<label className="block text-sm font-semibold text-gray-700 mb-2">
-											Your Location
-										</label>
-										<div className="relative">
-											<div className="flex items-center border-2 border-gray-200 rounded-xl focus-within:border-[#FFB400] transition-colors">
-												<div className="flex-1">
-													<AddressAutocomplete
-														value={fullAddress}
-														onChange={setFullAddress}
-														onSelect={handleAddressSelect}
-														placeholder="Enter your location"
-														initialValue={fullAddress}
-													/>
-												</div>
 											</div>
-										</div>
-									</motion.div>
+										</motion.div>
+									)}
 
-									{/* Pickup Date */}
-									<motion.div
-										initial={{ opacity: 0, x: -20 }}
-										animate={{ opacity: 1, x: 0 }}
-										transition={{ delay: 1, duration: 0.6 }}
-									>
-										<label className="block text-sm font-semibold text-gray-700 mb-2">
-											Pickup Date
-										</label>
-										<div className="relative">
-											<Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-											<input
-												type="date"
-												value={pickupDate}
-												onChange={(e) => setPickupDate(e.target.value)}
-												className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none transition-colors"
-												min={new Date().toISOString().split('T')[0]}
-											/>
-										</div>
-									</motion.div>
-
-									{/* Phone Number */}
-									<motion.div
-										initial={{ opacity: 0, x: -20 }}
-										animate={{ opacity: 1, x: 0 }}
-										transition={{ delay: 1.1, duration: 0.6 }}
-									>
-										<label className="block text-sm font-semibold text-gray-700 mb-2">
-											Phone Number
-										</label>
-										<div className="relative">
-											<Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-											<input
-												type="tel"
-												value={phoneNumber}
-												onChange={(e) => setPhoneNumber(e.target.value)}
-												placeholder="Enter your phone number"
-												className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none transition-colors"
-											/>
-										</div>
-									</motion.div>
-
-									{/* Book Button */}
-									<motion.button
-										initial={{ opacity: 0, y: 20 }}
-										animate={{ opacity: 1, y: 0 }}
-										transition={{ delay: 1.2, duration: 0.6 }}
-										whileHover={{ scale: 1.02, boxShadow: "0 10px 30px rgba(255, 180, 0, 0.3)" }}
-										whileTap={{ scale: 0.98 }}
-										onClick={handleBookService}
-										className="w-full py-4 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-									>
-										Book Your Service
-									</motion.button>
+									{/* Book Now button */}
+									{bookingService && bookingCategory && (
+										<motion.button
+											initial={{ opacity: 0, y: 20 }}
+											animate={{ opacity: 1, y: 0 }}
+											transition={{ delay: 1.0, duration: 0.6 }}
+											whileHover={{ scale: 1.02, boxShadow: "0 10px 30px rgba(255, 180, 0, 0.3)" }}
+											whileTap={{ scale: 0.98 }}
+											onClick={() => {
+												if (bookingService === 'Car') {
+													navigate(`/car-wash-deals/${bookingCategory}`);
+												} else if (bookingService === 'Bike') {
+													navigate(`/bike-wash-deals/${bookingCategory}`);
+												} else if (bookingService === 'Helmet') {
+													navigate(`/helmet-wash-deals/${bookingCategory}`);
+												}
+											}}
+											className="w-full py-4 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+										>
+											 Book Now
+										</motion.button>
+									)}
 
 									{/* Service Info */}
 									<motion.div
