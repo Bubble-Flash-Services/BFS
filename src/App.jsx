@@ -30,6 +30,7 @@ import Refund from './pages/policies/Refund';
 import GoogleSuccess from './pages/GoogleSuccess';
 import ContactPage from './pages/contact/ContactPage';
 import TeamPage from './pages/team/TeamPage';
+import GreenlandPage from './pages/GreenlandPage';
 import ProfilePage from './pages/ProfilePage';
 import OrdersPage from './pages/OrdersPage';
 import AddressesPage from './pages/AddressesPage';
@@ -89,6 +90,7 @@ function AppContent() {
         <Route path="/google-success" element={<GoogleSuccess />} />
         <Route path="/contact" element={<ContactPage />} />
   <Route path="/team" element={<TeamPage />} />
+    <Route path="/greenland" element={<GreenlandPage />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="/admin/dashboard" element={

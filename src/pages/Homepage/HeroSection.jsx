@@ -1160,6 +1160,49 @@ export default function HeroSection() {
 				</div>
 			</div>
 
+				{/* BFS Greenland Services Banner */}
+				<section className="relative py-12 bg-white">
+					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="relative overflow-hidden rounded-3xl border border-[#1F3C88]/10 shadow-[0_10px_30px_rgba(31,60,136,0.12)]">
+							<div className="absolute inset-0 bg-gradient-to-r from-[#1F3C88] via-[#2B4EA1] to-[#1F3C88]" />
+							{/* Yellow accent shapes */}
+							<div className="pointer-events-none absolute -top-10 -right-10 w-48 h-48 bg-[#FFB400] rounded-full opacity-20 blur-2xl" />
+							<div className="pointer-events-none absolute -bottom-10 -left-10 w-56 h-56 bg-[#FFB400] rounded-full opacity-10 blur-3xl" />
+
+							<div className="relative p-6 md:p-10 text-white grid md:grid-cols-[1.5fr_1fr] gap-8">
+								<div>
+									<div className="flex items-center gap-3 mb-3">
+										<img src="/logo.jpg" alt="BFS Logo" className="w-12 h-12 sm:w-16 sm:h-16 object-contain rounded-sm" />
+										<span className="text-2xl md:text-3xl font-extrabold leading-tight bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent">BFS Greenland Services</span>
+									</div>
+									<h3 className="text-2xl md:text-3xl font-extrabold leading-tight">Fast, Fresh & Reliable Home Services in Bangalore</h3>
+									<div className="mt-4 text-sm md:text-base text-white/95">
+										✅ No hidden charges • ✅ Eco-friendly products • ✅ Instant booking
+									</div>
+									<div className="mt-6 flex flex-col sm:flex-row gap-3">
+										<button
+											onClick={() => navigate('/greenland')}
+											className="px-5 py-3 rounded-xl font-semibold bg-[#FFB400] text-[#1F3C88] hover:brightness-105 transition-all"
+										>
+											Book a Service
+										</button>
+										<a
+											href="tel:+919980123452"
+											className="px-5 py-3 rounded-xl font-semibold border-2 border-white/70 hover:bg-white/10 transition-all text-white text-center"
+										>
+											Call Now
+										</a>
+									</div>
+								</div>
+								{/* right side simple illustration */}
+								<div className="hidden md:flex items-center justify-center p-4">
+									<img src="/clean-home.jpg" alt="Clean home" className="rounded-2xl shadow-xl border border-white/10 max-h-60 object-cover" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
 			{/* About Us Section with Light Theme */}
 			<div className="bg-gray-50">
 				<section id="aboutus" className="py-20">
