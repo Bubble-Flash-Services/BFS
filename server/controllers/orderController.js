@@ -226,6 +226,12 @@ export const createOrder = async (req, res) => {
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
     const orderNumber = `BFS${timestamp.slice(-6)}${random}`;
 
+    // Normalize checkout contact
+    const checkoutPhone = serviceAddress?.phone || serviceAddress?.contactPhone || req.body?.contactPhone || req.body?.phone || userDoc?.phone;
+    if (serviceAddress && checkoutPhone && !serviceAddress.phone) {
+      serviceAddress.phone = checkoutPhone;
+    }
+
     // Create order
     const order = new Order({
       orderNumber,
@@ -248,6 +254,18 @@ export const createOrder = async (req, res) => {
     });
 
     await order.save();
+
+    // Update user profile with latest phone/address for single source of truth
+    try {
+      const updates = {};
+      if (checkoutPhone && (!userDoc?.phone || userDoc.phone !== checkoutPhone)) updates.phone = checkoutPhone;
+      if (serviceAddress?.fullAddress && (!userDoc?.address || userDoc.address !== serviceAddress.fullAddress)) updates.address = serviceAddress.fullAddress;
+      if (Object.keys(updates).length) {
+        await User.findByIdAndUpdate(req.user.id, updates, { new: true });
+      }
+    } catch (e) {
+      console.warn('⚠️ Failed to sync user profile with checkout contact/address:', e.message);
+    }
 
     // Fetch user to enrich telegram notification
     let userDoc = null;

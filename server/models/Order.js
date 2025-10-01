@@ -82,6 +82,7 @@ const orderSchema = new mongoose.Schema({
       type: String,
       required: true
     },
+    phone: String,
     latitude: Number,
     longitude: Number,
     city: String,

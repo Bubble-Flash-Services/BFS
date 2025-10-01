@@ -60,17 +60,40 @@ const AdminDashboard = () => {
           cancellationRequests: overview?.cancelledBookings ?? 0,
         });
 
-        // Current customers table from recent bookings
-        const customersFromRecent = recentBookings.map((rb) => ({
+        // Helper to extract phone from various sources (notes, serviceAddress, explicit fields)
+        const extractPhone = (rb) => {
+          const fromUser = rb?.userId?.phone;
+          const fromSvcAddr = rb?.serviceAddress?.phone || rb?.serviceAddress?.contactPhone;
+          const explicit = rb?.contactPhone || rb?.phone || rb?.paymentDetails?.contact;
+          const fromNotes = (() => {
+            const notes = rb?.customerNotes || rb?.notes || '';
+            const m = /phone\s*[:\-]?\s*([+]?\d[\d\s-]{7,}\d)/i.exec(notes);
+            return m ? m[1].replace(/\s+/g, '').replace(/-/g, '') : null;
+          })();
+          return explicit || fromSvcAddr || fromNotes || fromUser || 'N/A';
+        };
+
+        // Current customers table from recent bookings (prefer checkout-provided address/phone)
+        const customersFromRecent = recentBookings.map((rb) => {
+          const locRaw = rb.serviceAddress?.fullAddress || rb.serviceAddress?.address || rb.userId?.address || '';
+          // Clean up placeholder defaults and standalone pincodes
+          const location = (() => {
+            if (!locRaw) return 'N/A';
+            if (/^\s*Bengaluru,?\s*India\s*$/i.test(locRaw)) return 'N/A';
+            if (/^\s*\d{6}\s*$/.test(locRaw)) return 'N/A';
+            return locRaw;
+          })();
+          return ({
           id: rb._id,
           customer: rb.userId?.name || 'Unknown',
-          contactNo: rb.userId?.phone || 'N/A',
-          location: rb.serviceAddress?.fullAddress || 'N/A',
+          contactNo: extractPhone(rb),
+          location,
           serviceMode: rb.serviceType || rb.items?.[0]?.serviceName || 'N/A',
           paymentMethod: rb.paymentMethod || 'N/A',
           plan: rb.items?.[0]?.packageName || 'N/A',
           date: rb.createdAt ? new Date(rb.createdAt).toISOString().split('T')[0] : 'N/A',
-        }));
+          });
+        });
         setCurrentCustomers(customersFromRecent);
 
         // Monthly charts from monthlyRevenue

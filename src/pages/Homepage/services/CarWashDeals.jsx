@@ -648,7 +648,9 @@ export default function CarWashDeals() {
   const startX = useRef(0);
   const isDragging = useRef(false);
 
-  const categoryKey = category?.toLowerCase().replace(/\s+/g, '-').replace('&', '');
+  let categoryKey = category?.toLowerCase().replace(/\s+/g, '-').replace('&', '');
+  // Normalize common aliases
+  if (categoryKey === 'mid-suv') categoryKey = 'midsuv';
   const dealData = carWashPackages[categoryKey] || carWashPackages.hatchbacks;
   const isLuxury = categoryKey === 'luxuries';
 

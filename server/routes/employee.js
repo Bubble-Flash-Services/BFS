@@ -110,7 +110,7 @@ router.get('/dashboard', authenticateEmployee, async (req, res) => {
         assignments: (activeAssignments.length ? activeAssignments : todayAssignments).map(assignment => ({
           id: assignment.orderNumber,
           customerName: assignment.userId?.name || 'Unknown',
-          customerPhone: assignment.userId?.phone || '',
+          customerPhone: assignment.serviceAddress?.phone || assignment.userId?.phone || '',
           serviceType: assignment.serviceType,
           location: assignment.serviceAddress?.city || assignment.serviceAddress?.state || '',
           address: assignment.serviceAddress?.fullAddress || '',
@@ -203,7 +203,7 @@ router.get('/assignments', authenticateEmployee, async (req, res) => {
     const formattedAssignments = filteredAssignments.map(assignment => ({
       id: assignment.orderNumber,
       customerName: assignment.userId?.name || 'Unknown',
-      customerPhone: assignment.userId?.phone || '',
+  customerPhone: assignment.serviceAddress?.phone || assignment.userId?.phone || '',
       serviceType: assignment.serviceType,
       location: assignment.serviceAddress?.city || assignment.serviceAddress?.state || '',
       address: assignment.serviceAddress?.fullAddress || '',

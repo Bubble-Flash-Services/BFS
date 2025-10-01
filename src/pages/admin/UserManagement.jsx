@@ -24,8 +24,10 @@ const UserManagement = () => {
 
   // Modal states
   const [viewModal, setViewModal] = useState({ open: false, user: null });
+  const [lastOrder, setLastOrder] = useState(null);
   const [editModal, setEditModal] = useState({ open: false, user: null });
   const [deleteModal, setDeleteModal] = useState({ open: false, user: null });
+  const [lastOrderMap, setLastOrderMap] = useState({});
 
   // Fetch users from API
   useEffect(() => {
@@ -83,7 +85,7 @@ const UserManagement = () => {
         };
 
         // Transform API data to match frontend format
-        const transformedUsers = result.data.users.map(user => ({
+        let transformedUsers = result.data.users.map(user => ({
           id: user._id,
           name: user.name || 'N/A',
           email: user.email || 'N/A',
@@ -96,6 +98,43 @@ const UserManagement = () => {
           provider: user.provider || 'local',
           lastLogin: formatDate(user.lastLogin)
         }));
+
+        // Enrich each user with latest order contact/address to replace N/A and store in a map
+        try {
+          const token = localStorage.getItem('adminToken');
+          const orderEntries = await Promise.all(transformedUsers.map(async (u) => {
+            try {
+              const res = await fetch(`${API}/api/adminNew/users/${u.id}/last-order`, { headers: { 'Authorization': `Bearer ${token}` } });
+              const data = await res.json();
+              if (data?.success && data.data) {
+                const o = data.data;
+                const phoneFromNotes = (() => {
+                  const notes = o?.customerNotes || '';
+                  const m = /phone\s*[:\-]?\s*([+]?\d[\d\s-]{7,}\d)/i.exec(notes);
+                  return m ? m[1].replace(/\s+/g, '').replace(/-/g, '') : '';
+                })();
+                const entry = {
+                  id: u.id,
+                  phone: o?.serviceAddress?.phone || o?.paymentDetails?.contact || phoneFromNotes || '',
+                  address: o?.serviceAddress?.fullAddress || '',
+                  createdAt: o?.createdAt || null
+                };
+                return entry;
+              }
+            } catch {}
+            return { id: u.id };
+          }));
+          const map = {};
+          orderEntries.forEach(e => { if (e && e.id) map[e.id] = e; });
+          setLastOrderMap(map);
+          // Patch transformed users when fields are N/A
+          transformedUsers = transformedUsers.map(u => {
+            const entry = map[u.id] || {};
+            const phone = (u.phone && u.phone !== 'N/A') ? u.phone : (entry.phone || u.phone);
+            const location = (u.location && u.location !== 'N/A') ? u.location : (entry.address || u.location);
+            return { ...u, phone, location };
+          });
+        } catch {}
 
         setUsers(transformedUsers);
         setFilteredUsers(transformedUsers);
@@ -142,9 +181,24 @@ const UserManagement = () => {
   };
 
   // Action handlers
-  const handleViewUser = (userId) => {
+  const handleViewUser = async (userId) => {
     const user = users.find(u => u.id === userId);
     setViewModal({ open: true, user });
+    // Fetch latest order to get checkout phone/address
+    try {
+      const token = localStorage.getItem('adminToken');
+      const res = await fetch(`${API}/api/adminNew/users/${userId}/last-order`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data?.success) {
+        setLastOrder(data.data);
+      } else {
+        setLastOrder(null);
+      }
+    } catch (e) {
+      setLastOrder(null);
+    }
   };
 
   const handleEditUser = (userId) => {
@@ -375,12 +429,12 @@ const UserManagement = () => {
                   <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(u.status)}`}>{u.status}</span>
                 </div>
                 <div className="mt-3 grid grid-cols-1 gap-2 text-sm">
-                  <div className="flex justify-between"><span className="text-gray-500">Phone</span><span className="text-gray-800">{u.phone}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-500">Phone</span><span className="text-gray-800">{(u.phone && u.phone !== 'N/A') ? u.phone : (lastOrderMap[u.id]?.phone || 'N/A')}</span></div>
                   <div className="flex justify-between"><span className="text-gray-500">Joined</span><span className="text-gray-800">{u.joinedDate}</span></div>
                   <div className="flex justify-between"><span className="text-gray-500">Bookings</span><span className="text-gray-800">{u.totalBookings}</span></div>
                   <div className="flex justify-between"><span className="text-gray-500">Total Spent</span><span className="text-gray-800">₹{u.totalSpent.toLocaleString()}</span></div>
                 </div>
-                <div className="mt-3 text-xs text-gray-600 break-words line-clamp-2">{u.location}</div>
+                <div className="mt-3 text-xs text-gray-600 break-words line-clamp-2">{(u.location && u.location !== 'N/A') ? u.location : (lastOrderMap[u.id]?.address || 'N/A')}</div>
                 <div className="mt-4 flex gap-3">
                   <button onClick={() => handleViewUser(u.id)} className="px-3 py-2 rounded border text-blue-600 border-blue-200">View</button>
                   <button onClick={() => handleEditUser(u.id)} className="px-3 py-2 rounded border text-green-600 border-green-200">Edit</button>
@@ -431,10 +485,10 @@ const UserManagement = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{user.phone}</div>
+                      <div className="text-sm text-gray-900">{(user.phone && user.phone !== 'N/A') ? user.phone : (lastOrderMap[user.id]?.phone || 'N/A')}</div>
                     </td>
                     <td className="px-6 py-4 align-top">
-                      <div className="max-w-xs md:max-w-sm lg:max-w-md text-sm text-gray-900 break-words line-clamp-2">{user.location}</div>
+                      <div className="max-w-xs md:max-w-sm lg:max-w-md text-sm text-gray-900 break-words line-clamp-2">{(user.location && user.location !== 'N/A') ? user.location : (lastOrderMap[user.id]?.address || 'N/A')}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{user.joinedDate}</div>
@@ -497,7 +551,7 @@ const UserManagement = () => {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">User Details</h3>
               <button
-                onClick={() => setViewModal({ open: false, user: null })}
+                onClick={() => { setViewModal({ open: false, user: null }); setLastOrder(null); }}
                 className="text-gray-400 hover:text-gray-600"
               >
                 ✕
@@ -515,12 +569,21 @@ const UserManagement = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Phone</label>
-                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.phone}</p>
+                  <p className="mt-1 text-sm text-gray-900">{(lastOrder?.serviceAddress?.phone || lastOrder?.paymentDetails?.contact || viewModal.user.phone)}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Location</label>
-                  <p className="mt-1 text-sm text-gray-900">{viewModal.user.location}</p>
+                  <label className="block text-sm font-medium text-gray-700">Service Address</label>
+                  <p className="mt-1 text-sm text-gray-900">{lastOrder?.serviceAddress?.fullAddress || viewModal.user.location}</p>
                 </div>
+                {/* Additional info from last order if available */}
+                {lastOrder && (
+                  <div className="col-span-2 mt-2 text-xs text-gray-600">
+                    <div>Last booking: {new Date(lastOrder.createdAt).toLocaleString()}</div>
+                    {lastOrder.customerNotes && (
+                      <div className="mt-1">Notes: {lastOrder.customerNotes}</div>
+                    )}
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Join Date</label>
                   <p className="mt-1 text-sm text-gray-900">{viewModal.user.joinedDate}</p>

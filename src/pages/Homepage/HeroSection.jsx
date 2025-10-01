@@ -74,6 +74,7 @@ function getCategoriesForService(service) {
 			return [
 				{ value: 'hatchbacks', label: 'Hatchback', icon: '/car/car1.png' },
 				{ value: 'sedans', label: 'Sedan', icon: '/car/car2.png' },
+				{ value: 'midsuv', label: 'Mid-SUV', icon: '/car/suv/pexels-eng_hk-2153621871-33018219.png' },
 				{ value: 'suv', label: 'SUV', icon: '/car/car3.png' },
 				{ value: 'luxuries', label: 'Luxury', icon: '/car/suv/luxury_suv.png' }
 			];
@@ -708,7 +709,7 @@ export default function HeroSection() {
 								{/* Offers Grid */}
 								<div className="grid grid-cols-2 gap-4 mb-6">
 									<div className="bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-3">
-										<div className="text-2xl font-bold text-yellow-300">20%</div>
+										<div className="text-2xl font-bold text-yellow-300">10%</div>
 										<div className="text-sm">OFF First Order</div>
 									</div>
 									<div className="bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-3">

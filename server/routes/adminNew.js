@@ -88,7 +88,7 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       .populate('userId', 'name email phone')
       .sort({ createdAt: -1 })
       .limit(5)
-      .select('_id serviceType status totalAmount paymentMethod serviceAddress items createdAt');
+      .select('_id serviceType status totalAmount paymentMethod serviceAddress items createdAt customerNotes paymentDetails');
 
     res.json({
       success: true,
@@ -326,6 +326,25 @@ router.delete('/users/:userId', authenticateAdmin, requirePermission('users'), a
       success: false,
       message: 'Failed to delete user'
     });
+  }
+});
+
+// Get the latest order of a user (for checkout phone/address)
+router.get('/users/:userId/last-order', authenticateAdmin, requirePermission('users'), async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const order = await Order.findOne({ userId })
+      .sort({ createdAt: -1 })
+      .select('serviceAddress customerNotes paymentDetails paymentMethod createdAt');
+
+    if (!order) {
+      return res.json({ success: true, data: null, message: 'No orders for user' });
+    }
+
+    res.json({ success: true, data: order });
+  } catch (error) {
+    console.error('Get last order error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch last order' });
   }
 });
 
