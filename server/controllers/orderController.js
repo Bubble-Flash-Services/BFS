@@ -226,6 +226,14 @@ export const createOrder = async (req, res) => {
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
     const orderNumber = `BFS${timestamp.slice(-6)}${random}`;
 
+      // Fetch user early to avoid TDZ when referencing below
+      let userDoc = null;
+      try {
+        userDoc = await User.findById(req.user.id).lean();
+      } catch (e) {
+        console.warn('⚠️ Could not fetch user early for checkout contact/address:', e.message);
+      }
+
     // Normalize checkout contact
     const checkoutPhone = serviceAddress?.phone || serviceAddress?.contactPhone || req.body?.contactPhone || req.body?.phone || userDoc?.phone;
     if (serviceAddress && checkoutPhone && !serviceAddress.phone) {
@@ -267,13 +275,7 @@ export const createOrder = async (req, res) => {
       console.warn('⚠️ Failed to sync user profile with checkout contact/address:', e.message);
     }
 
-    // Fetch user to enrich telegram notification
-    let userDoc = null;
-    try {
-      userDoc = await User.findById(req.user.id).lean();
-    } catch (e) {
-      console.warn('⚠️ Could not fetch user for telegram message:', e.message);
-    }
+    // userDoc already fetched above; reuse for telegram
 
     // Fire-and-forget Telegram notification (don't block response)
     (async () => {
