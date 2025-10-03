@@ -118,10 +118,21 @@ export const getCart = async (req, res) => {
       });
     }
 
+    // Normalize image fields for consistent frontend display
+    if (cart) {
+      const plain = cart.toObject();
+      plain.items = (plain.items || []).map(it => ({
+        ...it,
+        image: it.image || it.img || it.serviceId?.image || (it.serviceName && /bike/i.test(it.serviceName) ? '/bike/bike1.png' : (it.serviceName && /helmet/i.test(it.serviceName) ? '/helmet/helmethome.png' : '/car/car1.png')),
+        img: undefined
+      }));
+      cart = plain;
+    }
+
     // Ensure tax fields exist (for older carts before schema change)
     if (cart && (cart.taxAmount === undefined || cart.subtotalAmount === undefined)) {
-      const plain = cart.toObject();
-      const subtotal = plain.items.reduce((sum, item) => {
+      const plain = cart; // already plain object above
+      const subtotal = (plain.items || []).reduce((sum, item) => {
         let itemTotal = item.price * item.quantity;
         if (item.addOns) item.addOns.forEach(a => itemTotal += a.price * a.quantity);
         if (item.laundryItems) item.laundryItems.forEach(l => itemTotal += l.pricePerItem * l.quantity);
@@ -137,10 +148,7 @@ export const getCart = async (req, res) => {
       return res.json({ success: true, data: plain });
     }
 
-    res.json({
-      success: true,
-      data: cart
-    });
+    res.json({ success: true, data: cart });
   } catch (error) {
     console.error('Get cart error:', error);
     res.status(500).json({

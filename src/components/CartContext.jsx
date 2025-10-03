@@ -130,8 +130,8 @@ export function CartProvider({ children }) {
           vehicleType: item.vehicleType,
           specialInstructions: item.specialInstructions,
           // Add image handling
-          img: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
-          image: (item.serviceId?.image) || item.image || item.img || getDefaultServiceImage(item.serviceName || item.name),
+          img: item.image || item.img || item.serviceId?.image || getDefaultServiceImage(item.serviceName || item.name),
+          image: item.image || item.img || item.serviceId?.image || getDefaultServiceImage(item.serviceName || item.name),
           // Add other properties as needed
           category: item.category || deriveCategory(item),
           description: item.description,

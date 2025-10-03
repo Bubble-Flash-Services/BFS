@@ -28,6 +28,7 @@ import Security from './pages/policies/Security';
 import Shipping from './pages/policies/Shipping';
 import Refund from './pages/policies/Refund';
 import GoogleSuccess from './pages/GoogleSuccess';
+import Impersonate from './pages/Impersonate';
 import ContactPage from './pages/contact/ContactPage';
 import TeamPage from './pages/team/TeamPage';
 import GreenlandPage from './pages/GreenlandPage';
@@ -88,6 +89,7 @@ function AppContent() {
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/addresses" element={<AddressesPage />} />
         <Route path="/google-success" element={<GoogleSuccess />} />
+  <Route path="/impersonate" element={<Impersonate />} />
         <Route path="/contact" element={<ContactPage />} />
   <Route path="/team" element={<TeamPage />} />
     <Route path="/greenland" element={<GreenlandPage />} />
@@ -171,7 +173,7 @@ function CartProviderWrapper({ children }) {
   
   // Force CartProvider to remount when user changes by using user email as key
   // This ensures complete cart state isolation between users
-  const cartKey = user?.email || 'guest';
+  const cartKey = user?.email || user?._id || 'guest';
   
   return (
     <CartProvider key={cartKey}>

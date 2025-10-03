@@ -3,9 +3,12 @@ import Admin from '../models/Admin.js';
 import Employee from '../models/Employee.js';
 import User from '../models/User.js';
 import Order from '../models/Order.js';
+import Cart from '../models/Cart.js';
+import Address from '../models/Address.js';
 import Coupon from '../models/Coupon.js';
 import { authenticateAdmin, requirePermission } from '../middleware/authAdmin.js';
 import { searchByFolder } from '../services/cloudinary.js';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -286,46 +289,29 @@ router.delete('/users/:userId', authenticateAdmin, requirePermission('users'), a
   try {
     const { userId } = req.params;
 
-    // Check if user has any orders (optional - you may want to keep this check)
-    const userOrders = await Order.countDocuments({ userId });
-    
-    if (userOrders > 0) {
-      // Instead of deleting, mark as inactive
-      const user = await User.findByIdAndUpdate(
-        userId,
-        { status: 'inactive' },
-        { new: true }
-      ).select('-password');
-
-      return res.json({
-        success: true,
-        message: 'User deactivated (has existing orders)',
-        user,
-        deactivated: true
-      });
-    }
-
-    // If no orders, actually delete the user
-    const user = await User.findByIdAndDelete(userId);
-
+    // Ensure user exists first
+    const user = await User.findById(userId).select('_id');
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
+
+    // Cascade delete: Orders, Cart, Addresses, and finally the User document
+    await Promise.all([
+      Order.deleteMany({ userId }),
+      Cart.deleteOne({ userId }),
+      Address.deleteMany({ userId })
+    ]);
+
+    await User.findByIdAndDelete(userId);
 
     res.json({
       success: true,
-      message: 'User deleted successfully',
+      message: 'User and all related data deleted successfully',
       deleted: true
     });
   } catch (error) {
     console.error('Delete user error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to delete user'
-    });
+    res.status(500).json({ success: false, message: 'Failed to delete user' });
   }
 });
 
@@ -345,6 +331,22 @@ router.get('/users/:userId/last-order', authenticateAdmin, requirePermission('us
   } catch (error) {
     console.error('Get last order error:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch last order' });
+  }
+});
+
+// Admin: generate impersonation token for a user (login as that user)
+router.post('/users/:userId/impersonate', authenticateAdmin, requirePermission('users'), async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    const token = jwt.sign({ id: user._id, impersonatedBy: req.admin?._id || 'admin' }, process.env.JWT_SECRET || 'secret', { expiresIn: '15m' });
+    res.json({ success: true, token, user: { _id: user._id, name: user.name, email: user.email, phone: user.phone } });
+  } catch (error) {
+    console.error('Impersonation token error:', error);
+    res.status(500).json({ success: false, message: 'Failed to generate impersonation token' });
   }
 });
 

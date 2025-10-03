@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Eye, Edit, Trash2, Filter } from 'lucide-react';
+import { Search, Eye, Edit, Trash2, Filter, LogIn } from 'lucide-react';
 import AdminLayout from '../../components/AdminLayout';
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -209,6 +209,26 @@ const UserManagement = () => {
   const handleDeleteUser = (userId) => {
     const user = users.find(u => u.id === userId);
     setDeleteModal({ open: true, user });
+  };
+
+  // Impersonate (login as user)
+  const handleImpersonate = async (userId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) return;
+      const res = await fetch(`${API}/api/adminNew/users/${userId}/impersonate`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      if (data?.success && data.token) {
+        const base = window.location.origin;
+        const url = `${base}/impersonate?token=${encodeURIComponent(data.token)}`;
+        window.open(url, '_blank');
+      }
+    } catch (e) {
+      console.error('Failed to impersonate user', e);
+    }
   };
 
   // Update user status
@@ -526,6 +546,13 @@ const UserManagement = () => {
                           title="Delete User"
                         >
                           <Trash2 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleImpersonate(user.id)}
+                          className="text-gray-600 hover:text-gray-900 p-1"
+                          title="Login as this user"
+                        >
+                          <LogIn className="h-4 w-4" />
                         </button>
                       </div>
                     </td>

@@ -17,14 +17,18 @@ function generateToken(user) {
 // Signup (email/password)
 router.post('/signup', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) return res.status(400).json({ message: 'All fields required' });
-    const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ message: 'User already exists' });
-    // Remove manual hash, let pre-save hook hash the password
-    const user = await User.create({ name, email, password, provider: 'local' });
+    const { name, email, password, phone, address } = req.body;
+    if (!name || !email || !password || !phone || !address) {
+      return res.status(400).json({ message: 'Name, email, password, phone and address are required' });
+    }
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) return res.status(400).json({ message: 'User already exists' });
+    const existingPhone = await User.findOne({ phone });
+    if (existingPhone) return res.status(400).json({ message: 'Phone already in use' });
+    // Create user; pre-save hook hashes password
+    const user = await User.create({ name, email, password, phone, address, provider: 'local' });
     const token = generateToken(user);
-    res.json({ token, user: { name: user.name, email: user.email, image: null } });
+    res.json({ token, user: { name: user.name, email: user.email, phone: user.phone, address: user.address, image: null } });
   } catch (e) {
     res.status(500).json({ message: 'Server error' });
   }

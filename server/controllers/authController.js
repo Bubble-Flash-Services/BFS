@@ -26,12 +26,16 @@ export function genToken(user) {
 export const signup = async (req, res) => {
   try {
     // Accept both 'name' and 'username' as aliases
-    let { name, username, email, phone, password } = req.body;
+    let { name, username, email, phone, password, address } = req.body;
     name = name || username;
-    if (!name || (!email && !phone)) return res.status(400).json({ error: 'Name and email or phone required' });
+    // Require phone and address as mandatory fields
+    if (!name) return res.status(400).json({ error: 'Name is required' });
+    if (!phone) return res.status(400).json({ error: 'Phone is required' });
+    if (!address) return res.status(400).json({ error: 'Address is required' });
+    // Optional email; if provided ensure uniqueness
     if (email && await User.findOne({ email })) return res.status(400).json({ error: 'Email already exists' });
     if (phone && await User.findOne({ phone })) return res.status(400).json({ error: 'Phone already exists' });
-    const user = await User.create({ name, email, phone, password });
+    const user = await User.create({ name, email, phone, password, address });
     const token = genToken(user);
     res.json({ token, user });
   } catch (e) { res.status(500).json({ error: e.message }); }

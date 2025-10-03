@@ -21,6 +21,13 @@ export async function getUserOrders(token) {
   return res.json();
 }
 
+export async function getLastOrder(token) {
+  const res = await fetch(`${API}/api/orders?page=1&limit=1`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+}
+
 export async function getOrderById(token, orderId) {
   const res = await fetch(`${API}/api/orders/${orderId}`, {
     headers: { Authorization: `Bearer ${token}` },

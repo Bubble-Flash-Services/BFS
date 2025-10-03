@@ -8,6 +8,8 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -21,7 +23,9 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
     }
     setLoading(true);
     try {
-      const res = await signup({ email, password, name: name || email.split('@')[0] });
+      if (!phone.trim()) { setLoading(false); setError('Phone is required'); return; }
+      if (!address.trim()) { setLoading(false); setError('Address is required'); return; }
+      const res = await signup({ email, password, name: name || email.split('@')[0], phone, address });
       if (res.token && res.user) {
         console.log('✅ Signup successful, fetching complete profile...');
         
@@ -69,8 +73,8 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10">
-      <div className="relative bg-white rounded-3xl shadow-lg w-full max-w-xs sm:max-w-md md:max-w-lg max-h-screen overflow-y-auto p-4 sm:p-6 flex flex-col items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10 p-4">
+      <div className="relative bg-white rounded-3xl shadow-lg w-full max-w-xs sm:max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6 flex flex-col items-stretch">
         {/* Close button */}
         <button
           className="absolute top-4 right-4 text-3xl sm:text-4xl text-gray-900 bg-white rounded-full border border-gray-300 shadow-lg w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center z-50 cursor-pointer hover:bg-gray-100 "
@@ -86,7 +90,7 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
         <div className="w-2/3 sm:w-3/4 border-t border-black mb-4 sm:mb-6 md:mb-8" />
         {/* Form */}
         <div className="w-full flex flex-col items-center">
-          <form className="w-full flex flex-col items-center gap-4 sm:gap-8" onSubmit={handleSignup}>
+          <form className="w-full flex flex-col items-center gap-4 sm:gap-6" onSubmit={handleSignup}>
               <div className="w-full">
                 <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Name</label>
                 <input
@@ -106,6 +110,28 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
                   placeholder="Enter your email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="w-full">
+                <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Phone</label>
+                <input
+                  type="tel"
+                  className="w-full rounded-2xl px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  placeholder="Enter your phone number"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="w-full">
+                <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Address</label>
+                <textarea
+                  className="w-full rounded-2xl px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  placeholder="Enter your full address"
+                  rows="3"
+                  value={address}
+                  onChange={e => setAddress(e.target.value)}
                   required
                 />
               </div>
