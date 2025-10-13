@@ -1160,7 +1160,7 @@ export default function HeroSection() {
 				</div>
 			</div>
 
-				{/* BFS Greenland Services Banner */}
+				{/* BFS Green & Clean Services Banner */}
 				<section className="relative py-12 bg-white">
 					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="relative overflow-hidden rounded-3xl border border-[#1F3C88]/10 shadow-[0_10px_30px_rgba(31,60,136,0.12)]">
@@ -1173,7 +1173,7 @@ export default function HeroSection() {
 								<div>
 									<div className="flex items-center gap-3 mb-3">
 										<img src="/logo.jpg" alt="BFS Logo" className="w-12 h-12 sm:w-16 sm:h-16 object-contain rounded-sm" />
-										<span className="text-2xl md:text-3xl font-extrabold leading-tight bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent">BFS Greenland Services</span>
+										<span className="text-2xl md:text-3xl font-extrabold leading-tight bg-gradient-to-r from-yellow-400 via-yellow-300 to-blue-700 bg-clip-text text-transparent">BFS Green & Clean Services</span>
 									</div>
 									<h3 className="text-2xl md:text-3xl font-extrabold leading-tight">Fast, Fresh & Reliable Home Services in Bangalore</h3>
 									<div className="mt-4 text-sm md:text-base text-white/95">
@@ -1181,7 +1181,7 @@ export default function HeroSection() {
 									</div>
 									<div className="mt-6 flex flex-col sm:flex-row gap-3">
 										<button
-											onClick={() => navigate('/greenland')}
+											onClick={() => navigate('/green&clean')}
 											className="px-5 py-3 rounded-xl font-semibold bg-[#FFB400] text-[#1F3C88] hover:brightness-105 transition-all"
 										>
 											Book a Service

@@ -16,6 +16,8 @@ const getDefaultServiceImage = (serviceName) => {
     return '/helmet/helmethome.png';
   } else if (name.includes('laundry') || name.includes('wash') || name.includes('clean')) {
     return '/laundry/laundry1.png';
+  } else if (name.includes('green') || name.includes('home cleaning') || name.includes('sofa') || name.includes('carpet') || name.includes('bathroom') || name.includes('kitchen') || name.includes('office')) {
+    return '/clean-home.jpg';
   }
   
   // Default fallback
@@ -43,6 +45,12 @@ export function CartProvider({ children }) {
       const vt = (rawItem.vehicleType || '').toLowerCase();
       const kind = (rawItem.type || '').toLowerCase();
       const cat = (rawItem.category || '').toLowerCase();
+      
+      // Check for Green & Clean services
+      if (kind.includes('green') || cat.includes('green') || /green.*clean|home.*clean|sofa.*clean|carpet.*clean|bathroom.*clean|kitchen.*clean|office.*clean/i.test(svcName)) {
+        return 'Green & Clean';
+      }
+      
       if (kind.includes('accessory') || /accessor/.test(svcName)) return 'Car Accessories';
       if (kind.includes('helmet')) return 'Helmet';
       if (kind.includes('bike')) return 'Bike Wash';

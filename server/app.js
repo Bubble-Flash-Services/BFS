@@ -17,6 +17,10 @@ import callbackRoutes from './routes/callback.js';
 import adminRoutes from './routes/admin.js';
 import adminNewRoutes from './routes/adminNew.js';
 import employeeRoutes from './routes/employee.js';
+import greenServicesRoutes from './routes/greenServices.js';
+import greenBookingsRoutes from './routes/greenBookings.js';
+import greenProvidersRoutes from './routes/greenProviders.js';
+import greenAdminRoutes from './routes/greenAdmin.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import { configureCloudinary } from './services/cloudinary.js';
@@ -60,6 +64,12 @@ app.use('/api/callback', callbackRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/adminNew', adminNewRoutes);
 app.use('/api/employee', employeeRoutes);
+
+// Green & Clean routes
+app.use('/api/green/services', greenServicesRoutes);
+app.use('/api/green/booking', greenBookingsRoutes);
+app.use('/api/green/providers', greenProvidersRoutes);
+app.use('/api/green/admin', greenAdminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

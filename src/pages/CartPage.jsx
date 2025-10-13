@@ -294,12 +294,14 @@ export default function CartPage() {
     const nameField = ((item.serviceName || item.name || '') + ' ' + (item.vehicleType || '')).toLowerCase();
 
     // Prefer explicit type classification
+    if (type.includes('green') || categoryField.includes('green')) return 'Green & Clean';
     if (type.includes('car') || type.includes('monthly')) return 'Car';
     if (type.includes('bike')) return 'Bike';
     if (type.includes('helmet')) return 'Helmet';
     if (type.includes('laundry') || item.laundryDetails) return 'Laundry';
 
     // Then use category derived on server/client
+    if (/(green.*clean|home.*clean|sofa.*clean|carpet.*clean|bathroom.*clean|kitchen.*clean|office.*clean)/.test(categoryField)) return 'Green & Clean';
     if (/(car|car wash|hatch|sedan|suv|luxur)/.test(categoryField)) return 'Car';
     if (/(bike|bike wash|scooter|motorbike|cruiser)/.test(categoryField)) return 'Bike';
     if (/helmet/.test(categoryField)) return 'Helmet';
@@ -312,7 +314,7 @@ export default function CartPage() {
     return 'Others';
   };
 
-  const groupOrder = ['Car', 'Bike', 'Helmet', 'Laundry', 'Others'];
+  const groupOrder = ['Car', 'Bike', 'Helmet', 'Laundry', 'Green & Clean', 'Others'];
   const groupedCart = React.useMemo(() => {
     const groups = {};
     (cartItems || []).forEach((it) => {
