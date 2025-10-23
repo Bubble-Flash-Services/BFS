@@ -10,27 +10,36 @@ router.get('/bookings', authenticateAdmin, async (req, res) => {
     const { status, page = 1, limit = 20, search } = req.query;
     
     const query = {};
-    if (status) {
+    
+    // Validate and sanitize status input
+    const validStatuses = ['pending', 'confirmed', 'in-progress', 'completed', 'cancelled'];
+    if (status && validStatuses.includes(status)) {
       query.status = status;
     }
     
-    if (search) {
+    // Sanitize search input to prevent injection
+    if (search && typeof search === 'string') {
+      // Escape special regex characters in search string
+      const sanitizedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
-        { contactPhone: { $regex: search, $options: 'i' } },
-        { contactEmail: { $regex: search, $options: 'i' } },
-        { 'sourceCity.fullAddress': { $regex: search, $options: 'i' } },
-        { 'destinationCity.fullAddress': { $regex: search, $options: 'i' } }
+        { contactPhone: { $regex: sanitizedSearch, $options: 'i' } },
+        { contactEmail: { $regex: sanitizedSearch, $options: 'i' } },
+        { 'sourceCity.fullAddress': { $regex: sanitizedSearch, $options: 'i' } },
+        { 'destinationCity.fullAddress': { $regex: sanitizedSearch, $options: 'i' } }
       ];
     }
 
-    const skip = (page - 1) * limit;
+    // Validate pagination parameters
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 20));
+    const skip = (pageNum - 1) * limitNum;
     
     const bookings = await MoversPackers.find(query)
       .populate('userId', 'name email phone')
       .populate('assignedEmployee', 'name email')
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(parseInt(limit));
+      .limit(limitNum);
 
     const total = await MoversPackers.countDocuments(query);
 
@@ -40,8 +49,8 @@ router.get('/bookings', authenticateAdmin, async (req, res) => {
         bookings,
         pagination: {
           total,
-          page: parseInt(page),
-          pages: Math.ceil(total / limit)
+          page: pageNum,
+          pages: Math.ceil(total / limitNum)
         }
       }
     });
@@ -101,10 +110,12 @@ router.patch('/booking/:id/status', authenticateAdmin, async (req, res) => {
   try {
     const { status, adminNotes } = req.body;
 
-    if (!status) {
+    // Validate status
+    const validStatuses = ['pending', 'confirmed', 'in-progress', 'completed', 'cancelled'];
+    if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: 'Status is required'
+        message: 'Invalid status. Must be one of: pending, confirmed, in-progress, completed, cancelled'
       });
     }
 

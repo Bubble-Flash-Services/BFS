@@ -106,6 +106,24 @@ router.post('/booking', authenticateToken, async (req, res) => {
       });
     }
 
+    // Validate moveType
+    const validMoveTypes = ['within-city', 'intercity'];
+    if (!validMoveTypes.includes(moveType)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid move type. Must be either within-city or intercity'
+      });
+    }
+
+    // Validate homeSize
+    const validHomeSizes = ['1BHK', '2BHK', '3BHK', '4BHK', 'Villa'];
+    if (!validHomeSizes.includes(homeSize)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid home size. Must be one of: 1BHK, 2BHK, 3BHK, 4BHK, Villa'
+      });
+    }
+
     // Validate moving date (should be in future)
     const selectedDate = new Date(movingDate);
     const today = new Date();
@@ -167,6 +185,24 @@ router.post('/quote', async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Move type and home size are required'
+      });
+    }
+
+    // Validate moveType
+    const validMoveTypes = ['within-city', 'intercity'];
+    if (!validMoveTypes.includes(moveType)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid move type. Must be either within-city or intercity'
+      });
+    }
+
+    // Validate homeSize
+    const validHomeSizes = ['1BHK', '2BHK', '3BHK', '4BHK', 'Villa'];
+    if (!validHomeSizes.includes(homeSize)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid home size. Must be one of: 1BHK, 2BHK, 3BHK, 4BHK, Villa'
       });
     }
 
