@@ -1,6 +1,6 @@
 import express from 'express';
 import MoversPackers from '../models/MoversPackers.js';
-import { authMiddleware } from '../middleware/auth.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -83,7 +83,7 @@ function calculatePrice(moveType, homeSize, vehicleShifting, extraServices) {
 }
 
 // Create a new booking
-router.post('/booking', authMiddleware, async (req, res) => {
+router.post('/booking', authenticateToken, async (req, res) => {
   try {
     const {
       moveType,
@@ -187,7 +187,7 @@ router.post('/quote', async (req, res) => {
 });
 
 // Get user's bookings
-router.get('/my-bookings', authMiddleware, async (req, res) => {
+router.get('/my-bookings', authenticateToken, async (req, res) => {
   try {
     const bookings = await MoversPackers.find({ userId: req.user._id })
       .sort({ createdAt: -1 })
@@ -208,7 +208,7 @@ router.get('/my-bookings', authMiddleware, async (req, res) => {
 });
 
 // Get specific booking details
-router.get('/booking/:id', authMiddleware, async (req, res) => {
+router.get('/booking/:id', authenticateToken, async (req, res) => {
   try {
     const booking = await MoversPackers.findOne({
       _id: req.params.id,
@@ -237,7 +237,7 @@ router.get('/booking/:id', authMiddleware, async (req, res) => {
 });
 
 // Cancel booking
-router.patch('/booking/:id/cancel', authMiddleware, async (req, res) => {
+router.patch('/booking/:id/cancel', authenticateToken, async (req, res) => {
   try {
     const booking = await MoversPackers.findOne({
       _id: req.params.id,

@@ -1,11 +1,11 @@
 import express from 'express';
 import MoversPackers from '../models/MoversPackers.js';
-import { adminAuthMiddleware } from '../middleware/auth.js';
+import { authenticateAdmin } from '../middleware/authAdmin.js';
 
 const router = express.Router();
 
 // Get all bookings (admin only)
-router.get('/bookings', adminAuthMiddleware, async (req, res) => {
+router.get('/bookings', authenticateAdmin, async (req, res) => {
   try {
     const { status, page = 1, limit = 20, search } = req.query;
     
@@ -56,7 +56,7 @@ router.get('/bookings', adminAuthMiddleware, async (req, res) => {
 });
 
 // Get booking stats
-router.get('/stats', adminAuthMiddleware, async (req, res) => {
+router.get('/stats', authenticateAdmin, async (req, res) => {
   try {
     const stats = await MoversPackers.aggregate([
       {
@@ -97,7 +97,7 @@ router.get('/stats', adminAuthMiddleware, async (req, res) => {
 });
 
 // Update booking status
-router.patch('/booking/:id/status', adminAuthMiddleware, async (req, res) => {
+router.patch('/booking/:id/status', authenticateAdmin, async (req, res) => {
   try {
     const { status, adminNotes } = req.body;
 
@@ -140,7 +140,7 @@ router.patch('/booking/:id/status', adminAuthMiddleware, async (req, res) => {
 });
 
 // Assign employee to booking
-router.patch('/booking/:id/assign', adminAuthMiddleware, async (req, res) => {
+router.patch('/booking/:id/assign', authenticateAdmin, async (req, res) => {
   try {
     const { employeeId } = req.body;
 
@@ -182,7 +182,7 @@ router.patch('/booking/:id/assign', adminAuthMiddleware, async (req, res) => {
 });
 
 // Delete booking
-router.delete('/booking/:id', adminAuthMiddleware, async (req, res) => {
+router.delete('/booking/:id', authenticateAdmin, async (req, res) => {
   try {
     const booking = await MoversPackers.findByIdAndDelete(req.params.id);
     

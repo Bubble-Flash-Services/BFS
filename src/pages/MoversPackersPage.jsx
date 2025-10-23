@@ -16,8 +16,8 @@ import {
   Mail,
   ArrowRight
 } from 'lucide-react';
-import { useAuth } from '../../components/AuthContext';
-import AddressAutocomplete from '../../components/AddressAutocomplete';
+import { useAuth } from '../components/AuthContext';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -181,7 +181,6 @@ const MoversPackersPage = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        credentials: 'include',
         body: JSON.stringify({
           moveType,
           homeSize,
