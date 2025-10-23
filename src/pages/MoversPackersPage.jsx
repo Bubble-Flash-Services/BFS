@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { 
-  Truck, 
-  Home, 
-  MapPin, 
-  Calendar, 
-  Car, 
-  Bike, 
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import {
+  Truck,
+  Home,
+  MapPin,
+  Calendar,
+  Car,
+  Bike,
   Package,
   PaintBucket,
   CheckCircle2,
   Phone,
   Mail,
-  ArrowRight
-} from 'lucide-react';
-import { useAuth } from '../components/AuthContext';
-import AddressAutocomplete from '../components/AddressAutocomplete';
+  ArrowRight,
+} from "lucide-react";
+import { useAuth } from "../components/AuthContext";
+import AddressAutocomplete from "../components/AddressAutocomplete";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -26,14 +26,14 @@ const MoversPackersPage = () => {
   const navigate = useNavigate();
 
   // Form state
-  const [moveType, setMoveType] = useState('within-city');
-  const [homeSize, setHomeSize] = useState('');
+  const [moveType, setMoveType] = useState("within-city");
+  const [homeSize, setHomeSize] = useState("");
   const [sourceCity, setSourceCity] = useState(null);
   const [destinationCity, setDestinationCity] = useState(null);
-  const [movingDate, setMovingDate] = useState('');
-  const [contactPhone, setContactPhone] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
-  const [customerNotes, setCustomerNotes] = useState('');
+  const [movingDate, setMovingDate] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [customerNotes, setCustomerNotes] = useState("");
 
   // Vehicle shifting state
   const [needVehicleShifting, setNeedVehicleShifting] = useState(false);
@@ -44,7 +44,7 @@ const MoversPackersPage = () => {
   const [paintingServices, setPaintingServices] = useState({
     interiorPainting: false,
     exteriorPainting: false,
-    woodPolishing: false
+    woodPolishing: false,
   });
 
   // Price quote state
@@ -65,25 +65,34 @@ const MoversPackersPage = () => {
     if (homeSize && moveType) {
       fetchPriceQuote();
     }
-  }, [homeSize, moveType, needVehicleShifting, vehicles, needPainting, paintingServices]);
+  }, [
+    homeSize,
+    moveType,
+    needVehicleShifting,
+    vehicles,
+    needPainting,
+    paintingServices,
+  ]);
 
   const fetchPriceQuote = async () => {
     setLoadingQuote(true);
     try {
-      const vehicleShifting = needVehicleShifting ? { required: true, vehicles } : { required: false };
-      const extraServices = needPainting 
+      const vehicleShifting = needVehicleShifting
+        ? { required: true, vehicles }
+        : { required: false };
+      const extraServices = needPainting
         ? { painting: { required: true, services: paintingServices } }
         : { painting: { required: false } };
 
       const response = await fetch(`${API}/api/movers-packers/quote`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           moveType,
           homeSize,
           vehicleShifting,
-          extraServices
-        })
+          extraServices,
+        }),
       });
 
       const result = await response.json();
@@ -91,31 +100,35 @@ const MoversPackersPage = () => {
         setPriceQuote(result.data);
       }
     } catch (error) {
-      console.error('Error fetching quote:', error);
+      console.error("Error fetching quote:", error);
     } finally {
       setLoadingQuote(false);
     }
   };
 
   const addVehicle = (type) => {
-    const existingVehicle = vehicles.find(v => v.type === type);
+    const existingVehicle = vehicles.find((v) => v.type === type);
     if (existingVehicle) {
-      setVehicles(vehicles.map(v => 
-        v.type === type ? { ...v, count: v.count + 1 } : v
-      ));
+      setVehicles(
+        vehicles.map((v) =>
+          v.type === type ? { ...v, count: v.count + 1 } : v
+        )
+      );
     } else {
       setVehicles([...vehicles, { type, count: 1 }]);
     }
   };
 
   const removeVehicle = (type) => {
-    const existingVehicle = vehicles.find(v => v.type === type);
+    const existingVehicle = vehicles.find((v) => v.type === type);
     if (existingVehicle && existingVehicle.count > 1) {
-      setVehicles(vehicles.map(v => 
-        v.type === type ? { ...v, count: v.count - 1 } : v
-      ));
+      setVehicles(
+        vehicles.map((v) =>
+          v.type === type ? { ...v, count: v.count - 1 } : v
+        )
+      );
     } else {
-      setVehicles(vehicles.filter(v => v.type !== type));
+      setVehicles(vehicles.filter((v) => v.type !== type));
     }
   };
 
@@ -123,34 +136,34 @@ const MoversPackersPage = () => {
     e.preventDefault();
 
     if (!user) {
-      toast.error('Please login to book our services');
-      navigate('/');
+      toast.error("Please login to book our services");
+      navigate("/");
       return;
     }
 
     // Validation
     if (!homeSize) {
-      toast.error('Please select home size');
+      toast.error("Please select home size");
       return;
     }
 
     if (!sourceCity?.fullAddress) {
-      toast.error('Please enter source address');
+      toast.error("Please enter source address");
       return;
     }
 
     if (!destinationCity?.fullAddress) {
-      toast.error('Please enter destination address');
+      toast.error("Please enter destination address");
       return;
     }
 
     if (!movingDate) {
-      toast.error('Please select moving date');
+      toast.error("Please select moving date");
       return;
     }
 
     if (!contactPhone) {
-      toast.error('Please enter contact phone');
+      toast.error("Please enter contact phone");
       return;
     }
 
@@ -158,28 +171,29 @@ const MoversPackersPage = () => {
     const selectedDate = new Date(movingDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     if (selectedDate < today) {
-      toast.error('Moving date must be in the future');
+      toast.error("Moving date must be in the future");
       return;
     }
 
     setSubmitting(true);
 
     try {
-      const vehicleShifting = needVehicleShifting && vehicles.length > 0
-        ? { required: true, vehicles }
-        : { required: false };
+      const vehicleShifting =
+        needVehicleShifting && vehicles.length > 0
+          ? { required: true, vehicles }
+          : { required: false };
 
       const extraServices = needPainting
         ? { painting: { required: true, services: paintingServices } }
         : { painting: { required: false } };
 
       const response = await fetch(`${API}/api/movers-packers/booking`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           moveType,
@@ -191,48 +205,50 @@ const MoversPackersPage = () => {
           extraServices,
           contactPhone,
           contactEmail,
-          customerNotes
-        })
+          customerNotes,
+        }),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        toast.success('Booking created successfully! We will contact you soon.');
+        toast.success(
+          "Booking created successfully! We will contact you soon."
+        );
         // Redirect to orders page or show confirmation
         setTimeout(() => {
-          navigate('/orders');
+          navigate("/orders");
         }, 2000);
       } else {
-        toast.error(result.message || 'Failed to create booking');
+        toast.error(result.message || "Failed to create booking");
       }
     } catch (error) {
-      console.error('Error creating booking:', error);
-      toast.error('Failed to create booking. Please try again.');
+      console.error("Error creating booking:", error);
+      toast.error("Failed to create booking. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
   const homeSizeOptions = [
-    { value: '1BHK', label: '1 BHK', icon: Home },
-    { value: '2BHK', label: '2 BHK', icon: Home },
-    { value: '3BHK', label: '3 BHK', icon: Home },
-    { value: '4BHK', label: '4 BHK', icon: Home },
-    { value: 'Villa', label: 'Villa', icon: Home }
+    { value: "1BHK", label: "1 BHK", icon: Home },
+    { value: "2BHK", label: "2 BHK", icon: Home },
+    { value: "3BHK", label: "3 BHK", icon: Home },
+    { value: "4BHK", label: "4 BHK", icon: Home },
+    { value: "Villa", label: "Villa", icon: Home },
   ];
 
   const vehicleOptions = [
-    { type: 'Car', label: 'Car', icon: Car },
-    { type: 'Bike', label: 'Bike', icon: Bike },
-    { type: 'Scooter', label: 'Scooter', icon: Bike },
-    { type: 'Others', label: 'Others', icon: Package }
+    { type: "Car", label: "Car", icon: Car },
+    { type: "Bike", label: "Bike", icon: Bike },
+    { type: "Scooter", label: "Scooter", icon: Bike },
+    { type: "Others", label: "Others", icon: Package },
   ];
 
   // Get minimum date (tomorrow)
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split('T')[0];
+  const minDate = tomorrow.toISOString().split("T")[0];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] py-12 px-4">
@@ -250,8 +266,8 @@ const MoversPackersPage = () => {
             Movers & Packers Service
           </h1>
           <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            Professional moving services with care and reliability. 
-            Get instant quotes and book your move today!
+            Professional moving services with care and reliability. Get instant
+            quotes and book your move today!
           </p>
         </motion.div>
 
@@ -271,11 +287,11 @@ const MoversPackersPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  onClick={() => setMoveType('within-city')}
+                  onClick={() => setMoveType("within-city")}
                   className={`p-6 rounded-2xl border-2 transition-all ${
-                    moveType === 'within-city'
-                      ? 'border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88]'
-                      : 'border-gray-200 hover:border-[#FFB400]'
+                    moveType === "within-city"
+                      ? "border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88]"
+                      : "border-gray-200 hover:border-[#FFB400]"
                   }`}
                 >
                   <MapPin className="w-8 h-8 mx-auto mb-2" />
@@ -284,16 +300,18 @@ const MoversPackersPage = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMoveType('intercity')}
+                  onClick={() => setMoveType("intercity")}
                   className={`p-6 rounded-2xl border-2 transition-all ${
-                    moveType === 'intercity'
-                      ? 'border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88]'
-                      : 'border-gray-200 hover:border-[#FFB400]'
+                    moveType === "intercity"
+                      ? "border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88]"
+                      : "border-gray-200 hover:border-[#FFB400]"
                   }`}
                 >
                   <Truck className="w-8 h-8 mx-auto mb-2" />
                   <div className="font-semibold">Intercity</div>
-                  <div className="text-sm text-gray-600">Long distance move</div>
+                  <div className="text-sm text-gray-600">
+                    Long distance move
+                  </div>
                 </button>
               </div>
             </div>
@@ -311,8 +329,8 @@ const MoversPackersPage = () => {
                     onClick={() => setHomeSize(option.value)}
                     className={`p-4 rounded-xl border-2 transition-all ${
                       homeSize === option.value
-                        ? 'border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88]'
-                        : 'border-gray-200 hover:border-[#FFB400]'
+                        ? "border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88]"
+                        : "border-gray-200 hover:border-[#FFB400]"
                     }`}
                   >
                     <option.icon className="w-6 h-6 mx-auto mb-2" />
@@ -378,23 +396,25 @@ const MoversPackersPage = () => {
                   }}
                   className={`px-6 py-2 rounded-full font-semibold transition-all ${
                     needVehicleShifting
-                      ? 'bg-[#FFB400] text-[#1F3C88]'
-                      : 'bg-gray-200 text-gray-600'
+                      ? "bg-[#FFB400] text-[#1F3C88]"
+                      : "bg-gray-200 text-gray-600"
                   }`}
                 >
-                  {needVehicleShifting ? 'Yes' : 'No'}
+                  {needVehicleShifting ? "Yes" : "No"}
                 </button>
               </div>
 
               {needVehicleShifting && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
+                  animate={{ opacity: 1, height: "auto" }}
                   className="space-y-4"
                 >
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {vehicleOptions.map((option) => {
-                      const vehicle = vehicles.find(v => v.type === option.type);
+                      const vehicle = vehicles.find(
+                        (v) => v.type === option.type
+                      );
                       const count = vehicle?.count || 0;
                       return (
                         <div
@@ -402,7 +422,9 @@ const MoversPackersPage = () => {
                           className="p-4 border-2 border-gray-200 rounded-xl"
                         >
                           <option.icon className="w-8 h-8 mx-auto mb-2 text-gray-600" />
-                          <div className="text-center font-medium mb-3">{option.label}</div>
+                          <div className="text-center font-medium mb-3">
+                            {option.label}
+                          </div>
                           <div className="flex items-center justify-center gap-2">
                             <button
                               type="button"
@@ -412,7 +434,9 @@ const MoversPackersPage = () => {
                             >
                               -
                             </button>
-                            <span className="w-8 text-center font-semibold">{count}</span>
+                            <span className="w-8 text-center font-semibold">
+                              {count}
+                            </span>
                             <button
                               type="button"
                               onClick={() => addVehicle(option.type)}
@@ -443,30 +467,30 @@ const MoversPackersPage = () => {
                       setPaintingServices({
                         interiorPainting: false,
                         exteriorPainting: false,
-                        woodPolishing: false
+                        woodPolishing: false,
                       });
                     }
                   }}
                   className={`px-6 py-2 rounded-full font-semibold transition-all ${
                     needPainting
-                      ? 'bg-[#FFB400] text-[#1F3C88]'
-                      : 'bg-gray-200 text-gray-600'
+                      ? "bg-[#FFB400] text-[#1F3C88]"
+                      : "bg-gray-200 text-gray-600"
                   }`}
                 >
-                  {needPainting ? 'Yes' : 'No'}
+                  {needPainting ? "Yes" : "No"}
                 </button>
               </div>
 
               {needPainting && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
+                  animate={{ opacity: 1, height: "auto" }}
                   className="space-y-3"
                 >
                   {[
-                    { key: 'interiorPainting', label: 'Interior Painting' },
-                    { key: 'exteriorPainting', label: 'Exterior Painting' },
-                    { key: 'woodPolishing', label: 'Wood Polishing' }
+                    { key: "interiorPainting", label: "Interior Painting" },
+                    { key: "exteriorPainting", label: "Exterior Painting" },
+                    { key: "woodPolishing", label: "Wood Polishing" },
                   ].map((service) => (
                     <label
                       key={service.key}
@@ -475,10 +499,12 @@ const MoversPackersPage = () => {
                       <input
                         type="checkbox"
                         checked={paintingServices[service.key]}
-                        onChange={(e) => setPaintingServices({
-                          ...paintingServices,
-                          [service.key]: e.target.checked
-                        })}
+                        onChange={(e) =>
+                          setPaintingServices({
+                            ...paintingServices,
+                            [service.key]: e.target.checked,
+                          })
+                        }
                         className="w-5 h-5 text-[#FFB400] rounded focus:ring-[#FFB400]"
                       />
                       <PaintBucket className="w-5 h-5 text-gray-600" />
@@ -491,7 +517,9 @@ const MoversPackersPage = () => {
 
             {/* Contact Information */}
             <div className="border-t-2 border-gray-100 pt-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Contact Information</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Contact Information
+              </h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -552,29 +580,38 @@ const MoversPackersPage = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>Base Price ({homeSize}):</span>
-                    <span className="font-semibold">₹{priceQuote.basePrice?.toLocaleString()}</span>
+                    <span className="font-semibold">
+                      ₹{priceQuote.basePrice?.toLocaleString()}
+                    </span>
                   </div>
                   {priceQuote.vehicleShiftingCost > 0 && (
                     <div className="flex justify-between">
                       <span>Vehicle Shifting:</span>
-                      <span className="font-semibold">₹{priceQuote.vehicleShiftingCost?.toLocaleString()}</span>
+                      <span className="font-semibold">
+                        ₹{priceQuote.vehicleShiftingCost?.toLocaleString()}
+                      </span>
                     </div>
                   )}
                   {priceQuote.paintingCost > 0 && (
                     <div className="flex justify-between">
                       <span>Painting Services:</span>
-                      <span className="font-semibold">₹{priceQuote.paintingCost?.toLocaleString()}</span>
+                      <span className="font-semibold">
+                        ₹{priceQuote.paintingCost?.toLocaleString()}
+                      </span>
                     </div>
                   )}
                   <div className="border-t border-white/20 pt-2 mt-2">
                     <div className="flex justify-between text-xl font-bold">
                       <span>Total Estimate:</span>
-                      <span className="text-[#FFB400]">₹{priceQuote.totalPrice?.toLocaleString()}</span>
+                      <span className="text-[#FFB400]">
+                        ₹{priceQuote.totalPrice?.toLocaleString()}
+                      </span>
                     </div>
                   </div>
                 </div>
                 <p className="text-sm text-gray-200 mt-4">
-                  * Final price may vary based on actual requirements and distance
+                  * Final price may vary based on actual requirements and
+                  distance
                 </p>
               </motion.div>
             )}
@@ -588,7 +625,7 @@ const MoversPackersPage = () => {
               className="w-full py-4 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {submitting ? (
-                'Creating Booking...'
+                "Creating Booking..."
               ) : (
                 <>
                   Book Now
@@ -609,19 +646,19 @@ const MoversPackersPage = () => {
           {[
             {
               icon: CheckCircle2,
-              title: 'Professional Team',
-              description: 'Trained and verified moving experts'
+              title: "Professional Team",
+              description: "Trained and verified moving experts",
             },
             {
               icon: Package,
-              title: 'Safe Packaging',
-              description: 'Premium quality packing materials'
+              title: "Safe Packaging",
+              description: "Premium quality packing materials",
             },
             {
               icon: Truck,
-              title: 'Timely Delivery',
-              description: 'On-time pickup and delivery guaranteed'
-            }
+              title: "Timely Delivery",
+              description: "On-time pickup and delivery guaranteed",
+            },
           ].map((feature, index) => (
             <div
               key={index}
