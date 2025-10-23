@@ -54,6 +54,7 @@ import { CartProviderForGreenandClean } from "./context/CartContext";
 import GreenandClean from "./pages/green&clean/Green&Clean";
 import ServicePage from "./pages/green&clean/ServicePage";
 import ServiceByCategory from "./pages/green&clean/ServiceByCategory";
+import MoversPackersPage from "./pages/MoversPackersPage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -141,6 +142,7 @@ function AppContent() {
             path="/services/category/:categoryName"
             element={<ServiceByCategory />}
           />
+          <Route path="/movers-packers" element={<MoversPackersPage />} />
           <Route
             path="/admin/users"
             element={
