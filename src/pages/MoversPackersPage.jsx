@@ -34,7 +34,7 @@ const MoversPackersPage = () => {
   const [contactPhone, setContactPhone] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
-  
+
   // Address input values for display
   const [sourceAddressInput, setSourceAddressInput] = useState("");
   const [destinationAddressInput, setDestinationAddressInput] = useState("");
@@ -157,8 +157,9 @@ const MoversPackersPage = () => {
     }
 
     if (!destinationCity?.fullAddress) {
-      toast.error("Please enter destination address");
-      return;
+      // toast.error("Please enter destination address");
+      setDestinationCity(destinationAddressInput);
+      // return;
     }
 
     if (!movingDate) {
@@ -210,6 +211,7 @@ const MoversPackersPage = () => {
           contactPhone,
           contactEmail,
           customerNotes,
+          user,
         }),
       });
 
@@ -364,7 +366,9 @@ const MoversPackersPage = () => {
                 {sourceCity && (
                   <div className="mt-2 text-sm text-gray-600 flex items-start gap-2">
                     <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#FFB400]" />
-                    <span className="line-clamp-2">{sourceCity.fullAddress}</span>
+                    <span className="line-clamp-2">
+                      {sourceCity.fullAddress}
+                    </span>
                   </div>
                 )}
               </div>
@@ -386,7 +390,9 @@ const MoversPackersPage = () => {
                 {destinationCity && (
                   <div className="mt-2 text-sm text-gray-600 flex items-start gap-2">
                     <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#FFB400]" />
-                    <span className="line-clamp-2">{destinationCity.fullAddress}</span>
+                    <span className="line-clamp-2">
+                      {destinationCity.fullAddress}
+                    </span>
                   </div>
                 )}
               </div>
