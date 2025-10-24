@@ -1,5 +1,5 @@
-// Using built-in fetch API (Node.js 18+)
-// If running on older Node.js versions, install node-fetch: npm install node-fetch
+// Import node-fetch for compatibility across Node.js versions
+// Node.js 18+ has built-in fetch, but we use node-fetch for consistency
 import fetch from 'node-fetch';
 
 class AddressService {

@@ -116,9 +116,10 @@ export const getAddressSuggestions = async (req, res) => {
         data: result.data
       });
     } else {
-      // Return 200 with success:false for "no results" to distinguish from errors
+      // Return 200 with empty data for "no results" - this is application state, not an error
+      // The frontend can handle this gracefully without treating it as an error
       res.json({
-        success: false,
+        success: true,
         message: result.message,
         data: []
       });
