@@ -60,15 +60,33 @@ export default function ServiceByCategory() {
 
   const addCart = (item) => {
     checkAuth(() => {
-      addToCart({
+      const cartData = {
         id: `clean-${item._id}-${Date.now()}`,
-        serviceName: item.title,
-        price: item.basePrice,
-        image: item.images?.[0],
+        serviceId: item._id || item.id,
+        serviceName: item.title || item.serviceName || item.name,
+        packageName: item.packageName || item.plan,
+        packageId: item.packageId,
+        quantity: 1,
+        price: item.price || item.basePrice,
         duration: item.durationMinutes,
-        features: item.features,
-      });
-      toast.success(`${item.title} added to cart 🧺`);
+        image: item.images?.[0] || "/default-service.jpg",
+        packageDetails: item.packageDetails || {
+          basePrice: item.basePrice,
+          features: item.features || [],
+        },
+        includedFeatures:
+          item.includedFeatures ||
+          item.packageDetails?.features ||
+          item.features ||
+          [],
+        vehicleType: item.vehicleType,
+        specialInstructions: item.specialInstructions,
+        type: item.type || "cleaning",
+        category: item.subcategory,
+      };
+
+      addToCart(cartData);
+      toast.success(`${cartData.serviceName} added to cart 🧺`);
     });
   };
 
