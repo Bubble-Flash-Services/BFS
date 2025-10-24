@@ -97,6 +97,8 @@ export const getAddressSuggestions = async (req, res) => {
   try {
     const { query, limit } = req.query;
 
+    console.log('Address suggestions request:', { query, limit });
+
     if (!query || query.trim().length < 3) {
       return res.status(400).json({
         success: false,
@@ -104,7 +106,9 @@ export const getAddressSuggestions = async (req, res) => {
       });
     }
 
-    const result = await addressService.getAddressSuggestions(query, limit);
+    const result = await addressService.getAddressSuggestions(query, limit || 5);
+    
+    console.log('Address suggestions result:', result);
     
     if (result.success) {
       res.json({
@@ -112,9 +116,12 @@ export const getAddressSuggestions = async (req, res) => {
         data: result.data
       });
     } else {
-      res.status(400).json({
-        success: false,
-        message: result.message
+      // Return 200 with empty data for "no results" - this is application state, not an error
+      // The frontend can handle this gracefully without treating it as an error
+      res.json({
+        success: true,
+        message: result.message,
+        data: []
       });
     }
   } catch (error) {
