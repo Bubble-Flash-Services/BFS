@@ -84,13 +84,7 @@ export default function ServicePage() {
         price: item.price || item.basePrice,
         duration: item.durationMinutes,
         image: item.images?.[0] || "/default-service.jpg",
-        uiAddOns: (item.uiAddOns || item.packageDetails?.addons || [])
-          .filter((a) => !a.addOnId)
-          .map((a) => ({
-            name: a.name,
-            price: a.price,
-            quantity: a.quantity || 1,
-          })),
+
         packageDetails: item.packageDetails || {
           basePrice: item.basePrice,
           features: item.features || [],
