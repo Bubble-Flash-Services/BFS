@@ -34,6 +34,10 @@ const MoversPackersPage = () => {
   const [contactPhone, setContactPhone] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
+  
+  // Address input values for display
+  const [sourceAddressInput, setSourceAddressInput] = useState("");
+  const [destinationAddressInput, setDestinationAddressInput] = useState("");
 
   // Vehicle shifting state
   const [needVehicleShifting, setNeedVehicleShifting] = useState(false);
@@ -344,23 +348,47 @@ const MoversPackersPage = () => {
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-lg font-semibold text-gray-800 mb-3">
-                  Source Address
+                  Source Address *
                 </label>
                 <AddressAutocomplete
-                  onAddressSelect={(address) => setSourceCity(address)}
+                  value={sourceAddressInput}
+                  onChange={setSourceAddressInput}
+                  onAddressSelect={(address) => {
+                    setSourceCity(address);
+                    setSourceAddressInput(address.fullAddress);
+                  }}
                   placeholder="Enter pickup address"
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none"
+                  showCurrentLocation={true}
                 />
+                {sourceCity && (
+                  <div className="mt-2 text-sm text-gray-600 flex items-start gap-2">
+                    <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#FFB400]" />
+                    <span className="line-clamp-2">{sourceCity.fullAddress}</span>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-lg font-semibold text-gray-800 mb-3">
-                  Destination Address
+                  Destination Address *
                 </label>
                 <AddressAutocomplete
-                  onAddressSelect={(address) => setDestinationCity(address)}
+                  value={destinationAddressInput}
+                  onChange={setDestinationAddressInput}
+                  onAddressSelect={(address) => {
+                    setDestinationCity(address);
+                    setDestinationAddressInput(address.fullAddress);
+                  }}
                   placeholder="Enter destination address"
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none"
+                  showCurrentLocation={true}
                 />
+                {destinationCity && (
+                  <div className="mt-2 text-sm text-gray-600 flex items-start gap-2">
+                    <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#FFB400]" />
+                    <span className="line-clamp-2">{destinationCity.fullAddress}</span>
+                  </div>
+                )}
               </div>
             </div>
 

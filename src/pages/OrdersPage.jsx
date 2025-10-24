@@ -8,6 +8,7 @@ export default function OrdersPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
+  const [moversPackersBookings, setMoversPackersBookings] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [error, setError] = useState(null);
@@ -20,6 +21,7 @@ export default function OrdersPage() {
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewText, setReviewText] = useState('');
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState('services'); // 'services' or 'movers-packers'
 
   useEffect(() => {
     if (!loading && !user) {
@@ -43,7 +45,8 @@ export default function OrdersPage() {
         return;
       }
       
-  const response = await fetch(`${API}/api/orders`, {
+      // Fetch regular orders
+      const response = await fetch(`${API}/api/orders`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -64,12 +67,36 @@ export default function OrdersPage() {
           setOrders(result.data.orders || []);
         } else {
           setOrders([]);
-          setError(result.message || 'Failed to fetch orders');
         }
       } else {
         console.error('Failed to fetch orders:', response.status);
-        setError(`Failed to fetch orders (${response.status})`);
         setOrders([]);
+      }
+
+      // Fetch movers & packers bookings
+      try {
+        const mpResponse = await fetch(`${API}/api/movers-packers/my-bookings`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (mpResponse.ok) {
+          const mpResult = await mpResponse.json();
+          console.log('Movers & Packers API response:', mpResult);
+          
+          if (mpResult.success && mpResult.data) {
+            setMoversPackersBookings(mpResult.data);
+          } else {
+            setMoversPackersBookings([]);
+          }
+        } else {
+          console.error('Failed to fetch movers-packers bookings:', mpResponse.status);
+          setMoversPackersBookings([]);
+        }
+      } catch (mpError) {
+        console.error('Error fetching movers-packers bookings:', mpError);
+        setMoversPackersBookings([]);
       }
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -90,8 +117,14 @@ export default function OrdersPage() {
     try {
       setActing(true);
       const token = localStorage.getItem('token');
-  const res = await fetch(`${API}/api/orders/${cancelTargetId}/cancel`, {
-        method: 'PUT',
+      
+      // Determine which API endpoint to use based on active tab
+      const endpoint = activeTab === 'movers-packers' 
+        ? `${API}/api/movers-packers/booking/${cancelTargetId}/cancel`
+        : `${API}/api/orders/${cancelTargetId}/cancel`;
+      
+      const res = await fetch(endpoint, {
+        method: activeTab === 'movers-packers' ? 'PATCH' : 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -100,8 +133,12 @@ export default function OrdersPage() {
       });
       const result = await res.json();
       if (res.ok && result.success) {
-        setOrders(prev => prev.map(o => o._id === cancelTargetId ? result.data : o));
-        if (selectedOrder && selectedOrder._id === cancelTargetId) setSelectedOrder(result.data);
+        if (activeTab === 'movers-packers') {
+          setMoversPackersBookings(prev => prev.map(b => b._id === cancelTargetId ? result.data : b));
+        } else {
+          setOrders(prev => prev.map(o => o._id === cancelTargetId ? result.data : o));
+          if (selectedOrder && selectedOrder._id === cancelTargetId) setSelectedOrder(result.data);
+        }
         setShowCancelConfirm(false);
         setShowCancelSuccess(true);
         setTimeout(() => setShowCancelSuccess(false), 1800);
@@ -661,6 +698,32 @@ export default function OrdersPage() {
           </button>
         </div>
 
+        {/* Tabs */}
+        <div className="mb-6 border-b border-gray-200">
+          <div className="flex gap-4">
+            <button
+              onClick={() => setActiveTab('services')}
+              className={`px-4 py-3 font-medium transition-colors border-b-2 ${
+                activeTab === 'services'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              Services ({orders.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('movers-packers')}
+              className={`px-4 py-3 font-medium transition-colors border-b-2 ${
+                activeTab === 'movers-packers'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              Movers & Packers ({moversPackersBookings.length})
+            </button>
+          </div>
+        </div>
+
         {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
@@ -682,8 +745,8 @@ export default function OrdersPage() {
           </div>
         )}
 
-        {/* Orders List */}
-        {!loadingOrders && !error && (
+        {/* Orders List - Services Tab */}
+        {!loadingOrders && !error && activeTab === 'services' && (
           orders.length === 0 ? (
             <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
               <Package size={64} className="text-gray-300 mx-auto mb-4" />
@@ -764,6 +827,121 @@ export default function OrdersPage() {
               </div>
             ))}
           </div>
+          )
+        )}
+
+        {/* Movers & Packers Bookings List */}
+        {!loadingOrders && !error && activeTab === 'movers-packers' && (
+          moversPackersBookings.length === 0 ? (
+            <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
+              <Package size={64} className="text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">No Movers & Packers Bookings Yet</h3>
+              <p className="text-gray-600 mb-6">You haven't booked any moving services yet. Get started now!</p>
+              <button
+                onClick={() => navigate('/movers-packers')}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Book Moving Service
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {moversPackersBookings.map((booking) => (
+                <div key={booking._id} className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {booking.moveType === 'within-city' ? 'Within City Move' : 'Intercity Move'}
+                        </h3>
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)}`}>
+                          {(booking.status || 'pending').replace('_', ' ')}
+                        </span>
+                      </div>
+                    
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
+                        <div>
+                          <div className="font-medium text-gray-700 mb-1">From:</div>
+                          <div className="flex items-start gap-2">
+                            <MapPin size={16} className="text-gray-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-600 line-clamp-2">{booking.sourceCity?.fullAddress || 'N/A'}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-medium text-gray-700 mb-1">To:</div>
+                          <div className="flex items-start gap-2">
+                            <MapPin size={16} className="text-gray-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-600 line-clamp-2">{booking.destinationCity?.fullAddress || 'N/A'}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Calendar size={16} className="text-gray-500" />
+                          <span className="text-gray-600">
+                            Moving: {new Date(booking.movingDate).toLocaleDateString('en-US', { 
+                              year: 'numeric', 
+                              month: 'short', 
+                              day: 'numeric' 
+                            })}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Package size={16} className="text-gray-500" />
+                          <span className="text-gray-600">{booking.homeSize}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <DollarSign size={16} className="text-gray-500" />
+                          <span className="text-gray-600">₹{booking.estimatedPrice?.totalPrice?.toLocaleString() || 'N/A'}</span>
+                        </div>
+                      </div>
+
+                      {/* Additional Services */}
+                      {(booking.vehicleShifting?.required || booking.extraServices?.painting?.required) && (
+                        <div className="mt-3">
+                          <div className="flex flex-wrap gap-2">
+                            {booking.vehicleShifting?.required && booking.vehicleShifting.vehicles?.length > 0 && (
+                              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                                Vehicle Shifting: {booking.vehicleShifting.vehicles.map(v => `${v.count} ${v.type}`).join(', ')}
+                              </span>
+                            )}
+                            {booking.extraServices?.painting?.required && (
+                              <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
+                                Painting Services
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 mt-4">
+                    <button
+                      onClick={() => {
+                        // Navigate to booking details or show modal
+                        // For now, just log the booking
+                        console.log('View booking details:', booking);
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      <Eye size={16} />
+                      View Details
+                    </button>
+                    {booking.status !== 'cancelled' && booking.status !== 'completed' && (
+                      <button
+                        onClick={() => openCancelConfirm(booking._id)}
+                        className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors"
+                      >
+                        <X size={16} />
+                        Cancel Booking
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           )
         )}
       </div>
