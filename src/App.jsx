@@ -10,11 +10,11 @@ import Footer from "./components/Footer";
 // Placeholder imports for new pages
 import CarsPage from "./pages/Homepage/services/CarsPage";
 import BikesPage from "./pages/Homepage/services/BikesPage";
-// import LaundryPage from './pages/Homepage/services/LaundryPage';
+import LaundryPage from "./pages/Homepage/services/LaundryPage";
 import HelmetPage from "./pages/Homepage/services/HelmetPage";
 import CarWashDeals from "./pages/Homepage/services/CarWashDeals";
 import BikeWashDeals from "./pages/Homepage/services/BikeWashDeals";
-// import LaundryDeals from './pages/Homepage/services/LaundryDeals';
+import LaundryDeals from "./pages/Homepage/services/LaundryDeals";
 import ComingSoon from "./pages/ComingSoon";
 import HelmetWashDeals from "./pages/Homepage/services/HelmetWashDeals";
 import CartPage from "./pages/CartPage";
@@ -80,10 +80,11 @@ function AppContent() {
           <Route
             path="/laundry"
             element={
-              <ComingSoon
-                title="Laundry Service Coming Soon"
-                message="We’re working hard to bring laundry services to you. Stay tuned!"
-              />
+              // <ComingSoon
+              //   title="Laundry Service Coming Soon"
+              //   message="We’re working hard to bring laundry services to you. Stay tuned!"
+              // />
+              <LaundryPage />
             }
           />
           <Route path="/helmets" element={<HelmetPage />} />
@@ -92,7 +93,7 @@ function AppContent() {
             path="/bike-wash-deals/:category"
             element={<BikeWashDeals />}
           />
-          <Route
+          {/* <Route
             path="/laundry-deals/:category"
             element={
               <ComingSoon
@@ -100,7 +101,9 @@ function AppContent() {
                 message="We’re working hard to bring laundry services to you. Stay tuned!"
               />
             }
-          />
+          /> */}
+
+          <Route path="/laundry-deals/:category" element={<LaundryDeals />} />
           <Route
             path="/helmet-wash-deals/:category"
             element={<HelmetWashDeals />}

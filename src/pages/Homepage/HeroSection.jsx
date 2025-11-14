@@ -1386,7 +1386,7 @@ export default function HeroSection() {
                     Book a Service
                   </button>
                   <a
-                    href="tel:+919980123452"
+                    href="tel:+919591572775"
                     className="px-5 py-3 rounded-xl font-semibold border-2 border-white/70 hover:bg-white/10 transition-all text-white text-center"
                   >
                     Call Now
@@ -1436,7 +1436,7 @@ export default function HeroSection() {
                     Book a Move
                   </button>
                   <a
-                    href="tel:+919980123452"
+                    href="tel:+919591572775"
                     className="px-5 py-3 rounded-xl font-semibold border-2 border-white/70 hover:bg-white/10 transition-all text-white text-center"
                   >
                     Call Now
@@ -2286,7 +2286,7 @@ export default function HeroSection() {
                 className="bg-gradient-to-br from-white via-green-50 to-emerald-50 rounded-2xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-green-200 border-opacity-50 transition-all duration-300 hover:border-opacity-80"
                 onClick={() => {
                   window.open(
-                    "https://wa.me/919980123452?text=Hello! I would like to know more about your services.",
+                    "https://wa.me/919591572775?text=Hello! I would like to know more about your services.",
                     "_blank"
                   );
                 }}
@@ -2420,7 +2420,7 @@ export default function HeroSection() {
                   </div>
                   <div>
                     <div className="font-semibold text-purple-700">Phone</div>
-                    <div>+91 9980123452</div>
+                    <div>+91 9591572775</div>
                   </div>
                   <div>
                     <div className="font-semibold text-purple-700">Email</div>
@@ -3145,12 +3145,12 @@ export default function HeroSection() {
                       </svg>
                     ),
                     title: "Call for Instant Booking",
-                    main: "+91 9980123452",
+                    main: "+91 9591572775",
                     sub: "Available 7 days a week for your convenience",
                     color: "from-blue-400 to-indigo-500",
                     delay: 0.2,
                     action: () => {
-                      window.open("tel:+919980123452", "_self");
+                      window.open("tel:+919591572775", "_self");
                     },
                   },
                   {
@@ -3343,7 +3343,7 @@ export default function HeroSection() {
                 </motion.p>
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
                   <motion.a
-                    href="tel:+919980123452"
+                    href="tel:+919591572775"
                     initial={{ opacity: 0, x: -30 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
@@ -3368,7 +3368,7 @@ export default function HeroSection() {
                         d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                       />
                     </svg>
-                    Call Now: +91 9980123452
+                    Call Now: +91 9591572775
                   </motion.a>
                   <motion.button
                     initial={{ opacity: 0, x: 30 }}
@@ -3379,7 +3379,7 @@ export default function HeroSection() {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => {
                       window.open(
-                        "https://wa.me/919980123452?text=Hello! I'm interested in your services and would like to know more.",
+                        "https://wa.me/919591572775?text=Hello! I'm interested in your services and would like to know more.",
                         "_blank"
                       );
                     }}
