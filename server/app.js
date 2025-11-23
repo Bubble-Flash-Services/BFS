@@ -21,6 +21,7 @@ import greenServicesRoutes from './routes/greenServices.js';
 import greenBookingsRoutes from './routes/greenBookings.js';
 import greenProvidersRoutes from './routes/greenProviders.js';
 import greenAdminRoutes from './routes/greenAdmin.js';
+import moversPackersRoutes from './routes/moversPackers.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import { configureCloudinary } from './services/cloudinary.js';
@@ -70,6 +71,9 @@ app.use('/api/green/services', greenServicesRoutes);
 app.use('/api/green/booking', greenBookingsRoutes);
 app.use('/api/green/providers', greenProvidersRoutes);
 app.use('/api/green/admin', greenAdminRoutes);
+
+// Movers & Packers routes
+app.use('/api/movers-packers', moversPackersRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

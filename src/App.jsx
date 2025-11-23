@@ -32,6 +32,7 @@ import Impersonate from './pages/Impersonate';
 import ContactPage from './pages/contact/ContactPage';
 import TeamPage from './pages/team/TeamPage';
 import GreenCleanCart from './pages/GreenCleanCart';
+import MoversPackersPage from './pages/MoversPackersPage';
 import ProfilePage from './pages/ProfilePage';
 import OrdersPage from './pages/OrdersPage';
 import AddressesPage from './pages/AddressesPage';
@@ -93,6 +94,7 @@ function AppContent() {
         <Route path="/contact" element={<ContactPage />} />
   <Route path="/team" element={<TeamPage />} />
     <Route path="/green&clean" element={<GreenCleanCart />} />
+    <Route path="/movers-packers" element={<MoversPackersPage />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="/admin/dashboard" element={
