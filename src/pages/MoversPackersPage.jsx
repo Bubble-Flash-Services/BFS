@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { 
   MapPin, 
   Clock, 
@@ -25,7 +24,10 @@ const MoversPackersPage = () => {
   const [distance, setDistance] = useState(5);
   const [priceCalculation, setPriceCalculation] = useState(null);
   const [showCalculator, setShowCalculator] = useState(false);
-  const navigate = useNavigate();
+
+  // Distance charge constants
+  const DISTANCE_CHARGE_20_30KM = 350;
+  const DISTANCE_CHARGE_PER_KM_ABOVE_30 = 10;
 
   useEffect(() => {
     loadServices();
@@ -228,9 +230,9 @@ const MoversPackersPage = () => {
       } else if (distance <= 20) {
         distanceCharge = 250;
       } else if (distance <= 30) {
-        distanceCharge = 350;
+        distanceCharge = DISTANCE_CHARGE_20_30KM;
       } else {
-        distanceCharge = 350 + (distance - 30) * 10;
+        distanceCharge = DISTANCE_CHARGE_20_30KM + (distance - 30) * DISTANCE_CHARGE_PER_KM_ABOVE_30;
       }
       totalPrice += distanceCharge;
     }
@@ -251,8 +253,8 @@ const MoversPackersPage = () => {
     if (distance <= 5) return 'Base price (0-5 km)';
     if (distance <= 10) return '+₹150 (5-10 km)';
     if (distance <= 20) return '+₹250 (10-20 km)';
-    if (distance <= 30) return '+₹350 (20-30 km)';
-    return `+₹${350 + (distance - 30) * 10} (30+ km @ ₹10/km)`;
+    if (distance <= 30) return `+₹${DISTANCE_CHARGE_20_30KM} (20-30 km)`;
+    return `+₹${DISTANCE_CHARGE_20_30KM + (distance - 30) * DISTANCE_CHARGE_PER_KM_ABOVE_30} (30+ km @ ₹${DISTANCE_CHARGE_PER_KM_ABOVE_30}/km)`;
   };
 
   if (loading) {

@@ -1,5 +1,9 @@
 import MoversPackers from '../models/MoversPackers.js';
 
+// Constants for distance-based pricing
+const DISTANCE_CHARGE_20_30KM = 350;
+const DISTANCE_CHARGE_PER_KM_ABOVE_30 = 10;
+
 // Get all movers & packers services
 export const getMoversPackersServices = async (req, res) => {
   try {
@@ -108,7 +112,7 @@ export const calculatePrice = async (req, res) => {
       
       // If distance is beyond all defined ranges (30+ km), calculate at ₹10/km
       if (!chargeApplied && distance > 30) {
-        distanceCharge = 350 + (distance - 30) * 10; // Base 350 for up to 30km + ₹10 per additional km
+        distanceCharge = DISTANCE_CHARGE_20_30KM + (distance - 30) * DISTANCE_CHARGE_PER_KM_ABOVE_30;
       }
       
       totalPrice += distanceCharge;
