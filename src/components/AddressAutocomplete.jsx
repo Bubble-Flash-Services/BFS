@@ -6,11 +6,14 @@ const AddressAutocomplete = ({
   value, 
   onChange, 
   onSelect, 
+  onAddressSelect, // Support both prop names for backward compatibility
   placeholder = "Enter your address",
   className = "",
   showCurrentLocation = true,
   debounceMs = 300
 }) => {
+  // Use whichever callback is provided
+  const handleSelect = onAddressSelect || onSelect;
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -70,8 +73,8 @@ const AddressAutocomplete = ({
     setSuggestions([]);
     setSelectedIndex(-1);
     
-    if (onSelect) {
-      onSelect({
+    if (handleSelect) {
+      handleSelect({
         fullAddress: suggestion.display_name,
         latitude: suggestion.latitude,
         longitude: suggestion.longitude,
@@ -96,8 +99,8 @@ const AddressAutocomplete = ({
         setShowSuggestions(false);
         setSuggestions([]);
         
-        if (onSelect) {
-          onSelect(result.data);
+        if (handleSelect) {
+          handleSelect(result.data);
         }
       } else {
         alert(result.message || 'Unable to get current location');

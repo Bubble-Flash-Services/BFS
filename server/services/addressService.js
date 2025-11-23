@@ -1,5 +1,6 @@
-// Using built-in fetch API (Node.js 18+)
-// If running on older Node.js versions, install node-fetch: npm install node-fetch
+// Import node-fetch for compatibility across Node.js versions
+// Node.js 18+ has built-in fetch, but we use node-fetch for consistency
+import fetch from 'node-fetch';
 
 class AddressService {
   constructor() {
@@ -38,7 +39,13 @@ class AddressService {
 
       // Fallback to Nominatim (free but rate limited)
       const response = await fetch(
-        `${this.nominatimBaseUrl}/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`
+        `${this.nominatimBaseUrl}/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'BubbleFlash-App/1.0',
+            'Accept': 'application/json'
+          }
+        }
       );
       const data = await response.json();
 
@@ -101,7 +108,13 @@ class AddressService {
 
       // Fallback to Nominatim
       const response = await fetch(
-        `${this.nominatimBaseUrl}/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=${limit}&countrycode=in`
+        `${this.nominatimBaseUrl}/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=${limit}&countrycode=in`,
+        {
+          headers: {
+            'User-Agent': 'BubbleFlash-App/1.0',
+            'Accept': 'application/json'
+          }
+        }
       );
       const data = await response.json();
 
@@ -138,10 +151,26 @@ class AddressService {
   // Get address suggestions for autocomplete
   async getAddressSuggestions(query, limit = 5) {
     try {
-      const response = await fetch(
-        `${this.nominatimBaseUrl}/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=${limit}&countrycode=in`
-      );
+      const url = `${this.nominatimBaseUrl}/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=${limit}&countrycode=in`;
+      console.log('Fetching address suggestions from:', url);
+      
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'BubbleFlash-App/1.0',
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        console.error('Nominatim API error:', response.status, response.statusText);
+        return {
+          success: false,
+          message: `API request failed with status ${response.status}`
+        };
+      }
+
       const data = await response.json();
+      console.log('Nominatim API response:', data.length, 'results');
 
       if (data && data.length > 0) {
         return {
