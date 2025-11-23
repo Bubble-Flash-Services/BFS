@@ -39,13 +39,165 @@ const MoversPackersPage = () => {
         setServices(response.data);
       } else {
         toast.error('Failed to load services');
+        loadMockData();
       }
     } catch (error) {
       console.error('Error loading services:', error);
-      toast.error('Failed to load services');
+      // Load mock data for demo when API is unavailable
+      loadMockData();
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadMockData = () => {
+    // Mock data for demonstration
+    const mockServices = [
+      {
+        _id: '1',
+        itemType: 'bike',
+        name: 'Bike Shifting',
+        icon: '🏍️',
+        description: 'Professional bike shifting service with complete protection and safe transport',
+        basePrice: 1299,
+        baseDistance: 5,
+        includes: [
+          'Foam sheet packing',
+          'Bubble wrap',
+          'Tank & handle protection',
+          'Rope lock inside vehicle',
+          'Loading + transport + unloading'
+        ],
+        notIncludes: ['Bike repair', 'Fuel refill', 'Mechanical issues'],
+        howItsDone: 'Wrap → Load → Tie → Transport → Unload → Handover',
+        sortOrder: 1
+      },
+      {
+        _id: '2',
+        itemType: 'scooty',
+        name: 'Scooty Shifting',
+        icon: '🛵',
+        description: 'Safe and secure scooty transportation with proper packing',
+        basePrice: 1199,
+        baseDistance: 5,
+        includes: [
+          'Full wrap packing',
+          'Side panel protection',
+          'Loading + unloading',
+          'Mini-truck transport'
+        ],
+        notIncludes: ['Dent removal', 'Electrical issues'],
+        howItsDone: 'Scooty is padded, loaded, tied using straps, and delivered safely.',
+        sortOrder: 2
+      },
+      {
+        _id: '3',
+        itemType: 'fridge',
+        name: 'Fridge Shifting',
+        icon: '🧊',
+        description: 'Single/Double Door fridge shifting with upright transport',
+        basePrice: 1899,
+        baseDistance: 5,
+        includes: [
+          'Bubble + stretch wrap',
+          'Upright transport only',
+          '2–3 helpers',
+          'Placement in kitchen'
+        ],
+        notIncludes: ['Gas refill', 'Cooling repair'],
+        howItsDone: 'Wrap → Carry with 2 helpers → Load upright → Transport → Place properly.',
+        sortOrder: 3
+      },
+      {
+        _id: '4',
+        itemType: 'washing-machine',
+        name: 'Washing Machine Shifting',
+        icon: '🧼',
+        description: 'Safe washing machine transportation with proper packaging',
+        basePrice: 1299,
+        baseDistance: 5,
+        includes: ['Foam wrap', 'Drum lock', 'Transport', 'Loading + unloading'],
+        notIncludes: ['Pipe installation', 'Machine repair'],
+        howItsDone: 'Secure → Wrap → Load → Transport → Unload.',
+        sortOrder: 4
+      },
+      {
+        _id: '5',
+        itemType: 'sofa',
+        name: 'Sofa Shifting',
+        icon: '🛋️',
+        description: '3–5 Seater sofa shifting with complete protection',
+        basePrice: 2299,
+        baseDistance: 5,
+        includes: [
+          'Bubble wrap + foam',
+          'Corner protection',
+          'Manual lifting',
+          'Door-to-door transport'
+        ],
+        notIncludes: ['Sofa repair', 'Dismantling (extra)'],
+        howItsDone: 'Wrap → Protect corners → Lift carefully → Load → Deliver.',
+        sortOrder: 5
+      },
+      {
+        _id: '6',
+        itemType: 'tv',
+        name: 'TV Shifting',
+        icon: '📺',
+        description: 'LED/Smart TV shifting with screen protection',
+        basePrice: 899,
+        baseDistance: 5,
+        includes: [
+          'Bubble wrap',
+          'Screen protection sheet',
+          'Cardboard frame',
+          'Transport'
+        ],
+        notIncludes: ['Wall mounting', 'Screen replacement'],
+        howItsDone: 'TV wrapped like a sandwich panel → Cardboard edges → Load → Deliver.',
+        sortOrder: 6
+      },
+      {
+        _id: '7',
+        itemType: 'mattress',
+        name: 'Mattress Shifting',
+        icon: '🛏',
+        description: 'Single/Double/Queen/King mattress shifting',
+        basePrice: 699,
+        baseDistance: 5,
+        includes: ['Mattress cover / plastic wrap', 'Transport', 'Loading + unloading'],
+        notIncludes: ['Mattress cleaning', 'Mold treatment'],
+        howItsDone: 'Cover → Roll/flat carry → Transport → Deliver.',
+        sortOrder: 7
+      },
+      {
+        _id: '8',
+        itemType: 'cupboard',
+        name: 'Cupboard Shifting',
+        icon: '🚪',
+        description: 'Steel/Wooden cupboard shifting service',
+        basePrice: 1499,
+        baseDistance: 5,
+        includes: ['Full wrap', 'Shelf taping', 'Lifting & loading', 'Transport', 'Unloading'],
+        notIncludes: ['Inside item packing', 'Door repair'],
+        howItsDone: 'Empty → Wrap → Tie → Load → Deliver safely.',
+        sortOrder: 8
+      },
+      {
+        _id: '9',
+        itemType: 'table',
+        name: 'Table Shifting',
+        icon: '🪑',
+        description: 'Office / Dining / Study table shifting',
+        basePrice: 799,
+        baseDistance: 5,
+        includes: ['Table wrap', 'Edge protection', 'Transport', 'Loading + unloading'],
+        notIncludes: ['Table repair', 'Disassembling (extra)'],
+        howItsDone: 'Wrap → Lift → Load → Transport → Unload carefully.',
+        sortOrder: 9
+      }
+    ];
+    setServices(mockServices);
   };
 
   const handleCalculatePrice = async (service) => {
@@ -56,12 +208,43 @@ const MoversPackersPage = () => {
         setSelectedService(service);
         setShowCalculator(true);
       } else {
-        toast.error('Failed to calculate price');
+        // Fallback to manual calculation
+        calculatePriceManually(service);
       }
     } catch (error) {
       console.error('Error calculating price:', error);
-      toast.error('Failed to calculate price');
+      // Fallback to manual calculation when API is unavailable
+      calculatePriceManually(service);
     }
+  };
+
+  const calculatePriceManually = (service) => {
+    let totalPrice = service.basePrice;
+    let distanceCharge = 0;
+
+    if (distance > service.baseDistance) {
+      if (distance <= 10) {
+        distanceCharge = 150;
+      } else if (distance <= 20) {
+        distanceCharge = 250;
+      } else if (distance <= 30) {
+        distanceCharge = 350;
+      } else {
+        distanceCharge = 350 + (distance - 30) * 10;
+      }
+      totalPrice += distanceCharge;
+    }
+
+    setPriceCalculation({
+      serviceId: service._id,
+      serviceName: service.name,
+      basePrice: service.basePrice,
+      distance,
+      distanceCharge,
+      totalPrice
+    });
+    setSelectedService(service);
+    setShowCalculator(true);
   };
 
   const getDistanceChargeDisplay = () => {
