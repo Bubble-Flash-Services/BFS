@@ -4,18 +4,18 @@
       "_id": "inst-home-001",
       "subcategory": "Home Care",
       "title": "Sweeping & Mopping",
-      "description": "Quick dry and wet cleaning of floors using mop and broom.",
+      "description": "Sweeping full house and mopping all accessible areas with disinfectant solution.",
       "durationMinutes": 25,
-      "basePrice": 169,
+      "basePrice": 149,
       "active": true,
       "images": [
         "data:image/jpeg;base64,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"
       ],
       "features": [
-        "Dry sweeping",
-        "Wet mopping",
-        "Dust removal",
-        "Floor refresh"
+        "Sweeping full house",
+        "Mopping all accessible areas",
+        "Light stain removal",
+        "Moving small objects (chairs, stools)"
       ],
       "sortOrder": 1
     },
@@ -23,66 +23,73 @@
       "_id": "inst-home-002",
       "subcategory": "Home Care",
       "title": "Dusting",
-      "description": "Surface dusting for furniture, shelves, and fixtures.",
+      "description": "Dusting of furniture, shelves, TV unit, wall frames, and light decor items.",
       "durationMinutes": 20,
       "basePrice": 129,
       "active": true,
       "images": [
         "data:image/jpeg;base64,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"
       ],
-      "features": ["Furniture dusting", "Fan blades", "Shelves", "Corners"],
+      "features": [
+        "Furniture dusting",
+        "Shelves & tables",
+        "TV unit & wall frames",
+        "Light decorative items"
+      ],
       "sortOrder": 2
     },
     {
       "_id": "inst-home-003",
       "subcategory": "Home Care",
       "title": "Window Cleaning",
-      "description": "Quick wipe and polish of window panes and grills.",
+      "description": "Inside window cleaning with glass wipe, grill dusting, and frame wipe.",
       "durationMinutes": 25,
-      "basePrice": 159,
+      "basePrice": 79,
       "active": true,
       "images": [
         "https://media.istockphoto.com/id/1150282133/photo/cleaning-window-pane-with-detergent.jpg?s=612x612&w=0&k=20&c=BkzVas8qZ_VLxLDWpDAPbVSDRXgRFMxbI3_NHcamUfk="
       ],
-      "features": [
-        "Glass cleaning",
-        "Grill dusting",
-        "Streak-free polish",
-        "Eco spray"
-      ],
+      "features": ["Glass wiping", "Grill dusting", "Frame wiping"],
       "sortOrder": 3
     },
     {
       "_id": "inst-kitchen-001",
       "subcategory": "Kitchen Care",
-      "title": "Kitchen Cleaning",
-      "description": "Quick cleaning of kitchen surfaces, stove, and sink.",
+      "title": "Kitchen Quick Clean",
+      "description": "Quick kitchen cleaning including countertop, stove surface, sink, and outer cabinet wipe.",
       "durationMinutes": 30,
-      "basePrice": 219,
+      "basePrice": 149,
       "active": true,
       "images": [
         "https://www.cleaningiscaring.org/wpd/wp-content/uploads/2021/07/kitchencleaning-600x600.jpg"
       ],
       "features": [
-        "Sink scrub",
-        "Cabinet wipe",
-        "Counter degrease",
-        "Stove polish"
+        "Countertop wipe",
+        "Stove surface wiping",
+        "Sink cleaning",
+        "Cupboard outer wiping",
+        "Tile touch-up",
+        "Appliance external wipe"
       ],
       "sortOrder": 4
     },
     {
       "_id": "inst-kitchen-002",
       "subcategory": "Kitchen Care",
-      "title": "Utensil Cleaning",
-      "description": "Fast dishwashing and drying for daily use utensils.",
+      "title": "Utensils Washing",
+      "description": "Washing regular daily-use utensils with liquid soap and clean water.",
       "durationMinutes": 25,
-      "basePrice": 149,
+      "basePrice": 99,
       "active": true,
       "images": [
         "https://media.istockphoto.com/id/929676872/photo/untidy-kitchen-slow-motion.jpg?s=612x612&w=0&k=20&c=kfgosdl4-RnSa4H57h8P2f9q1kYTzSWjmZUW4rQSfKA="
       ],
-      "features": ["Scrubbing", "Rinsing", "Drying", "Eco-friendly soap"],
+      "features": [
+        "Plates, bowls, spoons",
+        "Regular pots & pans",
+        "Sink cleaning after wash",
+        "Soap + scrub pad included"
+      ],
       "sortOrder": 5
     },
     {
@@ -102,18 +109,21 @@
     {
       "_id": "inst-bath-001",
       "subcategory": "Bathroom Care",
-      "title": "Bathroom Surface Cleaning",
-      "description": "Quick cleaning of bathroom tiles, sink, and mirror.",
-      "durationMinutes": 30,
-      "basePrice": 229,
+      "title": "Bathroom Quick Clean",
+      "description": "Fast refresh clean for one bathroom including floor, toilet, washbasin, and mirror.",
+      "durationMinutes": 25,
+      "basePrice": 99,
       "active": true,
       "images": [
         "https://www.southernliving.com/thmb/4XfAtimgX1DuzMcgL2WAVuoj_qk=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-153187215-65d9eaf6255a42599b005211adc5faf1.jpg"
       ],
       "features": [
-        "Tile scrubbing",
-        "Sink polish",
-        "Mirror cleaning",
+        "Floor mop",
+        "Toilet bowl quick clean",
+        "Washbasin wipe",
+        "Tap & shower wipe",
+        "Bucket & mug clean",
+        "Mirror wipe",
         "Disinfectant spray"
       ],
       "sortOrder": 7
@@ -122,130 +132,457 @@
       "_id": "inst-laundry-001",
       "subcategory": "Laundry Care",
       "title": "Laundry",
-      "description": "Washing and drying of clothes using machine.",
+      "description": "Machine wash and dry of clothes, priced per kg (starting from \u20b960/kg).",
       "durationMinutes": 45,
-      "basePrice": 269,
+      "basePrice": 60,
       "active": true,
       "images": [
         "https://tumbledry.in/wp-content/uploads/2022/09/01-feature-Image-copy-5.jpg"
       ],
-      "features": ["Machine wash", "Detergent included", "Drying cycle"],
+      "features": [
+        "Machine washing",
+        "Drying cycle",
+        "Basic detergent included",
+        "Neat folding bag"
+      ],
       "sortOrder": 8
     },
     {
       "_id": "inst-laundry-002",
       "subcategory": "Laundry Care",
       "title": "Ironing",
-      "description": "Clothes ironing service using steam or dry iron.",
+      "description": "Per-cloth ironing service using steam or dry iron.",
       "durationMinutes": 35,
-      "basePrice": 179,
+      "basePrice": 10,
       "active": true,
       "images": [
         "https://media.istockphoto.com/id/1368091437/photo/young-woman-ironing-close-up.jpg?s=612x612&w=0&k=20&c=jzMqd7uxe_6bvR5q2gurP6irvp7JBys8Wv9bhKtnsRE="
       ],
-      "features": ["Steam or dry iron", "Shirts and pants", "Fold ready"],
+      "features": ["Regular ironing", "Steam iron if needed", "Neat finishing"],
       "sortOrder": 9
     },
     {
       "_id": "inst-laundry-003",
       "subcategory": "Laundry Care",
       "title": "Folding",
-      "description": "Neatly folding freshly washed or ironed clothes.",
+      "description": "Per-cloth folding of freshly washed or ironed clothes.",
       "durationMinutes": 20,
-      "basePrice": 119,
+      "basePrice": 5,
       "active": true,
       "images": [
         "https://www.wash.com/wp-content/uploads/2019/10/folding-colorful-clothes.jpg"
       ],
-      "features": [
-        "Shirts, pants, towels",
-        "Stacked arrangement",
-        "Wardrobe-ready"
-      ],
+      "features": ["Proper folding", "Stack arrangement", "Sorting by type"],
       "sortOrder": 10
+    },
+    {
+      "_id": "inst-home-fan-001",
+      "subcategory": "Home Care",
+      "title": "Fan Cleaning",
+      "description": "Cleaning of ceiling fan blades and motor cover using microfiber cloth.",
+      "durationMinutes": 15,
+      "basePrice": 49,
+      "features": [
+        "Fan blade dusting",
+        "Motor cover cleaning",
+        "Microfiber wipe"
+      ],
+      "active": true,
+      "images": [
+        "https://5.imimg.com/data5/SELLER/Default/2022/1/BY/VH/MW/142132883/ceiling-fan-cleaning-services.jpg"
+      ],
+      "sortOrder": 11
+    },
+    {
+      "_id": "inst-bath-shower-001",
+      "subcategory": "Bathroom Care",
+      "title": "Shower Cubicle Quick Clean",
+      "description": "Quick cleaning of glass shower cubicle and floor area.",
+      "durationMinutes": 25,
+      "basePrice": 149,
+      "features": [
+        "Glass surface wipe",
+        "Soap residue removal",
+        "Tap & shower wipe",
+        "Floor quick scrub"
+      ],
+      "active": true,
+      "images": [
+        "https://tapron.co.uk/cdn/shop/articles/TapronUK_shower_enclosure_1100x.jpg?v=1708180950"
+      ],
+      "sortOrder": 12
+    },
+    {
+      "_id": "inst-bath-tub-001",
+      "subcategory": "Bathroom Care",
+      "title": "Bathtub Cleaning",
+      "description": "Cleaning and light scrubbing of bathtub and tap area.",
+      "durationMinutes": 30,
+      "basePrice": 199,
+      "features": [
+        "Bathtub wiping",
+        "Soap scum removal",
+        "Tap & drain area cleaning",
+        "Light scrubbing"
+      ],
+      "active": true,
+      "images": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkbSDe0XF03q48z5cO7NYUtvLUGkqRpcgMXA&s"
+      ],
+      "sortOrder": 13
+    },
+    {
+      "_id": "inst-home-balcony-001",
+      "subcategory": "Home Care",
+      "title": "Balcony Cleaning",
+      "description": "Quick sweeping and mopping of balcony with railing wipe.",
+      "durationMinutes": 20,
+      "basePrice": 79,
+      "features": [
+        "Sweeping",
+        "Mopping",
+        "Railing/grill wipe",
+        "Light stain removal"
+      ],
+      "active": true,
+      "images": [
+        "https://5.imimg.com/data5/SELLER/Default/2023/12/367687798/GU/RW/TL/26356278/home-balcony-cleaning-service.jpg"
+      ],
+      "sortOrder": 14
+    },
+    {
+      "_id": "inst-common-stairs-001",
+      "subcategory": "Common Area Care",
+      "title": "Staircase Cleaning",
+      "description": "Sweeping and mopping of staircase steps with railing wipe.",
+      "durationMinutes": 25,
+      "basePrice": 99,
+      "features": ["Sweeping stairs", "Mopping steps", "Railing wipe"],
+      "active": true,
+      "images": [
+        "https://img.freepik.com/premium-photo/woman-cleaning-railing-home_1048944-28438039.jpg?semt=ais_hybrid&w=740&q=80"
+      ],
+      "sortOrder": 15
+    },
+    {
+      "_id": "inst-home-garbage-001",
+      "subcategory": "Home Care",
+      "title": "Garbage Disposal",
+      "description": "Collecting household garbage and dumping it safely in society bin.",
+      "durationMinutes": 10,
+      "basePrice": 19,
+      "features": [
+        "Collecting waste",
+        "Dumping to society bin",
+        "Replacing bag (if provided)"
+      ],
+      "active": true,
+      "images": [
+        "https://hometriangle.com/blogs/content/images/2024/03/Different-coloured-garbage-bins-for-different-kinds-of-waste.jpg"
+      ],
+      "sortOrder": 16
+    },
+    {
+      "_id": "inst-combo-001",
+      "subcategory": "Combo Packs",
+      "title": "Express Home Refresh Combo",
+      "description": "Value combo pack covering multiple quick cleaning services.",
+      "durationMinutes": 45,
+      "basePrice": 249,
+      "features": [
+        "Sweeping & Mopping",
+        "Dusting (Full House)",
+        "Garbage Disposal",
+        "Approx 30 mins"
+      ],
+      "active": true,
+      "images": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRchhl2KVrc1ROAbcxP51nx2MLcMci0gYA4g&s"
+      ],
+      "sortOrder": 17
+    },
+    {
+      "_id": "inst-combo-002",
+      "subcategory": "Combo Packs",
+      "title": "Kitchen & Bathroom Sparkle Combo",
+      "description": "Value combo pack covering multiple quick cleaning services.",
+      "durationMinutes": 45,
+      "basePrice": 299,
+      "features": [
+        "Kitchen Quick Clean",
+        "Bathroom Quick Clean (1 bathroom)",
+        "Sink cleaning",
+        "Mirror cleaning"
+      ],
+      "active": true,
+      "images": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE5MMSPioweEpGfgZar4NoZ6ioj9DUAWj--Q&s"
+      ],
+      "sortOrder": 18
+    },
+    {
+      "_id": "inst-combo-003",
+      "subcategory": "Combo Packs",
+      "title": "Balcony & Outdoor Shine Combo",
+      "description": "Value combo pack covering multiple quick cleaning services.",
+      "durationMinutes": 45,
+      "basePrice": 149,
+      "features": [
+        "Balcony sweeping & mopping",
+        "Balcony grill dusting",
+        "Balcony cobweb removal"
+      ],
+      "active": true,
+      "images": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9zup3LKgZcEJVYpqho8jH9YdlUJFGfxNn-w&s"
+      ],
+      "sortOrder": 19
+    },
+    {
+      "_id": "inst-combo-004",
+      "subcategory": "Combo Packs",
+      "title": "Laundry Care Combo",
+      "description": "Value combo pack covering multiple quick cleaning services.",
+      "durationMinutes": 45,
+      "basePrice": 99,
+      "features": [
+        "Laundry Wash & Dry",
+        "Ironing (5 clothes)",
+        "Folding (5 clothes)",
+        "Plus \u20b960/kg for laundry"
+      ],
+      "active": true,
+      "images": [
+        "https://weandco.co.nz/cdn/shop/products/9_f7dbac23-858d-438a-a3ef-584842f8a648.png?v=1602713876"
+      ],
+      "sortOrder": 20
+    },
+    {
+      "_id": "inst-combo-005",
+      "subcategory": "Combo Packs",
+      "title": "Bedroom Refresh Combo",
+      "description": "Value combo pack covering multiple quick cleaning services.",
+      "durationMinutes": 45,
+      "basePrice": 199,
+      "features": [
+        "Bed making",
+        "Pillow/Cushion freshening",
+        "Wardrobe outer cleaning",
+        "Mattress surface vacuuming (add-on)"
+      ],
+      "active": true,
+      "images": ["https://images.woodenstreet.de/image/data%2FLooks%2F3.jpg"],
+      "sortOrder": 21
+    },
+    {
+      "_id": "inst-combo-006",
+      "subcategory": "Combo Packs",
+      "title": "Complete Home MINI Clean Combo",
+      "description": "Value combo pack covering multiple quick cleaning services.",
+      "durationMinutes": 45,
+      "basePrice": 399,
+      "features": [
+        "Sweeping & Mopping",
+        "Dusting",
+        "Kitchen Quick Clean",
+        "Bathroom Quick Clean (1)",
+        "Garbage Disposal",
+        "Sanitizer spray"
+      ],
+      "active": true,
+      "images": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIDzYAtENTyoFO-odXujhFtG3Qf_d1DHUhb8qswjy3TJTxKx4fEMKHpWLYmxKnPCzFjn8&usqp=CAU"
+      ],
+      "sortOrder": 22
     }
   ],
-
   "deepCleanServices": [
     {
       "category": "home-cleaning",
       "title": "Home Deep Cleaning",
       "services": [
         {
-          "_id": "home-1bhk",
+          "_id": "home-1bhk-unf",
           "subcategory": "Home Care",
-          "title": "1BHK Deep Clean",
-          "description": "Comprehensive deep cleaning for 1BHK homes including kitchen and bathroom.",
-          "durationMinutes": 120,
-          "basePrice": 899,
+          "title": "1BHK Unfurnished Deep Cleaning",
+          "description": "Full deep cleaning for empty 1BHK home including kitchen, bathroom, and balcony.",
+          "durationMinutes": 300,
+          "basePrice": 2799,
           "active": true,
           "images": [
             "https://5.imimg.com/data5/ANDROID/Default/2022/1/CO/YJ/XP/56408041/product-jpeg-500x500.jpg"
           ],
           "features": [
-            "Living room and bedroom deep clean",
-            "Kitchen degreasing",
-            "Bathroom sanitization",
-            "Window cleaning"
+            "Full room dusting",
+            "Fans & lights cleaning",
+            "Switchboard cleaning",
+            "Cobweb removal",
+            "Deep floor scrubbing (machine where applicable)",
+            "Bathroom deep cleaning (1 bathroom)",
+            "Kitchen deep cleaning",
+            "Sink & tap descaling",
+            "Tile scrubbing",
+            "Balcony cleaning & washing",
+            "Window cleaning (inside only)",
+            "Door & handle deep cleaning"
           ],
           "sortOrder": 1
         },
         {
-          "_id": "home-2bhk",
+          "_id": "home-2bhk-unf",
           "subcategory": "Home Care",
-          "title": "2BHK Deep Clean",
-          "description": "Full deep cleaning for 2BHK homes with furniture movement and polishing.",
-          "durationMinutes": 180,
-          "basePrice": 1299,
+          "title": "2BHK Unfurnished Deep Cleaning",
+          "description": "Deep cleaning for empty 2BHK home with 2 bathrooms and extended balcony area.",
+          "durationMinutes": 360,
+          "basePrice": 3999,
           "active": true,
           "images": [
             "https://www.dirtblastercleaningservices.com/wp-content/uploads/2021/05/Bungalow-Cleaning-Services-Pune.jpg"
           ],
           "features": [
-            "All rooms deep cleaned",
-            "Balcony and glass panels",
-            "Wood surface polishing",
-            "Kitchen appliance cleaning"
+            "Everything in 1BHK package",
+            "Deep cleaning for 2 bedrooms",
+            "2 bathrooms deep clean",
+            "Complete kitchen degreasing",
+            "Additional balcony area cleaning",
+            "Extra window cleaning",
+            "Extra switchboard & fans cleaning"
           ],
           "sortOrder": 2
         },
         {
-          "_id": "home-3bhk",
+          "_id": "home-3bhk-unf",
           "subcategory": "Home Care",
-          "title": "3BHK Deep Clean",
-          "description": "Premium cleaning for 3BHK apartments using eco-friendly solutions.",
-          "durationMinutes": 240,
-          "basePrice": 1799,
+          "title": "3BHK Unfurnished Deep Cleaning",
+          "description": "Full deep cleaning for empty 3BHK apartment including hall, kitchen, and bathrooms.",
+          "durationMinutes": 420,
+          "basePrice": 4999,
           "active": true,
           "images": [
             "https://www.specifichomeservices.com/wp-content/uploads/2025/02/Empty-House-Cleaning-Services--715x415.jpg"
           ],
           "features": [
-            "Complete house sanitization",
-            "Eco-friendly cleaning products",
-            "Kitchen degreasing",
-            "Bathroom anti-fungal treatment"
+            "All 2BHK services",
+            "3 full bedrooms deep clean",
+            "2\u20133 bathrooms deep clean",
+            "Multipurpose hall deep cleaning",
+            "Full kitchen degreasing & scrubbing",
+            "Balcony scrubbing",
+            "Doors & windows detailed cleaning"
           ],
           "sortOrder": 3
         },
         {
-          "_id": "home-4bhk",
+          "_id": "home-4bhk-unf",
           "subcategory": "Home Care",
-          "title": "4BHK Deep Clean",
-          "description": "Full deep cleaning for 4BHK homes with extended service coverage.",
-          "durationMinutes": 300,
-          "basePrice": 2199,
+          "title": "4BHK Unfurnished Deep Cleaning",
+          "description": "Complete deep cleaning for empty 4BHK homes with hall, kitchen, and up to 4 bathrooms.",
+          "durationMinutes": 480,
+          "basePrice": 6499,
           "active": true,
           "images": [
             "https://5.imimg.com/data5/SELLER/Default/2024/5/418831261/KU/AU/ZL/5711578/2-bhk-flat-deep-cleaning-service.jpg"
           ],
           "features": [
-            "All rooms and utility areas",
-            "Staircase and fan cleaning",
-            "Balcony and window polish",
-            "Sofa and mattress shampoo"
+            "Complete deep cleaning for all 4 bedrooms",
+            "Full hall cleaning",
+            "3\u20134 bathroom deep cleaning",
+            "Complete kitchen wash",
+            "Balcony scrubbing",
+            "Full floor scrubbing",
+            "Doors, windows, grills deep clean",
+            "High-touch sanitization"
           ],
           "sortOrder": 4
+        },
+        {
+          "_id": "home-1bhk-fur",
+          "subcategory": "Home Care",
+          "title": "1BHK Fully Furnished Deep Cleaning",
+          "description": "Deep cleaning for furnished 1BHK including furniture and appliance exteriors.",
+          "durationMinutes": 330,
+          "basePrice": 3299,
+          "active": true,
+          "images": [
+            "https://5.imimg.com/data5/ANDROID/Default/2022/1/CO/YJ/XP/56408041/product-jpeg-500x500.jpg"
+          ],
+          "features": [
+            "All unfurnished 1BHK services",
+            "Furniture surface cleaning",
+            "Wardrobe outer cleaning",
+            "Table/chair/shelves cleaning",
+            "Appliance outer cleaning",
+            "Bedside cleaning",
+            "Sofa surface wipe",
+            "Window grill cleaning"
+          ],
+          "sortOrder": 5
+        },
+        {
+          "_id": "home-2bhk-fur",
+          "subcategory": "Home Care",
+          "title": "2BHK Fully Furnished Deep Cleaning",
+          "description": "Full deep cleaning for furnished 2BHK with furniture and appliance care.",
+          "durationMinutes": 390,
+          "basePrice": 4899,
+          "active": true,
+          "images": [
+            "https://www.dirtblastercleaningservices.com/wp-content/uploads/2021/05/Bungalow-Cleaning-Services-Pune.jpg"
+          ],
+          "features": [
+            "Furniture wipe for 2 bedrooms + hall",
+            "Wardrobe outer cleaning",
+            "All appliance exteriors",
+            "Kitchen cabinets outer clean",
+            "Bathroom deep clean",
+            "Balcony cleaning",
+            "Floor machine scrubbing",
+            "Switchboard & high-touch sanitization"
+          ],
+          "sortOrder": 6
+        },
+        {
+          "_id": "home-3bhk-fur",
+          "subcategory": "Home Care",
+          "title": "3BHK Fully Furnished Deep Cleaning",
+          "description": "Deep cleaning for furnished 3BHK homes with extra detailing and balcony wash.",
+          "durationMinutes": 420,
+          "basePrice": 5999,
+          "active": true,
+          "images": [
+            "https://www.specifichomeservices.com/wp-content/uploads/2025/02/Empty-House-Cleaning-Services--715x415.jpg"
+          ],
+          "features": [
+            "All 2BHK furnished services",
+            "3 bedrooms deep clean",
+            "Appliance external detailing",
+            "Extra window & grill cleaning",
+            "Full balcony wash",
+            "Extra bathroom deep clean"
+          ],
+          "sortOrder": 7
+        },
+        {
+          "_id": "home-4bhk-fur",
+          "subcategory": "Home Care",
+          "title": "4BHK Fully Furnished Deep Cleaning",
+          "description": "Complete deep cleaning for fully furnished 4BHK homes.",
+          "durationMinutes": 480,
+          "basePrice": 7499,
+          "active": true,
+          "images": [
+            "https://5.imimg.com/data5/SELLER/Default/2024/5/418831261/KU/AU/ZL/5711578/2-bhk-flat-deep-cleaning-service.jpg"
+          ],
+          "features": [
+            "All 3BHK furnished services",
+            "All 4 bedrooms deep clean",
+            "Full hall + dining area",
+            "3\u20134 bathroom deep cleansing",
+            "Furniture wipe for entire home",
+            "Window & grill deep cleaning",
+            "High-touch disinfection"
+          ],
+          "sortOrder": 8
         }
       ]
     },
@@ -257,18 +594,24 @@
           "_id": "com-office",
           "subcategory": "Office Care",
           "title": "Office Deep Clean",
-          "description": "Thorough cleaning for office spaces including desks, chairs, and carpets.",
+          "description": "Office deep cleaning up to 800 sq ft including workstations, glass, pantry, and washrooms.",
           "durationMinutes": 300,
-          "basePrice": 2499,
+          "basePrice": 2999,
           "active": true,
           "images": [
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiNfnirGO_QTax1kqSQiTbk3O4bp1N4P4mwA&s"
           ],
           "features": [
-            "Desk and chair shampooing",
-            "Glass panel polish",
-            "Pantry and restroom sanitization",
-            "Floor machine scrub"
+            "Workstation cleaning",
+            "Desk & chair surface wipe",
+            "Computer exterior cleaning",
+            "Glass & partition cleaning",
+            "Floor scrubbing",
+            "Pantry cleaning",
+            "Washroom deep clean",
+            "Meeting room cleaning",
+            "Cobweb removal",
+            "Sanitizer spray"
           ],
           "sortOrder": 1
         },
@@ -276,18 +619,20 @@
           "_id": "com-retail",
           "subcategory": "Retail Care",
           "title": "Retail Store Cleaning",
-          "description": "Detailed cleaning for retail outlets including shelves and fitting rooms.",
+          "description": "Retail store deep cleaning up to 600 sq ft including shelves, mirrors, and fitting rooms.",
           "durationMinutes": 180,
-          "basePrice": 1899,
+          "basePrice": 2299,
           "active": true,
           "images": [
             "https://5.imimg.com/data5/SELLER/Default/2024/12/472571628/BV/OY/KL/79099742/retail-stores-housekeeping-service.jpg"
           ],
           "features": [
-            "Display shelf dusting",
-            "Countertop polish",
-            "Fitting room sanitization",
-            "Floor vacuum and mop"
+            "Shelf dusting",
+            "Mirrors & glass cleaning",
+            "Fitting room cleaning",
+            "Cash counter area clean",
+            "Floor scrubbing",
+            "Product display wipe"
           ],
           "sortOrder": 2
         }
@@ -301,18 +646,18 @@
           "_id": "ind-factory",
           "subcategory": "Factory Care",
           "title": "Factory Floor Cleaning",
-          "description": "Heavy-duty cleaning for factory floors and machine bases.",
+          "description": "Factory floor deep cleaning up to 5,000 sq ft with industrial degreaser treatment.",
           "durationMinutes": 360,
-          "basePrice": 3499,
+          "basePrice": 3999,
           "active": true,
           "images": [
             "https://thumbs.dreamstime.com/b/industrial-cleaning-scene-worker-yellow-attire-mopping-factory-floor-354055374.jpg"
           ],
           "features": [
-            "Oil and grease removal",
-            "Machine base scrubbing",
-            "Epoxy floor polish",
-            "Debris disposal"
+            "Machine base cleaning",
+            "Oil-free floor scrubbing",
+            "Heavy dust removal",
+            "Industrial degreaser treatment"
           ],
           "sortOrder": 1
         },
@@ -320,7 +665,7 @@
           "_id": "ind-warehouse",
           "subcategory": "Warehouse Care",
           "title": "Warehouse Cleaning",
-          "description": "Rack and floor cleaning for large warehouse spaces.",
+          "description": "Warehouse deep cleaning up to 3,000 sq ft including racks, floors, and shutters.",
           "durationMinutes": 300,
           "basePrice": 2999,
           "active": true,
@@ -328,10 +673,10 @@
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEasPiFk0M2Guq-Ha1v6_78bjbmz4IQ1Ie1g&s"
           ],
           "features": [
-            "Rack dusting",
-            "Floor sweep and mop",
-            "Pest control prep",
-            "Loading bay sanitation"
+            "Rack surface dusting",
+            "Floor sweeping & scrubbing",
+            "Cobweb removal",
+            "Shutter cleaning"
           ],
           "sortOrder": 2
         }
@@ -441,6 +786,129 @@
             "Lighting fixture wipe"
           ],
           "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "category": "bathroom-cleaning",
+      "title": "Bathroom Deep Cleaning",
+      "services": [
+        {
+          "_id": "bath-basic-001",
+          "subcategory": "Bathroom Care",
+          "title": "Basic Bathroom Cleaning",
+          "description": "Basic bathroom cleaning for one bathroom.",
+          "durationMinutes": 30,
+          "basePrice": 349,
+          "active": true,
+          "images": [
+            "https://www.thecleaning.company/wp-content/uploads/2024/01/2.jpg"
+          ],
+          "features": [
+            "Basic floor and wall cleaning",
+            "Toilet and washbasin cleaning",
+            "Mirror wipe",
+            "Disinfectant spray"
+          ],
+          "sortOrder": 1
+        },
+        {
+          "_id": "bath-standard-001",
+          "subcategory": "Bathroom Care",
+          "title": "Standard Bathroom Deep Clean",
+          "description": "Standard deep cleaning for one bathroom.",
+          "durationMinutes": 40,
+          "basePrice": 499,
+          "active": true,
+          "images": [
+            "https://cdn.prod.website-files.com/60eece3229f951ea48ce43b4/6135fac1e90306181f42f477_shutterstock_761048302.jpg"
+          ],
+          "features": [
+            "Hard-water stain removal (basic level)",
+            "Toilet deep scrub",
+            "Tap & shower descaling",
+            "Wall tiles scrubbing",
+            "Floor scrubbing with chemicals",
+            "Mirror & glass cleaning"
+          ],
+          "sortOrder": 2
+        },
+        {
+          "_id": "bath-premium-001",
+          "subcategory": "Bathroom Care",
+          "title": "Premium Bathroom Deep Cleaning",
+          "description": "Premium full-process bathroom deep cleaning.",
+          "durationMinutes": 50,
+          "basePrice": 599,
+          "active": true,
+          "images": [
+            "https://jumanji.livspace-cdn.com/magazine/wp-content/uploads/sites/2/2022/08/24150004/bathroom-cleaning-tips.jpg"
+          ],
+          "features": [
+            "Hard-water stain removal",
+            "Tap & shower descaling",
+            "Toilet deep scrub",
+            "Wall tiles scrubbing",
+            "Floor scrubbing with chemicals",
+            "Mirror & glass cleaning",
+            "Exhaust fan cleaning",
+            "Shelf & cabinet outer wipe",
+            "Window & door cleaning",
+            "Drain cleaning",
+            "Sanitization spray"
+          ],
+          "sortOrder": 3
+        },
+        {
+          "_id": "bath-package-2",
+          "subcategory": "Bathroom Care",
+          "title": "2 Bathroom Deep Cleaning Package",
+          "description": "Deep cleaning for 2 bathrooms in one visit.",
+          "durationMinutes": 80,
+          "basePrice": 899,
+          "active": true,
+          "images": [
+            "https://5.imimg.com/data5/SELLER/Default/2022/1/SA/VS/QI/142132883/2-bathroom-cleaning-service-500x500.jpg"
+          ],
+          "features": [
+            "2 bathrooms fully deep cleaned",
+            "Ideal for 2-bathroom homes"
+          ],
+          "sortOrder": 4
+        },
+        {
+          "_id": "bath-package-3",
+          "subcategory": "Bathroom Care",
+          "title": "3 Bathroom Deep Cleaning Package",
+          "description": "Deep cleaning for 3 bathrooms in one visit.",
+          "durationMinutes": 110,
+          "basePrice": 1299,
+          "active": true,
+          "images": [
+            "https://way2cleaning.com/wp-content/uploads/2025/02/bathroom-cleaning-300x300.png"
+          ],
+          "features": [
+            "3 bathrooms fully deep cleaned",
+            "Best value for larger homes"
+          ],
+          "sortOrder": 5
+        },
+        {
+          "_id": "bath-package-4",
+          "subcategory": "Bathroom Care",
+          "title": "4 Bathroom Deep Cleaning Package",
+          "description": "Deep cleaning for 4 bathrooms in one visit.",
+          "durationMinutes": 140,
+          "basePrice": 1699,
+          "active": true,
+          "images": [
+            "https://5.imimg.com/data5/ANDROID/Default/2025/8/538478739/JK/OO/MQ/107425016/product-jpeg-500x500.jpeg"
+          ],
+          "features": [
+            "4 bathrooms fully deep cleaned",
+            "Complete coverage for big homes"
+          ],
+          "sortOrder": 6
         }
       ]
     }
