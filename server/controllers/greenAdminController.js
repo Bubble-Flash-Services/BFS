@@ -38,14 +38,12 @@ export const getAllGreenBookings = async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        bookings,
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          total,
-          pages: Math.ceil(total / limit)
-        }
+      bookings, // Return bookings at top level to match frontend expectation
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
       }
     });
   } catch (error) {
@@ -247,6 +245,62 @@ export const updateBranch = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to update branch',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Update booking status (Admin)
+ * PATCH /api/green/admin/bookings/:id/status
+ */
+export const updateBookingStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, adminNotes } = req.body;
+
+    // Validate status
+    const validStatuses = ['created', 'assigned', 'in_progress', 'completed', 'cancelled'];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status. Must be one of: created, assigned, in_progress, completed, cancelled'
+      });
+    }
+
+    const booking = await GreenBooking.findById(id);
+    
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: 'Booking not found'
+      });
+    }
+
+    booking.status = status;
+    if (adminNotes) {
+      booking.adminNotes = adminNotes;
+    }
+
+    // Set completion or cancellation time
+    if (status === 'completed' && !booking.completedAt) {
+      booking.completedAt = new Date();
+    } else if (status === 'cancelled' && !booking.cancelledAt) {
+      booking.cancelledAt = new Date();
+    }
+
+    await booking.save();
+
+    res.json({
+      success: true,
+      message: 'Booking status updated successfully',
+      data: booking
+    });
+  } catch (error) {
+    console.error('Error updating booking status:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update booking status',
       error: error.message
     });
   }

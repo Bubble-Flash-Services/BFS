@@ -40,6 +40,8 @@ import UserManagement from "./pages/admin/UserManagement";
 import BookingHistory from "./pages/admin/BookingHistory";
 import CouponManagement from "./pages/admin/CouponManagement";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
+import MoversPackersManagement from "./pages/admin/MoversPackersManagement";
+import GreenCleanManagement from "./pages/admin/GreenCleanManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
 import EmployeeCompleted from "./pages/employee/EmployeeCompleted";
@@ -175,6 +177,22 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <CouponManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/movers-packers"
+            element={
+              <ProtectedAdminRoute>
+                <MoversPackersManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/green-clean"
+            element={
+              <ProtectedAdminRoute>
+                <GreenCleanManagement />
               </ProtectedAdminRoute>
             }
           />
