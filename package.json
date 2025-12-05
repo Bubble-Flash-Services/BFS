@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mapbox/mapbox-gl-geocoder": "^5.1.2",
     "@react-oauth/google": "^0.12.2",
     "@splinetool/react-spline": "^4.1.0",
     "antd": "^5.27.5",
