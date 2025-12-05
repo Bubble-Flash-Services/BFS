@@ -3,8 +3,8 @@ import Map, { Marker, NavigationControl, GeolocateControl } from 'react-map-gl';
 import { MapPin, Search, X, Loader, Navigation } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// Use a public Mapbox token - In production, this should be in environment variables
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVtYW50aGt1bWFydjI0IiwiYSI6ImNtNThnaDNvdTBiejkyanM4a2pxbzFpMnQifQ.8UXp-dQ5gBDsAGGy9OVOdw';
+// Mapbox token - In production, set VITE_MAPBOX_TOKEN environment variable
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoiaGVtYW50aGt1bWFydjI0IiwiYSI6ImNtNThnaDNvdTBiejkyanM4a2pxbzFpMnQifQ.8UXp-dQ5gBDsAGGy9OVOdw';
 
 const MapboxLocationPicker = ({ 
   onLocationSelect,
