@@ -40,6 +40,8 @@ import UserManagement from "./pages/admin/UserManagement";
 import BookingHistory from "./pages/admin/BookingHistory";
 import CouponManagement from "./pages/admin/CouponManagement";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
+import MoversPackersManagement from "./pages/admin/MoversPackersManagement";
+import GreenCleanManagement from "./pages/admin/GreenCleanManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
 import EmployeeCompleted from "./pages/employee/EmployeeCompleted";
@@ -55,6 +57,7 @@ import GreenandClean from "./pages/green&clean/Green&Clean";
 import ServicePage from "./pages/green&clean/ServicePage";
 import ServiceByCategory from "./pages/green&clean/ServiceByCategory";
 import MoversPackersPage from "./pages/MoversPackersPage";
+import MapDemo from "./pages/MapDemo";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -121,6 +124,7 @@ function AppContent() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/addresses" element={<AddressesPage />} />
+          <Route path="/map-demo" element={<MapDemo />} />
           <Route path="/google-success" element={<GoogleSuccess />} />
           <Route path="/impersonate" element={<Impersonate />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -175,6 +179,22 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <CouponManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/movers-packers"
+            element={
+              <ProtectedAdminRoute>
+                <MoversPackersManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/green-clean"
+            element={
+              <ProtectedAdminRoute>
+                <GreenCleanManagement />
               </ProtectedAdminRoute>
             }
           />

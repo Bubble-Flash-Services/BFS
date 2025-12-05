@@ -5,7 +5,8 @@ import {
   getGreenStats,
   getAllBranches,
   createBranch,
-  updateBranch
+  updateBranch,
+  updateBookingStatus
 } from '../controllers/greenAdminController.js';
 import { authenticateAdmin } from '../middleware/authAdmin.js';
 
@@ -17,6 +18,7 @@ router.use(authenticateAdmin);
 // Booking management
 router.get('/bookings', getAllGreenBookings);
 router.post('/assign', assignProviderToBooking);
+router.patch('/bookings/:id/status', updateBookingStatus);
 
 // Statistics
 router.get('/stats', getGreenStats);

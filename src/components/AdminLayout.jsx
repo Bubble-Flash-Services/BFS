@@ -8,7 +8,9 @@ import {
   UserCheck,
   Menu, 
   X,
-  LogOut
+  LogOut,
+  Truck,
+  Leaf
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -39,6 +41,18 @@ const AdminLayout = ({ children }) => {
       href: '/admin/employees',
       icon: UserCheck,
       active: location.pathname === '/admin/employees'
+    },
+    {
+      name: 'Movers & Packers',
+      href: '/admin/movers-packers',
+      icon: Truck,
+      active: location.pathname === '/admin/movers-packers'
+    },
+    {
+      name: 'Green & Clean',
+      href: '/admin/green-clean',
+      icon: Leaf,
+      active: location.pathname === '/admin/green-clean'
     },
     {
       name: 'Coupons',
