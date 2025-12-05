@@ -57,6 +57,7 @@ import GreenandClean from "./pages/green&clean/Green&Clean";
 import ServicePage from "./pages/green&clean/ServicePage";
 import ServiceByCategory from "./pages/green&clean/ServiceByCategory";
 import MoversPackersPage from "./pages/MoversPackersPage";
+import MapDemo from "./pages/MapDemo";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -123,6 +124,7 @@ function AppContent() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/addresses" element={<AddressesPage />} />
+          <Route path="/map-demo" element={<MapDemo />} />
           <Route path="/google-success" element={<GoogleSuccess />} />
           <Route path="/impersonate" element={<Impersonate />} />
           <Route path="/contact" element={<ContactPage />} />

@@ -17,8 +17,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useAuth } from "../components/AuthContext";
-import AddressAutocomplete from "../components/AddressAutocomplete";
-
+import MapboxLocationPicker from "../components/MapboxLocationPicker";
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
 const MoversPackersPage = () => {
@@ -55,6 +54,10 @@ const MoversPackersPage = () => {
   const [priceQuote, setPriceQuote] = useState(null);
   const [loadingQuote, setLoadingQuote] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  // Coordinates for MapboxLocationPicker
+  const [sourceCoords, setSourceCoords] = useState(null);
+  const [destinationCoords, setDestinationCoords] = useState(null);
 
   // Auto-fill user data
   useEffect(() => {
@@ -136,6 +139,30 @@ const MoversPackersPage = () => {
     }
   };
 
+  // Handler for source address selection from MapboxLocationPicker
+  const handleSourceSelect = (address) => {
+    setSourceCity(address);
+    setSourceAddressInput(address.fullAddress);
+    if (address.latitude && address.longitude) {
+      setSourceCoords({
+        latitude: address.latitude,
+        longitude: address.longitude,
+      });
+    }
+  };
+
+  // Handler for destination address selection from MapboxLocationPicker
+  const handleDestinationSelect = (address) => {
+    setDestinationCity(address);
+    setDestinationAddressInput(address.fullAddress);
+    if (address.latitude && address.longitude) {
+      setDestinationCoords({
+        latitude: address.latitude,
+        longitude: address.longitude,
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -157,9 +184,8 @@ const MoversPackersPage = () => {
     }
 
     if (!destinationCity?.fullAddress) {
-      // toast.error("Please enter destination address");
-      setDestinationCity(destinationAddressInput);
-      // return;
+      toast.error("Please enter destination address");
+      return;
     }
 
     if (!movingDate) {
@@ -347,7 +373,7 @@ const MoversPackersPage = () => {
             </div>
 
             {/* Enhanced Address Fields with better visual hierarchy */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-2xl">
+            {/* <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-2xl">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-[#FFB400]" />
                 Location Details
@@ -407,6 +433,36 @@ const MoversPackersPage = () => {
                     </div>
                   )}
                 </div>
+              </div>
+            </div> */}
+            <div className="space-y-8">
+              <div>
+                <label className="block text-lg font-semibold text-gray-900 mb-3">
+                  <MapPin className="inline w-5 h-5 mr-2 text-blue-600" />
+                  Source Address (Pickup Location) *
+                </label>
+                <MapboxLocationPicker
+                  value={sourceAddressInput}
+                  onChange={setSourceAddressInput}
+                  onSelect={handleSourceSelect}
+                  placeholder="Search or select pickup location on map"
+                  className="w-full"
+                  initialCoords={sourceCoords}
+                />
+              </div>
+              <div>
+                <label className="block text-lg font-semibold text-gray-900 mb-3">
+                  <MapPin className="inline w-5 h-5 mr-2 text-green-600" />
+                  Destination Address (Drop-off Location) *
+                </label>
+                <MapboxLocationPicker
+                  value={destinationAddressInput}
+                  onChange={setDestinationAddressInput}
+                  onSelect={handleDestinationSelect}
+                  placeholder="Search or select destination location on map"
+                  className="w-full"
+                  initialCoords={destinationCoords}
+                />
               </div>
             </div>
 
@@ -671,8 +727,8 @@ const MoversPackersPage = () => {
                 </div>
                 <div className="mt-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg">
                   <p className="text-xs text-gray-200">
-                    * Final price may vary based on actual requirements and distance.
-                    Our team will contact you for a detailed quote.
+                    * Final price may vary based on actual requirements and
+                    distance. Our team will contact you for a detailed quote.
                   </p>
                 </div>
               </motion.div>
