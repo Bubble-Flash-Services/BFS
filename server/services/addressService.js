@@ -6,13 +6,52 @@ class AddressService {
   constructor() {
     this.nominatimBaseUrl = 'https://nominatim.openstreetmap.org';
     this.geocodingBaseUrl = 'https://api.opencagedata.com/geocode/v1';
+    this.mapboxBaseUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places';
     this.openCageApiKey = process.env.OPENCAGE_API_KEY; // Add this to your .env file
+    this.mapboxApiKey = process.env.MAPBOX_API_KEY; // Add this to your .env file for better results
   }
 
-  // Get current location by coordinates
+  // Get current location by coordinates using Mapbox (preferred) or fallbacks
   async reverseGeocode(latitude, longitude) {
     try {
-      // Try OpenCage first if API key is available
+      // Try Mapbox first if API key is available (best results)
+      if (this.mapboxApiKey) {
+        try {
+          const response = await fetch(
+            `${this.mapboxBaseUrl}/${longitude},${latitude}.json?access_token=${this.mapboxApiKey}&types=address,place,locality,neighborhood`
+          );
+          const data = await response.json();
+          
+          if (data.features && data.features.length > 0) {
+            const feature = data.features[0];
+            const context = feature.context || [];
+            
+            let city = '', state = '', pincode = '';
+            context.forEach(item => {
+              if (item.id.includes('place')) city = item.text;
+              else if (item.id.includes('region')) state = item.text;
+              else if (item.id.includes('postcode')) pincode = item.text;
+            });
+            
+            return {
+              success: true,
+              data: {
+                fullAddress: feature.place_name,
+                latitude: feature.center[1],
+                longitude: feature.center[0],
+                city: city || feature.text,
+                state: state,
+                pincode: pincode,
+                confidence: 0.95
+              }
+            };
+          }
+        } catch (mapboxError) {
+          console.warn('Mapbox geocoding failed, trying fallback:', mapboxError.message);
+        }
+      }
+
+      // Try OpenCage if API key is available
       if (this.openCageApiKey) {
         const response = await fetch(
           `${this.geocodingBaseUrl}/json?q=${latitude}+${longitude}&key=${this.openCageApiKey}&language=en&pretty=1`
@@ -79,10 +118,48 @@ class AddressService {
     }
   }
 
-  // Search addresses by query
+  // Search addresses by query using Mapbox (preferred) or fallbacks
   async searchAddresses(query, limit = 5) {
     try {
-      // Try OpenCage first if API key is available
+      // Try Mapbox first if API key is available
+      if (this.mapboxApiKey) {
+        try {
+          const response = await fetch(
+            `${this.mapboxBaseUrl}/${encodeURIComponent(query)}.json?access_token=${this.mapboxApiKey}&country=IN&limit=${limit}&types=address,place,locality,neighborhood`
+          );
+          const data = await response.json();
+          
+          if (data.features && data.features.length > 0) {
+            return {
+              success: true,
+              data: data.features.map(feature => {
+                const context = feature.context || [];
+                let city = '', state = '', pincode = '';
+                
+                context.forEach(item => {
+                  if (item.id.includes('place')) city = item.text;
+                  else if (item.id.includes('region')) state = item.text;
+                  else if (item.id.includes('postcode')) pincode = item.text;
+                });
+                
+                return {
+                  fullAddress: feature.place_name,
+                  latitude: feature.center[1],
+                  longitude: feature.center[0],
+                  city: city || feature.text,
+                  state: state,
+                  pincode: pincode,
+                  confidence: 0.95
+                };
+              })
+            };
+          }
+        } catch (mapboxError) {
+          console.warn('Mapbox search failed, trying fallback:', mapboxError.message);
+        }
+      }
+
+      // Try OpenCage if API key is available
       if (this.openCageApiKey) {
         const response = await fetch(
           `${this.geocodingBaseUrl}/json?q=${encodeURIComponent(query)}&key=${this.openCageApiKey}&language=en&limit=${limit}&countrycode=in&pretty=1`
