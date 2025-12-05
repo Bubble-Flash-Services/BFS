@@ -1,139 +1,305 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import toast from "react-hot-toast";
+import { useAuth } from "../components/AuthContext";
 import {
   Truck,
   Home,
   MapPin,
   Calendar,
-  Car,
-  Bike,
-  Package,
-  PaintBucket,
-  CheckCircle2,
   Phone,
   Mail,
-  ArrowRight,
+  ChevronRight,
+  Shield,
+  Star,
+  Clock,
+  Package,
+  Car,
+  Bike,
+  Paintbrush,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
-import { useAuth } from "../components/AuthContext";
 import MapboxLocationPicker from "../components/MapboxLocationPicker";
-const API = import.meta.env.VITE_API_URL || window.location.origin;
+// import { moversAPI } from "../api/movers";
+import toast from "react-hot-toast";
 
-const MoversPackersPage = () => {
+// Home size options
+const HOME_SIZES = [
+  {
+    value: "1bhk",
+    label: "1 BHK",
+    basePrice: { withinCity: 3999, intercity: 8999 },
+  },
+  {
+    value: "2bhk",
+    label: "2 BHK",
+    basePrice: { withinCity: 5999, intercity: 12999 },
+  },
+  {
+    value: "3bhk",
+    label: "3 BHK",
+    basePrice: { withinCity: 8999, intercity: 17999 },
+  },
+  {
+    value: "4bhk",
+    label: "4 BHK",
+    basePrice: { withinCity: 11999, intercity: 22999 },
+  },
+  {
+    value: "villa",
+    label: "Villa",
+    basePrice: { withinCity: 15999, intercity: 29999 },
+  },
+];
+
+// Vehicle shifting options
+const VEHICLE_TYPES = [
+  { value: "bike", label: "Bike", charge: 1500 },
+  { value: "car", label: "Car", charge: 3000 },
+  { value: "both", label: "Both (Bike & Car)", charge: 4000 },
+];
+
+// Painting services
+const PAINTING_SERVICES = [
+  { value: "interior", label: "Interior Painting", charge: 5000 },
+  { value: "exterior", label: "Exterior Painting", charge: 7000 },
+  { value: "wood", label: "Wood Painting", charge: 3000 },
+];
+
+export default function MoversPackersPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   // Form state
   const [moveType, setMoveType] = useState("within-city");
   const [homeSize, setHomeSize] = useState("");
-  const [sourceCity, setSourceCity] = useState(null);
-  const [destinationCity, setDestinationCity] = useState(null);
+  const [sourceAddress, setSourceAddress] = useState("");
+  const [sourceCoords, setSourceCoords] = useState(null);
+  const [destinationAddress, setDestinationAddress] = useState("");
+  const [destinationCoords, setDestinationCoords] = useState(null);
   const [movingDate, setMovingDate] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [customerNotes, setCustomerNotes] = useState("");
+  const [userName, setUserName] = useState(user?.name || "");
+  const [userPhone, setUserPhone] = useState(user?.phone || "");
+  const [userEmail, setUserEmail] = useState(user?.email || "");
 
-  // Address input values for display
-  const [sourceAddressInput, setSourceAddressInput] = useState("");
-  const [destinationAddressInput, setDestinationAddressInput] = useState("");
+  // Vehicle shifting
+  const [vehicleShifting, setVehicleShifting] = useState(false);
+  const [vehicleType, setVehicleType] = useState("");
 
-  // Vehicle shifting state
-  const [needVehicleShifting, setNeedVehicleShifting] = useState(false);
-  const [vehicles, setVehicles] = useState([]);
-
-  // Extra services state
-  const [needPainting, setNeedPainting] = useState(false);
+  // Painting services
   const [paintingServices, setPaintingServices] = useState({
-    interiorPainting: false,
-    exteriorPainting: false,
-    woodPolishing: false,
+    interior: false,
+    exterior: false,
+    wood: false,
   });
 
-  // Price quote state
-  const [priceQuote, setPriceQuote] = useState(null);
-  const [loadingQuote, setLoadingQuote] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [estimatedDistance, setEstimatedDistance] = useState(0);
 
-  // Auto-fill user data
+  // Update form when user logs in
   useEffect(() => {
     if (user) {
-      if (user.phone) setContactPhone(user.phone);
-      if (user.email) setContactEmail(user.email);
+      setUserName(user.name || "");
+      setUserPhone(user.phone || "");
+      setUserEmail(user.email || "");
     }
   }, [user]);
 
-  // Get price quote when relevant fields change
+  // Calculate estimated distance
   useEffect(() => {
-    if (homeSize && moveType) {
-      fetchPriceQuote();
-    }
-  }, [
-    homeSize,
-    moveType,
-    needVehicleShifting,
-    vehicles,
-    needPainting,
-    paintingServices,
-  ]);
-
-  const fetchPriceQuote = async () => {
-    setLoadingQuote(true);
-    try {
-      const vehicleShifting = needVehicleShifting
-        ? { required: true, vehicles }
-        : { required: false };
-      const extraServices = needPainting
-        ? { painting: { required: true, services: paintingServices } }
-        : { painting: { required: false } };
-
-      const response = await fetch(`${API}/api/movers-packers/quote`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          moveType,
-          homeSize,
-          vehicleShifting,
-          extraServices,
-        }),
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        setPriceQuote(result.data);
-      }
-    } catch (error) {
-      console.error("Error fetching quote:", error);
-    } finally {
-      setLoadingQuote(false);
-    }
-  };
-
-  const addVehicle = (type) => {
-    const existingVehicle = vehicles.find((v) => v.type === type);
-    if (existingVehicle) {
-      setVehicles(
-        vehicles.map((v) =>
-          v.type === type ? { ...v, count: v.count + 1 } : v
-        )
+    if (sourceCoords && destinationCoords) {
+      const distance = calculateDistance(
+        sourceCoords.latitude,
+        sourceCoords.longitude,
+        destinationCoords.latitude,
+        destinationCoords.longitude
       );
-    } else {
-      setVehicles([...vehicles, { type, count: 1 }]);
+      setEstimatedDistance(distance);
     }
+  }, [sourceCoords, destinationCoords]);
+
+  // Calculate distance using Haversine formula
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Earth's radius in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return Math.round(R * c);
   };
 
-  const removeVehicle = (type) => {
-    const existingVehicle = vehicles.find((v) => v.type === type);
-    if (existingVehicle && existingVehicle.count > 1) {
-      setVehicles(
-        vehicles.map((v) =>
-          v.type === type ? { ...v, count: v.count - 1 } : v
-        )
-      );
-    } else {
-      setVehicles(vehicles.filter((v) => v.type !== type));
+  // Calculate total price
+  const calculateTotalPrice = () => {
+    if (!homeSize) return 0;
+
+    const homeSizeData = HOME_SIZES.find((h) => h.value === homeSize);
+    const basePrice =
+      moveType === "within-city"
+        ? homeSizeData.basePrice.withinCity
+        : homeSizeData.basePrice.intercity;
+
+    let vehicleCharge = 0;
+    if (vehicleShifting && vehicleType) {
+      const vehicle = VEHICLE_TYPES.find((v) => v.value === vehicleType);
+      vehicleCharge = vehicle?.charge || 0;
     }
+
+    let paintingCharge = 0;
+    if (paintingServices.interior) paintingCharge += 5000;
+    if (paintingServices.exterior) paintingCharge += 7000;
+    if (paintingServices.wood) paintingCharge += 3000;
+
+    let distanceCharge = 0;
+    if (moveType === "intercity" && estimatedDistance > 100) {
+      distanceCharge = (estimatedDistance - 100) * 15;
+    }
+
+    return basePrice + vehicleCharge + paintingCharge + distanceCharge;
   };
+
+  const handleSourceSelect = (addressData) => {
+    setSourceCoords({
+      latitude: addressData.latitude,
+      longitude: addressData.longitude,
+      city: addressData.city,
+      pincode: addressData.pincode,
+    });
+  };
+
+  const handleDestinationSelect = (addressData) => {
+    setDestinationCoords({
+      latitude: addressData.latitude,
+      longitude: addressData.longitude,
+      city: addressData.city,
+      pincode: addressData.pincode,
+    });
+  };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   // Validation
+  //   if (
+  //     !moveType ||
+  //     !homeSize ||
+  //     !sourceAddress ||
+  //     !destinationAddress ||
+  //     !movingDate
+  //   ) {
+  //     toast.error("Please fill in all required fields");
+  //     return;
+  //   }
+
+  //   if (!userName || !userPhone) {
+  //     toast.error("Please provide your name and phone number");
+  //     return;
+  //   }
+
+  //   if (vehicleShifting && !vehicleType) {
+  //     toast.error("Please select vehicle type for shifting");
+  //     return;
+  //   }
+
+  //   setIsSubmitting(true);
+
+  //   try {
+  //     const bookingData = {
+  //       user: {
+  //         name: userName,
+  //         phone: userPhone,
+  //         email: userEmail,
+  //         userId: user?._id,
+  //       },
+  //       moveType,
+  //       homeSize,
+  //       sourceAddress: {
+  //         full: sourceAddress,
+  //         lat: sourceCoords?.latitude,
+  //         lng: sourceCoords?.longitude,
+  //         pincode: sourceCoords?.pincode,
+  //         city: sourceCoords?.city,
+  //       },
+  //       destinationAddress: {
+  //         full: destinationAddress,
+  //         lat: destinationCoords?.latitude,
+  //         lng: destinationCoords?.longitude,
+  //         pincode: destinationCoords?.pincode,
+  //         city: destinationCoords?.city,
+  //       },
+  //       movingDate,
+  //       distanceKm: estimatedDistance,
+  //       vehicleShifting: {
+  //         enabled: vehicleShifting,
+  //         vehicleType: vehicleShifting ? vehicleType : null,
+  //       },
+  //       paintingServices,
+  //       notes,
+  //     };
+
+  //     const result = await moversAPI.createBooking(bookingData);
+
+  //     if (result.success) {
+  //       toast.success("Booking created successfully!");
+
+  //       // Initialize Razorpay payment
+  //       const options = {
+  //         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+  //         amount: result.data.razorpayOrder.amount,
+  //         currency: result.data.razorpayOrder.currency,
+  //         name: "Bubble Flash Services",
+  //         description: `Movers & Packers - ${homeSize.toUpperCase()}`,
+  //         order_id: result.data.razorpayOrder.id,
+  //         handler: async function (response) {
+  //           try {
+  //             const verifyResult = await moversAPI.verifyPayment(
+  //               result.data.booking._id,
+  //               {
+  //                 razorpay_order_id: response.razorpay_order_id,
+  //                 razorpay_payment_id: response.razorpay_payment_id,
+  //                 razorpay_signature: response.razorpay_signature,
+  //               }
+  //             );
+
+  //             if (verifyResult.success) {
+  //               toast.success("Payment successful! Your booking is confirmed.");
+  //               navigate("/orders");
+  //             } else {
+  //               toast.error("Payment verification failed");
+  //             }
+  //           } catch (error) {
+  //             console.error("Payment verification error:", error);
+  //             toast.error("Payment verification failed");
+  //           }
+  //         },
+  //         prefill: {
+  //           name: userName,
+  //           email: userEmail,
+  //           contact: userPhone,
+  //         },
+  //         theme: {
+  //           color: "#3B82F6",
+  //         },
+  //       };
+
+  //       const razorpay = new window.Razorpay(options);
+  //       razorpay.open();
+  //     } else {
+  //       toast.error(result.message || "Failed to create booking");
+  //     }
+  //   } catch (error) {
+  //     console.error("Booking error:", error);
+  //     toast.error("Failed to create booking. Please try again.");
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -235,179 +401,166 @@ const MoversPackersPage = () => {
     }
   };
 
-  const homeSizeOptions = [
-    { value: "1BHK", label: "1 BHK", icon: Home },
-    { value: "2BHK", label: "2 BHK", icon: Home },
-    { value: "3BHK", label: "3 BHK", icon: Home },
-    { value: "4BHK", label: "4 BHK", icon: Home },
-    { value: "Villa", label: "Villa", icon: Home },
-  ];
-
-  const vehicleOptions = [
-    { type: "Car", label: "Car", icon: Car },
-    { type: "Bike", label: "Bike", icon: Bike },
-    { type: "Scooter", label: "Scooter", icon: Bike },
-    { type: "Others", label: "Others", icon: Package },
-  ];
-
-  // Get minimum date (tomorrow)
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split("T")[0];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] py-12 px-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-[#FFB400] rounded-full mb-6 shadow-lg">
-            <Truck className="w-10 h-10 text-[#1F3C88]" />
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-4 rounded-2xl shadow-lg">
+              <Truck className="w-12 h-12 text-white" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">
+              Movers & Packers
+            </h1>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Movers & Packers Service
-          </h1>
-          <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            Professional moving services with care and reliability. Get instant
-            quotes and book your move today!
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto leading-relaxed">
+            Professional and reliable moving services for your home. Book now
+            for a hassle-free relocation experience with our expert team!
           </p>
         </motion.div>
 
-        {/* Main Form */}
+        {/* Features */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          {[
+            {
+              icon: Shield,
+              title: "Insured Moving",
+              desc: "Your belongings are safe",
+              color: "from-blue-500 to-blue-600",
+            },
+            {
+              icon: Clock,
+              title: "On-Time Service",
+              desc: "Punctual and reliable",
+              color: "from-green-500 to-green-600",
+            },
+            {
+              icon: Star,
+              title: "Expert Team",
+              desc: "Trained professionals",
+              color: "from-purple-500 to-purple-600",
+            },
+            {
+              icon: Package,
+              title: "Quality Packing",
+              desc: "Premium materials",
+              color: "from-orange-500 to-orange-600",
+            },
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
+            >
+              <div
+                className={`bg-gradient-to-br ${feature.color} w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3`}
+              >
+                <feature.icon className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1 text-center">
+                {feature.title}
+              </h3>
+              <p className="text-sm text-gray-600 text-center">
+                {feature.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Booking Form */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-3xl shadow-2xl p-8 md:p-12"
+          className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 border border-gray-100"
         >
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Move Type Selection */}
             <div>
-              <label className="block text-lg font-semibold text-gray-800 mb-4">
-                Select Move Type
+              <label className="block text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Truck className="w-5 h-5 mr-2 text-blue-600" />
+                Select Move Type *
               </label>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setMoveType("within-city")}
-                  className={`p-6 rounded-2xl border-2 transition-all transform hover:scale-105 ${
-                    moveType === "within-city"
-                      ? "border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88] shadow-lg"
-                      : "border-gray-200 hover:border-[#FFB400] hover:shadow-md"
-                  }`}
-                >
-                  <MapPin className="w-8 h-8 mx-auto mb-2" />
-                  <div className="font-semibold">Within City</div>
-                  <div className="text-sm text-gray-600">Local relocation</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMoveType("intercity")}
-                  className={`p-6 rounded-2xl border-2 transition-all transform hover:scale-105 ${
-                    moveType === "intercity"
-                      ? "border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88] shadow-lg"
-                      : "border-gray-200 hover:border-[#FFB400] hover:shadow-md"
-                  }`}
-                >
-                  <Truck className="w-8 h-8 mx-auto mb-2" />
-                  <div className="font-semibold">Intercity</div>
-                  <div className="text-sm text-gray-600">
-                    Long distance move
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {/* Home Size Selection */}
-            <div>
-              <label className="block text-lg font-semibold text-gray-800 mb-4">
-                Select Home Size
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                {homeSizeOptions.map((option) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  {
+                    value: "within-city",
+                    label: "Within City",
+                    icon: Home,
+                    desc: "Local moving within city",
+                  },
+                  {
+                    value: "intercity",
+                    label: "Intercity",
+                    icon: Truck,
+                    desc: "Moving to another city",
+                  },
+                ].map((type) => (
                   <button
-                    key={option.value}
+                    key={type.value}
                     type="button"
-                    onClick={() => setHomeSize(option.value)}
-                    className={`p-4 rounded-xl border-2 transition-all transform hover:scale-105 ${
-                      homeSize === option.value
-                        ? "border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88] shadow-lg"
-                        : "border-gray-200 hover:border-[#FFB400] hover:shadow-md"
+                    onClick={() => setMoveType(type.value)}
+                    className={`p-6 rounded-xl border-2 transition-all duration-200 ${
+                      moveType === type.value
+                        ? "border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-md"
+                        : "border-gray-200 hover:border-blue-300 hover:shadow-sm"
                     }`}
                   >
-                    <option.icon className="w-6 h-6 mx-auto mb-2" />
-                    <div className="font-semibold text-sm">{option.label}</div>
+                    <type.icon
+                      className={`w-10 h-10 mx-auto mb-2 transition-colors ${
+                        moveType === type.value
+                          ? "text-blue-600"
+                          : "text-gray-400"
+                      }`}
+                    />
+                    <div className="font-bold text-gray-900 mb-1">
+                      {type.label}
+                    </div>
+                    <div className="text-sm text-gray-600">{type.desc}</div>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Enhanced Address Fields with better visual hierarchy */}
-            {/* <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-2xl">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-[#FFB400]" />
-                Location Details
-              </h3>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 bg-green-500 text-white rounded-full text-xs">
-                      A
-                    </span>
-                    Pickup Address *
-                  </label>
-                  <AddressAutocomplete
-                    value={sourceAddressInput}
-                    onChange={setSourceAddressInput}
-                    onAddressSelect={(address) => {
-                      setSourceCity(address);
-                      setSourceAddressInput(address.fullAddress);
-                    }}
-                    placeholder="Enter pickup address"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none shadow-sm"
-                    showCurrentLocation={true}
-                  />
-                  {sourceCity && (
-                    <div className="mt-2 text-sm text-gray-600 flex items-start gap-2 bg-white p-3 rounded-lg">
-                      <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-500" />
-                      <span className="line-clamp-2">
-                        {sourceCity.fullAddress}
-                      </span>
+            {/* Home Size */}
+            <div>
+              <label className="block text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Home className="w-5 h-5 mr-2 text-blue-600" />
+                Select Home Size *
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {HOME_SIZES.map((size) => (
+                  <button
+                    key={size.value}
+                    type="button"
+                    onClick={() => setHomeSize(size.value)}
+                    className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                      homeSize === size.value
+                        ? "border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-md scale-105"
+                        : "border-gray-200 hover:border-blue-300 hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="font-bold text-gray-900">{size.label}</div>
+                    <div className="text-sm text-blue-600 font-semibold mt-1">
+                      ₹
+                      {(moveType === "within-city"
+                        ? size.basePrice.withinCity
+                        : size.basePrice.intercity
+                      ).toLocaleString()}
                     </div>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded-full text-xs">
-                      B
-                    </span>
-                    Destination Address *
-                  </label>
-                  <AddressAutocomplete
-                    value={destinationAddressInput}
-                    onChange={setDestinationAddressInput}
-                    onAddressSelect={(address) => {
-                      setDestinationCity(address);
-                      setDestinationAddressInput(address.fullAddress);
-                    }}
-                    placeholder="Enter destination address"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none shadow-sm"
-                    showCurrentLocation={true}
-                  />
-                  {destinationCity && (
-                    <div className="mt-2 text-sm text-gray-600 flex items-start gap-2 bg-white p-3 rounded-lg">
-                      <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-red-500" />
-                      <span className="line-clamp-2">
-                        {destinationCity.fullAddress}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                  </button>
+                ))}
               </div>
-            </div> */}
+            </div>
+
+            {/* Addresses with Interactive Maps */}
             <div className="space-y-8">
               <div>
                 <label className="block text-lg font-semibold text-gray-900 mb-3">
@@ -439,195 +592,194 @@ const MoversPackersPage = () => {
               </div>
             </div>
 
+            {/* Distance Display */}
+            {estimatedDistance > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border-2 border-blue-200 shadow-sm"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="bg-blue-500 p-2 rounded-lg mr-3">
+                      <MapPin className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="text-gray-700 font-medium">
+                      Estimated Distance:
+                    </span>
+                  </div>
+                  <span className="text-2xl font-bold text-blue-700">
+                    {estimatedDistance} km
+                  </span>
+                </div>
+              </motion.div>
+            )}
+
             {/* Moving Date */}
             <div>
-              <label className="block text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-[#FFB400]" />
+              <label className="block text-lg font-semibold text-gray-900 mb-3">
+                <Calendar className="inline w-5 h-5 mr-2" />
                 Moving Date *
               </label>
-              <div className="relative">
+              <input
+                type="date"
+                value={movingDate}
+                onChange={(e) => setMovingDate(e.target.value)}
+                min={new Date().toISOString().split("T")[0]}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            {/* Vehicle Shifting */}
+            <div className="border-t pt-6">
+              <div className="flex items-center gap-3 mb-4">
                 <input
-                  type="date"
-                  value={movingDate}
-                  onChange={(e) => setMovingDate(e.target.value)}
-                  min={minDate}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none shadow-sm"
-                  required
+                  type="checkbox"
+                  id="vehicleShifting"
+                  checked={vehicleShifting}
+                  onChange={(e) => {
+                    setVehicleShifting(e.target.checked);
+                    if (!e.target.checked) setVehicleType("");
+                  }}
+                  className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
                 />
-              </div>
-            </div>
-
-            {/* Vehicle Shifting Section */}
-            <div className="border-t-2 border-gray-100 pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <label className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                  <Car className="w-5 h-5 text-[#FFB400]" />
-                  Need Vehicle Shifting?
+                <label
+                  htmlFor="vehicleShifting"
+                  className="text-lg font-semibold text-gray-900 cursor-pointer"
+                >
+                  Add Vehicle Shifting
                 </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNeedVehicleShifting(!needVehicleShifting);
-                    if (needVehicleShifting) setVehicles([]);
-                  }}
-                  className={`px-6 py-2 rounded-full font-semibold transition-all shadow-md ${
-                    needVehicleShifting
-                      ? "bg-[#FFB400] text-[#1F3C88]"
-                      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                  }`}
-                >
-                  {needVehicleShifting ? "Yes" : "No"}
-                </button>
               </div>
 
-              {needVehicleShifting && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="space-y-4"
-                >
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {vehicleOptions.map((option) => {
-                      const vehicle = vehicles.find(
-                        (v) => v.type === option.type
-                      );
-                      const count = vehicle?.count || 0;
-                      return (
-                        <div
-                          key={option.type}
-                          className="p-4 border-2 border-gray-200 rounded-xl bg-gradient-to-br from-white to-gray-50 shadow-sm"
-                        >
-                          <option.icon className="w-8 h-8 mx-auto mb-2 text-[#1F3C88]" />
-                          <div className="text-center font-medium mb-3">
-                            {option.label}
-                          </div>
-                          <div className="flex items-center justify-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => removeVehicle(option.type)}
-                              disabled={count === 0}
-                              className="w-8 h-8 rounded-full bg-gray-200 disabled:opacity-50 hover:bg-gray-300 transition-colors font-bold"
-                            >
-                              -
-                            </button>
-                            <span className="w-8 text-center font-semibold text-[#1F3C88]">
-                              {count}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => addVehicle(option.type)}
-                              className="w-8 h-8 rounded-full bg-[#FFB400] hover:bg-[#e0a000] transition-colors font-bold text-[#1F3C88]"
-                            >
-                              +
-                            </button>
-                          </div>
+              <AnimatePresence>
+                {vehicleShifting && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4"
+                  >
+                    {VEHICLE_TYPES.map((vehicle) => (
+                      <button
+                        key={vehicle.value}
+                        type="button"
+                        onClick={() => setVehicleType(vehicle.value)}
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          vehicleType === vehicle.value
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 hover:border-blue-300"
+                        }`}
+                      >
+                        {vehicle.value === "bike" && (
+                          <Bike className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                        )}
+                        {vehicle.value === "car" && (
+                          <Car className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                        )}
+                        {vehicle.value === "both" && (
+                          <Package className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                        )}
+                        <div className="font-semibold text-gray-900">
+                          {vehicle.label}
                         </div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )}
+                        <div className="text-sm text-gray-600 mt-1">
+                          +₹{vehicle.charge}
+                        </div>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Painting Services Section */}
-            <div className="border-t-2 border-gray-100 pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <label className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                  <PaintBucket className="w-5 h-5 text-[#FFB400]" />
-                  Need Painting Services?
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNeedPainting(!needPainting);
-                    if (needPainting) {
-                      setPaintingServices({
-                        interiorPainting: false,
-                        exteriorPainting: false,
-                        woodPolishing: false,
-                      });
-                    }
-                  }}
-                  className={`px-6 py-2 rounded-full font-semibold transition-all shadow-md ${
-                    needPainting
-                      ? "bg-[#FFB400] text-[#1F3C88]"
-                      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                  }`}
-                >
-                  {needPainting ? "Yes" : "No"}
-                </button>
+            {/* Painting Services */}
+            <div className="border-t pt-6">
+              <label className="block text-lg font-semibold text-gray-900 mb-4">
+                <Paintbrush className="inline w-5 h-5 mr-2" />
+                Additional Painting Services
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {PAINTING_SERVICES.map((service) => (
+                  <label
+                    key={service.value}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      paintingServices[service.value]
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 hover:border-blue-300"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={paintingServices[service.value]}
+                      onChange={(e) =>
+                        setPaintingServices({
+                          ...paintingServices,
+                          [service.value]: e.target.checked,
+                        })
+                      }
+                      className="sr-only"
+                    />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-gray-900">
+                          {service.label}
+                        </div>
+                        <div className="text-sm text-gray-600 mt-1">
+                          +₹{service.charge}
+                        </div>
+                      </div>
+                      {paintingServices[service.value] && (
+                        <CheckCircle2 className="w-6 h-6 text-blue-600" />
+                      )}
+                    </div>
+                  </label>
+                ))}
               </div>
-
-              {needPainting && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="space-y-3"
-                >
-                  {[
-                    { key: "interiorPainting", label: "Interior Painting" },
-                    { key: "exteriorPainting", label: "Exterior Painting" },
-                    { key: "woodPolishing", label: "Wood Polishing" },
-                  ].map((service) => (
-                    <label
-                      key={service.key}
-                      className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#FFB400] transition-all bg-gradient-to-r from-white to-orange-50 shadow-sm"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={paintingServices[service.key]}
-                        onChange={(e) =>
-                          setPaintingServices({
-                            ...paintingServices,
-                            [service.key]: e.target.checked,
-                          })
-                        }
-                        className="w-5 h-5 text-[#FFB400] rounded focus:ring-[#FFB400]"
-                      />
-                      <PaintBucket className="w-5 h-5 text-orange-600" />
-                      <span className="font-medium">{service.label}</span>
-                    </label>
-                  ))}
-                </motion.div>
-              )}
             </div>
 
-            {/* Contact Information */}
-            <div className="border-t-2 border-gray-100 pt-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Contact Information
+            {/* Contact Details */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Contact Details
               </h3>
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number *
+                    Name *
                   </label>
-                  <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type="tel"
-                      value={contactPhone}
-                      onChange={(e) => setContactPhone(e.target.value)}
-                      placeholder="Enter phone number"
-                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none"
-                      required
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email (Optional)
+                    <Phone className="inline w-4 h-4 mr-1" />
+                    Phone *
                   </label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type="email"
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                      placeholder="Enter email address"
-                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none"
-                    />
-                  </div>
+                  <input
+                    type="tel"
+                    value={userPhone}
+                    onChange={(e) => setUserPhone(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Mail className="inline w-4 h-4 mr-1" />
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
                 </div>
               </div>
             </div>
@@ -638,137 +790,203 @@ const MoversPackersPage = () => {
                 Additional Notes (Optional)
               </label>
               <textarea
-                value={customerNotes}
-                onChange={(e) => setCustomerNotes(e.target.value)}
-                placeholder="Any special requirements or instructions..."
-                rows="4"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FFB400] focus:outline-none resize-none"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={3}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Any special instructions or requirements..."
               />
             </div>
 
-            {/* Price Quote Display */}
-            {priceQuote && (
+            {/* Price Summary */}
+            {homeSize && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] text-white rounded-2xl p-6 shadow-xl"
+                className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 border-2 border-blue-300 shadow-lg"
               >
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <CheckCircle2 className="w-6 h-6 text-[#FFB400]" />
-                  Estimated Price
-                </h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center py-2">
-                    <span className="flex items-center gap-2">
-                      <Home className="w-4 h-4" />
-                      Base Price ({homeSize}):
-                    </span>
-                    <span className="font-semibold text-lg">
-                      ₹{priceQuote.basePrice?.toLocaleString()}
-                    </span>
+                <div className="flex items-center mb-4">
+                  <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-2 rounded-lg mr-3">
+                    <Package className="w-6 h-6 text-white" />
                   </div>
-                  {priceQuote.vehicleShiftingCost > 0 && (
-                    <div className="flex justify-between items-center py-2 border-t border-white/20">
-                      <span className="flex items-center gap-2">
-                        <Car className="w-4 h-4" />
-                        Vehicle Shifting:
-                      </span>
-                      <span className="font-semibold text-lg">
-                        ₹{priceQuote.vehicleShiftingCost?.toLocaleString()}
-                      </span>
-                    </div>
-                  )}
-                  {priceQuote.paintingCost > 0 && (
-                    <div className="flex justify-between items-center py-2 border-t border-white/20">
-                      <span className="flex items-center gap-2">
-                        <PaintBucket className="w-4 h-4" />
-                        Painting Services:
-                      </span>
-                      <span className="font-semibold text-lg">
-                        ₹{priceQuote.paintingCost?.toLocaleString()}
-                      </span>
-                    </div>
-                  )}
-                  <div className="border-t-2 border-white/40 pt-3 mt-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xl font-bold">Total Estimate:</span>
-                      <span className="text-2xl font-bold text-[#FFB400] flex items-center gap-1">
-                        ₹{priceQuote.totalPrice?.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Price Summary
+                  </h3>
                 </div>
-                <div className="mt-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg">
-                  <p className="text-xs text-gray-200">
-                    * Final price may vary based on actual requirements and
-                    distance. Our team will contact you for a detailed quote.
-                  </p>
+                <div className="space-y-3 mb-4">
+                  <div className="flex justify-between text-gray-700 py-2 border-b border-gray-200">
+                    <span className="font-medium">
+                      Base Price (
+                      {HOME_SIZES.find((h) => h.value === homeSize)?.label}):
+                    </span>
+                    <span className="font-semibold">
+                      ₹
+                      {(moveType === "within-city"
+                        ? HOME_SIZES.find((h) => h.value === homeSize)
+                            ?.basePrice.withinCity
+                        : HOME_SIZES.find((h) => h.value === homeSize)
+                            ?.basePrice.intercity
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                  {vehicleShifting && vehicleType && (
+                    <div className="flex justify-between text-gray-700 py-2 border-b border-gray-200">
+                      <span className="font-medium">
+                        Vehicle Shifting (
+                        {
+                          VEHICLE_TYPES.find((v) => v.value === vehicleType)
+                            ?.label
+                        }
+                        ):
+                      </span>
+                      <span className="font-semibold text-green-600">
+                        +₹
+                        {VEHICLE_TYPES.find(
+                          (v) => v.value === vehicleType
+                        )?.charge.toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                  {paintingServices.interior && (
+                    <div className="flex justify-between text-gray-700 py-2 border-b border-gray-200">
+                      <span className="font-medium">Interior Painting:</span>
+                      <span className="font-semibold text-green-600">
+                        +₹5,000
+                      </span>
+                    </div>
+                  )}
+                  {paintingServices.exterior && (
+                    <div className="flex justify-between text-gray-700 py-2 border-b border-gray-200">
+                      <span className="font-medium">Exterior Painting:</span>
+                      <span className="font-semibold text-green-600">
+                        +₹7,000
+                      </span>
+                    </div>
+                  )}
+                  {paintingServices.wood && (
+                    <div className="flex justify-between text-gray-700 py-2 border-b border-gray-200">
+                      <span className="font-medium">Wood Painting:</span>
+                      <span className="font-semibold text-green-600">
+                        +₹3,000
+                      </span>
+                    </div>
+                  )}
+                  {moveType === "intercity" && estimatedDistance > 100 && (
+                    <div className="flex justify-between text-gray-700 py-2 border-b border-gray-200">
+                      <span className="font-medium">
+                        Distance Charge ({estimatedDistance - 100} km × ₹15):
+                      </span>
+                      <span className="font-semibold text-green-600">
+                        +₹{((estimatedDistance - 100) * 15).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-4 mt-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xl font-bold text-white">
+                      Total Amount:
+                    </span>
+                    <span className="text-3xl font-bold text-white">
+                      ₹{calculateTotalPrice().toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </motion.div>
             )}
 
             {/* Submit Button */}
-            <motion.button
+            <button
               type="submit"
-              disabled={submitting}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-4 bg-gradient-to-r from-[#FFB400] via-[#FFC400] to-[#FFB400] text-[#1F3C88] font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 relative overflow-hidden group"
+              disabled={isSubmitting}
+              className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 text-white font-bold py-5 px-8 rounded-xl transition-all shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-lg transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
-              {submitting ? (
+              {isSubmitting ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#1F3C88]"></div>
-                  Creating Booking...
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  Processing...
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="w-5 h-5" />
-                  Book Now
-                  <ArrowRight className="w-5 h-5" />
+                  <CheckCircle2 className="w-6 h-6" />
+                  Book Now & Proceed to Payment
+                  <ChevronRight className="w-6 h-6" />
                 </>
               )}
-            </motion.button>
+            </button>
+
+            {/* Info Note */}
+            <div className="flex items-start gap-2 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-yellow-800">
+                <strong>Note:</strong> Final pricing may vary based on actual
+                distance, accessibility, and volume of items. Our team will
+                confirm the exact amount before the move.
+              </p>
+            </div>
           </form>
         </motion.div>
 
-        {/* Features Section */}
+        {/* Why Choose Us Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-12 grid md:grid-cols-3 gap-6"
+          className="mt-16 bg-white rounded-2xl shadow-lg p-8 md:p-12"
         >
-          {[
-            {
-              icon: CheckCircle2,
-              title: "Professional Team",
-              description: "Trained and verified moving experts",
-            },
-            {
-              icon: Package,
-              title: "Safe Packaging",
-              description: "Premium quality packing materials",
-            },
-            {
-              icon: Truck,
-              title: "Timely Delivery",
-              description: "On-time pickup and delivery guaranteed",
-            },
-          ].map((feature, index) => (
-            <div
-              key={index}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-white text-center"
-            >
-              <feature.icon className="w-12 h-12 mx-auto mb-4 text-[#FFB400]" />
-              <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-              <p className="text-gray-200">{feature.description}</p>
-            </div>
-          ))}
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Why Choose Our Moving Services?
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Professional Packing",
+                description:
+                  "We use high-quality packing materials and techniques to ensure your items are protected during transit.",
+                icon: Package,
+              },
+              {
+                title: "Experienced Team",
+                description:
+                  "Our trained professionals handle your belongings with care, ensuring safe and efficient relocation.",
+                icon: Star,
+              },
+              {
+                title: "Insurance Coverage",
+                description:
+                  "All moves are insured for your peace of mind. We take responsibility for your valuables.",
+                icon: Shield,
+              },
+              {
+                title: "On-Time Delivery",
+                description:
+                  "We value your time and ensure timely pickup and delivery as per the scheduled date.",
+                icon: Clock,
+              },
+              {
+                title: "Vehicle Options",
+                description:
+                  "Flexible vehicle shifting services for bikes and cars at competitive rates.",
+                icon: Car,
+              },
+              {
+                title: "Painting Services",
+                description:
+                  "Get your new home painted before moving in with our professional painting services.",
+                icon: Paintbrush,
+              },
+            ].map((item, index) => (
+              <div key={index} className="text-center">
+                <item.icon className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600">{item.description}</p>
+              </div>
+            ))}
+          </div>
         </motion.div>
       </div>
     </div>
   );
-};
-
-export default MoversPackersPage;
+}
