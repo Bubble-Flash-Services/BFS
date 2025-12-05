@@ -1,15 +1,20 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Map, { Marker, NavigationControl, GeolocateControl } from 'react-map-gl';
-import { MapPin, Search, X, Loader, Navigation } from 'lucide-react';
+import { MapPin, Search, X, Loader, Navigation, AlertCircle } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// Mapbox token - In production, set VITE_MAPBOX_TOKEN environment variable
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoiaGVtYW50aGt1bWFydjI0IiwiYSI6ImNtNThnaDNvdTBiejkyanM4a2pxbzFpMnQifQ.8UXp-dQ5gBDsAGGy9OVOdw';
+// Mapbox token - REQUIRED: Set VITE_MAPBOX_TOKEN environment variable
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+
+if (!MAPBOX_TOKEN) {
+  console.error('VITE_MAPBOX_TOKEN is not set. Please add it to your .env file.');
+}
 
 const MapboxLocationPicker = ({ 
   onLocationSelect,
   initialLocation = { latitude: 12.9716, longitude: 77.5946 }, // Bangalore default
-  className = ""
+  className = "",
+  showCurrentLocation = true
 }) => {
   const [viewport, setViewport] = useState({
     longitude: initialLocation.longitude,
@@ -28,6 +33,8 @@ const MapboxLocationPicker = ({
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [error, setError] = useState('');
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
   
   const mapRef = useRef();
   const searchTimeoutRef = useRef();
@@ -214,6 +221,23 @@ const MapboxLocationPicker = ({
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+          <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-red-800">Error</p>
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+          <button
+            onClick={() => setError('')}
+            className="ml-auto p-1 hover:bg-red-100 rounded"
+          >
+            <X className="h-4 w-4 text-red-600" />
+          </button>
+        </div>
+      )}
+      
       {/* Search Bar */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -305,7 +329,7 @@ const MapboxLocationPicker = ({
             onDragEnd={handleMarkerDragEnd}
           >
             <div className="relative">
-              <MapPin className="h-10 w-10 text-red-500 fill-red-500 drop-shadow-lg animate-bounce" />
+              <MapPin className="h-10 w-10 text-red-500 fill-red-500 drop-shadow-lg" />
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-1 bg-black/20 rounded-full blur-sm" />
             </div>
           </Marker>
