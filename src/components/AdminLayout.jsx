@@ -10,7 +10,8 @@ import {
   X,
   LogOut,
   Truck,
-  Leaf
+  Leaf,
+  ShieldCheck
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -35,6 +36,12 @@ const AdminLayout = ({ children }) => {
       href: '/admin/bookings',
       icon: History,
       active: location.pathname === '/admin/bookings'
+    },
+    {
+      name: 'PUC Bookings',
+      href: '/admin/puc-bookings',
+      icon: ShieldCheck,
+      active: location.pathname === '/admin/puc-bookings'
     },
     {
       name: 'Employee Management',

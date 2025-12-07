@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { useCart } from "../../components/CartContext";
 import { useNavigate } from "react-router-dom";
-import AddressAutocomplete from "../../components/AddressAutocomplete";
+import MapboxLocationPicker from "../../components/MapboxLocationPicker";
 
 export default function PUCCertificatePage() {
   const navigate = useNavigate();
@@ -30,6 +30,8 @@ export default function PUCCertificatePage() {
     date: "",
     time: "",
     location: "",
+    latitude: null,
+    longitude: null,
     phone: "",
     email: "",
   });
@@ -163,6 +165,8 @@ export default function PUCCertificatePage() {
     setFormData((prev) => ({
       ...prev,
       location: location.fullAddress || location.address || "",
+      latitude: location.latitude,
+      longitude: location.longitude,
     }));
   };
 
@@ -192,6 +196,8 @@ export default function PUCCertificatePage() {
       scheduledDate: formData.date,
       scheduledTime: formData.time,
       location: formData.location,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
       phone: formData.phone,
       email: formData.email,
       category: "PUC Certificate",
@@ -335,6 +341,30 @@ export default function PUCCertificatePage() {
                 </div>
               </motion.div>
             ))}
+          </div>
+          
+          {/* Book Now CTA - Placed near service selection */}
+          <div className="mt-12 text-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setShowBookingForm(true);
+                // Scroll to booking form
+                setTimeout(() => {
+                  document.getElementById('booking-form')?.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                  });
+                }, 100);
+              }}
+              className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-12 py-4 rounded-full font-bold text-lg hover:shadow-2xl transition-all duration-300"
+            >
+              Book Now - ₹{getSelectedPrice()}
+            </motion.button>
+            <p className="mt-4 text-gray-600">
+              Complete your booking details below
+            </p>
           </div>
         </div>
       </section>
@@ -597,7 +627,7 @@ export default function PUCCertificatePage() {
 
       {/* Booking Form Section */}
       {showBookingForm && (
-        <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+        <section id="booking-form" className="py-16 bg-gradient-to-b from-gray-50 to-white">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -707,14 +737,22 @@ export default function PUCCertificatePage() {
                   <label className="block text-gray-700 font-semibold mb-2">
                     Service Location *
                   </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3.5 w-5 h-5 text-gray-400 z-10" />
-                    <AddressAutocomplete
-                      onAddressSelect={handleLocationSelect}
-                      placeholder="Enter your location"
-                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
-                    />
-                  </div>
+                  <MapboxLocationPicker
+                    value={formData.location}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, location: value }))
+                    }
+                    onSelect={handleLocationSelect}
+                    placeholder="Search or select location on map"
+                    initialCoords={
+                      formData.latitude && formData.longitude
+                        ? {
+                            latitude: formData.latitude,
+                            longitude: formData.longitude,
+                          }
+                        : null
+                    }
+                  />
                 </div>
 
                 {/* Phone & Email */}
