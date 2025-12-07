@@ -1,37 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  ShieldCheck, 
-  CheckCircle, 
-  Clock, 
-  Calendar, 
-  MapPin, 
-  Phone, 
-  Mail, 
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  ShieldCheck,
+  CheckCircle,
+  Clock,
+  Calendar,
+  MapPin,
+  Phone,
+  Mail,
   FileText,
   AlertCircle,
   ChevronDown,
   Award,
   Truck,
   Users,
-  BadgeCheck
-} from 'lucide-react';
-import { useCart } from '../../components/CartContext';
-import { useNavigate } from 'react-router-dom';
-import AddressAutocomplete from '../../components/AddressAutocomplete';
+  BadgeCheck,
+} from "lucide-react";
+import { useCart } from "../../components/CartContext";
+import { useNavigate } from "react-router-dom";
+import AddressAutocomplete from "../../components/AddressAutocomplete";
 
 export default function PUCCertificatePage() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const [selectedVariant, setSelectedVariant] = useState('puc-2w');
+  const [selectedVariant, setSelectedVariant] = useState("puc-2w");
   const [formData, setFormData] = useState({
-    vehicleNumber: '',
-    vehicleType: 'Two-Wheeler',
-    date: '',
-    time: '',
-    location: '',
-    phone: '',
-    email: ''
+    vehicleNumber: "",
+    vehicleType: "Two-Wheeler",
+    date: "",
+    time: "",
+    location: "",
+    phone: "",
+    email: "",
   });
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
@@ -39,27 +39,28 @@ export default function PUCCertificatePage() {
   // Service data
   const serviceData = {
     title: "PUC Certificate Service",
-    description: "Government-approved Pollution Under Control (PUC) certificate issuance at your doorstep with certified technicians and equipment.",
+    description:
+      "Government-approved Pollution Under Control (PUC) certificate issuance at your doorstep with certified technicians and equipment.",
     duration: "15-20 minutes",
     variants: [
       {
         _id: "puc-2w",
         name: "Two-Wheeler",
         priceModifier: 149,
-        description: "For all two-wheelers"
+        description: "For all two-wheelers",
       },
       {
         _id: "puc-4w-petrol",
         name: "Four-Wheeler (Petrol)",
         priceModifier: 199,
-        description: "For petrol cars"
+        description: "For petrol cars",
       },
       {
         _id: "puc-4w-diesel",
         name: "Four-Wheeler (Diesel)",
-        priceModifier: 249,
-        description: "For diesel cars"
-      }
+        priceModifier: 199,
+        description: "For diesel cars",
+      },
     ],
     features: [
       "Doorstep emission testing",
@@ -67,112 +68,122 @@ export default function PUCCertificatePage() {
       "Digital copy via email/WhatsApp",
       "Hard copy provided",
       "Valid for 6 months",
-      "Instant certificate if passed"
+      "Instant certificate if passed",
     ],
     includes: [
       "Emission testing",
       "Certificate issuance",
       "Digital and physical copy",
-      "SMS and email notification"
+      "SMS and email notification",
     ],
     notIncludes: [
       "Vehicle repairs",
       "Pollution control system upgrades",
-      "Re-testing if vehicle fails"
+      "Re-testing if vehicle fails",
     ],
     process: [
       {
         step: 1,
         title: "Book Appointment",
-        description: "Select date, time, and location online"
+        description: "Select date, time, and location online",
       },
       {
         step: 2,
         title: "Technician Visit",
-        description: "Certified technician comes to your location"
+        description: "Certified technician comes to your location",
       },
       {
         step: 3,
         title: "Testing",
-        description: "Emission test completed in 10-15 minutes"
+        description: "Emission test completed in 10-15 minutes",
       },
       {
         step: 4,
         title: "Certificate",
-        description: "Certificate issued immediately if passed"
-      }
+        description: "Certificate issued immediately if passed",
+      },
     ],
     faqs: [
       {
         question: "How long is the PUC certificate valid?",
-        answer: "PUC certificate is valid for 6 months from the date of issue."
+        answer: "PUC certificate is valid for 6 months from the date of issue.",
       },
       {
         question: "What if my vehicle fails the test?",
-        answer: "If your vehicle fails, we'll provide a detailed report. You'll need to get repairs done and schedule a re-test."
+        answer:
+          "If your vehicle fails, we'll provide a detailed report. You'll need to get repairs done and schedule a re-test.",
       },
       {
         question: "What documents do I need?",
-        answer: "You need your vehicle registration documents and previous PUC certificate if available."
+        answer:
+          "You need your vehicle registration documents and previous PUC certificate if available.",
       },
       {
         question: "How quickly will I receive the certificate?",
-        answer: "If your vehicle passes the test, the certificate is issued immediately. Digital copy is sent within 5 minutes, and hard copy is provided on the spot."
+        answer:
+          "If your vehicle passes the test, the certificate is issued immediately. Digital copy is sent within 5 minutes, and hard copy is provided on the spot.",
       },
       {
         question: "Do you cover my area?",
-        answer: "We currently operate in Bangalore. Service availability in other cities coming soon."
-      }
-    ]
+        answer:
+          "We currently operate in Bangalore. Service availability in other cities coming soon.",
+      },
+    ],
   };
 
   const accessories = [
     {
       name: "Portable Emission Testing Device",
       description: "Government-approved portable emission analyzer",
-      icon: BadgeCheck
+      icon: BadgeCheck,
     },
     {
       name: "Digital Printer",
       description: "On-site certificate printing capability",
-      icon: FileText
+      icon: FileText,
     },
     {
       name: "Certification Authority Tie-up",
       description: "Government-authorized certification partnership",
-      icon: Award
-    }
+      icon: Award,
+    },
   ];
 
   const getSelectedPrice = () => {
-    const variant = serviceData.variants.find(v => v._id === selectedVariant);
+    const variant = serviceData.variants.find((v) => v._id === selectedVariant);
     return variant ? variant.priceModifier : 149;
   };
 
   const getSelectedVariantName = () => {
-    const variant = serviceData.variants.find(v => v._id === selectedVariant);
+    const variant = serviceData.variants.find((v) => v._id === selectedVariant);
     return variant ? variant.name : "Two-Wheeler";
   };
 
   const handleLocationSelect = (location) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      location: location.fullAddress || location.address || ''
+      location: location.fullAddress || location.address || "",
     }));
   };
 
   const handleBooking = (e) => {
     e.preventDefault();
-    
+
     // Validate form
-    if (!formData.vehicleNumber || !formData.date || !formData.time || !formData.location || !formData.phone) {
-      alert('Please fill in all required fields');
+    if (
+      !formData.vehicleNumber ||
+      !formData.date ||
+      !formData.time ||
+      !formData.location ||
+      !formData.phone
+    ) {
+      alert("Please fill in all required fields");
       return;
     }
 
     // Add to cart
     const bookingDetails = {
-      serviceId: 'vc-puc-001',
+      serviceId: "vc-puc-001",
       name: `PUC Certificate - ${getSelectedVariantName()}`,
       price: getSelectedPrice(),
       quantity: 1,
@@ -183,12 +194,12 @@ export default function PUCCertificatePage() {
       location: formData.location,
       phone: formData.phone,
       email: formData.email,
-      category: 'PUC Certificate',
-      type: 'puc-certificate'
+      category: "PUC Certificate",
+      type: "puc-certificate",
     };
 
     addToCart(bookingDetails);
-    navigate('/cart');
+    navigate("/cart");
   };
 
   return (
@@ -243,11 +254,18 @@ export default function PUCCertificatePage() {
             </motion.button>
           </motion.div>
         </div>
-        
+
         {/* Decorative wave */}
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z" fill="white"/>
+          <svg
+            viewBox="0 0 1440 120"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z"
+              fill="white"
+            />
           </svg>
         </div>
       </section>
@@ -261,8 +279,12 @@ export default function PUCCertificatePage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold mb-4 text-gray-800">Choose Your Vehicle Type</h2>
-            <p className="text-gray-600 text-lg">Select the appropriate package for your vehicle</p>
+            <h2 className="text-4xl font-bold mb-4 text-gray-800">
+              Choose Your Vehicle Type
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Select the appropriate package for your vehicle
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -275,12 +297,15 @@ export default function PUCCertificatePage() {
                 transition={{ delay: index * 0.1 }}
                 onClick={() => {
                   setSelectedVariant(variant._id);
-                  setFormData(prev => ({ ...prev, vehicleType: variant.name }));
+                  setFormData((prev) => ({
+                    ...prev,
+                    vehicleType: variant.name,
+                  }));
                 }}
                 className={`relative bg-gradient-to-br ${
                   selectedVariant === variant._id
-                    ? 'from-green-50 to-emerald-50 border-green-500 shadow-2xl scale-105'
-                    : 'from-gray-50 to-white border-gray-200 hover:shadow-xl'
+                    ? "from-green-50 to-emerald-50 border-green-500 shadow-2xl scale-105"
+                    : "from-gray-50 to-white border-gray-200 hover:shadow-xl"
                 } border-2 rounded-2xl p-8 cursor-pointer transition-all duration-300`}
               >
                 {selectedVariant === variant._id && (
@@ -289,19 +314,23 @@ export default function PUCCertificatePage() {
                   </div>
                 )}
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold mb-2 text-gray-800">{variant.name}</h3>
+                  <h3 className="text-2xl font-bold mb-2 text-gray-800">
+                    {variant.name}
+                  </h3>
                   <p className="text-gray-600 mb-6">{variant.description}</p>
                   <div className="mb-6">
-                    <span className="text-5xl font-bold text-green-600">₹{variant.priceModifier}</span>
+                    <span className="text-5xl font-bold text-green-600">
+                      ₹{variant.priceModifier}
+                    </span>
                   </div>
                   <button
                     className={`w-full py-3 rounded-full font-semibold transition-all ${
                       selectedVariant === variant._id
-                        ? 'bg-green-500 text-white'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                     }`}
                   >
-                    {selectedVariant === variant._id ? 'Selected' : 'Select'}
+                    {selectedVariant === variant._id ? "Selected" : "Select"}
                   </button>
                 </div>
               </motion.div>
@@ -319,8 +348,12 @@ export default function PUCCertificatePage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold mb-4 text-gray-800">How It Works</h2>
-            <p className="text-gray-600 text-lg">Simple 4-step process to get your PUC certificate</p>
+            <h2 className="text-4xl font-bold mb-4 text-gray-800">
+              How It Works
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Simple 4-step process to get your PUC certificate
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -344,13 +377,12 @@ export default function PUCCertificatePage() {
                     >
                       {step.step}
                     </motion.div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-800">{step.title}</h3>
+                    <h3 className="text-xl font-bold mb-2 text-gray-800">
+                      {step.title}
+                    </h3>
                     <p className="text-gray-600">{step.description}</p>
                   </div>
                 </div>
-                {index < serviceData.process.length - 1 && (
-                  <div className="hidden md:block absolute top-8 -right-4 w-8 h-0.5 bg-gradient-to-r from-green-500 to-emerald-500"></div>
-                )}
               </motion.div>
             ))}
           </div>
@@ -366,8 +398,12 @@ export default function PUCCertificatePage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold mb-4 text-gray-800">What's Included</h2>
-            <p className="text-gray-600 text-lg">Complete PUC certification service at your doorstep</p>
+            <h2 className="text-4xl font-bold mb-4 text-gray-800">
+              What's Included
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Complete PUC certification service at your doorstep
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
@@ -380,7 +416,9 @@ export default function PUCCertificatePage() {
             >
               <div className="flex items-center gap-3 mb-6">
                 <CheckCircle className="w-8 h-8 text-green-600" />
-                <h3 className="text-2xl font-bold text-gray-800">Service Includes</h3>
+                <h3 className="text-2xl font-bold text-gray-800">
+                  Service Includes
+                </h3>
               </div>
               <ul className="space-y-4">
                 {serviceData.includes.map((item, index) => (
@@ -408,7 +446,9 @@ export default function PUCCertificatePage() {
             >
               <div className="flex items-center gap-3 mb-6">
                 <AlertCircle className="w-8 h-8 text-red-600" />
-                <h3 className="text-2xl font-bold text-gray-800">Not Included</h3>
+                <h3 className="text-2xl font-bold text-gray-800">
+                  Not Included
+                </h3>
               </div>
               <ul className="space-y-4">
                 {serviceData.notIncludes.map((item, index) => (
@@ -458,8 +498,12 @@ export default function PUCCertificatePage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold mb-4 text-gray-800">Our Equipment</h2>
-            <p className="text-gray-600 text-lg">Professional-grade equipment for accurate testing</p>
+            <h2 className="text-4xl font-bold mb-4 text-gray-800">
+              Our Equipment
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Professional-grade equipment for accurate testing
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -479,7 +523,9 @@ export default function PUCCertificatePage() {
                       <Icon className="w-10 h-10 text-white" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800">{accessory.name}</h3>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800">
+                    {accessory.name}
+                  </h3>
                   <p className="text-gray-600">{accessory.description}</p>
                 </motion.div>
               );
@@ -497,8 +543,12 @@ export default function PUCCertificatePage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold mb-4 text-gray-800">Frequently Asked Questions</h2>
-            <p className="text-gray-600 text-lg">Everything you need to know about PUC certification</p>
+            <h2 className="text-4xl font-bold mb-4 text-gray-800">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Everything you need to know about PUC certification
+            </p>
           </motion.div>
 
           <div className="max-w-3xl mx-auto space-y-4">
@@ -512,25 +562,31 @@ export default function PUCCertificatePage() {
                 className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
               >
                 <button
-                  onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                  onClick={() =>
+                    setExpandedFaq(expandedFaq === index ? null : index)
+                  }
                   className="w-full p-6 text-left flex justify-between items-center gap-4"
                 >
-                  <span className="font-semibold text-gray-800 text-lg">{faq.question}</span>
+                  <span className="font-semibold text-gray-800 text-lg">
+                    {faq.question}
+                  </span>
                   <ChevronDown
                     className={`w-6 h-6 text-gray-600 transition-transform duration-300 flex-shrink-0 ${
-                      expandedFaq === index ? 'rotate-180' : ''
+                      expandedFaq === index ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 {expandedFaq === index && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
+                    animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                     className="px-6 pb-6"
                   >
-                    <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                    <p className="text-gray-600 leading-relaxed">
+                      {faq.answer}
+                    </p>
                   </motion.div>
                 )}
               </motion.div>
@@ -549,22 +605,31 @@ export default function PUCCertificatePage() {
               viewport={{ once: true }}
               className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-8"
             >
-              <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">Book Your PUC Certificate</h2>
-              
+              <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">
+                Book Your PUC Certificate
+              </h2>
+
               <form onSubmit={handleBooking} className="space-y-6">
                 {/* Vehicle Type Selection */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">Vehicle Type *</label>
+                  <label className="block text-gray-700 font-semibold mb-2">
+                    Vehicle Type *
+                  </label>
                   <select
                     value={selectedVariant}
                     onChange={(e) => {
                       setSelectedVariant(e.target.value);
-                      const variant = serviceData.variants.find(v => v._id === e.target.value);
-                      setFormData(prev => ({ ...prev, vehicleType: variant.name }));
+                      const variant = serviceData.variants.find(
+                        (v) => v._id === e.target.value
+                      );
+                      setFormData((prev) => ({
+                        ...prev,
+                        vehicleType: variant.name,
+                      }));
                     }}
                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
                   >
-                    {serviceData.variants.map(variant => (
+                    {serviceData.variants.map((variant) => (
                       <option key={variant._id} value={variant._id}>
                         {variant.name} - ₹{variant.priceModifier}
                       </option>
@@ -574,11 +639,18 @@ export default function PUCCertificatePage() {
 
                 {/* Vehicle Number */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">Vehicle Number *</label>
+                  <label className="block text-gray-700 font-semibold mb-2">
+                    Vehicle Number *
+                  </label>
                   <input
                     type="text"
                     value={formData.vehicleNumber}
-                    onChange={(e) => setFormData(prev => ({ ...prev, vehicleNumber: e.target.value.toUpperCase() }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        vehicleNumber: e.target.value.toUpperCase(),
+                      }))
+                    }
                     placeholder="KA01AB1234"
                     required
                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors uppercase"
@@ -588,27 +660,41 @@ export default function PUCCertificatePage() {
                 {/* Date & Time */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-2">Date *</label>
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Date *
+                    </label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
                       <input
                         type="date"
                         value={formData.date}
-                        onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
-                        min={new Date().toISOString().split('T')[0]}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            date: e.target.value,
+                          }))
+                        }
+                        min={new Date().toISOString().split("T")[0]}
                         required
                         className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-2">Time *</label>
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Time *
+                    </label>
                     <div className="relative">
                       <Clock className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
                       <input
                         type="time"
                         value={formData.time}
-                        onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            time: e.target.value,
+                          }))
+                        }
                         required
                         className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
                       />
@@ -618,7 +704,9 @@ export default function PUCCertificatePage() {
 
                 {/* Location */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">Service Location *</label>
+                  <label className="block text-gray-700 font-semibold mb-2">
+                    Service Location *
+                  </label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3.5 w-5 h-5 text-gray-400 z-10" />
                     <AddressAutocomplete
@@ -632,13 +720,20 @@ export default function PUCCertificatePage() {
                 {/* Phone & Email */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-2">Phone Number *</label>
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Phone Number *
+                    </label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
                       <input
                         type="tel"
                         value={formData.phone}
-                        onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            phone: e.target.value,
+                          }))
+                        }
                         placeholder="9876543210"
                         required
                         pattern="[0-9]{10}"
@@ -647,13 +742,20 @@ export default function PUCCertificatePage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-2">Email (Optional)</label>
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Email (Optional)
+                    </label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
                       <input
                         type="email"
                         value={formData.email}
-                        onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            email: e.target.value,
+                          }))
+                        }
                         placeholder="your@email.com"
                         className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
                       />
@@ -664,10 +766,16 @@ export default function PUCCertificatePage() {
                 {/* Price Summary */}
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-700 font-medium">Service Price:</span>
-                    <span className="text-2xl font-bold text-green-600">₹{getSelectedPrice()}</span>
+                    <span className="text-gray-700 font-medium">
+                      Service Price:
+                    </span>
+                    <span className="text-2xl font-bold text-green-600">
+                      ₹{getSelectedPrice()}
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-600">* Final price may vary based on location</p>
+                  <p className="text-sm text-gray-600">
+                    * Final price may vary based on location
+                  </p>
                 </div>
 
                 {/* Submit Button */}
@@ -698,8 +806,12 @@ export default function PUCCertificatePage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl font-bold mb-6">Ready to Get Your PUC Certificate?</h2>
-              <p className="text-xl mb-8 opacity-90">Book now and get certified at your doorstep!</p>
+              <h2 className="text-4xl font-bold mb-6">
+                Ready to Get Your PUC Certificate?
+              </h2>
+              <p className="text-xl mb-8 opacity-90">
+                Book now and get certified at your doorstep!
+              </p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
