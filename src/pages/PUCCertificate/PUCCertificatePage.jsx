@@ -292,7 +292,7 @@ export default function PUCCertificatePage() {
                   <h3 className="text-2xl font-bold mb-2 text-gray-800">{variant.name}</h3>
                   <p className="text-gray-600 mb-6">{variant.description}</p>
                   <div className="mb-6">
-                    <span className="text-5xl font-bold text-green-600">₹{variant.price}</span>
+                    <span className="text-5xl font-bold text-green-600">₹{variant.priceModifier}</span>
                   </div>
                   <button
                     className={`w-full py-3 rounded-full font-semibold transition-all ${
@@ -566,7 +566,7 @@ export default function PUCCertificatePage() {
                   >
                     {serviceData.variants.map(variant => (
                       <option key={variant._id} value={variant._id}>
-                        {variant.name} - ₹{variant.price}
+                        {variant.name} - ₹{variant.priceModifier}
                       </option>
                     ))}
                   </select>
