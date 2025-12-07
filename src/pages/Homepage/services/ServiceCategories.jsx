@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Car, Bike, Shirt, Shield, Truck } from 'lucide-react';
+import { ArrowRight, Car, Bike, Shirt, Shield, Truck, ShieldCheck } from 'lucide-react';
 
 export default function ServiceCategories() {
   const navigate = useNavigate();
@@ -159,6 +159,18 @@ export default function ServiceCategories() {
       hoverColor: 'hover:bg-purple-100'
     },
     {
+      name: 'PUC Certificate',
+      image: '/services/puc/puc-testing.jpg',
+      category: 'services/puc-certificate',
+      description: 'Government-approved emission testing at your doorstep',
+      fallbackIcon: ShieldCheck,
+      gradient: 'from-green-500 to-emerald-500',
+      bgColor: 'bg-green-50',
+      hoverColor: 'hover:bg-green-100',
+      price: 'From ₹149',
+      isNew: true
+    },
+    {
       name: 'Movers & Packers',
       image: '/movers/truck.png',
       category: 'movers-packers',
@@ -272,6 +284,20 @@ export default function ServiceCategories() {
                 className={`absolute inset-0 bg-gradient-to-br ${category.gradient} rounded-3xl`}
               />
 
+              {/* New Badge */}
+              {category.isNew && (
+                <div className="absolute top-4 right-4 z-20">
+                  <motion.div
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 200, delay: 0.5 }}
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg"
+                  >
+                    NEW
+                  </motion.div>
+                </div>
+              )}
+
               {/* Content */}
               <div className="relative z-10">
                 {/* Icon/Image Container */}
@@ -327,6 +353,20 @@ export default function ServiceCategories() {
                 >
                   {category.description}
                 </motion.p>
+
+                {/* Price Display for PUC Certificate */}
+                {category.price && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.55 + index * 0.1 }}
+                    className="text-center mb-4"
+                  >
+                    <span className="text-lg font-bold text-green-600">
+                      {category.price}
+                    </span>
+                  </motion.div>
+                )}
 
                 {/* CTA Button */}
                 <motion.div
