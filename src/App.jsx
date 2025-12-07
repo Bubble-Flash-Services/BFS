@@ -58,6 +58,7 @@ import ServicePage from "./pages/green&clean/ServicePage";
 import ServiceByCategory from "./pages/green&clean/ServiceByCategory";
 import MoversPackersPage from "./pages/MoversPackersPage";
 import MapDemo from "./pages/MapDemo";
+import PUCCertificatePage from "./pages/PUCCertificate/PUCCertificatePage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -111,6 +112,7 @@ function AppContent() {
             path="/helmet-wash-deals/:category"
             element={<HelmetWashDeals />}
           />
+          <Route path="/services/puc-certificate" element={<PUCCertificatePage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services-browser" element={<ServicesBrowser />} />
