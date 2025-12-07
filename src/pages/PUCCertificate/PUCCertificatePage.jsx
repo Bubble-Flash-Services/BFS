@@ -45,19 +45,19 @@ export default function PUCCertificatePage() {
       {
         _id: "puc-2w",
         name: "Two-Wheeler",
-        price: 149,
+        priceModifier: 149,
         description: "For all two-wheelers"
       },
       {
         _id: "puc-4w-petrol",
         name: "Four-Wheeler (Petrol)",
-        price: 199,
+        priceModifier: 199,
         description: "For petrol cars"
       },
       {
         _id: "puc-4w-diesel",
         name: "Four-Wheeler (Diesel)",
-        price: 249,
+        priceModifier: 249,
         description: "For diesel cars"
       }
     ],
@@ -146,7 +146,7 @@ export default function PUCCertificatePage() {
 
   const getSelectedPrice = () => {
     const variant = serviceData.variants.find(v => v._id === selectedVariant);
-    return variant ? variant.price : 149;
+    return variant ? variant.priceModifier : 149;
   };
 
   const getSelectedVariantName = () => {
@@ -157,7 +157,7 @@ export default function PUCCertificatePage() {
   const handleLocationSelect = (location) => {
     setFormData(prev => ({
       ...prev,
-      location: location.address
+      location: location.fullAddress || location.address || ''
     }));
   };
 
@@ -622,7 +622,7 @@ export default function PUCCertificatePage() {
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3.5 w-5 h-5 text-gray-400 z-10" />
                     <AddressAutocomplete
-                      onLocationSelect={handleLocationSelect}
+                      onAddressSelect={handleLocationSelect}
                       placeholder="Enter your location"
                       className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
                     />
