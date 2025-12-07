@@ -16,8 +16,9 @@ import {
   ArrowRight,
   CheckCircle,
   Clock,
+  AlertCircle,
 } from "lucide-react";
-import AddressAutocomplete from "../components/AddressAutocomplete";
+import MapboxLocationPicker from "../components/MapboxLocationPicker";
 import RazorpayPayment from "../components/RazorpayPayment";
 import { addressAPI } from "../api/address";
 import { createOrder } from "../api/orders";
@@ -1333,28 +1334,39 @@ export default function CartPage() {
 
       {/* Checkout Modal */}
       {showCheckoutModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-          <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/20 relative">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 relative transform transition-all">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 p-6 flex justify-between items-center rounded-t-3xl z-[110]">
-              <h2 className="text-2xl font-bold text-white">
-                Complete Your Order
-              </h2>
+            <div className="sticky top-0 bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 p-8 flex justify-between items-center rounded-t-3xl z-[110] shadow-lg">
+              <div>
+                <h2 className="text-3xl font-bold text-white mb-1">
+                  Complete Your Order
+                </h2>
+                <p className="text-emerald-100 text-sm">
+                  Just a few more details to get started!
+                </p>
+              </div>
               <button
                 onClick={() => setShowCheckoutModal(false)}
-                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                className="p-3 hover:bg-white/20 rounded-full transition-all duration-200 hover:rotate-90"
               >
                 <X className="w-6 h-6 text-white" />
               </button>
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 space-y-6">
+            <div className="p-8 space-y-6 bg-gradient-to-b from-gray-50 to-white">
               {/* Order Items Summary */}
-              <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4">
-                <h3 className="font-semibold text-gray-800 mb-3">
-                  Order Items
-                </h3>
+              <div className="bg-white rounded-2xl p-6 shadow-md border-2 border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-xl text-gray-800 flex items-center">
+                    <ShoppingBag className="w-5 h-5 mr-2 text-emerald-600" />
+                    Your Order
+                  </h3>
+                  <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold">
+                    {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
+                  </span>
+                </div>
                 <div className="space-y-3">
                   {groupedCart.map((group) => (
                     <div key={group.key}>
@@ -1421,20 +1433,27 @@ export default function CartPage() {
                     <MapPin className="inline w-4 h-4 mr-1" />
                     Service Address
                   </label>
-                  <AddressAutocomplete
+                  <MapboxLocationPicker
                     value={selectedLocation}
                     onChange={setSelectedLocation}
                     onSelect={handleAddressSelect}
-                    placeholder="Enter your service address"
+                    placeholder="Search or drag pin to select your location"
                     className="w-full"
-                    showCurrentLocation={true}
+                    initialCoords={
+                      addressData?.latitude && addressData?.longitude
+                        ? {
+                            latitude: addressData.latitude,
+                            longitude: addressData.longitude,
+                          }
+                        : null
+                    }
                   />
 
                   {/* Service Availability Warning */}
-                  <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <div className="text-red-700 text-sm">
+                  <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="text-blue-700 text-sm">
                       <p className="font-semibold mb-2">
-                        ⚠️ Service Availability:
+                        📍 Service Availability:
                       </p>
                       <div className="space-y-1">
                         <p>
@@ -1455,35 +1474,36 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Calendar className="inline w-4 h-4 mr-1" />
-                    Pickup Date
+                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                    <Calendar className="inline w-5 h-5 mr-2 text-emerald-600" />
+                    Service Date
                   </label>
                   <input
                     type="date"
                     value={pickupDate}
                     onChange={(e) => setPickupDate(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    min={new Date().toISOString().split("T")[0]}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Clock className="inline w-4 h-4 mr-1" />
-                    Time Slot
+                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                    <Clock className="inline w-5 h-5 mr-2 text-emerald-600" />
+                    Preferred Time Slot
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {generateTimeSlots().map((slot) => (
                       <button
                         type="button"
                         key={slot}
                         onClick={() => setSelectedTimeSlot(slot)}
-                        className={`px-3 py-2 rounded-lg border text-sm ${
+                        className={`px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 ${
                           selectedTimeSlot === slot
-                            ? "border-blue-600 bg-blue-50 text-blue-700"
-                            : "border-gray-300 hover:bg-gray-50"
+                            ? "border-emerald-600 bg-emerald-50 text-emerald-700 shadow-md transform scale-105"
+                            : "border-gray-300 hover:border-emerald-400 hover:bg-emerald-50/50"
                         }`}
                       >
                         {slot}
@@ -1491,37 +1511,43 @@ export default function CartPage() {
                     ))}
                   </div>
                   {!selectedTimeSlot && (
-                    <p className="text-xs text-red-600 mt-1">
-                      Please select a time slot.
+                    <p className="text-xs text-red-600 mt-2 flex items-center">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      Please select a time slot
                     </p>
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Phone className="inline w-4 h-4 mr-1" />
-                    Phone Number
+                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                    <Phone className="inline w-5 h-5 mr-2 text-emerald-600" />
+                    Contact Number
                   </label>
                   <input
                     type="tel"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter your phone number"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                    placeholder="Enter 10-digit mobile number"
+                    pattern="[0-9]{10}"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <CreditCard className="inline w-4 h-4 mr-1" />
+                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                    <CreditCard className="inline w-5 h-5 mr-2 text-emerald-600" />
                     Payment Method
                   </label>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {paymentOptions.map((option) => (
                       <label
                         key={option.id}
-                        className="flex items-center p-3 border border-gray-300 rounded-xl hover:bg-gray-50 cursor-pointer"
+                        className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                          selectedPayment === option.id
+                            ? "border-emerald-600 bg-emerald-50 shadow-md"
+                            : "border-gray-300 hover:border-emerald-400 hover:bg-emerald-50/30"
+                        }`}
                       >
                         <input
                           type="radio"
@@ -1529,10 +1555,10 @@ export default function CartPage() {
                           value={option.id}
                           checked={selectedPayment === option.id}
                           onChange={(e) => setSelectedPayment(e.target.value)}
-                          className="mr-3"
+                          className="w-5 h-5 text-emerald-600"
                         />
-                        <span className="mr-2">{option.icon}</span>
-                        <span>{option.name}</span>
+                        <span className="text-2xl mr-3">{option.icon}</span>
+                        <span className="font-medium">{option.name}</span>
                       </label>
                     ))}
                   </div>
@@ -1540,36 +1566,45 @@ export default function CartPage() {
               </div>
 
               {/* Place Order Button */}
-              <div className="space-y-3">
+              <div className="space-y-4 pt-2">
                 {!createdOrder ? (
                   // Show place order button if no order created yet
                   <button
                     onClick={handlePlaceOrder}
                     disabled={placingOrder}
-                    className={`w-full font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 ${
+                    className={`w-full font-bold py-5 px-6 rounded-2xl transition-all duration-300 transform shadow-xl flex items-center justify-center space-x-3 text-lg ${
                       placingOrder
                         ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+                        : "bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 hover:from-emerald-600 hover:via-green-600 hover:to-teal-600 text-white hover:scale-105 hover:shadow-2xl"
                     }`}
                   >
-                    <CreditCard className="w-5 h-5" />
-                    <span>
-                      {placingOrder
-                        ? "Creating Order..."
-                        : `Place Order - ₹${getFinalTotal()}`}
-                    </span>
+                    {placingOrder ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-6 h-6" />
+                        <span>Confirm Order - ₹{getFinalTotal()}</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </>
+                    )}
                   </button>
                 ) : selectedPayment === "upi" ? (
                   // Show Razorpay payment component for UPI payments
                   <div className="space-y-4">
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <h3 className="font-semibold text-blue-900 mb-2">
-                        Order Created Successfully!
-                      </h3>
-                      <p className="text-blue-700 text-sm">
+                    <div className="p-5 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 rounded-xl">
+                      <div className="flex items-center mb-3">
+                        <CheckCircle className="w-6 h-6 text-emerald-600 mr-2" />
+                        <h3 className="font-bold text-emerald-900 text-lg">
+                          Order Created Successfully!
+                        </h3>
+                      </div>
+                      <p className="text-emerald-700 font-semibold">
                         Order Number: {createdOrder.orderNumber}
                       </p>
-                      <p className="text-blue-600 text-sm">
+                      <p className="text-emerald-600 text-sm mt-2">
                         Please complete the payment to confirm your order.
                       </p>
                     </div>
@@ -1584,13 +1619,20 @@ export default function CartPage() {
                   </div>
                 ) : (
                   // COD order completed
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-center">
-                    <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                    <h3 className="font-semibold text-green-900">
-                      Order Placed Successfully!
+                  <div className="p-6 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-300 rounded-xl text-center">
+                    <div className="flex justify-center mb-3">
+                      <div className="bg-emerald-100 rounded-full p-3">
+                        <CheckCircle className="w-10 h-10 text-emerald-600" />
+                      </div>
+                    </div>
+                    <h3 className="font-bold text-emerald-900 text-xl mb-2">
+                      Order Placed Successfully! 🎉
                     </h3>
-                    <p className="text-green-700 text-sm">
-                      Order Number: {createdOrder.orderNumber}
+                    <p className="text-emerald-700 font-semibold text-lg mb-1">
+                      Order #{createdOrder.orderNumber}
+                    </p>
+                    <p className="text-emerald-600 text-sm">
+                      We'll contact you shortly to confirm the details
                     </p>
                   </div>
                 )}

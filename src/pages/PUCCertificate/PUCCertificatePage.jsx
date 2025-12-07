@@ -3,22 +3,16 @@ import { motion } from "framer-motion";
 import {
   ShieldCheck,
   CheckCircle,
-  Clock,
-  Calendar,
-  MapPin,
-  Phone,
   Mail,
   FileText,
   AlertCircle,
   ChevronDown,
   Award,
   Truck,
-  Users,
   BadgeCheck,
 } from "lucide-react";
 import { useCart } from "../../components/CartContext";
 import { useNavigate } from "react-router-dom";
-import MapboxLocationPicker from "../../components/MapboxLocationPicker";
 
 export default function PUCCertificatePage() {
   const navigate = useNavigate();
@@ -27,12 +21,6 @@ export default function PUCCertificatePage() {
   const [formData, setFormData] = useState({
     vehicleNumber: "",
     vehicleType: "Two-Wheeler",
-    date: "",
-    time: "",
-    location: "",
-    latitude: null,
-    longitude: null,
-    phone: "",
     email: "",
   });
   const [expandedFaq, setExpandedFaq] = useState(null);
@@ -161,27 +149,12 @@ export default function PUCCertificatePage() {
     return variant ? variant.name : "Two-Wheeler";
   };
 
-  const handleLocationSelect = (location) => {
-    setFormData((prev) => ({
-      ...prev,
-      location: location.fullAddress || location.address || "",
-      latitude: location.latitude,
-      longitude: location.longitude,
-    }));
-  };
-
   const handleBooking = (e) => {
     e.preventDefault();
 
     // Validate form
-    if (
-      !formData.vehicleNumber ||
-      !formData.date ||
-      !formData.time ||
-      !formData.location ||
-      !formData.phone
-    ) {
-      alert("Please fill in all required fields");
+    if (!formData.vehicleNumber) {
+      alert("Please enter vehicle number");
       return;
     }
 
@@ -193,12 +166,6 @@ export default function PUCCertificatePage() {
       quantity: 1,
       vehicleType: formData.vehicleType,
       vehicleNumber: formData.vehicleNumber,
-      scheduledDate: formData.date,
-      scheduledTime: formData.time,
-      location: formData.location,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-      phone: formData.phone,
       email: formData.email,
       category: "PUC Certificate",
       type: "puc-certificate",
@@ -687,117 +654,25 @@ export default function PUCCertificatePage() {
                   />
                 </div>
 
-                {/* Date & Time */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2">
-                      Date *
-                    </label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
-                      <input
-                        type="date"
-                        value={formData.date}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            date: e.target.value,
-                          }))
-                        }
-                        min={new Date().toISOString().split("T")[0]}
-                        required
-                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2">
-                      Time *
-                    </label>
-                    <div className="relative">
-                      <Clock className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
-                      <input
-                        type="time"
-                        value={formData.time}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            time: e.target.value,
-                          }))
-                        }
-                        required
-                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Location */}
+                {/* Email */}
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">
-                    Service Location *
+                    Email (Optional)
                   </label>
-                  <MapboxLocationPicker
-                    value={formData.location}
-                    onChange={(value) =>
-                      setFormData((prev) => ({ ...prev, location: value }))
-                    }
-                    onSelect={handleLocationSelect}
-                    placeholder="Search or select location on map"
-                    initialCoords={
-                      formData.latitude && formData.longitude
-                        ? {
-                            latitude: formData.latitude,
-                            longitude: formData.longitude,
-                          }
-                        : null
-                    }
-                  />
-                </div>
-
-                {/* Phone & Email */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2">
-                      Phone Number *
-                    </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
-                      <input
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            phone: e.target.value,
-                          }))
-                        }
-                        placeholder="9876543210"
-                        required
-                        pattern="[0-9]{10}"
-                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2">
-                      Email (Optional)
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            email: e.target.value,
-                          }))
-                        }
-                        placeholder="your@email.com"
-                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
-                      />
-                    </div>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
+                      placeholder="your@email.com"
+                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
+                    />
                   </div>
                 </div>
 
@@ -812,7 +687,7 @@ export default function PUCCertificatePage() {
                     </span>
                   </div>
                   <p className="text-sm text-gray-600">
-                    * Final price may vary based on location
+                    * Date, time, and location will be requested during checkout
                   </p>
                 </div>
 
