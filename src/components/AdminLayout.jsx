@@ -12,7 +12,8 @@ import {
   Truck,
   Leaf,
   ShieldCheck,
-  Shield
+  Shield,
+  ClipboardCheck
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -49,6 +50,12 @@ const AdminLayout = ({ children }) => {
       href: '/admin/insurance-bookings',
       icon: Shield,
       active: location.pathname === '/admin/insurance-bookings'
+    },
+    {
+      name: 'Vehicle Checkup',
+      href: '/admin/vehicle-checkup',
+      icon: ClipboardCheck,
+      active: location.pathname === '/admin/vehicle-checkup'
     },
     {
       name: "Employee Management",
