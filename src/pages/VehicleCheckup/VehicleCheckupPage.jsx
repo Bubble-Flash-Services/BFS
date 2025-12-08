@@ -105,6 +105,17 @@ const VehicleCheckupPage = () => {
     return packagePrice + addOnsTotal;
   };
 
+  const getFormattedAddons = () => {
+    return selectedAddOns
+      .map(id => addOns.find(a => a.id === id))
+      .filter(a => a)
+      .map(addon => ({
+        name: addon.name,
+        price: addon.price,
+        quantity: 1
+      }));
+  };
+
   const handleAddToCart = () => {
     if (!selectedPackage) {
       toast.error('Please select a package');
@@ -114,16 +125,10 @@ const VehicleCheckupPage = () => {
     const packageData = pricing[vehicleType][selectedPackage];
     const serviceName = `Full Body Vehicle Check-up - ${packageData.name}`;
     const packagePrice = packageData.price;
-    
-    // Calculate addons total and format addon objects
-    const selectedAddOnObjects = selectedAddOns.map(id => addOns.find(a => a.id === id)).filter(a => a);
-    const formattedAddons = selectedAddOnObjects.map(addon => ({
-      name: addon.name,
-      price: addon.price,
-      quantity: 1
-    }));
+    const formattedAddons = getFormattedAddons();
     const addonsTotal = formattedAddons.reduce((sum, addon) => sum + addon.price, 0);
     const totalPrice = packagePrice + addonsTotal;
+    const imageUrl = vehicleType === 'bike' ? '/bike/bike1.png' : '/car/car1.png';
 
     const cartItem = {
       id: `checkup-${vehicleType}-${selectedPackage}-${Date.now()}`,
@@ -147,8 +152,8 @@ const VehicleCheckupPage = () => {
       scheduledTime: selectedTime,
       category: 'Vehicle Checkup',
       type: 'vehicle-checkup',
-      image: vehicleType === 'bike' ? '/bike/bike1.png' : '/car/car1.png',
-      img: vehicleType === 'bike' ? '/bike/bike1.png' : '/car/car1.png',
+      image: imageUrl,
+      img: imageUrl,
     };
 
     addToCart(cartItem);

@@ -29,6 +29,19 @@ const normalizeVehicle = (raw) => {
   return allowed.has(mapped) ? mapped : 'all';
 };
 
+// Helper to detect special service types
+const detectServiceType = (item) => {
+  const type = toStr(item.type);
+  const category = toStr(item.category);
+  const serviceName = toStr(item.serviceName || item.name);
+  
+  return {
+    isVehicleCheckup: /vehicle-checkup|checkup/i.test(type) || /vehicle.*checkup|checkup/i.test(category) || /vehicle.*checkup|checkup/i.test(serviceName),
+    isPUC: /puc/i.test(type) || /puc/i.test(category) || /puc/i.test(serviceName),
+    isInsurance: /insurance/i.test(type) || /insurance/i.test(category) || /insurance/i.test(serviceName)
+  };
+};
+
 // Remove or repair legacy-bad items before populate/save to avoid cast errors
 const sanitizeCartItems = async (cart) => {
   if (!cart || !Array.isArray(cart.items)) return false;
@@ -279,9 +292,8 @@ export const addToCart = async (req, res) => {
         }
 
         // Special handling for vehicle checkup, PUC, and insurance services
-        const isVehicleCheckup = (type && /vehicle-checkup|checkup/i.test(type)) || (category && /vehicle.*checkup|checkup/i.test(category)) || (serviceName && /vehicle.*checkup|checkup/i.test(serviceName));
-        const isPUC = (type && /puc/i.test(type)) || (category && /puc/i.test(category)) || (serviceName && /puc/i.test(serviceName));
-        const isInsurance = (type && /insurance/i.test(type)) || (category && /insurance/i.test(category)) || (serviceName && /insurance/i.test(serviceName));
+        const serviceTypes = detectServiceType({ type, category, serviceName });
+        const { isVehicleCheckup, isPUC, isInsurance } = serviceTypes;
 
         if ((isVehicleCheckup || isPUC || isInsurance) && process.env.ALLOW_SERVICE_AUTOCREATE !== 'false') {
           try {
@@ -707,9 +719,8 @@ export const syncCartToDatabase = async (req, res) => {
 
       // Handle vehicle checkup, PUC, and insurance services
       if (!service && process.env.ALLOW_SERVICE_AUTOCREATE !== 'false') {
-        const isVehicleCheckup = (item.type && /vehicle-checkup|checkup/i.test(item.type)) || (item.category && /vehicle.*checkup|checkup/i.test(item.category)) || (item.serviceName && /vehicle.*checkup|checkup/i.test(item.serviceName));
-        const isPUC = (item.type && /puc/i.test(item.type)) || (item.category && /puc/i.test(item.category)) || (item.serviceName && /puc/i.test(item.serviceName));
-        const isInsurance = (item.type && /insurance/i.test(item.type)) || (item.category && /insurance/i.test(item.category)) || (item.serviceName && /insurance/i.test(item.serviceName));
+        const serviceTypes = detectServiceType(item);
+        const { isVehicleCheckup, isPUC, isInsurance } = serviceTypes;
 
         if (isVehicleCheckup || isPUC || isInsurance) {
           try {
