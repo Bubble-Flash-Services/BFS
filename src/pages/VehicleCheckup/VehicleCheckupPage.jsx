@@ -4,13 +4,8 @@ import {
   Car,
   Bike,
   ClipboardCheck,
-  Calendar,
-  MapPin,
   CheckCircle2,
-  AlertCircle,
   XCircle,
-  ChevronDown,
-  ChevronUp,
   Wrench,
   Droplet,
   Battery,
@@ -18,12 +13,9 @@ import {
   Camera,
   Shield,
   Star,
-  ArrowLeft,
-  ArrowRight,
   ShoppingCart,
   Clock,
   Award,
-  Users,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CartContext } from '../../context/CartContext';
@@ -50,32 +42,7 @@ const VehicleCheckupPage = () => {
     }
   };
 
-  // Service checklists
-  const bikeChecklist = [
-    { id: 1, item: 'Engine oil level check', status: 'good', category: 'Engine' },
-    { id: 2, item: 'Brake system inspection', status: 'good', category: 'Safety' },
-    { id: 3, item: 'Chain lubrication and tension check', status: 'attention', category: 'Drivetrain' },
-    { id: 4, item: 'Tyre pressure and tread depth', status: 'good', category: 'Tyres' },
-    { id: 5, item: 'Battery health check', status: 'good', category: 'Electrical' },
-    { id: 6, item: 'Light and horn functionality', status: 'good', category: 'Electrical' },
-    { id: 7, item: 'Suspension check', status: 'good', category: 'Suspension' },
-    { id: 8, item: 'Coolant level (if applicable)', status: 'good', category: 'Engine' },
-    { id: 9, item: 'Clutch and throttle play', status: 'attention', category: 'Controls' },
-    { id: 10, item: 'Digital inspection report with photos', status: 'good', category: 'Documentation' },
-  ];
 
-  const carChecklist = [
-    { id: 1, item: 'Engine oil and filter check', status: 'good', category: 'Engine' },
-    { id: 2, item: 'Brake system (pads, fluid, performance)', status: 'good', category: 'Safety' },
-    { id: 3, item: 'Tyre pressure, rotation, alignment', status: 'attention', category: 'Tyres' },
-    { id: 4, item: 'Battery health and terminals', status: 'good', category: 'Electrical' },
-    { id: 5, item: 'All lights and signals', status: 'good', category: 'Electrical' },
-    { id: 6, item: 'AC system check', status: 'good', category: 'Comfort' },
-    { id: 7, item: 'Suspension and steering', status: 'good', category: 'Handling' },
-    { id: 8, item: 'Coolant and radiator', status: 'attention', category: 'Engine' },
-    { id: 9, item: 'Windshield wipers and washer', status: 'good', category: 'Safety' },
-    { id: 10, item: 'Digital inspection report with 50+ point checklist', status: 'good', category: 'Documentation' },
-  ];
 
   const accessories = [
     { name: 'Chain Lubricant', icon: Droplet, applicableFor: 'bike' },
@@ -115,32 +82,6 @@ const VehicleCheckupPage = () => {
     { name: 'Amit Patel', rating: 5, text: 'Detailed report with photos. Highly recommended!' },
   ];
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'good':
-        return <CheckCircle2 className="w-5 h-5 text-green-500" />;
-      case 'attention':
-        return <AlertCircle className="w-5 h-5 text-yellow-500" />;
-      case 'critical':
-        return <XCircle className="w-5 h-5 text-red-500" />;
-      default:
-        return null;
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'good':
-        return 'bg-green-50 border-green-200';
-      case 'attention':
-        return 'bg-yellow-50 border-yellow-200';
-      case 'critical':
-        return 'bg-red-50 border-red-200';
-      default:
-        return 'bg-gray-50 border-gray-200';
-    }
-  };
-
   const handlePackageSelect = (packageType) => {
     setSelectedPackage(packageType);
     // Reset add-ons when package changes
@@ -155,6 +96,15 @@ const VehicleCheckupPage = () => {
     setShowAddOnsModal(true);
   };
 
+  const calculateTotalPrice = () => {
+    const packagePrice = pricing[vehicleType][selectedPackage].price;
+    const addOnsTotal = selectedAddOns.reduce((sum, id) => {
+      const addon = addOns.find(a => a.id === id);
+      return sum + (addon ? addon.price : 0);
+    }, 0);
+    return packagePrice + addOnsTotal;
+  };
+
   const handleAddToCart = () => {
     if (!selectedPackage) {
       toast.error('Please select a package');
@@ -162,18 +112,16 @@ const VehicleCheckupPage = () => {
     }
 
     const packageData = pricing[vehicleType][selectedPackage];
-    const addOnTotal = selectedAddOns.reduce((sum, id) => {
-      const addon = addOns.find(a => a.id === id);
-      return sum + (addon ? addon.price : 0);
-    }, 0);
+    const serviceName = `Full Body Vehicle Check-up - ${packageData.name}`;
+    const totalPrice = calculateTotalPrice();
 
     const cartItem = {
       id: `checkup-${vehicleType}-${selectedPackage}-${Date.now()}`,
       serviceId: `checkup-${vehicleType}-${selectedPackage}`,
-      name: `Full Body Vehicle Check-up - ${packageData.name}`,
-      title: `Full Body Vehicle Check-up - ${packageData.name}`,
-      serviceName: `Full Body Vehicle Check-up - ${packageData.name}`,
-      price: packageData.price + addOnTotal,
+      name: serviceName,
+      title: serviceName,
+      serviceName: serviceName,
+      price: totalPrice,
       quantity: 1,
       vehicleType,
       packageType: selectedPackage,
@@ -200,7 +148,6 @@ const VehicleCheckupPage = () => {
     );
   };
 
-  const checklist = vehicleType === 'bike' ? bikeChecklist : carChecklist;
   const currentPricing = pricing[vehicleType];
 
   return (
@@ -578,11 +525,7 @@ const VehicleCheckupPage = () => {
               <div className="flex justify-between items-center">
                 <span className="text-gray-700 font-semibold">Total Amount:</span>
                 <span className="text-2xl font-bold text-[#1F3C88]">
-                  ₹{pricing[vehicleType][selectedPackage].price + 
-                    selectedAddOns.reduce((sum, id) => {
-                      const addon = addOns.find(a => a.id === id);
-                      return sum + (addon ? addon.price : 0);
-                    }, 0)}
+                  ₹{calculateTotalPrice()}
                 </span>
               </div>
             </div>
