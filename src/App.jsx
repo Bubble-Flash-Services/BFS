@@ -39,6 +39,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import BookingHistory from "./pages/admin/BookingHistory";
 import PUCBookingManagement from "./pages/admin/PUCBookingManagement";
+import InsuranceBookingManagement from "./pages/admin/InsuranceBookingManagement";
 import CouponManagement from "./pages/admin/CouponManagement";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
 import MoversPackersManagement from "./pages/admin/MoversPackersManagement";
@@ -58,8 +59,8 @@ import GreenandClean from "./pages/green&clean/Green&Clean";
 import ServicePage from "./pages/green&clean/ServicePage";
 import ServiceByCategory from "./pages/green&clean/ServiceByCategory";
 import MoversPackersPage from "./pages/MoversPackersPage";
-import MapDemo from "./pages/MapDemo";
 import PUCCertificatePage from "./pages/PUCCertificate/PUCCertificatePage";
+import InsuranceAssistancePage from "./pages/InsuranceAssistance/InsuranceAssistancePage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -113,7 +114,14 @@ function AppContent() {
             path="/helmet-wash-deals/:category"
             element={<HelmetWashDeals />}
           />
-          <Route path="/services/puc-certificate" element={<PUCCertificatePage />} />
+          <Route
+            path="/services/puc-certificate"
+            element={<PUCCertificatePage />}
+          />
+          <Route
+            path="/services/insurance-assistance"
+            element={<InsuranceAssistancePage />}
+          />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services-browser" element={<ServicesBrowser />} />
@@ -127,7 +135,6 @@ function AppContent() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/addresses" element={<AddressesPage />} />
-          <Route path="/map-demo" element={<MapDemo />} />
           <Route path="/google-success" element={<GoogleSuccess />} />
           <Route path="/impersonate" element={<Impersonate />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -174,6 +181,14 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <PUCBookingManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/insurance-bookings"
+            element={
+              <ProtectedAdminRoute>
+                <InsuranceBookingManagement />
               </ProtectedAdminRoute>
             }
           />
