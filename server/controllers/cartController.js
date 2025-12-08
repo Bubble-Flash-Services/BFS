@@ -289,12 +289,11 @@ export const addToCart = async (req, res) => {
             let catName = isVehicleCheckup ? 'Vehicle Checkup' : (isPUC ? 'PUC Certificate' : 'Insurance Assistance');
             let planCat = await ServiceCategory.findOne({ name: { $regex: `^${catName}$`, $options: 'i' } });
             if (!planCat) {
-              const catImage = isVehicleCheckup ? '/car/car1.png' : (isPUC ? '/car/car1.png' : '/car/car1.png');
               const catIcon = isVehicleCheckup ? '🔧' : (isPUC ? '📜' : '🛡️');
               planCat = await ServiceCategory.create({ 
                 name: catName, 
                 description: isVehicleCheckup ? 'Vehicle inspection services' : (isPUC ? 'PUC certificate services' : 'Insurance assistance services'), 
-                image: catImage, 
+                image: '/car/car1.png', 
                 icon: catIcon 
               });
             }
@@ -718,12 +717,11 @@ export const syncCartToDatabase = async (req, res) => {
             let catName = isVehicleCheckup ? 'Vehicle Checkup' : (isPUC ? 'PUC Certificate' : 'Insurance Assistance');
             let planCat = await ServiceCategory.findOne({ name: { $regex: `^${catName}$`, $options: 'i' } });
             if (!planCat) {
-              const catImage = '/car/car1.png';
               const catIcon = isVehicleCheckup ? '🔧' : (isPUC ? '📜' : '🛡️');
               planCat = await ServiceCategory.create({ 
                 name: catName, 
                 description: isVehicleCheckup ? 'Vehicle inspection services' : (isPUC ? 'PUC certificate services' : 'Insurance assistance services'), 
-                image: catImage, 
+                image: '/car/car1.png', 
                 icon: catIcon 
               });
             }

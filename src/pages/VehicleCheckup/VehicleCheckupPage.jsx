@@ -115,9 +115,14 @@ const VehicleCheckupPage = () => {
     const serviceName = `Full Body Vehicle Check-up - ${packageData.name}`;
     const packagePrice = packageData.price;
     
-    // Calculate addons total
-    const selectedAddOnObjects = selectedAddOns.map(id => addOns.find(a => a.id === id));
-    const addonsTotal = selectedAddOnObjects.reduce((sum, addon) => sum + (addon?.price || 0), 0);
+    // Calculate addons total and format addon objects
+    const selectedAddOnObjects = selectedAddOns.map(id => addOns.find(a => a.id === id)).filter(a => a);
+    const formattedAddons = selectedAddOnObjects.map(addon => ({
+      name: addon.name,
+      price: addon.price,
+      quantity: 1
+    }));
+    const addonsTotal = formattedAddons.reduce((sum, addon) => sum + addon.price, 0);
     const totalPrice = packagePrice + addonsTotal;
 
     const cartItem = {
@@ -131,18 +136,10 @@ const VehicleCheckupPage = () => {
       vehicleType,
       packageType: selectedPackage,
       // Format addOns as UI-only addons (no DB ObjectId)
-      uiAddOns: selectedAddOnObjects.filter(a => a).map(addon => ({
-        name: addon.name,
-        price: addon.price,
-        quantity: 1
-      })),
+      uiAddOns: formattedAddons,
       packageDetails: {
         basePrice: packagePrice,
-        addons: selectedAddOnObjects.filter(a => a).map(addon => ({
-          name: addon.name,
-          price: addon.price,
-          quantity: 1
-        })),
+        addons: formattedAddons,
         addonsTotal: addonsTotal,
         features: []
       },
