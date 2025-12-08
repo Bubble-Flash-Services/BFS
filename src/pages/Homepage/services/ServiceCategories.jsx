@@ -1,7 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Car, Bike, Shirt, Shield, Truck, ShieldCheck } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowRight,
+  Car,
+  Bike,
+  Shirt,
+  Shield,
+  Truck,
+  ShieldCheck,
+} from "lucide-react";
 
 export default function ServiceCategories() {
   const navigate = useNavigate();
@@ -16,17 +24,17 @@ export default function ServiceCategories() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Auto-slide functionality for mobile
   useEffect(() => {
     if (!isMobile) return;
-    
+
     const autoSlide = setInterval(() => {
       setCurrentSlide((prev) => {
         const nextSlide = prev + 1;
@@ -51,11 +59,11 @@ export default function ServiceCategories() {
   const handleTouchEnd = (e) => {
     if (!isMobile || !isDragging.current) return;
     isDragging.current = false;
-    
+
     const endX = e.changedTouches[0].pageX;
     const diffX = startX.current - endX;
     const threshold = 50;
-    
+
     if (Math.abs(diffX) > threshold) {
       if (diffX > 0 && currentSlide < categories.length - 1) {
         setCurrentSlide(currentSlide + 1);
@@ -66,9 +74,9 @@ export default function ServiceCategories() {
   };
 
   const handleCategoryClick = (category) => {
-    if (category === 'laundry') {
+    if (category === "laundry") {
       // Show coming soon page instead of navigating to old Laundry content
-      navigate('/laundry');
+      navigate("/laundry");
       return;
     }
     navigate(`/${category}`);
@@ -80,120 +88,119 @@ export default function ServiceCategories() {
       opacity: 1,
       transition: {
         staggerChildren: 0.2,
-        delayChildren: 0.1
-      }
-    }
+        delayChildren: 0.1,
+      },
+    },
   };
 
   const cardVariants = {
-    hidden: { 
-      opacity: 0, 
+    hidden: {
+      opacity: 0,
       y: 50,
-      scale: 0.9
+      scale: 0.9,
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       scale: 1,
       transition: {
         type: "spring",
         stiffness: 100,
-        damping: 15
-      }
-    }
+        damping: 15,
+      },
+    },
   };
 
   const iconVariants = {
     hidden: { scale: 0, rotate: -180 },
-    visible: { 
-      scale: 1, 
+    visible: {
+      scale: 1,
       rotate: 0,
       transition: {
         type: "spring",
         stiffness: 200,
         damping: 10,
-        delay: 0.3
-      }
-    }
+        delay: 0.3,
+      },
+    },
   };
 
   const categories = [
     {
-      name: 'Car Wash',
-      image: '/car/home.png',
-      category: 'cars',
-      description: 'Professional car cleaning & detailing services',
+      name: "Car Wash",
+      image: "/car/home.png",
+      category: "cars",
+      description: "Professional car cleaning & detailing services",
       fallbackIcon: Car,
-      gradient: 'from-blue-500 to-cyan-500',
-      bgColor: 'bg-blue-50',
-      hoverColor: 'hover:bg-blue-100'
+      gradient: "from-blue-500 to-cyan-500",
+      bgColor: "bg-blue-50",
+      hoverColor: "hover:bg-blue-100",
     },
     {
-      name: 'Bike Wash',
-      image: '/bike/home.png',
-      category: 'bikes', 
-      description: 'Expert bike cleaning & maintenance',
+      name: "Bike Wash",
+      image: "/bike/home.png",
+      category: "bikes",
+      description: "Expert bike cleaning & maintenance",
       fallbackIcon: Bike,
-      gradient: 'from-green-500 to-emerald-500',
-      bgColor: 'bg-green-50',
-      hoverColor: 'hover:bg-green-100'
+      gradient: "from-green-500 to-emerald-500",
+      bgColor: "bg-green-50",
+      hoverColor: "hover:bg-green-100",
     },
     {
-      name: 'Helmet Care',
-      image: '/helmet/helmethome.png',
-      category: 'helmets',
-      description: 'Premium helmet cleaning & care',
+      name: "Helmet Care",
+      image: "/helmet/helmethome.png",
+      category: "helmets",
+      description: "Premium helmet cleaning & care",
       fallbackIcon: Shield,
-      gradient: 'from-orange-500 to-red-500',
-      bgColor: 'bg-orange-50',
-      hoverColor: 'hover:bg-orange-100'
+      gradient: "from-orange-500 to-red-500",
+      bgColor: "bg-orange-50",
+      hoverColor: "hover:bg-orange-100",
     },
     {
-      name: 'Laundry Service',
-      image: '/laundry/home.png',
-      category: 'laundry',
-      description: 'Fresh & clean laundry solutions',
+      name: "Laundry Service",
+      image: "/laundry/home.png",
+      category: "laundry",
+      description: "Fresh & clean laundry solutions",
       fallbackIcon: Shirt,
-      gradient: 'from-purple-500 to-pink-500',
-      bgColor: 'bg-purple-50',
-      hoverColor: 'hover:bg-purple-100'
+      gradient: "from-purple-500 to-pink-500",
+      bgColor: "bg-purple-50",
+      hoverColor: "hover:bg-purple-100",
     },
     {
-      name: 'PUC Certificate',
-      image: '/services/puc/puc-testing.jpg',
-      category: 'services/puc-certificate',
-      description: 'Government-approved emission testing at your doorstep',
+      name: "PUC Certificate",
+      image: "/services/puc/puc-testing.jpg",
+      category: "services/puc-certificate",
+      description: "Government-approved emission testing at your doorstep",
       fallbackIcon: ShieldCheck,
-      gradient: 'from-green-500 to-emerald-500',
-      bgColor: 'bg-green-50',
-      hoverColor: 'hover:bg-green-100',
-      price: 'From ₹149',
-      isNew: true
-    },
-    {
-      name: 'Insurance Assistance',
-      image: '/services/insurance/insurance-main.jpg',
-      category: 'services/insurance-assistance',
-      description: 'Compare & buy vehicle insurance from 10+ insurers',
-      fallbackIcon: Shield,
-      gradient: 'from-blue-600 to-green-600',
-      bgColor: 'bg-blue-50',
-      hoverColor: 'hover:bg-blue-100',
-      price: 'From ₹299',
+      gradient: "from-green-500 to-emerald-500",
+      bgColor: "bg-green-50",
+      hoverColor: "hover:bg-green-100",
+      price: "From ₹149",
       isNew: true,
-      isPopular: true
     },
     {
-      name: 'Movers & Packers',
-      image: '/movers/truck.png',
-      category: 'movers-packers',
-      description: 'Professional relocation services',
+      name: "Insurance Assistance",
+      image: "/services/insurance/insurance-main.jpg",
+      category: "services/insurance-assistance",
+      description: "Compare & buy vehicle insurance from 10+ insurers",
+      fallbackIcon: Shield,
+      gradient: "from-blue-600 to-green-600",
+      bgColor: "bg-blue-50",
+      hoverColor: "hover:bg-blue-100",
+      price: "From ₹199",
+      isNew: true,
+      isPopular: true,
+    },
+    {
+      name: "Movers & Packers",
+      image: "/movers/truck.png",
+      category: "movers-packers",
+      description: "Professional relocation services",
       fallbackIcon: Truck,
-      gradient: 'from-yellow-500 to-amber-500',
-      bgColor: 'bg-yellow-50',
-      hoverColor: 'hover:bg-yellow-100'
-    }
-    
+      gradient: "from-yellow-500 to-amber-500",
+      bgColor: "bg-yellow-50",
+      hoverColor: "hover:bg-yellow-100",
+    },
   ];
 
   return (
@@ -208,7 +215,7 @@ export default function ServiceCategories() {
           transition={{
             duration: 25,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
           className="absolute top-20 right-20 w-96 h-96 bg-[#FFB400] rounded-full opacity-5 blur-3xl"
         />
@@ -220,7 +227,7 @@ export default function ServiceCategories() {
           transition={{
             duration: 20,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
           className="absolute bottom-20 left-20 w-80 h-80 bg-[#FFB400] rounded-full opacity-3 blur-3xl"
         />
@@ -242,9 +249,11 @@ export default function ServiceCategories() {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="inline-flex items-center px-6 py-3 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30 mb-6"
           >
-            <span className="text-[#FFB400] font-semibold text-sm">Our Services</span>
+            <span className="text-[#FFB400] font-semibold text-sm">
+              Our Services
+            </span>
           </motion.div>
-          
+
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -254,7 +263,7 @@ export default function ServiceCategories() {
           >
             Choose Your <span className="text-[#FFB400]">Service</span>
           </motion.h2>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -265,7 +274,7 @@ export default function ServiceCategories() {
             Premium cleaning services delivered with care and precision
           </motion.p>
         </motion.div>
-        
+
         {/* Desktop Grid Layout */}
         <motion.div
           variants={containerVariants}
@@ -278,10 +287,10 @@ export default function ServiceCategories() {
             <motion.div
               key={category.name}
               variants={cardVariants}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.05,
                 y: -10,
-                transition: { type: "spring", stiffness: 300, damping: 20 }
+                transition: { type: "spring", stiffness: 300, damping: 20 },
               }}
               whileTap={{ scale: 0.95 }}
               onHoverStart={() => setHoveredCard(index)}
@@ -318,30 +327,32 @@ export default function ServiceCategories() {
                   variants={iconVariants}
                   className="relative w-28 h-28 mx-auto mb-6"
                 >
-                  <div className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                  <div
+                    className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                  >
                     <img
                       src={category.image}
                       alt={category.name}
                       className="w-20 h-20 object-contain"
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
                       }}
                     />
                     <div className="w-20 h-20 items-center justify-center hidden">
                       <category.fallbackIcon className="w-16 h-16 text-[#1F3C88]" />
                     </div>
                   </div>
-                  
+
                   {/* Floating Animation Ring */}
                   <motion.div
-                    animate={{ 
+                    animate={{
                       rotate: 360,
-                      scale: hoveredCard === index ? 1.2 : 1
+                      scale: hoveredCard === index ? 1.2 : 1,
                     }}
-                    transition={{ 
+                    transition={{
                       rotate: { duration: 8, repeat: Infinity, ease: "linear" },
-                      scale: { duration: 0.3 }
+                      scale: { duration: 0.3 },
                     }}
                     className="absolute inset-0 border-2 border-dashed border-[#FFB400] border-opacity-30 rounded-2xl"
                   />
@@ -406,9 +417,9 @@ export default function ServiceCategories() {
                 {/* Hover Effect Background */}
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
-                  animate={{ 
+                  animate={{
                     scale: hoveredCard === index ? 1 : 0,
-                    opacity: hoveredCard === index ? 0.1 : 0
+                    opacity: hoveredCard === index ? 0.1 : 0,
                   }}
                   transition={{ duration: 0.3 }}
                   className={`absolute inset-0 bg-gradient-to-br ${category.gradient} rounded-3xl -z-10`}
@@ -448,22 +459,24 @@ export default function ServiceCategories() {
                       <motion.div
                         initial={{ scale: 0, rotate: -180 }}
                         animate={{ scale: 1, rotate: 0 }}
-                        transition={{ 
-                          type: "spring", 
-                          stiffness: 200, 
+                        transition={{
+                          type: "spring",
+                          stiffness: 200,
                           damping: 10,
-                          delay: 0.3 
+                          delay: 0.3,
                         }}
                         className="relative w-32 h-32 mx-auto mb-6"
                       >
-                        <div className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center`}>
+                        <div
+                          className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center`}
+                        >
                           <img
                             src={category.image}
                             alt={category.name}
                             className="w-24 h-24 object-contain"
                             onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextSibling.style.display = 'flex';
+                              e.target.style.display = "none";
+                              e.target.nextSibling.style.display = "flex";
                             }}
                           />
                           <div className="w-24 h-24 items-center justify-center hidden">
@@ -475,7 +488,7 @@ export default function ServiceCategories() {
                       <h3 className="text-2xl font-bold text-[#1F3C88] mb-3">
                         {category.name}
                       </h3>
-                      
+
                       <p className="text-gray-600 mb-6 text-lg">
                         {category.description}
                       </p>
@@ -504,9 +517,9 @@ export default function ServiceCategories() {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setCurrentSlide(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentSlide 
-                    ? 'bg-[#FFB400] shadow-lg scale-125' 
-                    : 'bg-white bg-opacity-50 hover:bg-opacity-70'
+                  index === currentSlide
+                    ? "bg-[#FFB400] shadow-lg scale-125"
+                    : "bg-white bg-opacity-50 hover:bg-opacity-70"
                 }`}
               />
             ))}

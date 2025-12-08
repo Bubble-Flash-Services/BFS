@@ -270,6 +270,60 @@ export default function InsuranceAssistancePage() {
         </div>
       </div>
 
+      {/* Simple Add to Cart Section */}
+      <div className="bg-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto bg-gradient-to-br from-blue-50 to-green-50 p-8 rounded-2xl shadow-xl text-center">
+            <h2 className="text-3xl font-bold mb-4 text-gray-800">
+              Ready to Get Started?
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Select your insurance service type above and add it to your cart
+            </p>
+
+            <div className="bg-white p-6 rounded-xl mb-6 border-2 border-blue-200">
+              <h3 className="text-xl font-semibold mb-2 text-gray-800">
+                Selected Service
+              </h3>
+              <p className="text-2xl font-bold text-blue-600 mb-2">
+                {
+                  serviceData.variants.find((v) => v._id === selectedVariant)
+                    ?.name
+                }
+              </p>
+              <p className="text-gray-600 mb-3">
+                {
+                  serviceData.variants.find((v) => v._id === selectedVariant)
+                    ?.description
+                }
+              </p>
+              <div className="text-3xl font-bold text-green-600">
+                ₹
+                {
+                  serviceData.variants.find((v) => v._id === selectedVariant)
+                    ?.priceModifier
+                }
+              </div>
+              <p className="text-sm text-gray-500 mt-2">
+                Service fee only - Insurance premium paid separately to insurer
+              </p>
+            </div>
+
+            <button
+              onClick={handleAddToCart}
+              className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-12 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto space-x-2"
+            >
+              <ShoppingBag className="w-6 h-6" />
+              <span>Add to Cart</span>
+            </button>
+
+            <p className="text-sm text-gray-500 mt-4">
+              Complete your details at checkout
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Benefits Section */}
       <div className="bg-white py-16">
         <div className="container mx-auto px-4">
@@ -345,50 +399,6 @@ export default function InsuranceAssistancePage() {
               </div>
             </motion.div>
           ))}
-        </div>
-      </div>
-
-      {/* Simple Add to Cart Section */}
-      <div className="bg-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto bg-gradient-to-br from-blue-50 to-green-50 p-8 rounded-2xl shadow-xl text-center">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">
-              Ready to Get Started?
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Select your insurance service type above and add it to your cart
-            </p>
-            
-            <div className="bg-white p-6 rounded-xl mb-6 border-2 border-blue-200">
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">
-                Selected Service
-              </h3>
-              <p className="text-2xl font-bold text-blue-600 mb-2">
-                {serviceData.variants.find((v) => v._id === selectedVariant)?.name}
-              </p>
-              <p className="text-gray-600 mb-3">
-                {serviceData.variants.find((v) => v._id === selectedVariant)?.description}
-              </p>
-              <div className="text-3xl font-bold text-green-600">
-                ₹{serviceData.variants.find((v) => v._id === selectedVariant)?.priceModifier}
-              </div>
-              <p className="text-sm text-gray-500 mt-2">
-                Service fee only - Insurance premium paid separately to insurer
-              </p>
-            </div>
-
-            <button
-              onClick={handleAddToCart}
-              className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-12 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto space-x-2"
-            >
-              <ShoppingBag className="w-6 h-6" />
-              <span>Add to Cart</span>
-            </button>
-            
-            <p className="text-sm text-gray-500 mt-4">
-              Complete your details at checkout
-            </p>
-          </div>
         </div>
       </div>
 
