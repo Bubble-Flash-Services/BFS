@@ -606,33 +606,8 @@ export default function CartPage() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
-        <div className="text-center max-w-md mx-auto">
-          <div className="relative mb-8">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-red-100 to-orange-100 rounded-full flex items-center justify-center">
-              <ShoppingBag className="h-16 w-16 text-gray-400" />
-            </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-              <X className="text-red-500 h-5 w-5" />
-            </div>
-          </div>
-
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Please login to view your cart
-          </h2>
-          <p className="text-gray-600 mb-8 leading-relaxed">
-            You need to be logged in to add items to cart
-          </p>
-
-          <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-            Login Now
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // Guest users can view cart but need to login before checkout
+  // Removed the check: if (!user) { ... }
 
   // Show loading state while cart is being loaded
   if (cartLoading) {
