@@ -134,13 +134,12 @@ const VehicleCheckupPage = () => {
       id: `checkup-${vehicleType}-${selectedPackage}-${Date.now()}`,
       serviceId: `checkup-${vehicleType}-${selectedPackage}`,
       name: serviceName,
-      serviceName: serviceName,
       packageName: packageData.name,
       price: totalPrice,
       quantity: 1,
       vehicleType,
       packageType: selectedPackage,
-      // Format addOns as UI-only addons (no DB ObjectId)
+      // Add-ons formatted for backend storage (no DB references, stored as UI data)
       uiAddOns: formattedAddons,
       packageDetails: {
         basePrice: packagePrice,
