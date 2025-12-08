@@ -167,6 +167,19 @@ export default function ServiceCategories() {
       hoverColor: "hover:bg-purple-100",
     },
     {
+      name: "Vehicle Check-up",
+      image: "/services/checkup/vehicle-inspection.jpg",
+      category: "services/vehicle-checkup",
+      description: "Complete health inspection with 50+ point checklist",
+      fallbackIcon: ShieldCheck,
+      gradient: "from-red-500 to-orange-500",
+      bgColor: "bg-red-50",
+      hoverColor: "hover:bg-red-100",
+      price: "From ₹199",
+      isNew: true,
+      isPopular: true,
+    },
+    {
       name: "PUC Certificate",
       image: "/services/puc/puc-testing.jpg",
       category: "services/puc-certificate",
@@ -281,7 +294,7 @@ export default function ServiceCategories() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="hidden md:grid grid-cols-2 lg:grid-cols-5 gap-8"
+          className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {categories.map((category, index) => (
             <motion.div

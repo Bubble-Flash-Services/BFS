@@ -23,6 +23,7 @@ import greenProvidersRoutes from './routes/greenProviders.js';
 import greenAdminRoutes from './routes/greenAdmin.js';
 import moversPackersRoutes from './routes/moversPackers.js';
 import moversPackersAdminRoutes from './routes/moversPackersAdmin.js';
+import vehicleCheckupRoutes from './routes/vehicleCheckup.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import { configureCloudinary } from './services/cloudinary.js';
@@ -76,6 +77,9 @@ app.use('/api/green/admin', greenAdminRoutes);
 // Movers & Packers routes
 app.use('/api/movers-packers', moversPackersRoutes);
 app.use('/api/admin/movers-packers', moversPackersAdminRoutes);
+
+// Vehicle Checkup routes
+app.use('/api/vehicle-checkup', vehicleCheckupRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

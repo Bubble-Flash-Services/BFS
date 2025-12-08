@@ -44,6 +44,7 @@ import CouponManagement from "./pages/admin/CouponManagement";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
 import MoversPackersManagement from "./pages/admin/MoversPackersManagement";
 import GreenCleanManagement from "./pages/admin/GreenCleanManagement";
+import VehicleCheckupManagement from "./pages/admin/VehicleCheckupManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
 import EmployeeCompleted from "./pages/employee/EmployeeCompleted";
@@ -61,6 +62,7 @@ import ServiceByCategory from "./pages/green&clean/ServiceByCategory";
 import MoversPackersPage from "./pages/MoversPackersPage";
 import PUCCertificatePage from "./pages/PUCCertificate/PUCCertificatePage";
 import InsuranceAssistancePage from "./pages/InsuranceAssistance/InsuranceAssistancePage";
+import VehicleCheckupPage from "./pages/VehicleCheckup/VehicleCheckupPage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -121,6 +123,10 @@ function AppContent() {
           <Route
             path="/services/insurance-assistance"
             element={<InsuranceAssistancePage />}
+          />
+          <Route
+            path="/services/vehicle-checkup"
+            element={<VehicleCheckupPage />}
           />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/services" element={<ServicesPage />} />
@@ -189,6 +195,14 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <InsuranceBookingManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/vehicle-checkup"
+            element={
+              <ProtectedAdminRoute>
+                <VehicleCheckupManagement />
               </ProtectedAdminRoute>
             }
           />
