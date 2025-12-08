@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Car,
   Bike,
@@ -25,21 +25,17 @@ import {
   Award,
   Users,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { CartContext } from '../../context/CartContext';
 
 const VehicleCheckupPage = () => {
-  const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
   
   const [vehicleType, setVehicleType] = useState('bike'); // 'bike' or 'car'
   const [selectedPackage, setSelectedPackage] = useState(null);
-  const [expandedSection, setExpandedSection] = useState(null);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [beforeAfterSlider, setBeforeAfterSlider] = useState(50);
 
   // Reduced pricing
   const pricing = {

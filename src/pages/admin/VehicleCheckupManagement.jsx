@@ -15,8 +15,6 @@ import {
   FileText,
   UserCheck,
   Search,
-  Filter,
-  Download,
   Eye,
 } from 'lucide-react';
 import axios from 'axios';
