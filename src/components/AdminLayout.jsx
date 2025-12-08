@@ -11,7 +11,8 @@ import {
   LogOut,
   Truck,
   Leaf,
-  ShieldCheck
+  ShieldCheck,
+  FileShield
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -42,6 +43,12 @@ const AdminLayout = ({ children }) => {
       href: '/admin/puc-bookings',
       icon: ShieldCheck,
       active: location.pathname === '/admin/puc-bookings'
+    },
+    {
+      name: 'Insurance Bookings',
+      href: '/admin/insurance-bookings',
+      icon: FileShield,
+      active: location.pathname === '/admin/insurance-bookings'
     },
     {
       name: 'Employee Management',

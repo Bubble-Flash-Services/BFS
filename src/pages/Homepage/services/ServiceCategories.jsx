@@ -171,6 +171,19 @@ export default function ServiceCategories() {
       isNew: true
     },
     {
+      name: 'Insurance Assistance',
+      image: '/services/insurance/insurance-main.jpg',
+      category: 'services/insurance-assistance',
+      description: 'Compare & buy vehicle insurance from 10+ insurers',
+      fallbackIcon: Shield,
+      gradient: 'from-blue-600 to-green-600',
+      bgColor: 'bg-blue-50',
+      hoverColor: 'hover:bg-blue-100',
+      price: 'From ₹299',
+      isNew: true,
+      isPopular: true
+    },
+    {
       name: 'Movers & Packers',
       image: '/movers/truck.png',
       category: 'movers-packers',
