@@ -4,13 +4,8 @@ import {
   Car,
   Bike,
   ClipboardCheck,
-  Calendar,
-  MapPin,
   CheckCircle2,
-  AlertCircle,
   XCircle,
-  ChevronDown,
-  ChevronUp,
   Wrench,
   Droplet,
   Battery,
@@ -18,12 +13,9 @@ import {
   Camera,
   Shield,
   Star,
-  ArrowLeft,
-  ArrowRight,
   ShoppingCart,
   Clock,
   Award,
-  Users,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CartContext } from '../../context/CartContext';
@@ -36,6 +28,7 @@ const VehicleCheckupPage = () => {
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [showAddOnsModal, setShowAddOnsModal] = useState(false);
 
   // Reduced pricing
   const pricing = {
@@ -49,32 +42,7 @@ const VehicleCheckupPage = () => {
     }
   };
 
-  // Service checklists
-  const bikeChecklist = [
-    { id: 1, item: 'Engine oil level check', status: 'good', category: 'Engine' },
-    { id: 2, item: 'Brake system inspection', status: 'good', category: 'Safety' },
-    { id: 3, item: 'Chain lubrication and tension check', status: 'attention', category: 'Drivetrain' },
-    { id: 4, item: 'Tyre pressure and tread depth', status: 'good', category: 'Tyres' },
-    { id: 5, item: 'Battery health check', status: 'good', category: 'Electrical' },
-    { id: 6, item: 'Light and horn functionality', status: 'good', category: 'Electrical' },
-    { id: 7, item: 'Suspension check', status: 'good', category: 'Suspension' },
-    { id: 8, item: 'Coolant level (if applicable)', status: 'good', category: 'Engine' },
-    { id: 9, item: 'Clutch and throttle play', status: 'attention', category: 'Controls' },
-    { id: 10, item: 'Digital inspection report with photos', status: 'good', category: 'Documentation' },
-  ];
 
-  const carChecklist = [
-    { id: 1, item: 'Engine oil and filter check', status: 'good', category: 'Engine' },
-    { id: 2, item: 'Brake system (pads, fluid, performance)', status: 'good', category: 'Safety' },
-    { id: 3, item: 'Tyre pressure, rotation, alignment', status: 'attention', category: 'Tyres' },
-    { id: 4, item: 'Battery health and terminals', status: 'good', category: 'Electrical' },
-    { id: 5, item: 'All lights and signals', status: 'good', category: 'Electrical' },
-    { id: 6, item: 'AC system check', status: 'good', category: 'Comfort' },
-    { id: 7, item: 'Suspension and steering', status: 'good', category: 'Handling' },
-    { id: 8, item: 'Coolant and radiator', status: 'attention', category: 'Engine' },
-    { id: 9, item: 'Windshield wipers and washer', status: 'good', category: 'Safety' },
-    { id: 10, item: 'Digital inspection report with 50+ point checklist', status: 'good', category: 'Documentation' },
-  ];
 
   const accessories = [
     { name: 'Chain Lubricant', icon: Droplet, applicableFor: 'bike' },
@@ -114,30 +82,27 @@ const VehicleCheckupPage = () => {
     { name: 'Amit Patel', rating: 5, text: 'Detailed report with photos. Highly recommended!' },
   ];
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'good':
-        return <CheckCircle2 className="w-5 h-5 text-green-500" />;
-      case 'attention':
-        return <AlertCircle className="w-5 h-5 text-yellow-500" />;
-      case 'critical':
-        return <XCircle className="w-5 h-5 text-red-500" />;
-      default:
-        return null;
-    }
+  const handlePackageSelect = (packageType) => {
+    setSelectedPackage(packageType);
+    // Reset add-ons when package changes
+    setSelectedAddOns([]);
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'good':
-        return 'bg-green-50 border-green-200';
-      case 'attention':
-        return 'bg-yellow-50 border-yellow-200';
-      case 'critical':
-        return 'bg-red-50 border-red-200';
-      default:
-        return 'bg-gray-50 border-gray-200';
+  const handleProceedToAddOns = () => {
+    if (!selectedPackage) {
+      toast.error('Please select a package');
+      return;
     }
+    setShowAddOnsModal(true);
+  };
+
+  const calculateTotalPrice = () => {
+    const packagePrice = pricing[vehicleType][selectedPackage].price;
+    const addOnsTotal = selectedAddOns.reduce((sum, id) => {
+      const addon = addOns.find(a => a.id === id);
+      return sum + (addon ? addon.price : 0);
+    }, 0);
+    return packagePrice + addOnsTotal;
   };
 
   const handleAddToCart = () => {
@@ -147,25 +112,32 @@ const VehicleCheckupPage = () => {
     }
 
     const packageData = pricing[vehicleType][selectedPackage];
-    const addOnTotal = selectedAddOns.reduce((sum, id) => {
-      const addon = addOns.find(a => a.id === id);
-      return sum + (addon ? addon.price : 0);
-    }, 0);
+    const serviceName = `Full Body Vehicle Check-up - ${packageData.name}`;
+    const totalPrice = calculateTotalPrice();
 
     const cartItem = {
+      id: `checkup-${vehicleType}-${selectedPackage}-${Date.now()}`,
       serviceId: `checkup-${vehicleType}-${selectedPackage}`,
-      title: `Full Body Vehicle Check-up - ${packageData.name}`,
-      price: packageData.price + addOnTotal,
+      name: serviceName,
+      title: serviceName,
+      serviceName: serviceName,
+      price: totalPrice,
       quantity: 1,
       vehicleType,
       packageType: selectedPackage,
       addOns: selectedAddOns.map(id => addOns.find(a => a.id === id)),
       scheduledDate: selectedDate,
       scheduledTime: selectedTime,
+      category: 'Vehicle Checkup',
+      type: 'vehicle-checkup',
+      img: vehicleType === 'bike' ? '/bike/bike1.png' : '/car/car1.png',
     };
 
     addToCart(cartItem);
     toast.success('Added to cart successfully!');
+    setShowAddOnsModal(false);
+    // Reset selections
+    setSelectedAddOns([]);
   };
 
   const handleToggleAddOn = (addonId) => {
@@ -176,28 +148,10 @@ const VehicleCheckupPage = () => {
     );
   };
 
-  const checklist = vehicleType === 'bike' ? bikeChecklist : carChecklist;
   const currentPricing = pricing[vehicleType];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Fixed Add to Cart Button */}
-      <motion.div
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="fixed top-20 right-4 z-50"
-      >
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleAddToCart}
-          className="bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:shadow-xl transition-all"
-        >
-          <ShoppingCart className="w-5 h-5" />
-          Add to Cart
-        </motion.button>
-      </motion.div>
-
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white py-20 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -307,7 +261,7 @@ const VehicleCheckupPage = () => {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             whileHover={{ y: -5 }}
-            onClick={() => setSelectedPackage('basic')}
+            onClick={() => handlePackageSelect('basic')}
             className={`bg-white rounded-2xl shadow-xl p-8 cursor-pointer border-2 transition-all ${
               selectedPackage === 'basic'
                 ? 'border-[#1F3C88] ring-4 ring-blue-100'
@@ -362,7 +316,7 @@ const VehicleCheckupPage = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             whileHover={{ y: -5 }}
-            onClick={() => setSelectedPackage('comprehensive')}
+            onClick={() => handlePackageSelect('comprehensive')}
             className={`bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl shadow-xl p-8 cursor-pointer border-2 transition-all relative overflow-hidden ${
               selectedPackage === 'comprehensive'
                 ? 'border-[#FFB400] ring-4 ring-yellow-100'
@@ -424,46 +378,28 @@ const VehicleCheckupPage = () => {
             </motion.button>
           </motion.div>
         </div>
-      </section>
 
-      {/* Detailed Checklist */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-white rounded-3xl shadow-xl mb-16">
-        <h2 className="text-3xl font-bold text-center mb-4 text-[#1F3C88]">
-          What We Inspect
-        </h2>
-        <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-          Our certified mechanics perform a thorough inspection of your {vehicleType === 'bike' ? 'bike' : 'car'} with detailed documentation
-        </p>
-
-        <div className="grid gap-4">
-          {checklist.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className={`p-4 rounded-xl border-2 ${getStatusColor(item.status)} transition-all hover:shadow-md`}
+        {/* Add to Cart Button - Shows after package selection */}
+        {selectedPackage && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 text-center"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleProceedToAddOns}
+              className="bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-xl transition-all flex items-center gap-3 mx-auto"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 flex-1">
-                  {getStatusIcon(item.status)}
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{item.item}</h4>
-                    <p className="text-sm text-gray-600">{item.category}</p>
-                  </div>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  item.status === 'good' ? 'bg-green-100 text-green-700' :
-                  item.status === 'attention' ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-red-100 text-red-700'
-                }`}>
-                  {item.status.toUpperCase()}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              <ShoppingCart className="w-6 h-6" />
+              Add to Cart
+            </motion.button>
+          </motion.div>
+        )}
       </section>
+
+      {/* Detailed Checklist - Removed as per requirement */}
 
       {/* Tools & Accessories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -487,47 +423,6 @@ const VehicleCheckupPage = () => {
                   <accessory.icon className="w-8 h-8 text-[#1F3C88]" />
                 </div>
                 <p className="text-sm font-semibold text-gray-700">{accessory.name}</p>
-              </motion.div>
-            ))}
-        </div>
-      </section>
-
-      {/* Add-ons */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12 text-[#1F3C88]">
-          Add-on Services
-        </h2>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {addOns
-            .filter(addon => addon.applicableFor === 'both' || addon.applicableFor === vehicleType)
-            .map((addon) => (
-              <motion.div
-                key={addon.id}
-                whileHover={{ scale: 1.02 }}
-                onClick={() => handleToggleAddOn(addon.id)}
-                className={`bg-white rounded-xl shadow-lg p-6 cursor-pointer border-2 transition-all ${
-                  selectedAddOns.includes(addon.id)
-                    ? 'border-[#1F3C88] ring-4 ring-blue-100'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-[#1F3C88] mb-2">{addon.name}</h3>
-                    <p className="text-gray-600 mb-3">{addon.description}</p>
-                    <span className="text-2xl font-bold text-green-600">₹{addon.price}</span>
-                  </div>
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                    selectedAddOns.includes(addon.id)
-                      ? 'bg-[#1F3C88] border-[#1F3C88]'
-                      : 'border-gray-300'
-                  }`}>
-                    {selectedAddOns.includes(addon.id) && (
-                      <CheckCircle2 className="w-4 h-4 text-white" />
-                    )}
-                  </div>
-                </div>
               </motion.div>
             ))}
         </div>
@@ -560,29 +455,99 @@ const VehicleCheckupPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-gradient-to-r from-[#1F3C88] to-[#2952A3] rounded-3xl shadow-2xl p-12 text-center text-white"
-        >
-          <h2 className="text-4xl font-bold mb-4">Ready to Book Your Check-up?</h2>
-          <p className="text-xl text-gray-200 mb-8">
-            Get your vehicle inspected by certified professionals today
-          </p>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleAddToCart}
-            className="bg-[#FFB400] text-[#1F3C88] px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#e0a000] transition-all shadow-lg flex items-center gap-3 mx-auto"
+      {/* Add-ons Modal */}
+      {showAddOnsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6"
           >
-            <ShoppingCart className="w-6 h-6" />
-            Add to Cart & Book Now
-          </motion.button>
-        </motion.div>
-      </section>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-[#1F3C88]">Add-on Services</h3>
+              <button
+                onClick={() => setShowAddOnsModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XCircle className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <div className="bg-blue-50 rounded-xl p-4 mb-4">
+                <h4 className="font-semibold text-[#1F3C88] mb-2">Selected Package</h4>
+                <p className="text-gray-700">
+                  {pricing[vehicleType][selectedPackage].name} - ₹{pricing[vehicleType][selectedPackage].price}
+                </p>
+              </div>
+
+              <p className="text-gray-600 mb-4">
+                Enhance your vehicle checkup with these optional add-on services:
+              </p>
+
+              <div className="space-y-4">
+                {addOns
+                  .filter(addon => addon.applicableFor === 'both' || addon.applicableFor === vehicleType)
+                  .map((addon) => (
+                    <motion.div
+                      key={addon.id}
+                      whileHover={{ scale: 1.02 }}
+                      onClick={() => handleToggleAddOn(addon.id)}
+                      className={`bg-white rounded-xl shadow-md p-4 cursor-pointer border-2 transition-all ${
+                        selectedAddOns.includes(addon.id)
+                          ? 'border-[#1F3C88] ring-2 ring-blue-100'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h4 className="text-lg font-bold text-[#1F3C88] mb-1">{addon.name}</h4>
+                          <p className="text-gray-600 text-sm mb-2">{addon.description}</p>
+                          <span className="text-xl font-bold text-green-600">₹{addon.price}</span>
+                        </div>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ml-4 ${
+                          selectedAddOns.includes(addon.id)
+                            ? 'bg-[#1F3C88] border-[#1F3C88]'
+                            : 'border-gray-300'
+                        }`}>
+                          {selectedAddOns.includes(addon.id) && (
+                            <CheckCircle2 className="w-4 h-4 text-white" />
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Total Price */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 mb-6">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 font-semibold">Total Amount:</span>
+                <span className="text-2xl font-bold text-[#1F3C88]">
+                  ₹{calculateTotalPrice()}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowAddOnsModal(false)}
+                className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddToCart}
+                className="flex-1 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                Add to Cart
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
