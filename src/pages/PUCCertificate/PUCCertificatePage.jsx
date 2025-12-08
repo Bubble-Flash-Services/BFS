@@ -10,6 +10,7 @@ import {
   Award,
   Truck,
   BadgeCheck,
+  Clock,
 } from "lucide-react";
 import { useCart } from "../../components/CartContext";
 import { useNavigate } from "react-router-dom";
@@ -157,7 +158,10 @@ export default function PUCCertificatePage() {
       alert("Please enter vehicle number");
       return;
     }
-
+    if (!formData.email) {
+      alert("Please enter email");
+      return;
+    }
     // Add to cart
     const bookingDetails = {
       serviceId: "vc-puc-001",
@@ -309,7 +313,7 @@ export default function PUCCertificatePage() {
               </motion.div>
             ))}
           </div>
-          
+
           {/* Book Now CTA - Placed near service selection */}
           <div className="mt-12 text-center">
             <motion.button
@@ -319,9 +323,9 @@ export default function PUCCertificatePage() {
                 setShowBookingForm(true);
                 // Scroll to booking form
                 setTimeout(() => {
-                  document.getElementById('booking-form')?.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
+                  document.getElementById("booking-form")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
                   });
                 }, 100);
               }}
@@ -594,7 +598,10 @@ export default function PUCCertificatePage() {
 
       {/* Booking Form Section */}
       {showBookingForm && (
-        <section id="booking-form" className="py-16 bg-gradient-to-b from-gray-50 to-white">
+        <section
+          id="booking-form"
+          className="py-16 bg-gradient-to-b from-gray-50 to-white"
+        >
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -657,7 +664,7 @@ export default function PUCCertificatePage() {
                 {/* Email */}
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">
-                    Email (Optional)
+                    Email (for e-document) *
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
@@ -671,6 +678,7 @@ export default function PUCCertificatePage() {
                         }))
                       }
                       placeholder="your@email.com"
+                      required
                       className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-colors"
                     />
                   </div>
