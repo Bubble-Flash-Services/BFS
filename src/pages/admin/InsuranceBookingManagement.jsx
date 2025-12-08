@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Filter, 
-  FileShield, 
+  Shield, 
   User, 
   Phone, 
   Mail, 
@@ -263,7 +263,7 @@ const InsuranceBookingManagement = () => {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-              <FileShield className="w-8 h-8 text-blue-600" />
+              <Shield className="w-8 h-8 text-blue-600" />
               Insurance Bookings
             </h1>
             <p className="text-gray-600 mt-1">Manage vehicle insurance assistance bookings</p>
@@ -282,7 +282,7 @@ const InsuranceBookingManagement = () => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <div className="bg-white p-4 rounded-lg shadow">
             <div className="flex items-center gap-2 text-gray-600 mb-1">
-              <FileShield className="w-4 h-4" />
+              <Shield className="w-4 h-4" />
               <span className="text-sm">Total Bookings</span>
             </div>
             <p className="text-2xl font-bold text-gray-800">{stats.total}</p>
@@ -366,7 +366,7 @@ const InsuranceBookingManagement = () => {
           </div>
         ) : filteredBookings.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-12 text-center">
-            <FileShield className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+            <Shield className="w-16 h-16 mx-auto text-gray-400 mb-4" />
             <p className="text-xl text-gray-600">No insurance bookings found</p>
           </div>
         ) : (

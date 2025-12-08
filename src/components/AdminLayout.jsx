@@ -12,7 +12,7 @@ import {
   Truck,
   Leaf,
   ShieldCheck,
-  FileShield
+  Shield
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -47,7 +47,7 @@ const AdminLayout = ({ children }) => {
     {
       name: 'Insurance Bookings',
       href: '/admin/insurance-bookings',
-      icon: FileShield,
+      icon: Shield,
       active: location.pathname === '/admin/insurance-bookings'
     },
     {
