@@ -12,8 +12,8 @@ import {
   Truck,
   Leaf,
   ShieldCheck,
-  Shield,
-} from "lucide-react";
+  Shield
+} from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -45,10 +45,10 @@ const AdminLayout = ({ children }) => {
       active: location.pathname === "/admin/puc-bookings",
     },
     {
-      name: "Insurance Bookings",
-      href: "/admin/insurance-bookings",
+      name: 'Insurance Bookings',
+      href: '/admin/insurance-bookings',
       icon: Shield,
-      active: location.pathname === "/admin/insurance-bookings",
+      active: location.pathname === '/admin/insurance-bookings'
     },
     {
       name: "Employee Management",

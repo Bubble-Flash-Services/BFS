@@ -3,16 +3,12 @@ import { motion } from "framer-motion";
 import {
   Shield,
   FileText,
-  Calculator,
+  ShoppingBag,
   CheckCircle,
   ChevronDown,
-  Upload,
   Clock,
   TrendingDown,
-  Users,
   Award,
-  PhoneCall,
-  Mail,
 } from "lucide-react";
 import { useCart } from "../../components/CartContext";
 import { useNavigate } from "react-router-dom";
@@ -21,25 +17,7 @@ export default function InsuranceAssistancePage() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState("ins-renewal");
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    serviceType: "renewal",
-    vehicleNumber: "",
-    vehicleType: "Two-Wheeler",
-    make: "",
-    model: "",
-    year: "",
-    currentInsurer: "",
-    policyNumber: "",
-    expiryDate: "",
-    claimHistory: "no",
-    email: "",
-    phone: "",
-    coverageType: "comprehensive",
-  });
   const [expandedFaq, setExpandedFaq] = useState(null);
-  const [showBookingForm, setShowBookingForm] = useState(false);
-  const [estimatedPremium, setEstimatedPremium] = useState(null);
 
   // Service data
   const serviceData = {
@@ -199,69 +177,26 @@ export default function InsuranceAssistancePage() {
 
   const handleVariantChange = (variantId) => {
     setSelectedVariant(variantId);
-    const variant = serviceData.variants.find((v) => v._id === variantId);
-    if (variant) {
-      if (variantId === "ins-renewal") {
-        setFormData({ ...formData, serviceType: "renewal" });
-      } else if (variantId === "ins-new") {
-        setFormData({ ...formData, serviceType: "new" });
-      } else if (variantId === "ins-claim") {
-        setFormData({ ...formData, serviceType: "claim" });
-      }
-    }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const calculatePremium = () => {
-    // Simple premium calculator
-    let basePremium = formData.vehicleType === "Two-Wheeler" ? 2500 : 8000;
-
-    // Adjust for vehicle age
-    const vehicleAge =
-      new Date().getFullYear() - parseInt(formData.year || 2020);
-    basePremium = basePremium * (1 - vehicleAge * 0.05);
-
-    // Adjust for coverage type
-    if (formData.coverageType === "comprehensive") {
-      basePremium = basePremium * 1.5;
-    }
-
-    // Adjust for claim history
-    if (formData.claimHistory === "yes") {
-      basePremium = basePremium * 1.2;
-    }
-
-    setEstimatedPremium(Math.round(basePremium));
-  };
-
-  const handleNextStep = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handlePreviousStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleAddToCart = () => {
     const selectedVariantData = serviceData.variants.find(
       (v) => v._id === selectedVariant
     );
 
     const cartItem = {
-      _id: `ins-${Date.now()}`,
-      title: serviceData.title,
+      id: `ins-${Date.now()}`,
+      name: serviceData.title,
+      serviceName: serviceData.title,
+      packageName: selectedVariantData.name,
       variant: selectedVariantData.name,
       price: selectedVariantData.priceModifier,
-      formData: formData,
+      quantity: 1,
+      category: "Insurance",
+      type: "insurance",
+      image: "/car/car1.png",
+      img: "/car/car1.png",
+      description: selectedVariantData.description,
     };
 
     addToCart(cartItem);
@@ -413,353 +348,46 @@ export default function InsuranceAssistancePage() {
         </div>
       </div>
 
-      {/* Booking Form */}
+      {/* Simple Add to Cart Section */}
       <div className="bg-white py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-blue-50 to-green-50 p-8 rounded-2xl shadow-xl">
-            <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
-              Get Started
+          <div className="max-w-2xl mx-auto bg-gradient-to-br from-blue-50 to-green-50 p-8 rounded-2xl shadow-xl text-center">
+            <h2 className="text-3xl font-bold mb-4 text-gray-800">
+              Ready to Get Started?
             </h2>
-
-            {/* Progress Indicator */}
-            <div className="flex justify-between mb-8">
-              {[1, 2, 3].map((step) => (
-                <div
-                  key={step}
-                  className={`flex items-center ${step < 3 ? "flex-1" : ""}`}
-                >
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                      currentStep >= step
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-300 text-gray-600"
-                    }`}
-                  >
-                    {step}
-                  </div>
-                  {step < 3 && (
-                    <div
-                      className={`h-1 flex-1 mx-2 ${
-                        currentStep > step ? "bg-blue-600" : "bg-gray-300"
-                      }`}
-                    ></div>
-                  )}
-                </div>
-              ))}
+            <p className="text-gray-600 mb-6">
+              Select your insurance service type above and add it to your cart
+            </p>
+            
+            <div className="bg-white p-6 rounded-xl mb-6 border-2 border-blue-200">
+              <h3 className="text-xl font-semibold mb-2 text-gray-800">
+                Selected Service
+              </h3>
+              <p className="text-2xl font-bold text-blue-600 mb-2">
+                {serviceData.variants.find((v) => v._id === selectedVariant)?.name}
+              </p>
+              <p className="text-gray-600 mb-3">
+                {serviceData.variants.find((v) => v._id === selectedVariant)?.description}
+              </p>
+              <div className="text-3xl font-bold text-green-600">
+                ₹{serviceData.variants.find((v) => v._id === selectedVariant)?.priceModifier}
+              </div>
+              <p className="text-sm text-gray-500 mt-2">
+                Service fee only - Insurance premium paid separately to insurer
+              </p>
             </div>
 
-            <form onSubmit={handleSubmit}>
-              {/* Step 1: Vehicle Details */}
-              {currentStep === 1 && (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800">
-                    Vehicle Details
-                  </h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Vehicle Number *
-                      </label>
-                      <input
-                        type="text"
-                        name="vehicleNumber"
-                        value={formData.vehicleNumber}
-                        onChange={handleInputChange}
-                        placeholder="KA01AB1234"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Vehicle Type *
-                      </label>
-                      <select
-                        name="vehicleType"
-                        value={formData.vehicleType}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        required
-                      >
-                        <option value="Two-Wheeler">Two-Wheeler</option>
-                        <option value="Four-Wheeler">Four-Wheeler</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Make *
-                      </label>
-                      <input
-                        type="text"
-                        name="make"
-                        value={formData.make}
-                        onChange={handleInputChange}
-                        placeholder="e.g., Honda, Maruti"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Model *
-                      </label>
-                      <input
-                        type="text"
-                        name="model"
-                        value={formData.model}
-                        onChange={handleInputChange}
-                        placeholder="e.g., City, Swift"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Year *
-                      </label>
-                      <input
-                        type="number"
-                        name="year"
-                        value={formData.year}
-                        onChange={handleInputChange}
-                        placeholder="2020"
-                        min="1990"
-                        max={new Date().getFullYear()}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Coverage Type *
-                      </label>
-                      <select
-                        name="coverageType"
-                        value={formData.coverageType}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        required
-                      >
-                        <option value="comprehensive">Comprehensive</option>
-                        <option value="third-party">Third Party Only</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 2: Current Insurance Details */}
-              {currentStep === 2 && (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800">
-                    Current Insurance Details
-                  </h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {formData.serviceType !== "new" && (
-                      <>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Current Insurer
-                          </label>
-                          <input
-                            type="text"
-                            name="currentInsurer"
-                            value={formData.currentInsurer}
-                            onChange={handleInputChange}
-                            placeholder="e.g., HDFC ERGO"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Policy Number
-                          </label>
-                          <input
-                            type="text"
-                            name="policyNumber"
-                            value={formData.policyNumber}
-                            onChange={handleInputChange}
-                            placeholder="Policy number"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Expiry Date
-                          </label>
-                          <input
-                            type="date"
-                            name="expiryDate"
-                            value={formData.expiryDate}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                          />
-                        </div>
-                      </>
-                    )}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Any Claim History?
-                      </label>
-                      <select
-                        name="claimHistory"
-                        value={formData.claimHistory}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                      >
-                        <option value="no">No</option>
-                        <option value="yes">Yes</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Premium Calculator */}
-                  <div className="mt-6 p-6 bg-white rounded-lg border border-blue-200">
-                    <h4 className="text-lg font-semibold mb-4 text-gray-800">
-                      Estimate Your Premium
-                    </h4>
-                    <button
-                      type="button"
-                      onClick={calculatePremium}
-                      className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-                    >
-                      <Calculator className="w-5 h-5" />
-                      Calculate
-                    </button>
-                    {estimatedPremium && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-4 p-4 bg-green-50 rounded-lg"
-                      >
-                        <p className="text-sm text-gray-600 mb-1">
-                          Estimated Annual Premium:
-                        </p>
-                        <p className="text-3xl font-bold text-green-600">
-                          ₹{estimatedPremium}*
-                        </p>
-                        <p className="text-xs text-gray-500 mt-2">
-                          *This is an approximate calculation. Actual premium
-                          may vary based on insurer and other factors.
-                        </p>
-                      </motion.div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Step 3: Contact Information */}
-              {currentStep === 3 && (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800">
-                    Contact Information
-                  </h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email *
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="your@email.com"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone *
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="9876543210"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Summary */}
-                  <div className="mt-6 p-6 bg-white rounded-lg border border-gray-200">
-                    <h4 className="text-lg font-semibold mb-4 text-gray-800">
-                      Booking Summary
-                    </h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Service:</span>
-                        <span className="font-semibold">
-                          {
-                            serviceData.variants.find(
-                              (v) => v._id === selectedVariant
-                            )?.name
-                          }
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Vehicle:</span>
-                        <span className="font-semibold">
-                          {formData.vehicleNumber || "Not provided"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Service Fee:</span>
-                        <span className="font-semibold text-blue-600">
-                          ₹
-                          {
-                            serviceData.variants.find(
-                              (v) => v._id === selectedVariant
-                            )?.priceModifier
-                          }
-                        </span>
-                      </div>
-                      {estimatedPremium && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Est. Premium:</span>
-                          <span className="font-semibold text-green-600">
-                            ₹{estimatedPremium}*
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Navigation Buttons */}
-              <div className="flex justify-between mt-8">
-                {currentStep > 1 && (
-                  <button
-                    type="button"
-                    onClick={handlePreviousStep}
-                    className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                  >
-                    Previous
-                  </button>
-                )}
-                {currentStep < 3 ? (
-                  <button
-                    type="button"
-                    onClick={handleNextStep}
-                    className="ml-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Next
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    className="ml-auto px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
-                  >
-                    Add to Cart
-                  </button>
-                )}
-              </div>
-            </form>
+            <button
+              onClick={handleAddToCart}
+              className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-12 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto space-x-2"
+            >
+              <ShoppingBag className="w-6 h-6" />
+              <span>Add to Cart</span>
+            </button>
+            
+            <p className="text-sm text-gray-500 mt-4">
+              Complete your details at checkout
+            </p>
           </div>
         </div>
       </div>
