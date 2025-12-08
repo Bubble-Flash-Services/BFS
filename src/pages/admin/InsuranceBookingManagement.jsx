@@ -9,17 +9,17 @@ import {
   Calendar, 
   Clock, 
   Car,
-  CheckCircle, 
-  AlertCircle, 
+  CheckCircle,
+  AlertCircle,
   XCircle,
   UserCheck,
   RefreshCw,
   Eye,
   TrendingUp,
-  DollarSign
-} from 'lucide-react';
-import AdminLayout from '../../components/AdminLayout';
-import toast from 'react-hot-toast';
+  DollarSign,
+} from "lucide-react";
+import AdminLayout from "../../components/AdminLayout";
+import toast from "react-hot-toast";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -27,15 +27,15 @@ const InsuranceBookingManagement = () => {
   const [bookings, setBookings] = useState([]);
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [serviceTypeFilter, setServiceTypeFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [serviceTypeFilter, setServiceTypeFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState('');
+  const [selectedEmployee, setSelectedEmployee] = useState("");
   const [acting, setActing] = useState(false);
 
   // Statistics
@@ -51,35 +51,41 @@ const InsuranceBookingManagement = () => {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('adminToken');
-      
-      const response = await fetch(`${API}/api/adminNew/bookings?page=1&limit=100`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const token = localStorage.getItem("adminToken");
+
+      const response = await fetch(
+        `${API}/api/adminNew/bookings?page=1&limit=100`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
 
       const data = await response.json();
-      
+
       if (data.success && data.data) {
         // Filter for Insurance bookings
-        const insuranceBookings = (data.data.bookings || []).filter(booking => {
-          const items = booking.items || [];
-          return items.some(item => 
-            (item.type || '').toLowerCase().includes('insurance') ||
-            (item.category || '').toLowerCase().includes('insurance') ||
-            (item.serviceName || '').toLowerCase().includes('insurance')
-          );
-        });
-        
+        const insuranceBookings = (data.data.bookings || []).filter(
+          (booking) => {
+            const items = booking.items || [];
+            return items.some(
+              (item) =>
+                (item.type || "").toLowerCase().includes("insurance") ||
+                (item.category || "").toLowerCase().includes("insurance") ||
+                (item.serviceName || "").toLowerCase().includes("insurance")
+            );
+          }
+        );
+
         setBookings(insuranceBookings);
         setFilteredBookings(insuranceBookings);
         calculateStats(insuranceBookings);
       }
     } catch (error) {
-      console.error('Error fetching bookings:', error);
-      toast.error('Failed to load insurance bookings');
+      console.error("Error fetching bookings:", error);
+      toast.error("Failed to load insurance bookings");
     } finally {
       setLoading(false);
     }
@@ -89,9 +95,11 @@ const InsuranceBookingManagement = () => {
   const calculateStats = (bookings) => {
     const stats = {
       total: bookings.length,
-      pending: bookings.filter(b => b.status === 'pending').length,
-      inProgress: bookings.filter(b => b.status === 'in-progress' || b.status === 'assigned').length,
-      completed: bookings.filter(b => b.status === 'completed').length,
+      pending: bookings.filter((b) => b.status === "pending").length,
+      inProgress: bookings.filter(
+        (b) => b.status === "in-progress" || b.status === "assigned"
+      ).length,
+      completed: bookings.filter((b) => b.status === "completed").length,
       totalRevenue: bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0),
     };
     setStats(stats);
@@ -100,22 +108,25 @@ const InsuranceBookingManagement = () => {
   // Fetch employees
   const fetchEmployees = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      
-      const response = await fetch(`${API}/api/adminNew/employees?page=1&limit=100`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const token = localStorage.getItem("adminToken");
+
+      const response = await fetch(
+        `${API}/api/adminNew/employees?page=1&limit=100`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
 
       const data = await response.json();
-      
+
       if (data.success && data.data) {
         setEmployees(data.data.employees || []);
       }
     } catch (error) {
-      console.error('Error fetching employees:', error);
+      console.error("Error fetching employees:", error);
     }
   };
 
@@ -130,28 +141,32 @@ const InsuranceBookingManagement = () => {
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(booking => {
+      filtered = filtered.filter((booking) => {
         const searchLower = searchTerm.toLowerCase();
         return (
-          (booking.bookingId || '').toLowerCase().includes(searchLower) ||
-          (booking.userId?.name || '').toLowerCase().includes(searchLower) ||
-          (booking.userId?.email || '').toLowerCase().includes(searchLower) ||
-          (booking.formData?.vehicleNumber || '').toLowerCase().includes(searchLower)
+          (booking.bookingId || "").toLowerCase().includes(searchLower) ||
+          (booking.userId?.name || "").toLowerCase().includes(searchLower) ||
+          (booking.userId?.email || "").toLowerCase().includes(searchLower) ||
+          (booking.formData?.vehicleNumber || "")
+            .toLowerCase()
+            .includes(searchLower)
         );
       });
     }
 
     // Filter by status
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(b => b.status === statusFilter);
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((b) => b.status === statusFilter);
     }
 
     // Filter by service type
-    if (serviceTypeFilter !== 'all') {
-      filtered = filtered.filter(booking => {
+    if (serviceTypeFilter !== "all") {
+      filtered = filtered.filter((booking) => {
         const items = booking.items || [];
-        return items.some(item => 
-          (item.variant || '').toLowerCase().includes(serviceTypeFilter.toLowerCase())
+        return items.some((item) =>
+          (item.variant || "")
+            .toLowerCase()
+            .includes(serviceTypeFilter.toLowerCase())
         );
       });
     }
@@ -164,7 +179,7 @@ const InsuranceBookingManagement = () => {
     setRefreshing(true);
     await fetchBookings();
     setRefreshing(false);
-    toast.success('Bookings refreshed');
+    toast.success("Bookings refreshed");
   };
 
   // Assign employee to booking
@@ -173,31 +188,34 @@ const InsuranceBookingManagement = () => {
 
     try {
       setActing(true);
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem("adminToken");
 
-      const response = await fetch(`${API}/api/adminNew/bookings/${selectedBooking._id}/assign`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          employeeId: selectedEmployee
-        })
-      });
+      const response = await fetch(
+        `${API}/api/adminNew/bookings/${selectedBooking._id}/assign`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            employeeId: selectedEmployee,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (data.success) {
-        toast.success('Employee assigned successfully');
+        toast.success("Employee assigned successfully");
         setShowAssignModal(false);
         fetchBookings();
       } else {
-        toast.error(data.message || 'Failed to assign employee');
+        toast.error(data.message || "Failed to assign employee");
       }
     } catch (error) {
-      console.error('Error assigning employee:', error);
-      toast.error('Failed to assign employee');
+      console.error("Error assigning employee:", error);
+      toast.error("Failed to assign employee");
     } finally {
       setActing(false);
     }
@@ -206,18 +224,21 @@ const InsuranceBookingManagement = () => {
   // Update booking status
   const handleUpdateStatus = async (bookingId, newStatus) => {
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem("adminToken");
 
-      const response = await fetch(`${API}/api/adminNew/bookings/${bookingId}/status`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          status: newStatus
-        })
-      });
+      const response = await fetch(
+        `${API}/api/adminNew/bookings/${bookingId}/status`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: newStatus,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -225,11 +246,11 @@ const InsuranceBookingManagement = () => {
         toast.success(`Status updated to ${newStatus}`);
         fetchBookings();
       } else {
-        toast.error(data.message || 'Failed to update status');
+        toast.error(data.message || "Failed to update status");
       }
     } catch (error) {
-      console.error('Error updating status:', error);
-      toast.error('Failed to update status');
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status");
     }
   };
 
@@ -242,15 +263,19 @@ const InsuranceBookingManagement = () => {
   // Status badge component
   const StatusBadge = ({ status }) => {
     const statusColors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      assigned: 'bg-blue-100 text-blue-800',
-      'in-progress': 'bg-purple-100 text-purple-800',
-      completed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
+      pending: "bg-yellow-100 text-yellow-800",
+      assigned: "bg-blue-100 text-blue-800",
+      "in-progress": "bg-purple-100 text-purple-800",
+      completed: "bg-green-100 text-green-800",
+      cancelled: "bg-red-100 text-red-800",
     };
 
     return (
-      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[status] || 'bg-gray-100 text-gray-800'}`}>
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+          statusColors[status] || "bg-gray-100 text-gray-800"
+        }`}
+      >
         {status}
       </span>
     );
@@ -266,14 +291,18 @@ const InsuranceBookingManagement = () => {
               <Shield className="w-8 h-8 text-blue-600" />
               Insurance Bookings
             </h1>
-            <p className="text-gray-600 mt-1">Manage vehicle insurance assistance bookings</p>
+            <p className="text-gray-600 mt-1">
+              Manage vehicle insurance assistance bookings
+            </p>
           </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+            />
             Refresh
           </button>
         </div>
@@ -292,28 +321,36 @@ const InsuranceBookingManagement = () => {
               <Clock className="w-4 h-4" />
               <span className="text-sm">Pending</span>
             </div>
-            <p className="text-2xl font-bold text-yellow-800">{stats.pending}</p>
+            <p className="text-2xl font-bold text-yellow-800">
+              {stats.pending}
+            </p>
           </div>
           <div className="bg-blue-50 p-4 rounded-lg shadow">
             <div className="flex items-center gap-2 text-blue-600 mb-1">
               <TrendingUp className="w-4 h-4" />
               <span className="text-sm">In Progress</span>
             </div>
-            <p className="text-2xl font-bold text-blue-800">{stats.inProgress}</p>
+            <p className="text-2xl font-bold text-blue-800">
+              {stats.inProgress}
+            </p>
           </div>
           <div className="bg-green-50 p-4 rounded-lg shadow">
             <div className="flex items-center gap-2 text-green-600 mb-1">
               <CheckCircle className="w-4 h-4" />
               <span className="text-sm">Completed</span>
             </div>
-            <p className="text-2xl font-bold text-green-800">{stats.completed}</p>
+            <p className="text-2xl font-bold text-green-800">
+              {stats.completed}
+            </p>
           </div>
           <div className="bg-purple-50 p-4 rounded-lg shadow">
             <div className="flex items-center gap-2 text-purple-600 mb-1">
               <DollarSign className="w-4 h-4" />
               <span className="text-sm">Revenue</span>
             </div>
-            <p className="text-2xl font-bold text-purple-800">₹{stats.totalRevenue.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-purple-800">
+              ₹{stats.totalRevenue.toLocaleString()}
+            </p>
           </div>
         </div>
 
@@ -375,32 +412,52 @@ const InsuranceBookingManagement = () => {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Booking ID
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Customer
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Vehicle
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Service Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Employee
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Amount
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredBookings.map((booking) => (
                     <tr key={booking._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {booking.bookingId || 'N/A'}
+                        {booking.bookingId || "N/A"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <User className="w-4 h-4 text-gray-400 mr-2" />
                           <div>
                             <div className="text-sm font-medium text-gray-900">
-                              {booking.userId?.name || 'N/A'}
+                              {booking.userId?.name || "N/A"}
                             </div>
                             <div className="text-sm text-gray-500">
-                              {booking.userId?.email || booking.formData?.email || 'N/A'}
+                              {booking.userId?.email ||
+                                booking.formData?.email ||
+                                "N/A"}
                             </div>
                           </div>
                         </div>
@@ -410,16 +467,16 @@ const InsuranceBookingManagement = () => {
                           <Car className="w-4 h-4 text-gray-400 mr-2" />
                           <div>
                             <div className="text-sm font-medium text-gray-900">
-                              {booking.formData?.vehicleNumber || 'N/A'}
+                              {booking.formData?.vehicleNumber || "N/A"}
                             </div>
                             <div className="text-sm text-gray-500">
-                              {booking.formData?.vehicleType || 'N/A'}
+                              {booking.formData?.vehicleType || "N/A"}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {booking.items?.[0]?.variant || 'N/A'}
+                        {booking.items?.[0]?.variant || "N/A"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(booking.createdAt).toLocaleDateString()}
@@ -428,7 +485,7 @@ const InsuranceBookingManagement = () => {
                         <StatusBadge status={booking.status} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {booking.assignedTo?.name || 'Unassigned'}
+                        {booking.assignedTo?.name || "Unassigned"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                         ₹{booking.totalAmount?.toLocaleString() || 0}
@@ -516,38 +573,63 @@ const InsuranceBookingManagement = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-600">Customer Name</label>
-                    <p className="font-semibold">{selectedBooking.userId?.name || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-600">Email</label>
-                    <p className="font-semibold">{selectedBooking.formData?.email || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-600">Phone</label>
-                    <p className="font-semibold">{selectedBooking.formData?.phone || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-600">Vehicle Number</label>
-                    <p className="font-semibold">{selectedBooking.formData?.vehicleNumber || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-600">Vehicle Type</label>
-                    <p className="font-semibold">{selectedBooking.formData?.vehicleType || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-600">Make & Model</label>
+                    <label className="text-sm text-gray-600">
+                      Customer Name
+                    </label>
                     <p className="font-semibold">
-                      {selectedBooking.formData?.make} {selectedBooking.formData?.model}
+                      {selectedBooking.userId?.name || "N/A"}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-600">Service Type</label>
-                    <p className="font-semibold">{selectedBooking.items?.[0]?.variant || 'N/A'}</p>
+                    <label className="text-sm text-gray-600">Email</label>
+                    <p className="font-semibold">
+                      {selectedBooking.formData?.email || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-600">Phone</label>
+                    <p className="font-semibold">
+                      {selectedBooking.formData?.phone || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-600">
+                      Vehicle Number
+                    </label>
+                    <p className="font-semibold">
+                      {selectedBooking.formData?.vehicleNumber || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-600">
+                      Vehicle Type
+                    </label>
+                    <p className="font-semibold">
+                      {selectedBooking.formData?.vehicleType || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-600">
+                      Make & Model
+                    </label>
+                    <p className="font-semibold">
+                      {selectedBooking.formData?.make}{" "}
+                      {selectedBooking.formData?.model}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-600">
+                      Service Type
+                    </label>
+                    <p className="font-semibold">
+                      {selectedBooking.items?.[0]?.variant || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-600">Amount</label>
-                    <p className="font-semibold text-green-600">₹{selectedBooking.totalAmount?.toLocaleString()}</p>
+                    <p className="font-semibold text-green-600">
+                      ₹{selectedBooking.totalAmount?.toLocaleString()}
+                    </p>
                   </div>
                 </div>
               </div>

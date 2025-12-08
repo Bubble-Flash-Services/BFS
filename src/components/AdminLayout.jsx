@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  History, 
-  Ticket, 
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Users,
+  History,
+  Ticket,
   UserCheck,
-  Menu, 
+  Menu,
   X,
   LogOut,
   Truck,
@@ -21,28 +21,28 @@ const AdminLayout = ({ children }) => {
 
   const menuItems = [
     {
-      name: 'Dashboard',
-      href: '/admin/dashboard',
+      name: "Dashboard",
+      href: "/admin/dashboard",
       icon: LayoutDashboard,
-      active: location.pathname === '/admin/dashboard'
+      active: location.pathname === "/admin/dashboard",
     },
     {
-      name: 'User Management',
-      href: '/admin/users',
+      name: "User Management",
+      href: "/admin/users",
       icon: Users,
-      active: location.pathname === '/admin/users'
+      active: location.pathname === "/admin/users",
     },
     {
-      name: 'Booking History',
-      href: '/admin/bookings',
+      name: "Booking History",
+      href: "/admin/bookings",
       icon: History,
-      active: location.pathname === '/admin/bookings'
+      active: location.pathname === "/admin/bookings",
     },
     {
-      name: 'PUC Bookings',
-      href: '/admin/puc-bookings',
+      name: "PUC Bookings",
+      href: "/admin/puc-bookings",
       icon: ShieldCheck,
-      active: location.pathname === '/admin/puc-bookings'
+      active: location.pathname === "/admin/puc-bookings",
     },
     {
       name: 'Insurance Bookings',
@@ -51,52 +51,54 @@ const AdminLayout = ({ children }) => {
       active: location.pathname === '/admin/insurance-bookings'
     },
     {
-      name: 'Employee Management',
-      href: '/admin/employees',
+      name: "Employee Management",
+      href: "/admin/employees",
       icon: UserCheck,
-      active: location.pathname === '/admin/employees'
+      active: location.pathname === "/admin/employees",
     },
     {
-      name: 'Movers & Packers',
-      href: '/admin/movers-packers',
+      name: "Movers & Packers",
+      href: "/admin/movers-packers",
       icon: Truck,
-      active: location.pathname === '/admin/movers-packers'
+      active: location.pathname === "/admin/movers-packers",
     },
     {
-      name: 'Green & Clean',
-      href: '/admin/green-clean',
+      name: "Green & Clean",
+      href: "/admin/green-clean",
       icon: Leaf,
-      active: location.pathname === '/admin/green-clean'
+      active: location.pathname === "/admin/green-clean",
     },
     {
-      name: 'Coupons',
-      href: '/admin/coupons',
+      name: "Coupons",
+      href: "/admin/coupons",
       icon: Ticket,
-      active: location.pathname === '/admin/coupons'
-    }
+      active: location.pathname === "/admin/coupons",
+    },
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminUser');
-    window.location.href = '/admin/login';
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminUser");
+    window.location.href = "/admin/login";
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+      `}
+      >
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
           <h1 className="text-xl font-bold text-blue-600">Bubble Flash</h1>
           <button
@@ -117,9 +119,10 @@ const AdminLayout = ({ children }) => {
                   to={item.href}
                   className={`
                     flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
-                    ${item.active 
-                      ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' 
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    ${
+                      item.active
+                        ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }
                   `}
                   onClick={() => setSidebarOpen(false)}
@@ -160,9 +163,7 @@ const AdminLayout = ({ children }) => {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto">
-          {children}
-        </main>
+        <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>
   );
