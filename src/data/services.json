@@ -497,6 +497,111 @@
       "warranty": "Certificate valid 6 months",
       "rating": 4.8,
       "reviewCount": 234
+    },
+    {
+      "_id": "vc-ins-001",
+      "category": "vehicle-care",
+      "subcategory": "Insurance",
+      "title": "Vehicle Insurance Assistance",
+      "description": "Complete assistance for vehicle insurance including policy comparison, renewal, new policy purchase, and claim support.",
+      "shortDescription": "Hassle-free vehicle insurance service",
+      "basePrice": 299,
+      "pricingType": "fixed",
+      "durationMinutes": 0,
+      "active": true,
+      "featured": true,
+      "isNew": true,
+      "isPopular": true,
+      "images": [
+        "/services/insurance/insurance-main.jpg",
+        "/services/insurance/comparison.jpg"
+      ],
+      "icon": "FileShield",
+      "features": [
+        "Compare 10+ insurers",
+        "Best quote identification",
+        "Documentation assistance",
+        "Policy purchase support",
+        "Claim filing assistance",
+        "Renewal reminders",
+        "Digital policy storage"
+      ],
+      "includes": [
+        "Policy comparison service",
+        "Documentation help",
+        "Best quote analysis",
+        "Paperwork assistance",
+        "Digital policy copy"
+      ],
+      "notIncludes": [
+        "Insurance premium amount",
+        "Vehicle inspection charges",
+        "Traffic penalties or fines"
+      ],
+      "process": [
+        {
+          "step": 1,
+          "title": "Submit Details",
+          "description": "Provide vehicle and current insurance details"
+        },
+        {
+          "step": 2,
+          "title": "Compare Quotes",
+          "description": "We compare quotes from 10+ insurers"
+        },
+        {
+          "step": 3,
+          "title": "Select Policy",
+          "description": "Choose your preferred insurer and coverage"
+        },
+        {
+          "step": 4,
+          "title": "Documentation",
+          "description": "We help with all paperwork"
+        },
+        {
+          "step": 5,
+          "title": "Policy Issued",
+          "description": "Get your policy within 24-48 hours"
+        }
+      ],
+      "variants": [
+        {
+          "_id": "ins-renewal",
+          "name": "Renewal Assistance",
+          "priceModifier": 299,
+          "description": "Help with insurance renewal"
+        },
+        {
+          "_id": "ins-new",
+          "name": "New Policy Purchase",
+          "priceModifier": 499,
+          "description": "Complete new policy assistance"
+        },
+        {
+          "_id": "ins-claim",
+          "name": "Claim Assistance",
+          "priceModifier": 199,
+          "description": "Help with claim filing and follow-up"
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Do you charge anything extra apart from service fee?",
+          "answer": "No, we only charge the service fee. The insurance premium is paid directly to the insurer."
+        },
+        {
+          "question": "Which insurance companies do you work with?",
+          "answer": "We work with all major insurers including HDFC ERGO, ICICI Lombard, Bajaj Allianz, and more."
+        }
+      ],
+      "sortOrder": 11,
+      "tags": ["Insurance", "Vehicle", "Renewal", "Claim", "Policy"],
+      "serviceArea": ["Pan India"],
+      "estimatedTime": "24-48 hours for policy",
+      "warranty": "1 year support",
+      "rating": 4.7,
+      "reviewCount": 567
     }
   ],
   "deepCleanServices": [
