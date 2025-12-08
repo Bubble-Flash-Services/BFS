@@ -164,8 +164,10 @@ export default function PUCCertificatePage() {
     }
     // Add to cart
     const bookingDetails = {
+      id: `puc-${selectedVariant}-${Date.now()}`,
       serviceId: "vc-puc-001",
       name: `PUC Certificate - ${getSelectedVariantName()}`,
+      serviceName: `PUC Certificate - ${getSelectedVariantName()}`,
       price: getSelectedPrice(),
       quantity: 1,
       vehicleType: formData.vehicleType,
@@ -173,6 +175,8 @@ export default function PUCCertificatePage() {
       email: formData.email,
       category: "PUC Certificate",
       type: "puc-certificate",
+      image: "/car/car1.png",
+      img: "/car/car1.png",
     };
 
     addToCart(bookingDetails);
