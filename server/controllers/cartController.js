@@ -278,6 +278,53 @@ export const addToCart = async (req, res) => {
           }
         }
 
+        // Special handling for vehicle checkup, PUC, and insurance services
+        const isVehicleCheckup = (type && /vehicle-checkup|checkup/i.test(type)) || (category && /vehicle.*checkup|checkup/i.test(category)) || (serviceName && /vehicle.*checkup|checkup/i.test(serviceName));
+        const isPUC = (type && /puc/i.test(type)) || (category && /puc/i.test(category)) || (serviceName && /puc/i.test(serviceName));
+        const isInsurance = (type && /insurance/i.test(type)) || (category && /insurance/i.test(category)) || (serviceName && /insurance/i.test(serviceName));
+
+        if ((isVehicleCheckup || isPUC || isInsurance) && process.env.ALLOW_SERVICE_AUTOCREATE !== 'false') {
+          try {
+            const ServiceCategory = (await import('../models/ServiceCategory.js')).default;
+            let catName = isVehicleCheckup ? 'Vehicle Checkup' : (isPUC ? 'PUC Certificate' : 'Insurance Assistance');
+            let planCat = await ServiceCategory.findOne({ name: { $regex: `^${catName}$`, $options: 'i' } });
+            if (!planCat) {
+              const catImage = isVehicleCheckup ? '/car/car1.png' : (isPUC ? '/car/car1.png' : '/car/car1.png');
+              const catIcon = isVehicleCheckup ? '🔧' : (isPUC ? '📜' : '🛡️');
+              planCat = await ServiceCategory.create({ 
+                name: catName, 
+                description: isVehicleCheckup ? 'Vehicle inspection services' : (isPUC ? 'PUC certificate services' : 'Insurance assistance services'), 
+                image: catImage, 
+                icon: catIcon 
+              });
+            }
+            
+            // Use serviceName as-is for these special services
+            const serviceItemName = serviceName || (isVehicleCheckup ? 'Vehicle Checkup' : (isPUC ? 'PUC Certificate' : 'Insurance Assistance'));
+            service = await Service.findOne({ name: serviceItemName });
+            if (!service) {
+              service = await Service.create({
+                categoryId: planCat._id,
+                name: serviceItemName,
+                description: isVehicleCheckup ? 'Vehicle inspection service' : (isPUC ? 'PUC certificate service' : 'Insurance assistance service'),
+                basePrice: customPrice || 0,
+                estimatedDuration: 0,
+                image: image || '/car/car1.png',
+                features: [],
+                isActive: true
+              });
+            } else if (customPrice && service.basePrice !== customPrice) {
+              service.basePrice = customPrice; 
+              if (image && service.image !== image) service.image = image; 
+              await service.save();
+            }
+            actualServiceId = service._id;
+            console.log(`🧩 Using ${catName} service ${service.name} (${service._id})`);
+          } catch (serviceErr) {
+            console.warn('Special service handling failed:', serviceErr.message);
+          }
+        }
+
         // Fallback: find a default service based on category keywords
         if (!service) {
           const categoryMap = {
@@ -655,6 +702,49 @@ export const syncCartToDatabase = async (req, res) => {
             }
           } catch (err) {
             console.warn('Accessory resolution failed during sync:', err.message);
+          }
+        }
+      }
+
+      // Handle vehicle checkup, PUC, and insurance services
+      if (!service && process.env.ALLOW_SERVICE_AUTOCREATE !== 'false') {
+        const isVehicleCheckup = (item.type && /vehicle-checkup|checkup/i.test(item.type)) || (item.category && /vehicle.*checkup|checkup/i.test(item.category)) || (item.serviceName && /vehicle.*checkup|checkup/i.test(item.serviceName));
+        const isPUC = (item.type && /puc/i.test(item.type)) || (item.category && /puc/i.test(item.category)) || (item.serviceName && /puc/i.test(item.serviceName));
+        const isInsurance = (item.type && /insurance/i.test(item.type)) || (item.category && /insurance/i.test(item.category)) || (item.serviceName && /insurance/i.test(item.serviceName));
+
+        if (isVehicleCheckup || isPUC || isInsurance) {
+          try {
+            const ServiceCategory = (await import('../models/ServiceCategory.js')).default;
+            let catName = isVehicleCheckup ? 'Vehicle Checkup' : (isPUC ? 'PUC Certificate' : 'Insurance Assistance');
+            let planCat = await ServiceCategory.findOne({ name: { $regex: `^${catName}$`, $options: 'i' } });
+            if (!planCat) {
+              const catImage = '/car/car1.png';
+              const catIcon = isVehicleCheckup ? '🔧' : (isPUC ? '📜' : '🛡️');
+              planCat = await ServiceCategory.create({ 
+                name: catName, 
+                description: isVehicleCheckup ? 'Vehicle inspection services' : (isPUC ? 'PUC certificate services' : 'Insurance assistance services'), 
+                image: catImage, 
+                icon: catIcon 
+              });
+            }
+            
+            const serviceItemName = item.serviceName || item.name || (isVehicleCheckup ? 'Vehicle Checkup' : (isPUC ? 'PUC Certificate' : 'Insurance Assistance'));
+            service = await Service.findOne({ name: serviceItemName });
+            if (!service) {
+              service = await Service.create({
+                categoryId: planCat._id,
+                name: serviceItemName,
+                description: isVehicleCheckup ? 'Vehicle inspection service' : (isPUC ? 'PUC certificate service' : 'Insurance assistance service'),
+                basePrice: item.price || 0,
+                estimatedDuration: 0,
+                image: item.image || item.img || '/car/car1.png',
+                features: [],
+                isActive: true
+              });
+            }
+            console.log(`🧩 Sync: Using ${catName} service ${service.name} (${service._id})`);
+          } catch (err) {
+            console.warn('Special service resolution failed during sync:', err.message);
           }
         }
       }
