@@ -394,109 +394,6 @@
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIDzYAtENTyoFO-odXujhFtG3Qf_d1DHUhb8qswjy3TJTxKx4fEMKHpWLYmxKnPCzFjn8&usqp=CAU"
       ],
       "sortOrder": 22
-    },
-    {
-      "_id": "vc-puc-001",
-      "category": "vehicle-care",
-      "subcategory": "Certification",
-      "title": "PUC Certificate Service",
-      "description": "Government-approved Pollution Under Control (PUC) certificate issuance at your doorstep with certified technicians and equipment.",
-      "shortDescription": "Get PUC certificate at your doorstep",
-      "basePrice": 149,
-      "pricingType": "fixed",
-      "durationMinutes": 20,
-      "active": true,
-      "featured": true,
-      "isNew": true,
-      "isPopular": false,
-      "images": [
-        "/services/puc/puc-testing.jpg",
-        "/services/puc/certificate.jpg"
-      ],
-      "icon": "ShieldCheck",
-      "features": [
-        "Doorstep emission testing",
-        "Government-approved certificate",
-        "Digital copy via email/WhatsApp",
-        "Hard copy provided",
-        "Valid for 6 months",
-        "Instant certificate if passed"
-      ],
-      "includes": [
-        "Emission testing",
-        "Certificate issuance",
-        "Digital and physical copy",
-        "SMS and email notification"
-      ],
-      "notIncludes": [
-        "Vehicle repairs",
-        "Pollution control system upgrades",
-        "Re-testing if vehicle fails"
-      ],
-      "process": [
-        {
-          "step": 1,
-          "title": "Book Appointment",
-          "description": "Select date, time, and location online"
-        },
-        {
-          "step": 2,
-          "title": "Technician Visit",
-          "description": "Certified technician comes to your location"
-        },
-        {
-          "step": 3,
-          "title": "Testing",
-          "description": "Emission test completed in 10-15 minutes"
-        },
-        {
-          "step": 4,
-          "title": "Certificate",
-          "description": "Certificate issued immediately if passed"
-        }
-      ],
-      "variants": [
-        {
-          "_id": "puc-2w",
-          "name": "Two-Wheeler",
-          "priceModifier": 149,
-          "description": "For all two-wheelers"
-        },
-        {
-          "_id": "puc-4w-petrol",
-          "name": "Four-Wheeler (Petrol)",
-          "priceModifier": 199,
-          "description": "For petrol cars"
-        },
-        {
-          "_id": "puc-4w-diesel",
-          "name": "Four-Wheeler (Diesel)",
-          "priceModifier": 249,
-          "description": "For diesel cars"
-        }
-      ],
-      "requirements": [
-        "Vehicle should be in running condition",
-        "Vehicle registration documents",
-        "Previous PUC certificate (if any)"
-      ],
-      "faqs": [
-        {
-          "question": "How long is the PUC certificate valid?",
-          "answer": "PUC certificate is valid for 6 months from the date of issue."
-        },
-        {
-          "question": "What if my vehicle fails the test?",
-          "answer": "If your vehicle fails, we'll provide a detailed report. You'll need to get repairs done and schedule a re-test."
-        }
-      ],
-      "sortOrder": 23,
-      "tags": ["PUC", "Certificate", "Emission", "Vehicle", "Government"],
-      "serviceArea": ["Bangalore"],
-      "estimatedTime": "15-20 minutes",
-      "warranty": "Certificate valid 6 months",
-      "rating": 4.8,
-      "reviewCount": 234
     }
   ],
   "deepCleanServices": [
@@ -1029,7 +926,9 @@
       "inStock": true,
       "rating": 4.5,
       "reviewCount": 234,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "Premium PU leather material",
         "Diamond stitching pattern",
@@ -1057,7 +956,9 @@
       "inStock": true,
       "rating": 4.7,
       "reviewCount": 456,
-      "images": ["https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=500"
+      ],
       "features": [
         "Custom fit design",
         "3D raised edges",
@@ -1085,7 +986,9 @@
       "inStock": true,
       "rating": 4.3,
       "reviewCount": 189,
-      "images": ["https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=500"
+      ],
       "features": [
         "Cleans and shines",
         "UV protection",
@@ -1108,15 +1011,25 @@
       "inStock": true,
       "rating": 4.4,
       "reviewCount": 312,
-      "images": ["https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500"
+      ],
       "features": [
         "Long-lasting up to 60 days",
         "Premium fragrance oils",
         "Elegant design"
       ],
       "variants": [
-        { "name": "Ocean Breeze (₹149)", "priceModifier": -250, "inStock": true },
-        { "name": "Fresh Lemon (₹199)", "priceModifier": -200, "inStock": true },
+        {
+          "name": "Ocean Breeze (₹149)",
+          "priceModifier": -250,
+          "inStock": true
+        },
+        {
+          "name": "Fresh Lemon (₹199)",
+          "priceModifier": -200,
+          "inStock": true
+        },
         { "name": "Premium (₹399)", "priceModifier": 0, "inStock": true }
       ],
       "isNew": true,
@@ -1135,7 +1048,9 @@
       "inStock": true,
       "rating": 4.6,
       "reviewCount": 145,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "Thick clinging foam",
         "pH balanced formula",
@@ -1158,7 +1073,9 @@
       "inStock": true,
       "rating": 4.8,
       "reviewCount": 567,
-      "images": ["https://images.unsplash.com/photo-1563453392212-326f5e854473?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=500"
+      ],
       "features": [
         "Ultra-soft 400 GSM",
         "Scratch-free cleaning",
@@ -1181,7 +1098,9 @@
       "inStock": true,
       "rating": 4.2,
       "reviewCount": 234,
-      "images": ["https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=500"
+      ],
       "features": [
         "Deep black shine",
         "Water-based formula",
@@ -1204,7 +1123,9 @@
       "inStock": true,
       "rating": 4.1,
       "reviewCount": 178,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "Bug remover formula",
         "Streak-free cleaning",
@@ -1226,7 +1147,9 @@
       "inStock": true,
       "rating": 4.6,
       "reviewCount": 289,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "Deep penetrating formula",
         "Water resistant",
@@ -1249,7 +1172,9 @@
       "inStock": true,
       "rating": 4.3,
       "reviewCount": 156,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "Anti-scratch coating",
         "Anti-fog treated",
@@ -1277,7 +1202,9 @@
       "inStock": true,
       "rating": 4.5,
       "reviewCount": 234,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "100% waterproof",
         "UV resistant",
@@ -1305,7 +1232,9 @@
       "inStock": true,
       "rating": 4.4,
       "reviewCount": 345,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "Ergonomic design",
         "Anti-slip texture",
@@ -1328,7 +1257,9 @@
       "inStock": true,
       "rating": 4.5,
       "reviewCount": 456,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "360° rotation",
         "One-hand operation",
@@ -1351,7 +1282,9 @@
       "inStock": true,
       "rating": 4.7,
       "reviewCount": 567,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "Digital LCD display",
         "Backlit screen",
@@ -1374,7 +1307,9 @@
       "inStock": true,
       "rating": 4.4,
       "reviewCount": 234,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "5 different brush sizes",
         "Soft and stiff options",
@@ -1397,7 +1332,9 @@
       "inStock": true,
       "rating": 4.6,
       "reviewCount": 345,
-      "images": ["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"],
+      "images": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      ],
       "features": [
         "Pure Carnauba wax",
         "Deep glossy shine",
