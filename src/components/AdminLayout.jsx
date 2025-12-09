@@ -13,7 +13,9 @@ import {
   Leaf,
   ShieldCheck,
   Shield,
-  ClipboardCheck
+  ClipboardCheck,
+  Wrench,
+  ShoppingBag
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -56,6 +58,18 @@ const AdminLayout = ({ children }) => {
       href: '/admin/vehicle-checkup',
       icon: ClipboardCheck,
       active: location.pathname === '/admin/vehicle-checkup'
+    },
+    {
+      name: 'Vehicle Accessories',
+      href: '/admin/vehicle-accessories',
+      icon: Wrench,
+      active: location.pathname === '/admin/vehicle-accessories'
+    },
+    {
+      name: 'Orders',
+      href: '/admin/orders',
+      icon: ShoppingBag,
+      active: location.pathname === '/admin/orders'
     },
     {
       name: "Employee Management",
