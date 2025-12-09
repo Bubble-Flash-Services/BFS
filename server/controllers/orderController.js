@@ -115,6 +115,13 @@ export const createOrder = async (req, res) => {
         // Process add-ons (keep as provided since they're custom)
         const processedAddOns = item.addOns || [];
 
+        // Process UI-only add-ons (no database reference)
+        const processedUiAddOns = (item.uiAddOns || []).map(addon => ({
+          name: addon.name,
+          price: addon.price || 0,
+          quantity: addon.quantity || 1
+        }));
+
         // Process laundry items (keep as provided since they're custom)
         const laundryItems = item.laundryItems || [];
 
@@ -126,6 +133,14 @@ export const createOrder = async (req, res) => {
           });
         }
 
+        // Add UI-only add-ons to total
+        let uiAddOnTotal = 0;
+        if (processedUiAddOns.length > 0) {
+          processedUiAddOns.forEach(addOn => {
+            uiAddOnTotal += (addOn.price || 0) * (addOn.quantity || 1);
+          });
+        }
+
         let laundryTotal = 0;
         if (laundryItems.length > 0) {
           laundryItems.forEach(laundryItem => {
@@ -133,7 +148,7 @@ export const createOrder = async (req, res) => {
           });
         }
 
-        const itemTotal = (price * (item.quantity || 1)) + addOnTotal + laundryTotal;
+        const itemTotal = (price * (item.quantity || 1)) + addOnTotal + uiAddOnTotal + laundryTotal;
         subtotal += itemTotal;
 
         orderItems.push({
@@ -147,6 +162,7 @@ export const createOrder = async (req, res) => {
           quantity: item.quantity || 1,
           price: price,
           addOns: processedAddOns,
+          uiAddOns: processedUiAddOns,
           laundryItems: laundryItems,
           vehicleType: item.vehicleType || item.category || 'standard',
           specialInstructions: item.specialInstructions || item.notes || '',
