@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { useCart } from "../../components/CartContext";
 import { useAuth } from "../../components/AuthContext";
 import servicesData from "../../data/services.json";
+import { commercialAddons } from "../../data/commercialAddons";
 
 export default function ServicePage() {
   const { categoryName, type } = useParams(); // type could be "instant" or "deep"
@@ -16,6 +17,7 @@ export default function ServicePage() {
   const [deep, setDeep] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedAddons, setSelectedAddons] = useState([]);
   useEffect(() => {
     const instantServices = servicesData.instantServices; // fine
     const deepServices = servicesData.deepCleanServices.flatMap(
@@ -81,13 +83,15 @@ export default function ServicePage() {
         packageName: item.packageName || item.plan,
         packageId: item.packageId,
         quantity: 1,
-        price: item.price || item.basePrice,
+        price: calculateTotal(),
         duration: item.durationMinutes,
         image: item.images?.[0] || "/default-service.jpg",
 
         packageDetails: item.packageDetails || {
           basePrice: item.basePrice,
           features: item.features || [],
+          addons: selectedAddons, // For display in cart details
+          addonsTotal: getAddonsTotal(),
         },
         includedFeatures:
           item.includedFeatures ||
@@ -98,21 +102,51 @@ export default function ServicePage() {
         specialInstructions: item.specialInstructions,
         type: item.type || "cleaning",
         category: item.subcategory,
+        // uiAddOns is used by cart backend for calculating totals
+        // packageDetails.addons is used for frontend display
+        uiAddOns: selectedAddons.map(addon => ({
+          name: addon.name,
+          price: addon.price,
+          quantity: 1
+        }))
       };
 
       addToCart(cartData);
       toast.success(`${cartData.serviceName} added to cart 🧺`);
+      setSelectedAddons([]); // Reset addons after adding to cart
     });
+  };
+
+  const handleAddonToggle = (addon) => {
+    setSelectedAddons(prev => {
+      const isSelected = prev.find(item => item.id === addon.id);
+      if (isSelected) {
+        return prev.filter(item => item.id !== addon.id);
+      } else {
+        return [...prev, addon];
+      }
+    });
+  };
+
+  const getAddonsTotal = () => {
+    return selectedAddons.reduce((total, addon) => total + addon.price, 0);
+  };
+
+  const calculateTotal = () => {
+    const basePrice = selectedService?.basePrice || 0;
+    return basePrice + getAddonsTotal();
   };
 
   const openModal = (item) => {
     console.log(item);
     setSelectedService(item);
+    setSelectedAddons([]); // Reset addons when opening modal
     setIsModalVisible(true);
   };
 
   const closeModal = () => {
     setSelectedService(null);
+    setSelectedAddons([]);
     setIsModalVisible(false);
   };
 
@@ -208,7 +242,7 @@ export default function ServicePage() {
           onCancel={closeModal}
           footer={null}
           centered
-          width={500}
+          width={600}
         >
           {selectedService && (
             <div>
@@ -234,6 +268,74 @@ export default function ServicePage() {
                   ))}
                 </ul>
               )}
+
+              {/* Add-ons Section - Only show for deep cleaning services */}
+              {categoryName === "deep" && (
+                <div className="mb-6 mt-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Commercial Add-ons
+                  </h3>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {commercialAddons.map((addon) => (
+                      <div
+                        key={addon.id}
+                        className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                      >
+                        <div className="flex items-center flex-1">
+                          <input
+                            type="checkbox"
+                            id={`addon-${addon.id}`}
+                            checked={Boolean(
+                              selectedAddons.find((item) => item.id === addon.id)
+                            )}
+                            onChange={() => handleAddonToggle(addon)}
+                            className="w-4 h-4 text-[#1F3C88] border-gray-300 rounded focus:ring-[#FFB400]"
+                          />
+                          <label
+                            htmlFor={`addon-${addon.id}`}
+                            className="ml-3 text-gray-800 font-medium cursor-pointer"
+                          >
+                            {addon.name}
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {addon.description}
+                            </p>
+                          </label>
+                        </div>
+                        <span className="font-semibold text-gray-800 ml-2">
+                          ₹{addon.price}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Price Breakdown - Show if addons are selected */}
+              {selectedAddons.length > 0 && (
+                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-gray-600">Service Price</span>
+                    <span className="text-gray-800">
+                      ₹{selectedService.basePrice}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-gray-600">Add-ons</span>
+                    <span className="text-gray-800">₹{getAddonsTotal()}</span>
+                  </div>
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg font-semibold text-[#1F3C88]">
+                        Total
+                      </span>
+                      <span className="text-xl font-bold text-[#1F3C88]">
+                        ₹{calculateTotal()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="flex gap-3">
                 <button
                   onClick={() => addCart(selectedService)}
