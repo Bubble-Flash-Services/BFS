@@ -63,7 +63,10 @@ const OrdersManagement = () => {
         queryParams.append('status', statusFilter);
       }
 
-      const response = await fetch(`${API}/api/admin/orders?${queryParams}`, {
+      const queryString = queryParams.toString();
+      const url = `${API}/api/admin/orders${queryString ? `?${queryString}` : ''}`;
+      
+      const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -299,6 +302,7 @@ const OrdersManagement = () => {
               <option value="painting">Painting Services</option>
               <option value="laundry">Laundry</option>
               <option value="vehicle-checkup">Vehicle Checkup</option>
+              <option value="insurance">Insurance</option>
             </select>
 
             {/* Status Filter */}

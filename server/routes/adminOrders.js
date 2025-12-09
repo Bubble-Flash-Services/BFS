@@ -113,6 +113,15 @@ router.get('/', authenticateAdmin, async (req, res) => {
             .limit(1000);
           break;
           
+        case 'insurance':
+          const insuranceFilter = { 'items.category': 'Insurance' };
+          if (status && status !== 'all') insuranceFilter.orderStatus = status;
+          serviceOrders = await Order.find(insuranceFilter)
+            .populate('userId', 'name email phone')
+            .sort({ createdAt: -1 })
+            .limit(1000);
+          break;
+          
         default:
           serviceOrders = await Order.find()
             .populate('userId', 'name email phone')

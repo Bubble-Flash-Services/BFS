@@ -123,9 +123,16 @@ const PaintingQuote = ({ onClose }) => {
         colorPreferences: formData.colorPreferences,
         additionalRequirements: formData.additionalRequirements,
         inspectionDate: formData.inspectionDate || null,
-        inspectionTime: formData.inspectionTime || null,
-        photos: [] // Photos would be uploaded to server if implemented
+        inspectionTime: formData.inspectionTime || null
+        // Note: Photo upload feature to be implemented in future version
       };
+
+      // Validate area is a valid number
+      if (isNaN(quoteData.area) || quoteData.area <= 0) {
+        toast.error("Please enter a valid area in square feet");
+        setLoading(false);
+        return;
+      }
 
       // Submit to API
       const API = import.meta.env.VITE_API_URL || window.location.origin;
