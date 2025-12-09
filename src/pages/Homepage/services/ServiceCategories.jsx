@@ -9,6 +9,7 @@ import {
   Shield,
   Truck,
   ShieldCheck,
+  PaintBucket,
 } from "lucide-react";
 
 export default function ServiceCategories() {
@@ -201,6 +202,19 @@ export default function ServiceCategories() {
       bgColor: "bg-blue-50",
       hoverColor: "hover:bg-blue-100",
       price: "From ₹199",
+      isNew: true,
+      isPopular: true,
+    },
+    {
+      name: "Painting Services",
+      image: "/services/painting/painting-main.jpg",
+      category: "painting-services",
+      description: "Professional painting services for home & office",
+      fallbackIcon: PaintBucket,
+      gradient: "from-indigo-500 to-purple-500",
+      bgColor: "bg-indigo-50",
+      hoverColor: "hover:bg-indigo-100",
+      price: "From ₹14/sq.ft",
       isNew: true,
       isPopular: true,
     },

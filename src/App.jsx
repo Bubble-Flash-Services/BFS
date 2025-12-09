@@ -66,6 +66,7 @@ import PUCCertificatePage from "./pages/PUCCertificate/PUCCertificatePage";
 import InsuranceAssistancePage from "./pages/InsuranceAssistance/InsuranceAssistancePage";
 import VehicleCheckupPage from "./pages/VehicleCheckup/VehicleCheckupPage";
 import VehicleAccessoriesPage from "./pages/VehicleAccessories/VehicleAccessoriesPage";
+import PaintingServicesPage from "./pages/PaintingServices/PaintingServicesPage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -173,6 +174,10 @@ function AppContent() {
             element={<ServiceByCategory />}
           />
           <Route path="/movers-packers" element={<MoversPackersPage />} />
+          <Route
+            path="/painting-services"
+            element={<PaintingServicesPage />}
+          />
           <Route
             path="/admin/users"
             element={
