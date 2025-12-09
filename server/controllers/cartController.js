@@ -29,6 +29,43 @@ const normalizeVehicle = (raw) => {
   return allowed.has(mapped) ? mapped : 'all';
 };
 
+// Helper to detect special service types
+const detectServiceType = (item) => {
+  const type = toStr(item.type);
+  const category = toStr(item.category);
+  const serviceName = toStr(item.serviceName || item.name);
+  
+  return {
+    isVehicleCheckup: /vehicle.*checkup|full.*body.*checkup/i.test(type) || /vehicle.*checkup/i.test(category) || /vehicle.*checkup|full.*body.*checkup/i.test(serviceName),
+    isPUC: /puc.*certificate|puc/i.test(type) || /puc/i.test(category) || /puc/i.test(serviceName),
+    isInsurance: /insurance/i.test(type) || /insurance/i.test(category) || /insurance/i.test(serviceName)
+  };
+};
+
+// Helper to get service category details based on service type
+const getServiceCategoryDetails = (isVehicleCheckup, isPUC, isInsurance) => {
+  if (isVehicleCheckup) {
+    return {
+      name: 'Vehicle Checkup',
+      description: 'Vehicle inspection services',
+      icon: '🔧'
+    };
+  } else if (isPUC) {
+    return {
+      name: 'PUC Certificate',
+      description: 'PUC certificate services',
+      icon: '📜'
+    };
+  } else if (isInsurance) {
+    return {
+      name: 'Insurance Assistance',
+      description: 'Insurance assistance services',
+      icon: '🛡️'
+    };
+  }
+  return null;
+};
+
 // Remove or repair legacy-bad items before populate/save to avoid cast errors
 const sanitizeCartItems = async (cart) => {
   if (!cart || !Array.isArray(cart.items)) return false;
@@ -275,6 +312,51 @@ export const addToCart = async (req, res) => {
             console.log(`🧩 Using accessory service ${service.name} (${service._id})`);
           } catch (accErr) {
             console.error('Accessory service handling failed:', accErr.message);
+          }
+        }
+
+        // Special handling for vehicle checkup, PUC, and insurance services
+        const serviceTypes = detectServiceType({ type, category, serviceName });
+        const { isVehicleCheckup, isPUC, isInsurance } = serviceTypes;
+
+        if ((isVehicleCheckup || isPUC || isInsurance) && process.env.ALLOW_SERVICE_AUTOCREATE !== 'false') {
+          try {
+            const ServiceCategory = (await import('../models/ServiceCategory.js')).default;
+            const categoryDetails = getServiceCategoryDetails(isVehicleCheckup, isPUC, isInsurance);
+            
+            let planCat = await ServiceCategory.findOne({ name: { $regex: `^${categoryDetails.name}$`, $options: 'i' } });
+            if (!planCat) {
+              planCat = await ServiceCategory.create({ 
+                name: categoryDetails.name, 
+                description: categoryDetails.description, 
+                image: '/car/car1.png', 
+                icon: categoryDetails.icon 
+              });
+            }
+            
+            // Use serviceName as-is for these special services
+            const serviceItemName = serviceName || categoryDetails.name;
+            service = await Service.findOne({ name: serviceItemName });
+            if (!service) {
+              service = await Service.create({
+                categoryId: planCat._id,
+                name: serviceItemName,
+                description: `${categoryDetails.name} service`,
+                basePrice: customPrice || 0,
+                estimatedDuration: 0,
+                image: image || '/car/car1.png',
+                features: [],
+                isActive: true
+              });
+            } else if (customPrice && service.basePrice !== customPrice) {
+              service.basePrice = customPrice; 
+              if (image && service.image !== image) service.image = image; 
+              await service.save();
+            }
+            actualServiceId = service._id;
+            console.log(`🧩 Using ${categoryDetails.name} service ${service.name} (${service._id})`);
+          } catch (serviceErr) {
+            console.warn('Special service handling failed:', serviceErr.message);
           }
         }
 
@@ -655,6 +737,47 @@ export const syncCartToDatabase = async (req, res) => {
             }
           } catch (err) {
             console.warn('Accessory resolution failed during sync:', err.message);
+          }
+        }
+      }
+
+      // Handle vehicle checkup, PUC, and insurance services
+      if (!service && process.env.ALLOW_SERVICE_AUTOCREATE !== 'false') {
+        const serviceTypes = detectServiceType(item);
+        const { isVehicleCheckup, isPUC, isInsurance } = serviceTypes;
+
+        if (isVehicleCheckup || isPUC || isInsurance) {
+          try {
+            const ServiceCategory = (await import('../models/ServiceCategory.js')).default;
+            const categoryDetails = getServiceCategoryDetails(isVehicleCheckup, isPUC, isInsurance);
+            
+            let planCat = await ServiceCategory.findOne({ name: { $regex: `^${categoryDetails.name}$`, $options: 'i' } });
+            if (!planCat) {
+              planCat = await ServiceCategory.create({ 
+                name: categoryDetails.name, 
+                description: categoryDetails.description, 
+                image: '/car/car1.png', 
+                icon: categoryDetails.icon 
+              });
+            }
+            
+            const serviceItemName = item.serviceName || item.name || categoryDetails.name;
+            service = await Service.findOne({ name: serviceItemName });
+            if (!service) {
+              service = await Service.create({
+                categoryId: planCat._id,
+                name: serviceItemName,
+                description: `${categoryDetails.name} service`,
+                basePrice: item.price || 0,
+                estimatedDuration: 0,
+                image: item.image || item.img || '/car/car1.png',
+                features: [],
+                isActive: true
+              });
+            }
+            console.log(`🧩 Sync: Using ${categoryDetails.name} service ${service.name} (${service._id})`);
+          } catch (err) {
+            console.warn('Special service resolution failed during sync:', err.message);
           }
         }
       }

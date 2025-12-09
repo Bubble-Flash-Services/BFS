@@ -185,7 +185,8 @@ export default function InsuranceAssistancePage() {
     );
 
     const cartItem = {
-      id: `ins-${Date.now()}`,
+      id: `ins-${selectedVariant}-${Date.now()}`,
+      serviceId: `ins-${selectedVariant}`,
       name: serviceData.title,
       serviceName: serviceData.title,
       packageName: selectedVariantData.name,

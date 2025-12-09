@@ -105,6 +105,17 @@ const VehicleCheckupPage = () => {
     return packagePrice + addOnsTotal;
   };
 
+  const getFormattedAddons = () => {
+    return selectedAddOns
+      .map(id => addOns.find(a => a.id === id))
+      .filter(a => a)
+      .map(addon => ({
+        name: addon.name,
+        price: addon.price,
+        quantity: 1
+      }));
+  };
+
   const handleAddToCart = () => {
     if (!selectedPackage) {
       toast.error('Please select a package');
@@ -113,24 +124,35 @@ const VehicleCheckupPage = () => {
 
     const packageData = pricing[vehicleType][selectedPackage];
     const serviceName = `Full Body Vehicle Check-up - ${packageData.name}`;
-    const totalPrice = calculateTotalPrice();
+    const packagePrice = packageData.price;
+    const formattedAddons = getFormattedAddons();
+    const addonsTotal = formattedAddons.reduce((sum, addon) => sum + addon.price, 0);
+    const totalPrice = packagePrice + addonsTotal;
+    const imageUrl = vehicleType === 'bike' ? '/bike/bike1.png' : '/car/car1.png';
 
     const cartItem = {
       id: `checkup-${vehicleType}-${selectedPackage}-${Date.now()}`,
       serviceId: `checkup-${vehicleType}-${selectedPackage}`,
       name: serviceName,
-      title: serviceName,
-      serviceName: serviceName,
+      packageName: packageData.name,
       price: totalPrice,
       quantity: 1,
       vehicleType,
       packageType: selectedPackage,
-      addOns: selectedAddOns.map(id => addOns.find(a => a.id === id)),
+      // Add-ons formatted for backend storage (no DB references, stored as UI data)
+      uiAddOns: formattedAddons,
+      packageDetails: {
+        basePrice: packagePrice,
+        addons: formattedAddons,
+        addonsTotal: addonsTotal,
+        features: []
+      },
       scheduledDate: selectedDate,
       scheduledTime: selectedTime,
       category: 'Vehicle Checkup',
       type: 'vehicle-checkup',
-      img: vehicleType === 'bike' ? '/bike/bike1.png' : '/car/car1.png',
+      image: imageUrl,
+      img: imageUrl,
     };
 
     addToCart(cartItem);
