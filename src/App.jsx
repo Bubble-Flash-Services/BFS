@@ -45,6 +45,7 @@ import EmployeeManagement from "./pages/admin/EmployeeManagement";
 import MoversPackersManagement from "./pages/admin/MoversPackersManagement";
 import GreenCleanManagement from "./pages/admin/GreenCleanManagement";
 import VehicleCheckupManagement from "./pages/admin/VehicleCheckupManagement";
+import VehicleAccessoriesManagement from "./pages/admin/VehicleAccessoriesManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
 import EmployeeCompleted from "./pages/employee/EmployeeCompleted";
@@ -63,6 +64,7 @@ import MoversPackersPage from "./pages/MoversPackersPage";
 import PUCCertificatePage from "./pages/PUCCertificate/PUCCertificatePage";
 import InsuranceAssistancePage from "./pages/InsuranceAssistance/InsuranceAssistancePage";
 import VehicleCheckupPage from "./pages/VehicleCheckup/VehicleCheckupPage";
+import VehicleAccessoriesPage from "./pages/VehicleAccessories/VehicleAccessoriesPage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -127,6 +129,10 @@ function AppContent() {
           <Route
             path="/services/vehicle-checkup"
             element={<VehicleCheckupPage />}
+          />
+          <Route
+            path="/vehicle-accessories"
+            element={<VehicleAccessoriesPage />}
           />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/services" element={<ServicesPage />} />
@@ -235,6 +241,14 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <GreenCleanManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/vehicle-accessories"
+            element={
+              <ProtectedAdminRoute>
+                <VehicleAccessoriesManagement />
               </ProtectedAdminRoute>
             }
           />
