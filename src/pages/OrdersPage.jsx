@@ -907,7 +907,7 @@ export default function OrdersPage() {
                                         : ""}
                                     </span>
                                     <span className="text-green-600 font-medium">
-                                      ₹{addon.price * (addon.quantity || 1)}
+                                      ₹{(addon.price || 0) * (addon.quantity || 1)}
                                     </span>
                                   </div>
                                 ))}

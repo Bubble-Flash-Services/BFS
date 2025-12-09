@@ -10,6 +10,15 @@ import mongoose from 'mongoose';
 import { broadcastToAdmins, formatOrderMessage } from '../services/telegramService.js';
 import { bangalorePincodes } from '../utils/bangalorePincodes.js';
 
+// Helper function to process UI-only add-ons
+const processUiAddOns = (uiAddOns) => {
+  return (uiAddOns || []).map(addon => ({
+    name: addon.name,
+    price: addon.price || 0,
+    quantity: addon.quantity || 1
+  }));
+};
+
 // Create new order
 export const createOrder = async (req, res) => {
   try {
@@ -116,11 +125,7 @@ export const createOrder = async (req, res) => {
         const processedAddOns = item.addOns || [];
 
         // Process UI-only add-ons (no database reference)
-        const processedUiAddOns = (item.uiAddOns || []).map(addon => ({
-          name: addon.name,
-          price: addon.price || 0,
-          quantity: addon.quantity || 1
-        }));
+        const processedUiAddOns = processUiAddOns(item.uiAddOns);
 
         // Process laundry items (keep as provided since they're custom)
         const laundryItems = item.laundryItems || [];
@@ -210,11 +215,7 @@ export const createOrder = async (req, res) => {
             quantity: addon.quantity || 1,
             price: addon.price
           })),
-          uiAddOns: (item.uiAddOns || []).map(addon => ({
-            name: addon.name,
-            price: addon.price || 0,
-            quantity: addon.quantity || 1
-          })),
+          uiAddOns: processUiAddOns(item.uiAddOns),
           laundryItems: item.laundryItems || [],
           vehicleType: item.vehicleType || '',
           specialInstructions: item.specialInstructions || '',
