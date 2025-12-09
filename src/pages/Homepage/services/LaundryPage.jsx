@@ -1312,7 +1312,17 @@ const shoeCleanItems = {
   ]
 };
 
-// Add-ons for different categories
+// Detergent options for wash services
+const detergentOptions = [
+  { id: 'detergent-ariel', name: 'Ariel', price: 0 },
+  { id: 'detergent-surf-excel', name: 'Surf Excel', price: 0 },
+  { id: 'detergent-comfort', name: 'Comfort', price: 0 },
+  { id: 'detergent-dettol', name: 'Dettol', price: 0 },
+  { id: 'detergent-bio-wash', name: 'Bio wash', price: 0 },
+  { id: 'detergent-organic', name: 'Organic wash', price: 0 },
+];
+
+// Add-ons for different categories (Express Service removed as per requirements)
 const addOns = {
   shoeClean: [
     {
@@ -1359,12 +1369,6 @@ const addOns = {
       price: 35,
       description: 'Long-lasting fragrance'
     },
-    {
-      id: 'addon-wash-4',
-      name: 'Express Service',
-      price: 60,
-      description: 'Same-day delivery'
-    },
   ],
   ironing: [
     {
@@ -1385,12 +1389,6 @@ const addOns = {
       price: 30,
       description: 'Long-lasting press'
     },
-    {
-      id: 'addon-iron-4',
-      name: 'Express Service',
-      price: 60,
-      description: 'Same-day delivery'
-    },
   ],
   dryClean: [
     {
@@ -1410,12 +1408,6 @@ const addOns = {
       name: 'Perfume Infusion',
       price: 40,
       description: 'Luxury fragrance'
-    },
-    {
-      id: 'addon-dry-4',
-      name: 'Express Service',
-      price: 80,
-      description: 'Priority processing'
     },
   ],
 };
@@ -1502,6 +1494,9 @@ export default function LaundryPage() {
   const [activeCategory, setActiveCategory] = useState('wash-fold');
   const [quantities, setQuantities] = useState({});
   const [selectedAddons, setSelectedAddons] = useState({});
+  const [showAddonsModal, setShowAddonsModal] = useState(false);
+  const [selectedDetergent, setSelectedDetergent] = useState(null);
+  const [tempSelectedAddons, setTempSelectedAddons] = useState({});
   const navigate = useNavigate();
   const { addToCart, updateQuantity } = useCart();
   const sliderRef = useRef(null);
@@ -1550,11 +1545,82 @@ export default function LaundryPage() {
     }));
   };
 
+  const toggleTempAddon = (addonId) => {
+    setTempSelectedAddons(prev => ({
+      ...prev,
+      [addonId]: !prev[addonId]
+    }));
+  };
+
+  const getRelevantAddons = () => {
+    // Determine which addons to show based on selected items
+    const hasWashFoldItems = Object.keys(quantities).some(id => {
+      const numId = parseInt(id);
+      return (numId >= 1 && numId <= 27) && quantities[id] > 0; // wash-fold items
+    });
+    
+    const hasIroningItems = Object.keys(quantities).some(id => {
+      const numId = parseInt(id);
+      return (numId >= 101 && numId <= 122) && quantities[id] > 0; // ironing items
+    });
+    
+    const hasDryCleanItems = Object.keys(quantities).some(id => {
+      const numId = parseInt(id);
+      return (numId >= 301 && numId <= 541) && quantities[id] > 0; // dry clean items
+    });
+    
+    const hasShoeItems = Object.keys(quantities).some(id => {
+      const numId = parseInt(id);
+      return (numId >= 901 && numId <= 910) && quantities[id] > 0; // shoe items
+    });
+
+    let relevantAddons = [];
+    if (hasWashFoldItems) relevantAddons = [...relevantAddons, ...addOns.washFold];
+    if (hasIroningItems) relevantAddons = [...relevantAddons, ...addOns.ironing];
+    if (hasDryCleanItems) relevantAddons = [...relevantAddons, ...addOns.dryClean];
+    if (hasShoeItems) relevantAddons = [...relevantAddons, ...addOns.shoeClean];
+
+    // Remove duplicates based on id
+    return relevantAddons.filter((addon, index, self) =>
+      index === self.findIndex((a) => a.id === addon.id)
+    );
+  };
+
+  const shouldShowDetergentSelection = () => {
+    // Show detergent selection for wash-fold and wash-iron items
+    return Object.keys(quantities).some(id => {
+      const numId = parseInt(id);
+      return (numId >= 1 && numId <= 27) && quantities[id] > 0; // wash-fold items
+    });
+  };
+
   const getItemQuantity = (itemId) => {
     return quantities[itemId] || 0;
   };
 
-  const addSelectedItemsToCart = () => {
+  const openAddonsModal = () => {
+    // Reset temp selections
+    setTempSelectedAddons({});
+    setSelectedDetergent(null);
+    setShowAddonsModal(true);
+  };
+
+  const closeAddonsModal = () => {
+    setShowAddonsModal(false);
+  };
+
+  const confirmAddToCart = () => {
+    // Apply temp selections to actual selections
+    setSelectedAddons(tempSelectedAddons);
+    
+    // Proceed with adding to cart
+    proceedToAddToCart();
+    
+    // Close modal
+    closeAddonsModal();
+  };
+
+  const proceedToAddToCart = () => {
     // Check all categories for items with quantities, regardless of active category
     const allCategoryItems = [
       { items: clothingItems, categoryName: 'Laundry Service' },
@@ -1566,7 +1632,7 @@ export default function LaundryPage() {
     
     // Collect selected addons
     const allAddons = [...addOns.shoeClean, ...addOns.washFold, ...addOns.ironing, ...addOns.dryClean];
-    const selectedAddonsList = allAddons.filter(addon => selectedAddons[addon.id]);
+    const selectedAddonsList = allAddons.filter(addon => tempSelectedAddons[addon.id]);
     
     allCategoryItems.forEach(({ items, categoryName }) => {
       Object.entries(items).forEach(([category, itemsList]) => {
@@ -1606,12 +1672,36 @@ export default function LaundryPage() {
       addToCart(addonCartItem);
     });
     
+    // Add detergent selection if selected
+    if (selectedDetergent) {
+      const detergent = detergentOptions.find(d => d.id === selectedDetergent);
+      if (detergent) {
+        const detergentCartItem = {
+          id: `detergent-${detergent.id}`,
+          name: `Detergent: ${detergent.name}`,
+          image: '/laundry/laundry1.png',
+          price: detergent.price,
+          category: 'Detergent Preference',
+          type: 'laundry-detergent',
+          description: `Your preferred detergent: ${detergent.name}`
+        };
+        addToCart(detergentCartItem);
+      }
+    }
+    
     // Clear quantities and addons
     setQuantities({});
     setSelectedAddons({});
+    setSelectedDetergent(null);
+    setTempSelectedAddons({});
     
     // Navigate to cart
     navigate('/cart');
+  };
+
+  const addSelectedItemsToCart = () => {
+    // Open modal instead of directly adding to cart
+    openAddonsModal();
   };
 
   const getTotalItems = () => {
@@ -2024,6 +2114,59 @@ export default function LaundryPage() {
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {clothingItems.kids.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="aspect-square bg-gray-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-medium text-gray-800 text-sm mb-1">{item.name}</h3>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-gray-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-purple-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Shoes Section - Now displayed in wash-fold category */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b border-gray-300 pb-2">
+                Shoes
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {shoeCleanItems.shoes.map((item) => (
                   <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                     <div className="aspect-square bg-gray-100 p-4">
                       <img
@@ -3044,6 +3187,135 @@ export default function LaundryPage() {
               >
                 Add to Cart
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Add-ons Modal */}
+        {showAddonsModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold text-gray-800">Customize Your Order</h2>
+                  <button
+                    onClick={closeAddonsModal}
+                    className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                  >
+                    ×
+                  </button>
+                </div>
+                <p className="text-gray-600 mt-2">Select add-ons and preferences for your laundry</p>
+              </div>
+
+              <div className="p-6">
+                {/* Detergent Selection */}
+                {shouldShowDetergentSelection() && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">
+                      <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                        Choose Your Detergent
+                      </span>
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">Select your preferred detergent for washing</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {detergentOptions.map((detergent) => (
+                        <button
+                          key={detergent.id}
+                          onClick={() => setSelectedDetergent(detergent.id)}
+                          className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                            selectedDetergent === detergent.id
+                              ? 'border-blue-600 bg-blue-50 shadow-md'
+                              : 'border-gray-200 hover:border-blue-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-gray-800">{detergent.name}</span>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                              selectedDetergent === detergent.id
+                                ? 'border-blue-600 bg-blue-600'
+                                : 'border-gray-300'
+                            }`}>
+                              {selectedDetergent === detergent.id && (
+                                <svg className="w-3 h-3 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Premium Add-ons */}
+                {getRelevantAddons().length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">
+                      <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        Premium Add-ons
+                      </span>
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">Enhance your service with these optional add-ons</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {getRelevantAddons().map((addon) => (
+                        <div
+                          key={addon.id}
+                          onClick={() => toggleTempAddon(addon.id)}
+                          className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                            tempSelectedAddons[addon.id]
+                              ? 'border-purple-600 bg-purple-50 shadow-md'
+                              : 'border-gray-200 hover:border-purple-300'
+                          }`}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-gray-800 mb-1">{addon.name}</h4>
+                              <p className="text-xs text-gray-600">{addon.description}</p>
+                            </div>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ml-3 ${
+                              tempSelectedAddons[addon.id]
+                                ? 'border-purple-600 bg-purple-600'
+                                : 'border-gray-300'
+                            }`}>
+                              {tempSelectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between mt-3">
+                            <span className="text-lg font-bold text-purple-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {tempSelectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-6 rounded-b-2xl">
+                <div className="flex gap-4">
+                  <button
+                    onClick={closeAddonsModal}
+                    className="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-gray-300 transition-colors"
+                  >
+                    Skip Add-ons
+                  </button>
+                  <button
+                    onClick={confirmAddToCart}
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-blue-700 transition-colors shadow-lg"
+                  >
+                    Confirm & Add to Cart
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
