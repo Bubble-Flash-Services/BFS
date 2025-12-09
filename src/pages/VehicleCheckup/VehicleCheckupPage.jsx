@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Car,
@@ -18,10 +18,12 @@ import {
   Award,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { CartContext } from '../../context/CartContext';
+import { useCart } from '../../components/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const VehicleCheckupPage = () => {
-  const { addToCart } = useContext(CartContext);
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
   
   const [vehicleType, setVehicleType] = useState('bike'); // 'bike' or 'car'
   const [selectedPackage, setSelectedPackage] = useState(null);
@@ -134,6 +136,7 @@ const VehicleCheckupPage = () => {
       id: `checkup-${vehicleType}-${selectedPackage}-${Date.now()}`,
       serviceId: `checkup-${vehicleType}-${selectedPackage}`,
       name: serviceName,
+      serviceName: serviceName,
       packageName: packageData.name,
       price: totalPrice,
       quantity: 1,
@@ -160,6 +163,8 @@ const VehicleCheckupPage = () => {
     setShowAddOnsModal(false);
     // Reset selections
     setSelectedAddOns([]);
+    // Navigate to cart page like PUC and Insurance
+    navigate('/cart');
   };
 
   const handleToggleAddOn = (addonId) => {
