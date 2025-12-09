@@ -13,6 +13,13 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
+// Constants
+const STANDARD_DOOR_AREA = 21; // 7ft x 3ft
+const STANDARD_WINDOW_AREA = 15; // 5ft x 3ft
+const PAINT_COVERAGE_PER_LITRE = 120; // sq.ft per litre
+const STANDARD_DOOR_PRICE = 599;
+const STANDARD_WINDOW_PRICE = 299;
+
 const PaintingCalculator = () => {
   // State for inputs
   const [rooms, setRooms] = useState(1);
@@ -82,8 +89,8 @@ const PaintingCalculator = () => {
     if (paintWalls) {
       wallArea = 2 * (length + width) * height * rooms;
       // Subtract door and window areas
-      const doorArea = doorCount * 21; // Standard door: 7ft x 3ft
-      const windowArea = windowCount * 15; // Standard window: 5ft x 3ft
+      const doorArea = doorCount * STANDARD_DOOR_AREA;
+      const windowArea = windowCount * STANDARD_WINDOW_AREA;
       wallArea = Math.max(0, wallArea - doorArea - windowArea);
     }
 
@@ -102,15 +109,15 @@ const PaintingCalculator = () => {
     setLaborCost(labor);
 
     // Calculate material cost
-    // 1 litre covers approximately 120 sq.ft for 1 coat
-    const litresNeeded = (total * coats) / 120;
+    // 1 litre covers approximately PAINT_COVERAGE_PER_LITRE sq.ft for 1 coat
+    const litresNeeded = (total * coats) / PAINT_COVERAGE_PER_LITRE;
     const pricePerLitre = paintTypePricing[paintType];
     const material = litresNeeded * pricePerLitre;
     setMaterialCost(material);
 
     // Add door and window painting if any
-    const doorCost = doorCount * 599;
-    const windowCost = windowCount * 299;
+    const doorCost = doorCount * STANDARD_DOOR_PRICE;
+    const windowCost = windowCount * STANDARD_WINDOW_PRICE;
 
     setTotalCost(labor + material + doorCost + windowCost);
   };

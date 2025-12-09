@@ -16,7 +16,8 @@ import {
 import toast from "react-hot-toast";
 import { useAuth } from "./AuthContext";
 
-const API = import.meta.env.VITE_API_URL || window.location.origin;
+const FORM_SUBMISSION_DELAY = 2000; // milliseconds
+const AUTO_CLOSE_DELAY = 3000; // milliseconds
 
 const PaintingQuote = ({ onClose }) => {
   const { user } = useAuth();
@@ -104,15 +105,15 @@ const PaintingQuote = ({ onClose }) => {
     try {
       // In a real application, you would upload photos and submit the form data
       // For now, we'll simulate the API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, FORM_SUBMISSION_DELAY));
 
       setSubmitted(true);
       toast.success("Quote request submitted successfully!");
 
-      // Auto close after 3 seconds
+      // Auto close after delay
       setTimeout(() => {
         onClose();
-      }, 3000);
+      }, AUTO_CLOSE_DELAY);
     } catch (error) {
       console.error("Error submitting quote:", error);
       toast.error("Failed to submit quote request. Please try again.");
