@@ -1274,7 +1274,150 @@ const shoeCleanItems = {
       price: 110,
       description: 'High heels and formal shoes'
     },
+    {
+      id: 906,
+      name: 'Sandals',
+      image: '/laundry/shoe clean/Normal Shoes.jpg',
+      price: 70,
+      description: 'Casual and formal sandals'
+    },
+    {
+      id: 907,
+      name: 'Slippers',
+      image: '/laundry/shoe clean/Normal Shoes.jpg',
+      price: 60,
+      description: 'Indoor and outdoor slippers'
+    },
+    {
+      id: 908,
+      name: 'Sneakers',
+      image: '/laundry/shoe clean/Sports Shoes.jpg',
+      price: 95,
+      description: 'Canvas and fabric sneakers'
+    },
+    {
+      id: 909,
+      name: 'Loafers',
+      image: '/laundry/shoe clean/leather shoes.jpg',
+      price: 105,
+      description: 'Casual and formal loafers'
+    },
+    {
+      id: 910,
+      name: 'Formal Shoes',
+      image: '/laundry/shoe clean/leather shoes.jpg',
+      price: 115,
+      description: 'Office and occasion wear'
+    },
   ]
+};
+
+// Add-ons for different categories
+const addOns = {
+  shoeClean: [
+    {
+      id: 'addon-shoe-1',
+      name: 'Shoe Deodorizer',
+      price: 30,
+      description: 'Fresh scent treatment'
+    },
+    {
+      id: 'addon-shoe-2',
+      name: 'Lace Replacement',
+      price: 40,
+      description: 'New premium laces'
+    },
+    {
+      id: 'addon-shoe-3',
+      name: 'Sole Whitening',
+      price: 50,
+      description: 'Restore white soles'
+    },
+    {
+      id: 'addon-shoe-4',
+      name: 'Fabric Softener',
+      price: 25,
+      description: 'Extra soft finish'
+    },
+  ],
+  washFold: [
+    {
+      id: 'addon-wash-1',
+      name: 'Fabric Softener',
+      price: 30,
+      description: 'Extra soft and fragrant'
+    },
+    {
+      id: 'addon-wash-2',
+      name: 'Stain Treatment',
+      price: 40,
+      description: 'Deep stain removal'
+    },
+    {
+      id: 'addon-wash-3',
+      name: 'Perfume Spray',
+      price: 35,
+      description: 'Long-lasting fragrance'
+    },
+    {
+      id: 'addon-wash-4',
+      name: 'Express Service',
+      price: 60,
+      description: 'Same-day delivery'
+    },
+  ],
+  ironing: [
+    {
+      id: 'addon-iron-1',
+      name: 'Starch Treatment',
+      price: 25,
+      description: 'Crisp finish'
+    },
+    {
+      id: 'addon-iron-2',
+      name: 'Perfume Spray',
+      price: 35,
+      description: 'Fresh scent'
+    },
+    {
+      id: 'addon-iron-3',
+      name: 'Crease Protection',
+      price: 30,
+      description: 'Long-lasting press'
+    },
+    {
+      id: 'addon-iron-4',
+      name: 'Express Service',
+      price: 60,
+      description: 'Same-day delivery'
+    },
+  ],
+  dryClean: [
+    {
+      id: 'addon-dry-1',
+      name: 'Stain Guard',
+      price: 50,
+      description: 'Protective coating'
+    },
+    {
+      id: 'addon-dry-2',
+      name: 'Delicate Care',
+      price: 45,
+      description: 'Extra gentle handling'
+    },
+    {
+      id: 'addon-dry-3',
+      name: 'Perfume Infusion',
+      price: 40,
+      description: 'Luxury fragrance'
+    },
+    {
+      id: 'addon-dry-4',
+      name: 'Express Service',
+      price: 80,
+      description: 'Priority processing'
+    },
+  ],
 };
 
 const bedsheetWashItems = {
@@ -1358,6 +1501,7 @@ export default function LaundryPage() {
   const [bookingData, setBookingData] = useState(null);
   const [activeCategory, setActiveCategory] = useState('wash-fold');
   const [quantities, setQuantities] = useState({});
+  const [selectedAddons, setSelectedAddons] = useState({});
   const navigate = useNavigate();
   const { addToCart, updateQuantity } = useCart();
   const sliderRef = useRef(null);
@@ -1399,6 +1543,13 @@ export default function LaundryPage() {
     }
   };
 
+  const toggleAddon = (addonId) => {
+    setSelectedAddons(prev => ({
+      ...prev,
+      [addonId]: !prev[addonId]
+    }));
+  };
+
   const getItemQuantity = (itemId) => {
     return quantities[itemId] || 0;
   };
@@ -1412,6 +1563,10 @@ export default function LaundryPage() {
       { items: shoeCleanItems, categoryName: 'Shoe Clean Service' },
       { items: bedsheetWashItems, categoryName: 'Bedsheet/Heavy Wash Service' }
     ];
+    
+    // Collect selected addons
+    const allAddons = [...addOns.shoeClean, ...addOns.washFold, ...addOns.ironing, ...addOns.dryClean];
+    const selectedAddonsList = allAddons.filter(addon => selectedAddons[addon.id]);
     
     allCategoryItems.forEach(({ items, categoryName }) => {
       Object.entries(items).forEach(([category, itemsList]) => {
@@ -1437,8 +1592,23 @@ export default function LaundryPage() {
       });
     });
     
-    // Clear quantities
+    // Add selected addons to cart
+    selectedAddonsList.forEach(addon => {
+      const addonCartItem = {
+        id: `addon-${addon.id}`,
+        name: addon.name,
+        image: '/laundry/laundry1.png', // Default addon image
+        price: addon.price,
+        category: 'Laundry Add-on',
+        type: 'laundry-addon',
+        description: addon.description
+      };
+      addToCart(addonCartItem);
+    });
+    
+    // Clear quantities and addons
     setQuantities({});
+    setSelectedAddons({});
     
     // Navigate to cart
     navigate('/cart');
@@ -1469,6 +1639,14 @@ export default function LaundryPage() {
       });
     });
     
+    // Add addon prices
+    const allAddons = [...addOns.shoeClean, ...addOns.washFold, ...addOns.ironing, ...addOns.dryClean];
+    allAddons.forEach(addon => {
+      if (selectedAddons[addon.id]) {
+        total += addon.price;
+      }
+    });
+    
     return total;
   };
 
@@ -1488,16 +1666,16 @@ export default function LaundryPage() {
   // Touch handlers - removed as we don't need swipe functionality for categories
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-purple-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Booking Data Banner */}
         {bookingData && (
-          <div className="mb-8 bg-purple-50 border border-purple-200 rounded-lg p-6">
+          <div className="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-2xl p-6 shadow-lg">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-lg font-semibold text-purple-800 mb-2">
-                  👕 Your Laundry Service Booking Details
+                <h3 className="text-lg font-semibold text-purple-800 mb-2 flex items-center gap-2">
+                  <span className="text-2xl">👕</span> Your Laundry Service Booking Details
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
@@ -1529,29 +1707,42 @@ export default function LaundryPage() {
         
         {/* Main Header */}
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Laundry Services</h1>
+          <div className="inline-block mb-4">
+            <span className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-md">
+              PREMIUM LAUNDRY SERVICES
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Professional Laundry Care
+            </span>
+          </h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Choose from our wide range of laundry services with premium add-ons for the perfect clean
+          </p>
         </div>
 
         {/* Service Category Tabs */}
         <div className="mb-8">
-          <div className="flex flex-wrap justify-center gap-2 mb-6">
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
             {[
-              { id: 'wash-fold', label: 'Wash & Fold' },
-              { id: 'wash-iron', label: 'Wash & Iron' },
-              { id: 'ironing', label: 'Ironing' },
-              { id: 'dry-clean', label: 'Dry Clean' },
-              { id: 'shoe-clean', label: 'Shoe Clean' },
-              { id: 'bedsheet-wash', label: 'Bedsheet Wash' }
+              { id: 'wash-fold', label: 'Wash & Fold', icon: '🧺' },
+              { id: 'wash-iron', label: 'Wash & Iron', icon: '👕' },
+              { id: 'ironing', label: 'Ironing', icon: '🎽' },
+              { id: 'dry-clean', label: 'Dry Clean', icon: '✨' },
+              { id: 'shoe-clean', label: 'Shoe Clean', icon: '👟' },
+              { id: 'bedsheet-wash', label: 'Bedsheet Wash', icon: '🛏️' }
             ].map((category) => (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`px-6 py-3 rounded-full text-sm font-medium transition-colors ${
+                className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-md ${
                   activeCategory === category.id
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200'
                 }`}
               >
+                <span className="mr-2">{category.icon}</span>
                 {category.label}
               </button>
             ))}
@@ -1878,6 +2069,53 @@ export default function LaundryPage() {
                 ))}
               </div>
             </div>
+
+            {/* Add-ons Section for Wash & Fold */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-green-300 pb-2">
+                <span className="bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+                  Premium Add-ons for Wash & Fold
+                </span>
+              </h3>
+              <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6 shadow-lg">
+                <p className="text-center text-gray-600 mb-6">
+                  ✨ Enhance your wash & fold service with these premium add-ons
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {addOns.washFold.map((addon) => (
+                    <div 
+                      key={addon.id} 
+                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                        selectedAddons[addon.id] ? 'ring-2 ring-green-500 bg-green-50' : ''
+                      }`}
+                      onClick={() => toggleAddon(addon.id)}
+                    >
+                      <div className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                            selectedAddons[addon.id] ? 'bg-green-600 border-green-600' : 'border-gray-300'
+                          }`}>
+                            {selectedAddons[addon.id] && (
+                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M5 13l4 4L19 7"></path>
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-bold text-green-600">₹{addon.price}</span>
+                          <span className="text-xs text-gray-500">
+                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -2199,6 +2437,53 @@ export default function LaundryPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Add-ons Section for Ironing */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-blue-300 pb-2">
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  Premium Add-ons for Ironing
+                </span>
+              </h3>
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-lg">
+                <p className="text-center text-gray-600 mb-6">
+                  ✨ Enhance your ironing service with these premium add-ons
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {addOns.ironing.map((addon) => (
+                    <div 
+                      key={addon.id} 
+                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                        selectedAddons[addon.id] ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                      }`}
+                      onClick={() => toggleAddon(addon.id)}
+                    >
+                      <div className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                            selectedAddons[addon.id] ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
+                          }`}>
+                            {selectedAddons[addon.id] && (
+                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M5 13l4 4L19 7"></path>
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-bold text-blue-600">₹{addon.price}</span>
+                          <span className="text-xs text-gray-500">
+                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -2524,6 +2809,53 @@ export default function LaundryPage() {
                 ))}
               </div>
             </div>
+
+            {/* Add-ons Section for Dry Clean */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-orange-300 pb-2">
+                <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                  Premium Add-ons for Dry Clean
+                </span>
+              </h3>
+              <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 shadow-lg">
+                <p className="text-center text-gray-600 mb-6">
+                  ✨ Enhance your dry clean service with these premium add-ons
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {addOns.dryClean.map((addon) => (
+                    <div 
+                      key={addon.id} 
+                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                        selectedAddons[addon.id] ? 'ring-2 ring-orange-500 bg-orange-50' : ''
+                      }`}
+                      onClick={() => toggleAddon(addon.id)}
+                    >
+                      <div className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                            selectedAddons[addon.id] ? 'bg-orange-600 border-orange-600' : 'border-gray-300'
+                          }`}>
+                            {selectedAddons[addon.id] && (
+                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M5 13l4 4L19 7"></path>
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-bold text-orange-600">₹{addon.price}</span>
+                          <span className="text-xs text-gray-500">
+                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -2580,6 +2912,53 @@ export default function LaundryPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Add-ons Section for Shoes */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-purple-300 pb-2">
+                <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  Premium Add-ons for Shoes
+                </span>
+              </h3>
+              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 shadow-lg">
+                <p className="text-center text-gray-600 mb-6">
+                  ✨ Enhance your shoe cleaning service with these premium add-ons
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {addOns.shoeClean.map((addon) => (
+                    <div 
+                      key={addon.id} 
+                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                        selectedAddons[addon.id] ? 'ring-2 ring-purple-500 bg-purple-50' : ''
+                      }`}
+                      onClick={() => toggleAddon(addon.id)}
+                    >
+                      <div className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                            selectedAddons[addon.id] ? 'bg-purple-600 border-purple-600' : 'border-gray-300'
+                          }`}>
+                            {selectedAddons[addon.id] && (
+                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M5 13l4 4L19 7"></path>
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-bold text-purple-600">₹{addon.price}</span>
+                          <span className="text-xs text-gray-500">
+                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
