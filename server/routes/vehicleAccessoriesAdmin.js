@@ -1,21 +1,11 @@
 import express from 'express';
 import VehicleAccessory from '../models/VehicleAccessory.js';
+import { authenticateAdmin } from '../middleware/authAdmin.js';
 
 const router = express.Router();
 
-// Middleware to verify admin token
-const verifyAdminToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'No token provided' });
-  }
-  // For now, just check if token exists
-  // In production, verify JWT properly
-  next();
-};
-
 // Get all accessories (admin view - includes inactive)
-router.get('/accessories', verifyAdminToken, async (req, res) => {
+router.get('/accessories', authenticateAdmin, async (req, res) => {
   try {
     const { page = 1, limit = 20, search, category, status } = req.query;
 
@@ -71,7 +61,7 @@ router.get('/accessories', verifyAdminToken, async (req, res) => {
 });
 
 // Create new accessory
-router.post('/accessories', verifyAdminToken, async (req, res) => {
+router.post('/accessories', authenticateAdmin, async (req, res) => {
   try {
     const accessoryData = req.body;
     
@@ -94,7 +84,7 @@ router.post('/accessories', verifyAdminToken, async (req, res) => {
 });
 
 // Update accessory
-router.put('/accessories/:id', verifyAdminToken, async (req, res) => {
+router.put('/accessories/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
@@ -128,7 +118,7 @@ router.put('/accessories/:id', verifyAdminToken, async (req, res) => {
 });
 
 // Delete accessory
-router.delete('/accessories/:id', verifyAdminToken, async (req, res) => {
+router.delete('/accessories/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -156,7 +146,7 @@ router.delete('/accessories/:id', verifyAdminToken, async (req, res) => {
 });
 
 // Toggle accessory status
-router.patch('/accessories/:id/toggle-status', verifyAdminToken, async (req, res) => {
+router.patch('/accessories/:id/toggle-status', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -188,7 +178,7 @@ router.patch('/accessories/:id/toggle-status', verifyAdminToken, async (req, res
 });
 
 // Update stock
-router.patch('/accessories/:id/stock', verifyAdminToken, async (req, res) => {
+router.patch('/accessories/:id/stock', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { stockQuantity, inStock } = req.body;
@@ -231,7 +221,7 @@ router.patch('/accessories/:id/stock', verifyAdminToken, async (req, res) => {
 });
 
 // Get dashboard stats
-router.get('/accessories/stats', verifyAdminToken, async (req, res) => {
+router.get('/accessories/stats', authenticateAdmin, async (req, res) => {
   try {
     const [totalProducts, activeProducts, outOfStock, categoryStats] = await Promise.all([
       VehicleAccessory.countDocuments(),
