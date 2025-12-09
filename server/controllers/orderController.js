@@ -192,8 +192,40 @@ export const createOrder = async (req, res) => {
         });
       }
 
-      orderItems = cart.items;
-      subtotal = cart.totalAmount;
+      // Transform cart items to order items format
+      orderItems = cart.items.map(item => {
+        const orderItem = {
+          serviceId: item.serviceId._id || item.serviceId,
+          packageId: item.packageId?._id || item.packageId,
+          serviceName: item.serviceName || item.name || item.serviceId?.name || 'Service',
+          image: item.image || item.img || item.serviceId?.image || '',
+          type: item.type || '',
+          category: item.category || '',
+          packageName: item.packageName || item.packageId?.name || '',
+          quantity: item.quantity || 1,
+          price: item.price,
+          addOns: (item.addOns || []).map(addon => ({
+            addOnId: addon.addOnId?._id || addon.addOnId,
+            name: addon.addOnId?.name || addon.name || '',
+            quantity: addon.quantity || 1,
+            price: addon.price
+          })),
+          uiAddOns: (item.uiAddOns || []).map(addon => ({
+            name: addon.name,
+            price: addon.price || 0,
+            quantity: addon.quantity || 1
+          })),
+          laundryItems: item.laundryItems || [],
+          vehicleType: item.vehicleType || '',
+          specialInstructions: item.specialInstructions || '',
+          includedFeatures: item.includedFeatures || [],
+          planDetails: item.planDetails || {}
+        };
+        return orderItem;
+      });
+      
+      // Use subtotalAmount which doesn't include tax
+      subtotal = cart.subtotalAmount || cart.totalAmount;
     }
 
     // Apply coupon if provided
