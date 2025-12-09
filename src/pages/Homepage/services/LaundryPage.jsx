@@ -1609,10 +1609,15 @@ export default function LaundryPage() {
     setShowAddonsModal(false);
   };
 
+  const skipAddonsAndAddToCart = () => {
+    // Clear temp selections and proceed without add-ons
+    setTempSelectedAddons({});
+    setSelectedDetergent(null);
+    proceedToAddToCart();
+    closeAddonsModal();
+  };
+
   const confirmAddToCart = () => {
-    // Apply temp selections to actual selections
-    setSelectedAddons(tempSelectedAddons);
-    
     // Proceed with adding to cart
     proceedToAddToCart();
     
@@ -1677,7 +1682,7 @@ export default function LaundryPage() {
       const detergent = detergentOptions.find(d => d.id === selectedDetergent);
       if (detergent) {
         const detergentCartItem = {
-          id: `detergent-${detergent.id}`,
+          id: detergent.id,
           name: `Detergent: ${detergent.name}`,
           image: '/laundry/laundry1.png',
           price: detergent.price,
@@ -3303,7 +3308,7 @@ export default function LaundryPage() {
               <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-6 rounded-b-2xl">
                 <div className="flex gap-4">
                   <button
-                    onClick={closeAddonsModal}
+                    onClick={skipAddonsAndAddToCart}
                     className="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-gray-300 transition-colors"
                   >
                     Skip Add-ons
