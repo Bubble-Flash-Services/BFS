@@ -65,16 +65,28 @@ const VehicleCheckupManagement = () => {
       const data = await response.json();
       
       if (data.success && data.data) {
-        // Filter for vehicle checkup bookings
+        // Filter for vehicle checkup bookings using consistent identifiers
+        const VEHICLE_CHECKUP_IDENTIFIERS = [
+          'vehicle-checkup',
+          'vehicle checkup',
+          'vehicle check-up',
+          'body vehicle check',
+          'checkup'
+        ];
+        
         const checkupBookings = (data.data.bookings || []).filter(booking => {
           const items = booking.items || [];
-          return items.some(item => 
-            (item.type || '').toLowerCase().includes('vehicle-checkup') ||
-            (item.type || '').toLowerCase().includes('checkup') ||
-            (item.category || '').toLowerCase().includes('vehicle checkup') ||
-            (item.serviceName || '').toLowerCase().includes('vehicle check-up') ||
-            (item.serviceName || '').toLowerCase().includes('body vehicle check')
-          );
+          return items.some(item => {
+            const type = (item.type || '').toLowerCase();
+            const category = (item.category || '').toLowerCase();
+            const serviceName = (item.serviceName || '').toLowerCase();
+            
+            return VEHICLE_CHECKUP_IDENTIFIERS.some(identifier => 
+              type.includes(identifier) || 
+              category.includes(identifier) || 
+              serviceName.includes(identifier)
+            );
+          });
         });
         
         setBookings(checkupBookings);
@@ -214,17 +226,27 @@ const VehicleCheckupManagement = () => {
   };
 
   const getStatusColor = (status) => {
+    const statusLower = (status || 'pending').toLowerCase();
     const colors = {
       pending: 'bg-yellow-100 text-yellow-800',
       confirmed: 'bg-blue-100 text-blue-800',
       assigned: 'bg-purple-100 text-purple-800',
+      'in_progress': 'bg-orange-100 text-orange-800',
       'in-progress': 'bg-orange-100 text-orange-800',
-      'inspection-completed': 'bg-indigo-100 text-indigo-800',
-      'report-generated': 'bg-green-100 text-green-800',
       completed: 'bg-green-100 text-green-800',
       cancelled: 'bg-red-100 text-red-800',
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[statusLower] || 'bg-gray-100 text-gray-800';
+  };
+
+  // Helper to format dates consistently
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
   };
 
   const getVehicleIcon = (type) => {
@@ -467,9 +489,7 @@ const VehicleCheckupManagement = () => {
                           <div className="text-sm">
                             <div className="flex items-center gap-1 text-gray-900">
                               <Calendar className="w-3 h-3" />
-                              {booking.scheduledDate 
-                                ? new Date(booking.scheduledDate).toLocaleDateString() 
-                                : 'N/A'}
+                              {formatDate(booking.scheduledDate)}
                             </div>
                             <div className="flex items-center gap-1 text-gray-600 mt-1">
                               <Clock className="w-3 h-3" />
@@ -616,9 +636,7 @@ const VehicleCheckupManagement = () => {
                   <div>
                     <span className="text-gray-600">Scheduled Date:</span>{' '}
                     <span className="font-medium">
-                      {selectedBooking.scheduledDate 
-                        ? new Date(selectedBooking.scheduledDate).toLocaleDateString() 
-                        : 'N/A'}
+                      {formatDate(selectedBooking.scheduledDate)}
                     </span>
                   </div>
                   <div>
