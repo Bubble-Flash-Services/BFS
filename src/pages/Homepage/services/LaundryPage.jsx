@@ -1564,6 +1564,10 @@ export default function LaundryPage() {
       { items: bedsheetWashItems, categoryName: 'Bedsheet/Heavy Wash Service' }
     ];
     
+    // Collect selected addons
+    const allAddons = [...addOns.shoeClean, ...addOns.washFold, ...addOns.ironing, ...addOns.dryClean];
+    const selectedAddonsList = allAddons.filter(addon => selectedAddons[addon.id]);
+    
     allCategoryItems.forEach(({ items, categoryName }) => {
       Object.entries(items).forEach(([category, itemsList]) => {
         itemsList.forEach(item => {
@@ -1588,8 +1592,23 @@ export default function LaundryPage() {
       });
     });
     
-    // Clear quantities
+    // Add selected addons to cart
+    selectedAddonsList.forEach(addon => {
+      const addonCartItem = {
+        id: `addon-${addon.id}`,
+        name: addon.name,
+        image: '/laundry/laundry1.png', // Default addon image
+        price: addon.price,
+        category: 'Laundry Add-on',
+        type: 'laundry-addon',
+        description: addon.description
+      };
+      addToCart(addonCartItem);
+    });
+    
+    // Clear quantities and addons
     setQuantities({});
+    setSelectedAddons({});
     
     // Navigate to cart
     navigate('/cart');
