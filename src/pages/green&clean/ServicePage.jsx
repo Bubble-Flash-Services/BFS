@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { useCart } from "../../components/CartContext";
 import { useAuth } from "../../components/AuthContext";
 import servicesData from "../../data/services.json";
+import { commercialAddons } from "../../data/commercialAddons";
 
 export default function ServicePage() {
   const { categoryName, type } = useParams(); // type could be "instant" or "deep"
@@ -113,16 +114,6 @@ export default function ServicePage() {
       setSelectedAddons([]); // Reset addons after adding to cart
     });
   };
-
-  // Commercial add-ons for deep cleaning services
-  const commercialAddons = [
-    { id: 1, name: "Glass cleaner refills", price: 299, description: "Professional glass cleaner refill pack" },
-    { id: 2, name: "Vacuum bags", price: 199, description: "High-quality vacuum cleaner bags" },
-    { id: 3, name: "Floor polish", price: 399, description: "Premium floor polish solution" },
-    { id: 4, name: "Disinfectant fogging", price: 599, description: "Complete disinfectant fogging service" },
-    { id: 5, name: "Sanitizer refills", price: 249, description: "Antibacterial sanitizer refills" },
-    { id: 6, name: "Toilet consumables", price: 179, description: "Essential toilet cleaning supplies" }
-  ];
 
   const handleAddonToggle = (addon) => {
     setSelectedAddons(prev => {
