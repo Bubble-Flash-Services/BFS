@@ -227,6 +227,7 @@ export default function OrdersPage() {
         </tr>`;
         const rows = arr.map((item) => {
           const addOns = item.addOns || [];
+          const uiAddOns = item.uiAddOns || [];
           const baseTotal = (item.price || 0) * (item.quantity || 1);
           const laundryTotal = (item.laundryItems || []).reduce(
             (s, l) => s + (l.pricePerItem || 0) * (l.quantity || 1),
@@ -287,7 +288,19 @@ export default function OrdersPage() {
         </tr>`
             )
             .join("");
-          return mainRow + addOnRows;
+          const uiAddOnRows = uiAddOns
+            .map(
+              (a) => `
+        <tr>
+          <td></td>
+          <td style="padding-left:18px">+ Add-on: ${a.name}</td>
+          <td>${a.quantity || 1}</td>
+          <td>₹${a.price}</td>
+          <td>₹${(a.price || 0) * (a.quantity || 1)}</td>
+        </tr>`
+            )
+            .join("");
+          return mainRow + addOnRows + uiAddOnRows;
         });
         return [headerRow, ...rows];
       })
@@ -858,6 +871,31 @@ export default function OrdersPage() {
                               </p>
                               <div className="space-y-1">
                                 {item.addOns.map((addon, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="flex justify-between text-xs"
+                                  >
+                                    <span className="text-gray-600">
+                                      + {addon.name}{" "}
+                                      {addon.quantity > 1
+                                        ? `× ${addon.quantity}`
+                                        : ""}
+                                    </span>
+                                    <span className="text-green-600 font-medium">
+                                      ₹{addon.price * (addon.quantity || 1)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {item.uiAddOns && item.uiAddOns.length > 0 && (
+                            <div className="mt-3">
+                              <p className="text-xs font-semibold text-gray-700 mb-1">
+                                {item.addOns && item.addOns.length > 0 ? "Additional Add-ons:" : "Add-ons:"}
+                              </p>
+                              <div className="space-y-1">
+                                {item.uiAddOns.map((addon, idx) => (
                                   <div
                                     key={idx}
                                     className="flex justify-between text-xs"
