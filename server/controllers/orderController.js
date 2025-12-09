@@ -10,6 +10,15 @@ import mongoose from 'mongoose';
 import { broadcastToAdmins, formatOrderMessage } from '../services/telegramService.js';
 import { bangalorePincodes } from '../utils/bangalorePincodes.js';
 
+// Helper function to process UI-only add-ons
+const processUiAddOns = (uiAddOns) => {
+  return (uiAddOns || []).map(addon => ({
+    name: addon.name,
+    price: addon.price || 0,
+    quantity: addon.quantity || 1
+  }));
+};
+
 // Create new order
 export const createOrder = async (req, res) => {
   try {
@@ -115,6 +124,9 @@ export const createOrder = async (req, res) => {
         // Process add-ons (keep as provided since they're custom)
         const processedAddOns = item.addOns || [];
 
+        // Process UI-only add-ons (no database reference)
+        const processedUiAddOns = processUiAddOns(item.uiAddOns);
+
         // Process laundry items (keep as provided since they're custom)
         const laundryItems = item.laundryItems || [];
 
@@ -126,6 +138,14 @@ export const createOrder = async (req, res) => {
           });
         }
 
+        // Add UI-only add-ons to total
+        let uiAddOnTotal = 0;
+        if (processedUiAddOns.length > 0) {
+          processedUiAddOns.forEach(addOn => {
+            uiAddOnTotal += (addOn.price || 0) * (addOn.quantity || 1);
+          });
+        }
+
         let laundryTotal = 0;
         if (laundryItems.length > 0) {
           laundryItems.forEach(laundryItem => {
@@ -133,7 +153,7 @@ export const createOrder = async (req, res) => {
           });
         }
 
-        const itemTotal = (price * (item.quantity || 1)) + addOnTotal + laundryTotal;
+        const itemTotal = (price * (item.quantity || 1)) + addOnTotal + uiAddOnTotal + laundryTotal;
         subtotal += itemTotal;
 
         orderItems.push({
@@ -147,6 +167,7 @@ export const createOrder = async (req, res) => {
           quantity: item.quantity || 1,
           price: price,
           addOns: processedAddOns,
+          uiAddOns: processedUiAddOns,
           laundryItems: laundryItems,
           vehicleType: item.vehicleType || item.category || 'standard',
           specialInstructions: item.specialInstructions || item.notes || '',
@@ -176,8 +197,36 @@ export const createOrder = async (req, res) => {
         });
       }
 
-      orderItems = cart.items;
-      subtotal = cart.totalAmount;
+      // Transform cart items to order items format
+      orderItems = cart.items.map(item => {
+        const orderItem = {
+          serviceId: item.serviceId._id || item.serviceId,
+          packageId: item.packageId?._id || item.packageId,
+          serviceName: item.serviceName || item.name || item.serviceId?.name || 'Service',
+          image: item.image || item.img || item.serviceId?.image || '',
+          type: item.type || '',
+          category: item.category || '',
+          packageName: item.packageName || item.packageId?.name || '',
+          quantity: item.quantity || 1,
+          price: item.price,
+          addOns: (item.addOns || []).map(addon => ({
+            addOnId: addon.addOnId?._id || addon.addOnId,
+            name: addon.addOnId?.name || addon.name || '',
+            quantity: addon.quantity || 1,
+            price: addon.price
+          })),
+          uiAddOns: processUiAddOns(item.uiAddOns),
+          laundryItems: item.laundryItems || [],
+          vehicleType: item.vehicleType || '',
+          specialInstructions: item.specialInstructions || '',
+          includedFeatures: item.includedFeatures || [],
+          planDetails: item.planDetails || {}
+        };
+        return orderItem;
+      });
+      
+      // Use subtotalAmount which doesn't include tax
+      subtotal = cart.subtotalAmount || cart.totalAmount;
     }
 
     // Apply coupon if provided

@@ -774,10 +774,36 @@ export function CartProvider({ children }) {
   };
 
   const getCartTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    return cartItems.reduce((total, item) => {
+      // Base item price
+      let itemTotal = item.price * item.quantity;
+      
+      // Add database add-ons (with addOnId reference)
+      if (item.addOns && item.addOns.length > 0) {
+        itemTotal += item.addOns.reduce(
+          (sum, addon) => sum + (addon.price || 0) * (addon.quantity || 1),
+          0
+        );
+      }
+      
+      // Add UI-only add-ons (no database reference)
+      if (item.uiAddOns && item.uiAddOns.length > 0) {
+        itemTotal += item.uiAddOns.reduce(
+          (sum, addon) => sum + (addon.price || 0) * (addon.quantity || 1),
+          0
+        );
+      }
+      
+      // Add laundry items
+      if (item.laundryItems && item.laundryItems.length > 0) {
+        itemTotal += item.laundryItems.reduce(
+          (sum, laundryItem) => sum + (laundryItem.pricePerItem || 0) * (laundryItem.quantity || 1),
+          0
+        );
+      }
+      
+      return total + itemTotal;
+    }, 0);
   };
 
   const getCartItemsCount = () => {

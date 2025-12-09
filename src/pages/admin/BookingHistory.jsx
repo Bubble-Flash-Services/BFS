@@ -61,6 +61,7 @@ const BookingHistory = () => {
         </tr>`;
       const rows = arr.map((item) => {
         const addOns = item.addOns || [];
+        const uiAddOns = item.uiAddOns || [];
         const baseTotal = (item.price || 0) * (item.quantity || 1);
         const laundryTotal = (item.laundryItems || []).reduce((s,l)=> s + (l.pricePerItem || 0) * (l.quantity || 1), 0);
         const itemRowTotal = baseTotal + laundryTotal; // exclude add-ons here; they will be separate rows
@@ -91,7 +92,15 @@ const BookingHistory = () => {
           <td>₹${a.price || 0}</td>
           <td>₹${(a.price || 0) * (a.quantity || 1)}</td>
         </tr>`).join('');
-        return mainRow + addOnRows;
+        const uiAddOnRows = uiAddOns.map(a => `
+        <tr>
+          <td></td>
+          <td style="padding-left:18px">+ Add-on: ${a.name}</td>
+          <td>${a.quantity || 1}</td>
+          <td>₹${a.price || 0}</td>
+          <td>₹${(a.price || 0) * (a.quantity || 1)}</td>
+        </tr>`).join('');
+        return mainRow + addOnRows + uiAddOnRows;
       });
       return [headerRow, ...rows];
     }).join('');
@@ -100,8 +109,9 @@ const BookingHistory = () => {
     const computedSubtotal = items.reduce((sum, it) => {
       const base = (it.price || 0) * (it.quantity || 1);
       const add = (it.addOns || []).reduce((s, a) => s + (a.price || 0) * (a.quantity || 1), 0);
+      const uiAdd = (it.uiAddOns || []).reduce((s, a) => s + (a.price || 0) * (a.quantity || 1), 0);
       const laundry = (it.laundryItems || []).reduce((s, l) => s + (l.pricePerItem || 0) * (l.quantity || 1), 0);
-      return sum + base + add + laundry;
+      return sum + base + add + uiAdd + laundry;
     }, 0);
   const subtotal = booking.subtotal ?? computedSubtotal;
   const discount = Number(booking.discountAmount) || 0;
@@ -1104,9 +1114,10 @@ const BookingHistory = () => {
                               </div>
                               {(() => {
                                 const addOnsTotal = (item.addOns || []).reduce((s, a) => s + (a.price * (a.quantity || 1)), 0);
+                                const uiAddOnsTotal = (item.uiAddOns || []).reduce((s, a) => s + (a.price * (a.quantity || 1)), 0);
                                 const laundryTotal = (item.laundryItems || []).reduce((s, l) => s + (l.pricePerItem * (l.quantity || 1)), 0);
                                 const baseTotal = (item.price || 0) * (item.quantity || 1);
-                                const finalTotal = baseTotal + addOnsTotal + laundryTotal;
+                                const finalTotal = baseTotal + addOnsTotal + uiAddOnsTotal + laundryTotal;
                                 return (
                                   <div className="text-right">
                                     <p className="text-lg font-bold text-gray-900">₹{finalTotal}</p>
@@ -1204,6 +1215,28 @@ const BookingHistory = () => {
                               </div>
                             )}
 
+                            {item.uiAddOns && item.uiAddOns.length > 0 && (
+                              <div className="mb-4">
+                                <h5 className="text-sm font-semibold text-gray-700 mb-2">
+                                  {item.addOns && item.addOns.length > 0 ? "Additional Add-ons" : "Add-ons"}
+                                </h5>
+                                <div className="space-y-2">
+                                  {item.uiAddOns.map((addon, addonIndex) => (
+                                    <div key={addonIndex} className="bg-green-50 rounded-lg p-3 flex items-center justify-between">
+                                      <div className="flex items-center">
+                                        <span className="text-green-600 mr-2">+</span>
+                                        <span className="text-gray-700">{addon.name}</span>
+                                        {addon.quantity > 1 && (
+                                          <span className="text-gray-500 ml-2">x {addon.quantity}</span>
+                                        )}
+                                      </div>
+                                      <span className="text-gray-900 font-medium">₹{addon.price * addon.quantity}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
                             {/* Laundry Items */}
                             {item.laundryItems && item.laundryItems.length > 0 && (
                               <div className="mb-4">
@@ -1234,6 +1267,7 @@ const BookingHistory = () => {
                                 <span className="text-green-600">₹{
                                   (item.price * item.quantity) + 
                                   ((item.addOns || []).reduce((sum, addon) => sum + (addon.price * addon.quantity), 0)) +
+                                  ((item.uiAddOns || []).reduce((sum, addon) => sum + (addon.price * addon.quantity), 0)) +
                                   ((item.laundryItems || []).reduce((sum, laundry) => sum + (laundry.pricePerItem * laundry.quantity), 0))
                                 }</span>
                               </div>
@@ -1278,8 +1312,9 @@ const BookingHistory = () => {
                       const computedSubtotal = items.reduce((sum, it) => {
                         const base = (it.price || 0) * (it.quantity || 1);
                         const add = (it.addOns || []).reduce((s, a) => s + (a.price * (a.quantity || 1)), 0);
+                        const uiAdd = (it.uiAddOns || []).reduce((s, a) => s + (a.price * (a.quantity || 1)), 0);
                         const laundry = (it.laundryItems || []).reduce((s, l) => s + (l.pricePerItem * (l.quantity || 1)), 0);
-                        return sum + base + add + laundry;
+                        return sum + base + add + uiAdd + laundry;
                       }, 0);
                       const discount = Number(selectedBooking.discountAmount) || 0;
                       const grandTotal = Math.max(0, computedSubtotal - discount);

@@ -60,6 +60,24 @@ const orderSchema = new mongoose.Schema({
         min: 0
       }
     }],
+    // UI-only add-ons (no database reference)
+    uiAddOns: [{
+      name: {
+        type: String,
+        required: true
+      },
+      price: {
+        type: Number,
+        required: true,
+        min: 0
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: 1,
+        default: 1
+      }
+    }],
     laundryItems: [{
       itemType: String,
       quantity: Number,
