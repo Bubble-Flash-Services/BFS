@@ -38,6 +38,7 @@ import AddressesPage from "./pages/AddressesPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import BookingHistory from "./pages/admin/BookingHistory";
+import OrdersManagement from "./pages/admin/OrdersManagement";
 import PUCBookingManagement from "./pages/admin/PUCBookingManagement";
 import InsuranceBookingManagement from "./pages/admin/InsuranceBookingManagement";
 import CouponManagement from "./pages/admin/CouponManagement";
@@ -185,6 +186,14 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <BookingHistory />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <ProtectedAdminRoute>
+                <OrdersManagement />
               </ProtectedAdminRoute>
             }
           />
