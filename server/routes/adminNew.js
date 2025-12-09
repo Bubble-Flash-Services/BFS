@@ -6,6 +6,9 @@ import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Address from '../models/Address.js';
 import Coupon from '../models/Coupon.js';
+import PaintingQuote from '../models/PaintingQuote.js';
+import MoversPackers from '../models/MoversPackers.js';
+import VehicleCheckupBooking from '../models/VehicleCheckupBooking.js';
 import { authenticateAdmin, requirePermission } from '../middleware/authAdmin.js';
 import { searchByFolder } from '../services/cloudinary.js';
 import jwt from 'jsonwebtoken';
@@ -93,6 +96,25 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       .limit(5)
       .select('_id serviceType status totalAmount paymentMethod serviceAddress items createdAt customerNotes paymentDetails');
 
+    // Get service-specific order counts
+    const [
+      carWashOrders,
+      greenCleanOrders,
+      moversPackersOrders,
+      paintingOrders,
+      laundryOrders,
+      vehicleCheckupOrders,
+      insuranceOrders
+    ] = await Promise.all([
+      Order.countDocuments({ 'items.category': 'Car Wash' }),
+      Order.countDocuments({ 'items.category': 'Green & Clean' }),
+      MoversPackers.countDocuments(),
+      PaintingQuote.countDocuments(),
+      Order.countDocuments({ 'items.category': 'Laundry' }),
+      VehicleCheckupBooking.countDocuments(),
+      Order.countDocuments({ 'items.category': 'Insurance' })
+    ]);
+
     res.json({
       success: true,
       data: {
@@ -105,6 +127,15 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
           pendingBookings,
           completedBookings,
           cancelledBookings
+        },
+        serviceBreakdown: {
+          carWash: carWashOrders,
+          greenClean: greenCleanOrders,
+          moversPackers: moversPackersOrders,
+          painting: paintingOrders,
+          laundry: laundryOrders,
+          vehicleCheckup: vehicleCheckupOrders,
+          insurance: insuranceOrders
         },
         monthlyRevenue: monthlyRevenue.map(item => ({
           month: item._id.month,
