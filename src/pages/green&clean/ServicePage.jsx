@@ -90,7 +90,7 @@ export default function ServicePage() {
         packageDetails: item.packageDetails || {
           basePrice: item.basePrice,
           features: item.features || [],
-          addons: selectedAddons,
+          addons: selectedAddons, // For display in cart details
           addonsTotal: getAddonsTotal(),
         },
         includedFeatures:
@@ -102,6 +102,8 @@ export default function ServicePage() {
         specialInstructions: item.specialInstructions,
         type: item.type || "cleaning",
         category: item.subcategory,
+        // uiAddOns is used by cart backend for calculating totals
+        // packageDetails.addons is used for frontend display
         uiAddOns: selectedAddons.map(addon => ({
           name: addon.name,
           price: addon.price,
@@ -126,14 +128,13 @@ export default function ServicePage() {
     });
   };
 
-  const calculateTotal = () => {
-    const basePrice = selectedService?.basePrice || 0;
-    const addonsTotal = selectedAddons.reduce((total, addon) => total + addon.price, 0);
-    return basePrice + addonsTotal;
-  };
-
   const getAddonsTotal = () => {
     return selectedAddons.reduce((total, addon) => total + addon.price, 0);
+  };
+
+  const calculateTotal = () => {
+    const basePrice = selectedService?.basePrice || 0;
+    return basePrice + getAddonsTotal();
   };
 
   const openModal = (item) => {
