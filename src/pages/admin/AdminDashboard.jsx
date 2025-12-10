@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -25,11 +26,22 @@ ChartJS.register(
 );
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [dashboardStats, setDashboardStats] = useState({
     bookingsCount: 0,
     todayBookings: 0,
     totalRevenue: 0,
     cancellationRequests: 0
+  });
+
+  const [serviceBreakdown, setServiceBreakdown] = useState({
+    carWash: 0,
+    greenClean: 0,
+    moversPackers: 0,
+    painting: 0,
+    laundry: 0,
+    vehicleCheckup: 0,
+    insurance: 0
   });
 
   const [currentCustomers, setCurrentCustomers] = useState([]);
@@ -50,7 +62,7 @@ const AdminDashboard = () => {
           throw new Error(statsResponse.message || 'Failed to load dashboard stats');
         }
 
-        const { overview, monthlyRevenue = [], recentBookings = [] } = statsResponse.data || {};
+        const { overview, monthlyRevenue = [], recentBookings = [], serviceBreakdown = {} } = statsResponse.data || {};
 
         // Cards
         setDashboardStats({
@@ -58,6 +70,17 @@ const AdminDashboard = () => {
           todayBookings: overview?.todayBookings ?? 0,
           totalRevenue: overview?.totalRevenue ?? 0,
           cancellationRequests: overview?.cancelledBookings ?? 0,
+        });
+
+        // Service breakdown
+        setServiceBreakdown({
+          carWash: serviceBreakdown?.carWash ?? 0,
+          greenClean: serviceBreakdown?.greenClean ?? 0,
+          moversPackers: serviceBreakdown?.moversPackers ?? 0,
+          painting: serviceBreakdown?.painting ?? 0,
+          laundry: serviceBreakdown?.laundry ?? 0,
+          vehicleCheckup: serviceBreakdown?.vehicleCheckup ?? 0,
+          insurance: serviceBreakdown?.insurance ?? 0
         });
 
         // Helper to extract phone from various sources (notes, serviceAddress, explicit fields)
@@ -256,6 +279,110 @@ const AdminDashboard = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Cancellation Requests</p>
                 <p className="text-2xl font-bold text-gray-900">{dashboardStats.cancellationRequests}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Service-Specific Orders Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Orders by Service Type</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div 
+              onClick={() => navigate('/admin/orders?serviceType=car-wash')}
+              className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <p className="text-sm font-medium opacity-90">Car Wash</p>
+                  <p className="text-3xl font-bold mt-2">{serviceBreakdown.carWash}</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                </div>
+                <div className="text-4xl opacity-80">🚗</div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate('/admin/orders?serviceType=green-clean')}
+              className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <p className="text-sm font-medium opacity-90">Green & Clean</p>
+                  <p className="text-3xl font-bold mt-2">{serviceBreakdown.greenClean}</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                </div>
+                <div className="text-4xl opacity-80">🌿</div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate('/admin/orders?serviceType=movers-packers')}
+              className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <p className="text-sm font-medium opacity-90">Movers & Packers</p>
+                  <p className="text-3xl font-bold mt-2">{serviceBreakdown.moversPackers}</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                </div>
+                <div className="text-4xl opacity-80">📦</div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate('/admin/orders?serviceType=painting')}
+              className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <p className="text-sm font-medium opacity-90">Painting Services</p>
+                  <p className="text-3xl font-bold mt-2">{serviceBreakdown.painting}</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                </div>
+                <div className="text-4xl opacity-80">🎨</div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate('/admin/orders?serviceType=laundry')}
+              className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <p className="text-sm font-medium opacity-90">Laundry</p>
+                  <p className="text-3xl font-bold mt-2">{serviceBreakdown.laundry}</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                </div>
+                <div className="text-4xl opacity-80">👔</div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate('/admin/orders?serviceType=vehicle-checkup')}
+              className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <p className="text-sm font-medium opacity-90">Vehicle Checkup</p>
+                  <p className="text-3xl font-bold mt-2">{serviceBreakdown.vehicleCheckup}</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                </div>
+                <div className="text-4xl opacity-80">🔧</div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate('/admin/orders?serviceType=insurance')}
+              className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <p className="text-sm font-medium opacity-90">Insurance</p>
+                  <p className="text-3xl font-bold mt-2">{serviceBreakdown.insurance}</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                </div>
+                <div className="text-4xl opacity-80">🛡️</div>
               </div>
             </div>
           </div>

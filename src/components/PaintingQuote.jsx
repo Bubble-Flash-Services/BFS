@@ -103,17 +103,61 @@ const PaintingQuote = ({ onClose }) => {
     setLoading(true);
 
     try {
-      // In a real application, you would upload photos and submit the form data
-      // For now, we'll simulate the API call
-      await new Promise((resolve) => setTimeout(resolve, FORM_SUBMISSION_DELAY));
+      // Check if user is authenticated
+      if (!user || !user.token) {
+        toast.error("Please login to submit a quote request");
+        setLoading(false);
+        return;
+      }
 
-      setSubmitted(true);
-      toast.success("Quote request submitted successfully!");
+      // Prepare quote data
+      const quoteData = {
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        propertyType: formData.propertyType,
+        area: parseFloat(formData.area),
+        address: formData.address,
+        serviceType: formData.serviceType,
+        paintBrand: formData.paintBrand,
+        colorPreferences: formData.colorPreferences,
+        additionalRequirements: formData.additionalRequirements,
+        inspectionDate: formData.inspectionDate || null,
+        inspectionTime: formData.inspectionTime || null
+        // Note: Photo upload feature to be implemented in future version
+      };
 
-      // Auto close after delay
-      setTimeout(() => {
-        onClose();
-      }, AUTO_CLOSE_DELAY);
+      // Validate area is a valid number
+      if (isNaN(quoteData.area) || quoteData.area <= 0) {
+        toast.error("Please enter a valid area in square feet");
+        setLoading(false);
+        return;
+      }
+
+      // Submit to API
+      const API = import.meta.env.VITE_API_URL || window.location.origin;
+      const response = await fetch(`${API}/api/painting/quote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify(quoteData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitted(true);
+        toast.success("Quote request submitted successfully!");
+
+        // Auto close after delay
+        setTimeout(() => {
+          onClose();
+        }, AUTO_CLOSE_DELAY);
+      } else {
+        toast.error(result.message || "Failed to submit quote request. Please try again.");
+      }
     } catch (error) {
       console.error("Error submitting quote:", error);
       toast.error("Failed to submit quote request. Please try again.");

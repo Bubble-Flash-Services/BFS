@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { 
   Search, 
   Filter, 
@@ -19,12 +20,14 @@ import toast from 'react-hot-toast';
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
 const OrdersManagement = () => {
+  const [searchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [paymentFilter, setPaymentFilter] = useState('all');
+  const [serviceTypeFilter, setServiceTypeFilter] = useState(searchParams.get('serviceType') || 'all');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [stats, setStats] = useState({
@@ -42,7 +45,7 @@ const OrdersManagement = () => {
   useEffect(() => {
     fetchOrders();
     fetchStats();
-  }, []);
+  }, [serviceTypeFilter, statusFilter]);
 
   const fetchOrders = async (isRefresh = false) => {
     try {
@@ -52,7 +55,18 @@ const OrdersManagement = () => {
         setLoading(true);
       }
 
-      const response = await fetch(`${API}/api/admin/orders`, {
+      const queryParams = new URLSearchParams();
+      if (serviceTypeFilter && serviceTypeFilter !== 'all') {
+        queryParams.append('serviceType', serviceTypeFilter);
+      }
+      if (statusFilter && statusFilter !== 'all') {
+        queryParams.append('status', statusFilter);
+      }
+
+      const queryString = queryParams.toString();
+      const url = `${API}/api/admin/orders${queryString ? `?${queryString}` : ''}`;
+      
+      const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -274,6 +288,22 @@ const OrdersManagement = () => {
                 />
               </div>
             </div>
+
+            {/* Service Type Filter */}
+            <select
+              value={serviceTypeFilter}
+              onChange={(e) => setServiceTypeFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">All Services</option>
+              <option value="car-wash">Car Wash</option>
+              <option value="green-clean">Green & Clean</option>
+              <option value="movers-packers">Movers & Packers</option>
+              <option value="painting">Painting Services</option>
+              <option value="laundry">Laundry</option>
+              <option value="vehicle-checkup">Vehicle Checkup</option>
+              <option value="insurance">Insurance</option>
+            </select>
 
             {/* Status Filter */}
             <select

@@ -27,6 +27,8 @@ import moversPackersAdminRoutes from './routes/moversPackersAdmin.js';
 import vehicleCheckupRoutes from './routes/vehicleCheckup.js';
 import vehicleAccessoriesRoutes from './routes/vehicleAccessories.js';
 import vehicleAccessoriesAdminRoutes from './routes/vehicleAccessoriesAdmin.js';
+import paintingQuotesRoutes from './routes/paintingQuotes.js';
+import paintingQuotesAdminRoutes from './routes/paintingQuotesAdmin.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import { configureCloudinary } from './services/cloudinary.js';
@@ -88,6 +90,10 @@ app.use('/api/vehicle-checkup', vehicleCheckupRoutes);
 // Vehicle Accessories routes
 app.use('/api/vehicle-accessories', vehicleAccessoriesRoutes);
 app.use('/api/admin/vehicle-accessories', vehicleAccessoriesAdminRoutes);
+
+// Painting Services routes
+app.use('/api/painting', paintingQuotesRoutes);
+app.use('/api/admin/painting-quotes', paintingQuotesAdminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
