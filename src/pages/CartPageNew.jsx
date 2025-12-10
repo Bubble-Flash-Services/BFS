@@ -11,6 +11,7 @@ export default function CartPage() {
   const [alternateLocation, setAlternateLocation] = useState('');
   const [useAlternateLocation, setUseAlternateLocation] = useState(false);
   const [pickupDate, setPickupDate] = useState('');
+  const [pickupTime, setPickupTime] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedPayment, setSelectedPayment] = useState('');
 
@@ -39,6 +40,7 @@ export default function CartPage() {
       const data = JSON.parse(storedBooking);
       setSelectedLocation(data.address || '');
       setPickupDate(data.pickupDate || '');
+      setPickupTime(data.pickupTime || '');
       setPhoneNumber(data.phoneNumber || user?.phone || '');
     }
     
@@ -47,7 +49,7 @@ export default function CartPage() {
 
   const handlePlaceOrder = () => {
     // Validate required fields
-    if (!pickupDate || !phoneNumber || !selectedLocation || !selectedPayment) {
+    if (!pickupDate || !pickupTime || !phoneNumber || !selectedLocation || !selectedPayment) {
       alert('Please fill in all required fields');
       return;
     }
@@ -59,6 +61,7 @@ export default function CartPage() {
       address: selectedLocation,
       alternateAddress: useAlternateLocation ? alternateLocation : null,
       pickupDate,
+      pickupTime,
       phone: phoneNumber,
       paymentMethod: selectedPayment,
       userId: user?.id
@@ -466,18 +469,33 @@ export default function CartPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Calendar className="inline w-4 h-4 mr-1" />
-                    Pickup Date
-                  </label>
-                  <input
-                    type="date"
-                    value={pickupDate}
-                    onChange={(e) => setPickupDate(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <Calendar className="inline w-4 h-4 mr-1" />
+                      Service Date
+                    </label>
+                    <input
+                      type="date"
+                      value={pickupDate}
+                      onChange={(e) => setPickupDate(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <Clock className="inline w-4 h-4 mr-1" />
+                      Service Time
+                    </label>
+                    <input
+                      type="time"
+                      value={pickupTime}
+                      onChange={(e) => setPickupTime(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div>
