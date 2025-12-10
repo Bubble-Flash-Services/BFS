@@ -16,6 +16,9 @@ import EmergencyKeyService from "../../components/EmergencyKeyService";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
+// Constants
+const PENDING_KEY_SERVICE_BOOKING_KEY = "pendingKeyServiceBooking";
+
 const KeyServicesPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -102,7 +105,7 @@ const KeyServicesPage = () => {
   const handleSubmit = async () => {
     if (!user) {
       toast.error("Please sign in to book a service");
-      navigate("/");
+      // Don't navigate away, let user stay on the page to see services
       return;
     }
     if (!serviceType || !specificService) {
@@ -122,7 +125,7 @@ const KeyServicesPage = () => {
       timestamp: Date.now()
     };
     
-    localStorage.setItem("pendingKeyServiceBooking", JSON.stringify(bookingData));
+    localStorage.setItem(PENDING_KEY_SERVICE_BOOKING_KEY, JSON.stringify(bookingData));
     toast.success("Service selected! Please provide your booking details.");
     
     // Navigate to cart or a dedicated booking page where user can fill address and other details
