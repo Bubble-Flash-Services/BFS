@@ -47,6 +47,7 @@ import MoversPackersManagement from "./pages/admin/MoversPackersManagement";
 import GreenCleanManagement from "./pages/admin/GreenCleanManagement";
 import VehicleCheckupManagement from "./pages/admin/VehicleCheckupManagement";
 import VehicleAccessoriesManagement from "./pages/admin/VehicleAccessoriesManagement";
+import KeyServicesManagement from "./pages/admin/KeyServicesManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
 import EmployeeCompleted from "./pages/employee/EmployeeCompleted";
@@ -249,6 +250,14 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <MoversPackersManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/key-services"
+            element={
+              <ProtectedAdminRoute>
+                <KeyServicesManagement />
               </ProtectedAdminRoute>
             }
           />
