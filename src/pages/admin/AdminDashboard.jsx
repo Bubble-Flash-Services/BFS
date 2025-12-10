@@ -426,9 +426,9 @@ const AdminDashboard = () => {
             >
               <div className="flex items-center justify-between text-white">
                 <div>
-                  <p className="text-sm font-medium opacity-90">Painting Services</p>
+                  <p className="text-sm font-medium opacity-90">Painting Quotes</p>
                   <p className="text-3xl font-bold mt-2">{serviceBreakdown.painting}</p>
-                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view quotes</p>
                 </div>
                 <div className="text-4xl opacity-80">🎨</div>
               </div>
