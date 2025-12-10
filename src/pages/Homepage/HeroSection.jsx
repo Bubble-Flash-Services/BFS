@@ -1452,6 +1452,48 @@ export default function HeroSection() {
               </div>
             </div>
           </div>
+
+          {/* BFS Key Services Banner */}
+          <div className="relative overflow-hidden rounded-3xl border border-[#1F3C88]/10 shadow-[0_10px_30px_rgba(31,60,136,0.12)]">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0F52BA] via-[#2B4EA1] to-[#0F52BA]" />
+            <div className="pointer-events-none absolute -top-10 -right-10 w-48 h-48 bg-[#FFB400] rounded-full opacity-20 blur-2xl" />
+            <div className="pointer-events-none absolute -bottom-10 -left-10 w-56 h-56 bg-[#C0C0C0] rounded-full opacity-10 blur-3xl" />
+
+            <div className="relative p-6 md:p-10 text-white grid md:grid-cols-[1.5fr_1fr] gap-8">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="text-5xl">🔑</div>
+                  <span className="text-2xl md:text-3xl font-extrabold leading-tight bg-gradient-to-r from-yellow-400 via-silver-300 to-blue-700 bg-clip-text text-transparent">
+                    BFS Doorstep Key Services
+                  </span>
+                </div>
+                <div className="mt-4 text-sm md:text-base text-white/95">
+                  ✅ 24/7 Emergency Service • ✅ 30-min Response • ✅ Police-Verified Technicians
+                </div>
+                <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => navigate("/key-services")}
+                    className="px-5 py-3 rounded-xl font-semibold bg-[#FFB400] text-[#1F3C88] hover:brightness-105 transition-all"
+                  >
+                    Book Key Service
+                  </button>
+                  <a
+                    href="tel:+919591572775"
+                    className="px-5 py-3 rounded-xl font-semibold border-2 border-white/70 hover:bg-white/10 transition-all text-white text-center"
+                  >
+                    Emergency Call
+                  </a>
+                </div>
+              </div>
+              <div className="hidden md:flex items-center justify-center p-4">
+                <img
+                  src="https://static.vecteezy.com/system/resources/previews/033/867/065/non_2x/locksmith-key-cutting-service-illustration-concept-on-white-background-vector.jpg"
+                  alt="Key Services"
+                  className="rounded-2xl shadow-xl border border-white/10 max-h-60 object-cover"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
