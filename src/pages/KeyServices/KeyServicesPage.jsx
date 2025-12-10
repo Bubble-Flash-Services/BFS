@@ -182,13 +182,14 @@ const KeyServicesPage = () => {
       type: "key-services",
       category: category.title,
       name: service.name,
-      image: service.icon,
+      image: "/services/keys/key-duplication.jpg", // Use generic key image
+      icon: service.icon, // Store emoji icon separately
       price: priceQuote?.totalPrice || service.price,
       basePrice: priceQuote?.basePrice || service.price,
       quantity: quantity,
       isEmergency: isEmergency,
       nightService: nightService,
-      features: service.icon ? [service.icon] : [],
+      features: [service.name],
       serviceCategory: category.title,
       metadata: {
         serviceType: serviceType,
