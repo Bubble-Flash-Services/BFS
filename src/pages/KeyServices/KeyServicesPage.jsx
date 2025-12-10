@@ -7,17 +7,19 @@ import {
   Lock,
   Shield,
   Clock,
+  Phone,
+  MapPin,
+  Calendar,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  User,
 } from "lucide-react";
 import { useAuth } from "../../components/AuthContext";
+import MapboxLocationPicker from "../../components/MapboxLocationPicker";
 import KeyServiceCard from "../../components/KeyServiceCard";
 import EmergencyKeyService from "../../components/EmergencyKeyService";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
-
-// Constants
-const PENDING_KEY_SERVICE_BOOKING_KEY = "pendingKeyServiceBooking";
 
 const KeyServicesPage = () => {
   const { user } = useAuth();
@@ -30,8 +32,16 @@ const KeyServicesPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [isEmergency, setIsEmergency] = useState(false);
   const [nightService, setNightService] = useState(false);
+  const [serviceLocation, setServiceLocation] = useState(null);
+  const [contactPhone, setContactPhone] = useState("");
+  const [alternateContact, setAlternateContact] = useState("");
+  const [preferredTime, setPreferredTime] = useState("");
+  const [specialInstructions, setSpecialInstructions] = useState("");
+  const [idProof, setIdProof] = useState("");
+  const [addressInput, setAddressInput] = useState("");
   const [priceQuote, setPriceQuote] = useState(null);
   const [loadingQuote, setLoadingQuote] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   // Service categories data
   const serviceCategories = {
@@ -39,40 +49,94 @@ const KeyServicesPage = () => {
       title: "Key Duplication",
       services: [
         { id: "house-key", name: "House/Door Key", price: 99, icon: "🏠" },
-        { id: "bike-key", name: "Bike Key (Non-Digital)", price: 149, icon: "🏍️" },
+        {
+          id: "bike-key",
+          name: "Bike Key (Non-Digital)",
+          price: 149,
+          icon: "🏍️",
+        },
         { id: "car-key", name: "Car Key (Non-Remote)", price: 299, icon: "🚗" },
-        { id: "cupboard-key", name: "Cupboard/Drawer Key", price: 79, icon: "🗄️" },
+        {
+          id: "cupboard-key",
+          name: "Cupboard/Drawer Key",
+          price: 79,
+          icon: "🗄️",
+        },
         { id: "mailbox-key", name: "Mailbox Key", price: 69, icon: "📬" },
-        { id: "padlock-key", name: "Padlock Key", price: 49, icon: "🔐" }
-      ]
+        { id: "padlock-key", name: "Padlock Key", price: 49, icon: "🔐" },
+      ],
     },
     "lock-services": {
       title: "Lock Services",
       services: [
-        { id: "emergency-lock-opening", name: "Emergency Lock Opening", price: "₹499 (day) / ₹799 (night)", icon: "🚨" },
+        {
+          id: "emergency-lock-opening",
+          name: "Emergency Lock Opening",
+          price: "₹499 (day) / ₹799 (night)",
+          icon: "🚨",
+        },
         { id: "lock-repair", name: "Lock Repair", price: 299, icon: "🔧" },
-        { id: "lock-replacement", name: "Lock Replacement", price: "₹599 + lock cost", icon: "🔄" },
-        { id: "lock-installation", name: "Lock Installation", price: "₹399 + lock cost", icon: "🔨" }
-      ]
+        {
+          id: "lock-replacement",
+          name: "Lock Replacement",
+          price: "₹599 + lock cost",
+          icon: "🔄",
+        },
+        {
+          id: "lock-installation",
+          name: "Lock Installation",
+          price: "₹399 + lock cost",
+          icon: "🔨",
+        },
+      ],
     },
     "advanced-services": {
       title: "Advanced Services",
       services: [
-        { id: "safe-key-services", name: "Safe Key Services", price: "Starting ₹1,999", icon: "🏦" },
-        { id: "digital-lock-programming", name: "Digital Lock Programming", price: 799, icon: "🔢" },
-        { id: "master-key-system", name: "Master Key System Setup", price: "Starting ₹2,999", icon: "👑" },
-        { id: "lock-rekeying", name: "Lock Rekeying", price: 399, icon: "🔑" }
-      ]
+        {
+          id: "safe-key-services",
+          name: "Safe Key Services",
+          price: "Starting ₹1,999",
+          icon: "🏦",
+        },
+        {
+          id: "digital-lock-programming",
+          name: "Digital Lock Programming",
+          price: 799,
+          icon: "🔢",
+        },
+        {
+          id: "master-key-system",
+          name: "Master Key System Setup",
+          price: "Starting ₹2,999",
+          icon: "👑",
+        },
+        { id: "lock-rekeying", name: "Lock Rekeying", price: 399, icon: "🔑" },
+      ],
     },
     "specialized-keys": {
       title: "Specialized Keys",
       services: [
-        { id: "car-remote-key", name: "Car Remote Key Programming", price: 1499, icon: "📡" },
-        { id: "transponder-key", name: "Transponder Key", price: 2499, icon: "🔐" },
-        { id: "smart-key-fob", name: "Smart Key Fob", price: 3499, icon: "📱" }
-      ]
-    }
+        {
+          id: "car-remote-key",
+          name: "Car Remote Key Programming",
+          price: 1499,
+          icon: "📡",
+        },
+        {
+          id: "transponder-key",
+          name: "Transponder Key",
+          price: 2499,
+          icon: "🔐",
+        },
+        { id: "smart-key-fob", name: "Smart Key Fob", price: 3499, icon: "📱" },
+      ],
+    },
   };
+
+  useEffect(() => {
+    if (user?.phone) setContactPhone(user.phone);
+  }, [user]);
 
   useEffect(() => {
     if (serviceType && specificService) {
@@ -90,8 +154,8 @@ const KeyServicesPage = () => {
           serviceType,
           specificService,
           quantity,
-          nightService
-        })
+          nightService,
+        }),
       });
       const data = await response.json();
       if (data.success) setPriceQuote(data.data);
@@ -102,41 +166,68 @@ const KeyServicesPage = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!user) {
       toast.error("Please sign in to book a service");
-      // Don't navigate away, let user stay on the page to see services
       return;
     }
-    if (!serviceType || !specificService) {
-      toast.error("Please select a service");
+    if (!serviceType || !specificService || !serviceLocation || !contactPhone) {
+      toast.error("Please fill in all required fields");
       return;
     }
 
-    // Store the booking details in localStorage to be used in the cart/checkout flow
-    const bookingData = {
-      type: "key-service",
-      serviceType,
-      specificService,
-      keyType,
-      quantity,
-      isEmergency,
-      nightService,
-      timestamp: Date.now()
-    };
-    
-    localStorage.setItem(PENDING_KEY_SERVICE_BOOKING_KEY, JSON.stringify(bookingData));
-    toast.success("Service selected! Please provide your booking details.");
-    
-    // Navigate to cart or a dedicated booking page where user can fill address and other details
-    navigate("/cart");
+    setSubmitting(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${API}/api/key-services/booking`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          serviceType,
+          specificService,
+          keyType,
+          quantity,
+          isEmergency,
+          nightService,
+          serviceLocation,
+          contactPhone,
+          alternateContact,
+          preferredTime: !isEmergency ? preferredTime : null,
+          specialInstructions,
+          idProof,
+          user,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast.success(data.message);
+        if (isEmergency) {
+          toast.success(`Verification Code: ${data.data.verificationCode}`, {
+            duration: 10000,
+          });
+        }
+        setTimeout(() => navigate("/orders"), 2000);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      toast.error("Failed to create booking");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleServiceSelect = (type, serviceId) => {
     setServiceType(type);
     setSpecificService(serviceId);
     const category = serviceCategories[type];
-    const service = category.services.find(s => s.id === serviceId);
+    const service = category.services.find((s) => s.id === serviceId);
     if (service) {
       setKeyType({ name: service.name, description: "" });
     }
@@ -159,7 +250,7 @@ const KeyServicesPage = () => {
           <p className="text-xl text-gray-600 mb-6">
             Professional key duplication and lock services at your doorstep
           </p>
-          
+
           <div className="flex flex-wrap justify-center gap-6 mt-8">
             <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
               <Shield className="w-5 h-5 text-green-600" />
@@ -246,29 +337,102 @@ const KeyServicesPage = () => {
             </motion.div>
 
             {specificService && (
-              <motion.div
+              <motion.form
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                onSubmit={handleSubmit}
                 className="bg-white rounded-2xl shadow-lg p-6 mt-8"
               >
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Ready to Book?
+                  {isEmergency ? "Emergency Booking" : "Booking Details"}
                 </h2>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                  <div className="flex gap-3">
-                    <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-800">
-                      <p className="font-medium mb-2">You've selected:</p>
-                      <p className="text-lg font-bold text-blue-900 mb-2">{keyType.name}</p>
-                      {serviceType === "key-duplication" && (
-                        <p className="text-sm">Quantity: {quantity}</p>
-                      )}
-                      {nightService && (
-                        <p className="text-sm">Night Service (10PM - 6AM)</p>
-                      )}
-                    </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    Service Location *
+                  </label>
+                  <MapboxLocationPicker
+                    onLocationSelect={(location) => {
+                      setServiceLocation(location);
+                      setAddressInput(location.fullAddress);
+                    }}
+                    placeholder="Enter your service location"
+                  />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <Phone className="w-4 h-4" />
+                      Contact Phone *
+                    </label>
+                    <input
+                      type="tel"
+                      value={contactPhone}
+                      onChange={(e) => setContactPhone(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Alternate Contact
+                    </label>
+                    <input
+                      type="tel"
+                      value={alternateContact}
+                      onChange={(e) => setAlternateContact(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {!isEmergency && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      Preferred Date & Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={preferredTime}
+                      onChange={(e) => setPreferredTime(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      min={new Date().toISOString().slice(0, 16)}
+                    />
+                  </div>
+                )}
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    ID Proof Type
+                  </label>
+                  <select
+                    value={idProof}
+                    onChange={(e) => setIdProof(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select ID Proof</option>
+                    <option value="aadhar">Aadhar Card</option>
+                    <option value="pan">PAN Card</option>
+                    <option value="driving-license">Driving License</option>
+                    <option value="passport">Passport</option>
+                  </select>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Special Instructions
+                  </label>
+                  <textarea
+                    value={specialInstructions}
+                    onChange={(e) => setSpecialInstructions(e.target.value)}
+                    rows="3"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Any specific requirements..."
+                  />
                 </div>
 
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
@@ -286,23 +450,23 @@ const KeyServicesPage = () => {
                 </div>
 
                 <button
-                  onClick={handleSubmit}
-                  disabled={!user}
+                  type="submit"
+                  disabled={submitting || !serviceLocation}
                   className={`w-full py-4 rounded-lg font-semibold text-white transition-all ${
-                    !user
+                    submitting || !serviceLocation
                       ? "bg-gray-400 cursor-not-allowed"
                       : isEmergency
                       ? "bg-red-600 hover:bg-red-700"
                       : "bg-blue-600 hover:bg-blue-700"
                   }`}
                 >
-                  {!user
-                    ? "Please Sign In to Book"
+                  {submitting
+                    ? "Booking..."
                     : isEmergency
                     ? "🚨 Book Emergency Service"
                     : "Book Service"}
                 </button>
-              </motion.div>
+              </motion.form>
             )}
           </div>
 
@@ -325,7 +489,9 @@ const KeyServicesPage = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Base Price:</span>
-                    <span className="font-semibold">₹{priceQuote.basePrice}</span>
+                    <span className="font-semibold">
+                      ₹{priceQuote.basePrice}
+                    </span>
                   </div>
                   {priceQuote.nightSurcharge > 0 && (
                     <div className="flex justify-between items-center">
@@ -343,9 +509,11 @@ const KeyServicesPage = () => {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="border-t pt-4 space-y-2">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Includes:</p>
+                    <p className="text-sm font-medium text-gray-700 mb-2">
+                      Includes:
+                    </p>
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <CheckCircle className="w-4 h-4 text-green-500" />
@@ -401,11 +569,36 @@ const KeyServicesPage = () => {
           </h2>
           <div className="grid md:grid-cols-5 gap-6">
             {[
-              { step: "1", title: "Book Service", desc: "Online or call", icon: "📱" },
-              { step: "2", title: "Technician Arrives", desc: "With mobile key machine", icon: "🚐" },
-              { step: "3", title: "Verify Ownership", desc: "ID verification", icon: "🆔" },
-              { step: "4", title: "Create Keys", desc: "On-site key making", icon: "🔑" },
-              { step: "5", title: "Test & Pay", desc: "Test all keys", icon: "✅" }
+              {
+                step: "1",
+                title: "Book Service",
+                desc: "Online or call",
+                icon: "📱",
+              },
+              {
+                step: "2",
+                title: "Technician Arrives",
+                desc: "With mobile key machine",
+                icon: "🚐",
+              },
+              {
+                step: "3",
+                title: "Verify Ownership",
+                desc: "ID verification",
+                icon: "🆔",
+              },
+              {
+                step: "4",
+                title: "Create Keys",
+                desc: "On-site key making",
+                icon: "🔑",
+              },
+              {
+                step: "5",
+                title: "Test & Pay",
+                desc: "Test all keys",
+                icon: "✅",
+              },
             ].map((item, index) => (
               <div key={index} className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
@@ -414,7 +607,9 @@ const KeyServicesPage = () => {
                 <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
                   {item.step}
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  {item.title}
+                </h3>
                 <p className="text-sm text-gray-600">{item.desc}</p>
               </div>
             ))}
