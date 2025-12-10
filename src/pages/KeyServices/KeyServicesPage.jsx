@@ -13,9 +13,10 @@ import {
   AlertCircle,
   CheckCircle,
   User,
+  ShoppingCart,
 } from "lucide-react";
 import { useAuth } from "../../components/AuthContext";
-import MapboxLocationPicker from "../../components/MapboxLocationPicker";
+import { useCart } from "../../components/CartContext";
 import KeyServiceCard from "../../components/KeyServiceCard";
 import EmergencyKeyService from "../../components/EmergencyKeyService";
 
@@ -23,6 +24,7 @@ const API = import.meta.env.VITE_API_URL || window.location.origin;
 
 const KeyServicesPage = () => {
   const { user } = useAuth();
+  const { addToCart, cartItems } = useCart();
   const navigate = useNavigate();
 
   // Form state
@@ -32,16 +34,8 @@ const KeyServicesPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [isEmergency, setIsEmergency] = useState(false);
   const [nightService, setNightService] = useState(false);
-  const [serviceLocation, setServiceLocation] = useState(null);
-  const [contactPhone, setContactPhone] = useState("");
-  const [alternateContact, setAlternateContact] = useState("");
-  const [preferredTime, setPreferredTime] = useState("");
-  const [specialInstructions, setSpecialInstructions] = useState("");
-  const [idProof, setIdProof] = useState("");
-  const [addressInput, setAddressInput] = useState("");
   const [priceQuote, setPriceQuote] = useState(null);
   const [loadingQuote, setLoadingQuote] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   // Service categories data
   const serviceCategories = {
@@ -135,10 +129,6 @@ const KeyServicesPage = () => {
   };
 
   useEffect(() => {
-    if (user?.phone) setContactPhone(user.phone);
-  }, [user]);
-
-  useEffect(() => {
     if (serviceType && specificService) {
       fetchPriceQuote();
     }
@@ -166,61 +156,57 @@ const KeyServicesPage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleAddToCart = () => {
     if (!user) {
       toast.error("Please sign in to book a service");
+      navigate("/login");
       return;
     }
-    if (!serviceType || !specificService || !serviceLocation || !contactPhone) {
-      toast.error("Please fill in all required fields");
+    if (!serviceType || !specificService) {
+      toast.error("Please select a service");
       return;
     }
 
-    setSubmitting(true);
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API}/api/key-services/booking`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          serviceType,
-          specificService,
-          keyType,
-          quantity,
-          isEmergency,
-          nightService,
-          serviceLocation,
-          contactPhone,
-          alternateContact,
-          preferredTime: !isEmergency ? preferredTime : null,
-          specialInstructions,
-          idProof,
-          user,
-        }),
-      });
+    // Get the selected service details
+    const category = serviceCategories[serviceType];
+    const service = category.services.find((s) => s.id === specificService);
 
-      const data = await response.json();
-      if (data.success) {
-        toast.success(data.message);
-        if (isEmergency) {
-          toast.success(`Verification Code: ${data.data.verificationCode}`, {
-            duration: 10000,
-          });
-        }
-        setTimeout(() => navigate("/orders"), 2000);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      console.error("Error creating booking:", error);
-      toast.error("Failed to create booking");
-    } finally {
-      setSubmitting(false);
+    if (!service) {
+      toast.error("Service not found");
+      return;
     }
+
+    // Create cart item
+    const cartItem = {
+      id: `key-${specificService}-${Date.now()}`,
+      type: "key-services",
+      category: category.title,
+      name: service.name,
+      image: service.icon,
+      price: priceQuote?.totalPrice || service.price,
+      basePrice: priceQuote?.basePrice || service.price,
+      quantity: quantity,
+      isEmergency: isEmergency,
+      nightService: nightService,
+      features: service.icon ? [service.icon] : [],
+      serviceCategory: category.title,
+      metadata: {
+        serviceType: serviceType,
+        specificService: specificService,
+        serviceId: service.id,
+        isEmergency: isEmergency,
+        nightService: nightService,
+      },
+    };
+
+    addToCart(cartItem);
+    toast.success(`${service.name} added to cart!`, {
+      icon: "🔑",
+      duration: 2000,
+    });
+
+    // Navigate to cart
+    setTimeout(() => navigate("/cart"), 500);
   };
 
   const handleServiceSelect = (type, serviceId) => {
@@ -231,6 +217,10 @@ const KeyServicesPage = () => {
     if (service) {
       setKeyType({ name: service.name, description: "" });
     }
+  };
+
+  const getCartItemCount = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
   return (
@@ -269,6 +259,23 @@ const KeyServicesPage = () => {
 
         {!isEmergency && (
           <EmergencyKeyService onEmergencyClick={() => setIsEmergency(true)} />
+        )}
+
+        {/* Shopping Cart Badge */}
+        {getCartItemCount() > 0 && (
+          <motion.button
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            onClick={() => navigate("/cart")}
+            className="fixed bottom-8 right-8 z-50 bg-blue-600 text-white rounded-full p-4 shadow-2xl hover:scale-110 transition-transform"
+          >
+            <div className="relative">
+              <ShoppingCart className="w-6 h-6" />
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {getCartItemCount()}
+              </span>
+            </div>
+          </motion.button>
         )}
 
         <div className="grid lg:grid-cols-3 gap-8 mt-12">
@@ -337,112 +344,24 @@ const KeyServicesPage = () => {
             </motion.div>
 
             {specificService && (
-              <motion.form
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                onSubmit={handleSubmit}
                 className="bg-white rounded-2xl shadow-lg p-6 mt-8"
               >
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  {isEmergency ? "Emergency Booking" : "Booking Details"}
+                  {isEmergency ? "Emergency Service Selected" : "Selected Service"}
                 </h2>
-
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    Service Location *
-                  </label>
-                  <MapboxLocationPicker
-                    onLocationSelect={(location) => {
-                      setServiceLocation(location);
-                      setAddressInput(location.fullAddress);
-                    }}
-                    placeholder="Enter your service location"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <Phone className="w-4 h-4" />
-                      Contact Phone *
-                    </label>
-                    <input
-                      type="tel"
-                      value={contactPhone}
-                      onChange={(e) => setContactPhone(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Alternate Contact
-                    </label>
-                    <input
-                      type="tel"
-                      value={alternateContact}
-                      onChange={(e) => setAlternateContact(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {!isEmergency && (
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      Preferred Date & Time
-                    </label>
-                    <input
-                      type="datetime-local"
-                      value={preferredTime}
-                      onChange={(e) => setPreferredTime(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                      min={new Date().toISOString().slice(0, 16)}
-                    />
-                  </div>
-                )}
-
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    ID Proof Type
-                  </label>
-                  <select
-                    value={idProof}
-                    onChange={(e) => setIdProof(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select ID Proof</option>
-                    <option value="aadhar">Aadhar Card</option>
-                    <option value="pan">PAN Card</option>
-                    <option value="driving-license">Driving License</option>
-                    <option value="passport">Passport</option>
-                  </select>
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Special Instructions
-                  </label>
-                  <textarea
-                    value={specialInstructions}
-                    onChange={(e) => setSpecialInstructions(e.target.value)}
-                    rows="3"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="Any specific requirements..."
-                  />
-                </div>
 
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                   <div className="flex gap-2">
                     <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-yellow-800">
-                      <p className="font-medium mb-1">Security Notice:</p>
+                      <p className="font-medium mb-1">Service Information:</p>
                       <ul className="list-disc list-inside space-y-1 text-xs">
+                        <li>Add to cart and proceed to checkout</li>
+                        <li>Provide location, date, time, and contact details in cart</li>
                         <li>ID verification required before service</li>
-                        <li>Ownership proof mandatory for lock opening</li>
                         <li>All technicians are police-verified</li>
                       </ul>
                     </div>
@@ -450,23 +369,16 @@ const KeyServicesPage = () => {
                 </div>
 
                 <button
-                  type="submit"
-                  disabled={submitting || !serviceLocation}
+                  onClick={handleAddToCart}
                   className={`w-full py-4 rounded-lg font-semibold text-white transition-all ${
-                    submitting || !serviceLocation
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : isEmergency
+                    isEmergency
                       ? "bg-red-600 hover:bg-red-700"
                       : "bg-blue-600 hover:bg-blue-700"
                   }`}
                 >
-                  {submitting
-                    ? "Booking..."
-                    : isEmergency
-                    ? "🚨 Book Emergency Service"
-                    : "Book Service"}
+                  {isEmergency ? "🚨 Add Emergency Service to Cart" : "🔑 Book Service"}
                 </button>
-              </motion.form>
+              </motion.div>
             )}
           </div>
 
