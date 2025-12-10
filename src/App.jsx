@@ -48,6 +48,7 @@ import GreenCleanManagement from "./pages/admin/GreenCleanManagement";
 import VehicleCheckupManagement from "./pages/admin/VehicleCheckupManagement";
 import VehicleAccessoriesManagement from "./pages/admin/VehicleAccessoriesManagement";
 import KeyServicesManagement from "./pages/admin/KeyServicesManagement";
+import PaintingServicesManagement from "./pages/admin/PaintingServicesManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
 import EmployeeCompleted from "./pages/employee/EmployeeCompleted";
@@ -274,6 +275,14 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <VehicleAccessoriesManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/painting-services"
+            element={
+              <ProtectedAdminRoute>
+                <PaintingServicesManagement />
               </ProtectedAdminRoute>
             }
           />
