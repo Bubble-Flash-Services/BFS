@@ -86,6 +86,19 @@ router.get('/', authenticateAdmin, async (req, res) => {
           }));
           break;
           
+        case 'washing-services':
+          const washingServicesFilter = { 
+            'items.category': { 
+              $in: ['Car Wash', 'Bike Wash', 'Helmet Wash'] 
+            } 
+          };
+          if (status && status !== 'all') washingServicesFilter.orderStatus = status;
+          serviceOrders = await Order.find(washingServicesFilter)
+            .populate('userId', 'name email phone')
+            .sort({ createdAt: -1 })
+            .limit(1000);
+          break;
+          
         case 'car-wash':
           const carWashFilter = { 'items.category': 'Car Wash' };
           if (status && status !== 'all') carWashFilter.orderStatus = status;
