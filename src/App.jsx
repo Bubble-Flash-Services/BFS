@@ -48,6 +48,7 @@ import GreenCleanManagement from "./pages/admin/GreenCleanManagement";
 import VehicleCheckupManagement from "./pages/admin/VehicleCheckupManagement";
 import VehicleAccessoriesManagement from "./pages/admin/VehicleAccessoriesManagement";
 import KeyServicesManagement from "./pages/admin/KeyServicesManagement";
+import LaundryManagement from "./pages/admin/LaundryManagement";
 import PaintingServicesManagement from "./pages/admin/PaintingServicesManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
@@ -256,6 +257,14 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <KeyServicesManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/laundry"
+            element={
+              <ProtectedAdminRoute>
+                <LaundryManagement />
               </ProtectedAdminRoute>
             }
           />

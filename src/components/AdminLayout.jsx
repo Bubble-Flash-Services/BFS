@@ -15,7 +15,9 @@ import {
   Shield,
   ClipboardCheck,
   Wrench,
-  ShoppingBag
+  ShoppingBag,
+  Key,
+  Shirt
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -88,6 +90,18 @@ const AdminLayout = ({ children }) => {
       href: "/admin/green-clean",
       icon: Leaf,
       active: location.pathname === "/admin/green-clean",
+    },
+    {
+      name: "Key Services",
+      href: "/admin/key-services",
+      icon: Key,
+      active: location.pathname === "/admin/key-services",
+    },
+    {
+      name: "Laundry Services",
+      href: "/admin/laundry",
+      icon: Shirt,
+      active: location.pathname === "/admin/laundry",
     },
     {
       name: "Coupons",
