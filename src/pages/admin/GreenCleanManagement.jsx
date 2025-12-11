@@ -96,9 +96,6 @@ const GreenCleanManagement = () => {
     } catch (error) {
       console.error('Error fetching bookings:', error);
       toast.error('Failed to fetch bookings');
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-      toast.error('Failed to fetch bookings');
     } finally {
       setLoading(false);
     }
@@ -236,29 +233,30 @@ const GreenCleanManagement = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      // GreenBooking statuses
-      created: 'bg-yellow-100 text-yellow-800',
-      assigned: 'bg-blue-100 text-blue-800',
+      // Shared statuses
       in_progress: 'bg-purple-100 text-purple-800',
       completed: 'bg-green-100 text-green-800',
       cancelled: 'bg-red-100 text-red-800',
-      // Order model statuses
+      // GreenBooking specific
+      created: 'bg-yellow-100 text-yellow-800',
+      assigned: 'bg-blue-100 text-blue-800',
+      // Order model specific
       pending: 'bg-yellow-100 text-yellow-800',
       confirmed: 'bg-blue-100 text-blue-800',
-      in_progress: 'bg-purple-100 text-purple-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
   const getStatusIcon = (status) => {
     const icons = {
-      // GreenBooking statuses
-      created: Clock,
-      assigned: CheckCircle,
+      // Shared statuses
       in_progress: Package,
       completed: CheckCircle,
       cancelled: XCircle,
-      // Order model statuses
+      // GreenBooking specific
+      created: Clock,
+      assigned: CheckCircle,
+      // Order model specific
       pending: Clock,
       confirmed: CheckCircle,
     };
