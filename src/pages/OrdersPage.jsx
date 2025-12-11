@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 import { useAuth } from "../components/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +36,39 @@ export default function OrdersPage() {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [serviceNameFilter, setServiceNameFilter] = useState("all");
+
+  // Memoize unique service names for filter dropdown
+  const uniqueServiceNames = useMemo(() => {
+    return Array.from(
+      new Set(
+        orders.flatMap((order) =>
+          (order.items || []).map(
+            (item) =>
+              item.serviceName ||
+              item.serviceId?.name ||
+              item.category ||
+              "Unknown"
+          )
+        )
+      )
+    ).sort();
+  }, [orders]);
+
+  // Memoize filtered orders
+  const filteredOrders = useMemo(() => {
+    if (serviceNameFilter === "all") {
+      return orders;
+    }
+    return orders.filter((order) =>
+      (order.items || []).some(
+        (item) =>
+          (item.serviceName ||
+            item.serviceId?.name ||
+            item.category ||
+            "Unknown") === serviceNameFilter
+      )
+    );
+  }, [orders, serviceNameFilter]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -1082,26 +1115,11 @@ export default function OrdersPage() {
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="all">All Services</option>
-                {/* Extract unique service names from orders */}
-                {Array.from(
-                  new Set(
-                    orders.flatMap((order) =>
-                      (order.items || []).map(
-                        (item) =>
-                          item.serviceName ||
-                          item.serviceId?.name ||
-                          item.category ||
-                          "Unknown"
-                      )
-                    )
-                  )
-                )
-                  .sort()
-                  .map((serviceName) => (
-                    <option key={serviceName} value={serviceName}>
-                      {serviceName}
-                    </option>
-                  ))}
+                {uniqueServiceNames.map((serviceName) => (
+                  <option key={serviceName} value={serviceName}>
+                    {serviceName}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -1132,39 +1150,24 @@ export default function OrdersPage() {
         {!loadingOrders &&
           !error &&
           activeTab === "services" &&
-          (() => {
-            // Filter orders by serviceName
-            const filteredOrders =
-              serviceNameFilter === "all"
-                ? orders
-                : orders.filter((order) =>
-                    (order.items || []).some(
-                      (item) =>
-                        (item.serviceName ||
-                          item.serviceId?.name ||
-                          item.category ||
-                          "Unknown") === serviceNameFilter
-                    )
-                  );
-
-            return filteredOrders.length === 0 ? (
-              <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-                <Package size={64} className="text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  {orders.length === 0 ? "No Orders Yet" : "No Matching Orders"}
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  {orders.length === 0
-                    ? "You haven't placed any orders yet. Start by browsing our services!"
-                    : "No orders found for the selected service. Try selecting a different service."}
-                </p>
-                {orders.length === 0 && (
-                  <button
-                    onClick={() => navigate("/")}
-                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Browse Services
-                  </button>
+          (filteredOrders.length === 0 ? (
+            <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
+              <Package size={64} className="text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                {orders.length === 0 ? "No Orders Yet" : "No Matching Orders"}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {orders.length === 0
+                  ? "You haven't placed any orders yet. Start by browsing our services!"
+                  : "No orders found for the selected service. Try selecting a different service."}
+              </p>
+              {orders.length === 0 && (
+                <button
+                  onClick={() => navigate("/")}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Browse Services
+                </button>
                 )}
               </div>
             ) : (
@@ -1257,8 +1260,7 @@ export default function OrdersPage() {
                 </div>
               ))}
             </div>
-          );
-        })()}
+          ))}
 
         {/* Movers & Packers Bookings List */}
         {!loadingOrders &&
