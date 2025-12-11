@@ -5,6 +5,17 @@ import { authenticateAdmin } from "../middleware/authAdmin.js";
 
 const router = express.Router();
 
+// Helper function to normalize status from Order to KeyServiceBooking format
+function normalizeOrderStatus(orderStatus) {
+  // Order: pending, confirmed, assigned, in_progress, completed, cancelled
+  // KeyServiceBooking: pending, assigned, in-progress, completed, cancelled
+  const statusMap = {
+    'in_progress': 'in-progress',
+    'confirmed': 'pending',  // Map confirmed orders to pending for display
+  };
+  return statusMap[orderStatus] || orderStatus;
+}
+
 // Get all bookings with optional filters (includes both direct bookings and cart orders)
 router.get("/bookings", authenticateAdmin, async (req, res) => {
   try {
@@ -24,7 +35,14 @@ router.get("/bookings", authenticateAdmin, async (req, res) => {
     // Build filter for cart orders
     const orderFilter = { 'items.type': 'key-services' };
     if (status) {
-      orderFilter.$or = [{ status }, { orderStatus: status }];
+      // Map KeyServiceBooking status to Order status
+      // KeyServiceBooking: pending, assigned, in-progress, completed, cancelled
+      // Order: pending, confirmed, assigned, in_progress, completed, cancelled
+      let orderStatus = status;
+      if (status === 'in-progress') {
+        orderStatus = 'in_progress'; // Handle hyphen vs underscore
+      }
+      orderFilter.orderStatus = orderStatus;
     }
     if (startDate || endDate) {
       orderFilter.createdAt = {};
@@ -47,6 +65,8 @@ router.get("/bookings", authenticateAdmin, async (req, res) => {
     // Transform cart orders to match booking structure for unified display
     const transformedCartOrders = cartOrders.map(order => {
       const keyServiceItem = order.items.find(item => item.type === 'key-services');
+      // Note: Cart-based key services are typically not emergency bookings
+      // Emergency services use the direct booking flow
       return {
         _id: order._id,
         userId: order.userId,
@@ -55,7 +75,7 @@ router.get("/bookings", authenticateAdmin, async (req, res) => {
         serviceType: keyServiceItem?.category || 'key-services',
         specificService: keyServiceItem?.serviceName || 'N/A',
         quantity: keyServiceItem?.quantity || 1,
-        isEmergency: false,
+        isEmergency: false,  // Cart orders are not emergency bookings
         serviceLocation: {
           fullAddress: order.serviceAddress?.fullAddress,
           city: order.serviceAddress?.city,
@@ -65,7 +85,7 @@ router.get("/bookings", authenticateAdmin, async (req, res) => {
         pricing: {
           totalPrice: order.totalAmount || keyServiceItem?.price
         },
-        status: order.orderStatus || order.status || 'pending',
+        status: normalizeOrderStatus(order.orderStatus || order.status || 'pending'),
         assignedTechnician: order.assignedEmployee,
         paymentStatus: order.paymentStatus,
         paymentMethod: order.paymentMethod,
@@ -342,14 +362,13 @@ router.get("/stats", authenticateAdmin, async (req, res) => {
       { $group: { _id: null, total: { $sum: "$pricing.totalPrice" } } },
     ]);
 
+    // For cart orders, consider revenue only when payment is completed
+    // (not when order is completed, as payment might still be pending)
     const cartRevenue = await Order.aggregate([
       { 
         $match: { 
-          ...orderFilter, 
-          $or: [
-            { paymentStatus: 'completed' },
-            { orderStatus: 'completed' }
-          ]
+          ...orderFilter,
+          paymentStatus: 'completed'  // Only count when payment is actually completed
         } 
       },
       { $unwind: "$items" },
