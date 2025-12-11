@@ -20,6 +20,14 @@ const LaundryManagement = () => {
   const [adminNotes, setAdminNotes] = useState('');
   const [stats, setStats] = useState(null);
 
+  // Default stats structure
+  const DEFAULT_STATS = {
+    totalBookings: 0,
+    totalRevenue: 0,
+    statusCounts: {},
+    itemTypes: []
+  };
+
   useEffect(() => {
     fetchBookings();
     fetchEmployees();
@@ -86,23 +94,13 @@ const LaundryManagement = () => {
         setStats(result.data);
       } else {
         // Set default stats if API returns unsuccessful response
-        setStats({
-          totalBookings: 0,
-          totalRevenue: 0,
-          statusCounts: {},
-          itemTypes: []
-        });
+        setStats(DEFAULT_STATS);
         toast.error(result.message || 'Failed to fetch statistics');
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
       // Set default stats on error
-      setStats({
-        totalBookings: 0,
-        totalRevenue: 0,
-        statusCounts: {},
-        itemTypes: []
-      });
+      setStats(DEFAULT_STATS);
       toast.error('Failed to fetch statistics');
     }
   };
