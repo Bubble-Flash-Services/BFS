@@ -84,9 +84,32 @@ const KeyServicesManagement = () => {
       const result = await response.json();
       if (result.success) {
         setStats(result.data);
+      } else {
+        // Set default stats if API returns unsuccessful response
+        setStats({
+          totalBookings: 0,
+          directBookings: 0,
+          cartOrders: 0,
+          emergencyBookings: 0,
+          statusCounts: {},
+          serviceTypeCounts: {},
+          totalRevenue: 0
+        });
+        toast.error(result.message || 'Failed to fetch statistics');
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Set default stats on error
+      setStats({
+        totalBookings: 0,
+        directBookings: 0,
+        cartOrders: 0,
+        emergencyBookings: 0,
+        statusCounts: {},
+        serviceTypeCounts: {},
+        totalRevenue: 0
+      });
+      toast.error('Failed to fetch statistics');
     }
   };
 

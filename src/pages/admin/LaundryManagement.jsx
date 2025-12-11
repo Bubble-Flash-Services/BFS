@@ -84,9 +84,26 @@ const LaundryManagement = () => {
       const result = await response.json();
       if (result.success) {
         setStats(result.data);
+      } else {
+        // Set default stats if API returns unsuccessful response
+        setStats({
+          totalBookings: 0,
+          totalRevenue: 0,
+          statusCounts: {},
+          itemTypes: []
+        });
+        toast.error(result.message || 'Failed to fetch statistics');
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Set default stats on error
+      setStats({
+        totalBookings: 0,
+        totalRevenue: 0,
+        statusCounts: {},
+        itemTypes: []
+      });
+      toast.error('Failed to fetch statistics');
     }
   };
 
