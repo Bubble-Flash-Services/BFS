@@ -107,7 +107,8 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       vehicleCheckupOrders,
       insuranceOrders,
       pucOrders,
-      keyServicesOrders,
+      keyServicesCartOrders,
+      keyServicesDirectBookings,
       vehicleAccessoriesOrders
     ] = await Promise.all([
       Order.countDocuments({ 'items.category': 'Car Wash' }),
@@ -118,9 +119,13 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       VehicleCheckupBooking.countDocuments(),
       Order.countDocuments({ 'items.category': 'Insurance' }),
       Order.countDocuments({ 'items.category': 'PUC Certificate' }),
+      Order.countDocuments({ 'items.type': 'key-services' }),
       KeyServiceBooking.countDocuments(),
-      Order.countDocuments({ 'items.category': 'Car Accessories' })
+      Order.countDocuments({ 'items.category': { $regex: 'Accessories', $options: 'i' } })
     ]);
+
+    // Total key services includes both cart orders and direct bookings
+    const keyServicesOrders = keyServicesCartOrders + keyServicesDirectBookings;
 
     res.json({
       success: true,
