@@ -1628,11 +1628,11 @@ export default function LaundryPage() {
   const proceedToAddToCart = () => {
     // Check all categories for items with quantities, regardless of active category
     const allCategoryItems = [
-      { items: clothingItems, categoryName: 'Laundry Service', serviceName: 'Laundry Service' },
-      { items: ironingItems, categoryName: 'Ironing Service', serviceName: 'Laundry Service' },
-      { items: dryCleanItems, categoryName: 'Dry Clean Service', serviceName: 'Laundry Service' },
-      { items: shoeCleanItems, categoryName: 'Shoe Clean Service', serviceName: 'Laundry Service' },
-      { items: bedsheetWashItems, categoryName: 'Bedsheet/Heavy Wash Service', serviceName: 'Laundry Service' }
+      { items: clothingItems, categoryName: 'Laundry Service', serviceName: 'laundry' },
+      { items: ironingItems, categoryName: 'Ironing Service', serviceName: 'laundry' },
+      { items: dryCleanItems, categoryName: 'Dry Clean Service', serviceName: 'laundry' },
+      { items: shoeCleanItems, categoryName: 'Shoe Clean Service', serviceName: 'laundry' },
+      { items: bedsheetWashItems, categoryName: 'Bedsheet/Heavy Wash Service', serviceName: 'laundry' }
     ];
     
     // Collect selected addons as uiAddOns
@@ -1672,7 +1672,7 @@ export default function LaundryPage() {
             const cartItem = {
               id: `laundry-${item.id}`,
               name: item.name,
-              serviceName: `${serviceName} - ${item.name}`, // Include serviceName parameter
+              serviceName: serviceName, // Use generic service name
               image: item.image,
               price: item.price,
               category: categoryName,

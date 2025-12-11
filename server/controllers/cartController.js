@@ -366,7 +366,7 @@ export const addToCart = async (req, res) => {
             bikewash: 'Basic Bike Wash',
             carwash: 'Basic Car Wash',
             helmet: 'Basic Helmet Wash',
-            laundry: 'Basic Laundry'
+            laundry: 'laundry'
           };
           const idStr = toStr(serviceId).toLowerCase();
           const key = Object.keys(categoryMap).find(cat => idStr.includes(cat));
@@ -381,7 +381,7 @@ export const addToCart = async (req, res) => {
             } else if (/(helmet)/i.test(toStr(type))) {
               fallbackServiceName = 'Basic Helmet Wash';
             } else if (/(laundry|wash & fold|dry)/i.test(toStr(type))) {
-              fallbackServiceName = 'Basic Laundry';
+              fallbackServiceName = 'laundry';
             } else {
               fallbackServiceName = 'Basic Car Wash';
             }
