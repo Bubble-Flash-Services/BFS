@@ -10,7 +10,7 @@ const BookingItemSchema = new Schema(
       required: true,
     },
     title: { type: String, required: true },
-    serviceName: { type: String },
+    serviceName: { type: String, default: 'washing' },
     price: { type: Number, required: true },
     quantity: { type: Number, default: 1 },
     durationMinutes: { type: Number, default: 0 },

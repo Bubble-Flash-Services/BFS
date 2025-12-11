@@ -9,7 +9,7 @@ const moversPackersSchema = new mongoose.Schema({
   // Service Name
   serviceName: {
     type: String,
-    default: 'Movers & Packers'
+    default: 'packers&movers'
   },
   // Basic Information
   moveType: {

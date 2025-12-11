@@ -998,7 +998,7 @@ export default function CarWashDeals() {
       id: `carwash-${selectedPackage.id}-${Date.now()}`,
       serviceId: `carwash-${selectedPackage.id}`,
       name: selectedPackage.name,
-      serviceName: selectedPackage.name,
+      serviceName: 'washing', // Hardcoded serviceName
   packageName: selectedPackage.name,
   image: selectedPackage.image || getCategoryBaseImage(),
       price: totalPrice,

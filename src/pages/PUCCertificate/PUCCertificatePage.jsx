@@ -167,7 +167,7 @@ export default function PUCCertificatePage() {
       id: `puc-${selectedVariant}-${Date.now()}`,
       serviceId: "vc-puc-001",
       name: `PUC Certificate - ${getSelectedVariantName()}`,
-      serviceName: `PUC Certificate - ${getSelectedVariantName()}`,
+      serviceName: 'puc', // Hardcoded serviceName
       price: getSelectedPrice(),
       quantity: 1,
       vehicleType: formData.vehicleType,

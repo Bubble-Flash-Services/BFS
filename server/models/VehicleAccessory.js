@@ -18,7 +18,8 @@ const vehicleAccessorySchema = new mongoose.Schema({
   },
   serviceName: {
     type: String,
-    maxlength: 200
+    maxlength: 200,
+    default: 'accessories'
   },
   description: {
     type: String,
