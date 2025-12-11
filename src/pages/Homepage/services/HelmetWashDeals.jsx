@@ -323,6 +323,7 @@ export default function HelmetWashDeals() {
     const cartItem = {
       id: `helmetwash-${category}-${selectedPackage.id}-${Date.now()}`,
       name: selectedPackage.name,
+      serviceName: selectedPackage.name,
   packageName: selectedPackage.name,
       image: selectedPackage.image,
       price: calculateTotal(),
