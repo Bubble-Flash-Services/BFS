@@ -114,7 +114,12 @@ router.get('/', authenticateAdmin, async (req, res) => {
           break;
           
         case 'green-clean':
-          const greenCleanFilter = { 'items.category': 'Green & Clean' };
+          const greenCleanFilter = { 
+            'items.category': { 
+              $regex: 'Green.*Clean', 
+              $options: 'i' 
+            } 
+          };
           if (status && status !== 'all') greenCleanFilter.orderStatus = status;
           serviceOrders = await Order.find(greenCleanFilter)
             .populate('userId', 'name email phone')
@@ -123,7 +128,12 @@ router.get('/', authenticateAdmin, async (req, res) => {
           break;
           
         case 'laundry':
-          const laundryFilter = { 'items.category': 'Laundry' };
+          const laundryFilter = { 
+            'items.category': { 
+              $regex: 'Laundry', 
+              $options: 'i' 
+            } 
+          };
           if (status && status !== 'all') laundryFilter.orderStatus = status;
           serviceOrders = await Order.find(laundryFilter)
             .populate('userId', 'name email phone')

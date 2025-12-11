@@ -11,8 +11,13 @@ router.get('/bookings', authenticateAdmin, async (req, res) => {
   try {
     const { status, page = 1, limit = 20, search } = req.query;
     
-    // Base query - find orders with laundry items
-    const query = { 'items.category': 'Laundry' };
+    // Base query - find orders with laundry items (match both old and new category formats)
+    const query = { 
+      'items.category': { 
+        $regex: 'Laundry', 
+        $options: 'i' 
+      } 
+    };
     
     // Validate and sanitize status input
     const validStatuses = ['pending', 'confirmed', 'assigned', 'in_progress', 'completed', 'cancelled'];
@@ -102,7 +107,12 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    const dateFilter = { 'items.category': 'Laundry' };
+    const dateFilter = { 
+      'items.category': { 
+        $regex: 'Laundry', 
+        $options: 'i' 
+      } 
+    };
     if (startDate || endDate) {
       dateFilter.createdAt = {};
       if (startDate) {

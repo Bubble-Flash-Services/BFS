@@ -101,7 +101,7 @@ export default function ServicePage() {
         vehicleType: item.vehicleType,
         specialInstructions: item.specialInstructions,
         type: item.type || "cleaning",
-        category: item.subcategory,
+        category: 'Green & Clean', // Standardized category for proper filtering in admin
         // uiAddOns is used by cart backend for calculating totals
         // packageDetails.addons is used for frontend display
         uiAddOns: selectedAddons.map(addon => ({
