@@ -124,6 +124,8 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       Order.countDocuments({ 'items.category': 'PUC Certificate' }),
       Order.countDocuments({ 'items.type': 'key-services' }),
       KeyServiceBooking.countDocuments(),
+      // Regex match for accessories - matches 'car Accessories', 'bike Accessories', 'common Accessories'
+      // Note: If performance becomes an issue, create index on items.category or use exact matches
       Order.countDocuments({ 'items.category': { $regex: 'Accessories', $options: 'i' } })
     ]);
 

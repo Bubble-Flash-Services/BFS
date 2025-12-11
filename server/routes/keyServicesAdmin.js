@@ -11,7 +11,7 @@ function normalizeOrderStatus(orderStatus) {
   // KeyServiceBooking: pending, assigned, in-progress, completed, cancelled
   const statusMap = {
     'in_progress': 'in-progress',
-    'confirmed': 'pending',  // Map confirmed orders to pending for display
+    'confirmed': 'pending',  // 'confirmed' in Order = payment done, awaiting assignment = 'pending' in KeyServiceBooking
   };
   return statusMap[orderStatus] || orderStatus;
 }
@@ -358,12 +358,13 @@ router.get("/stats", authenticateAdmin, async (req, res) => {
     ]);
 
     const directRevenue = await KeyServiceBooking.aggregate([
+      // KeyServiceBooking uses 'paid' status for completed payments
       { $match: { ...dateFilter, paymentStatus: "paid" } },
       { $group: { _id: null, total: { $sum: "$pricing.totalPrice" } } },
     ]);
 
     // For cart orders, consider revenue only when payment is completed
-    // (not when order is completed, as payment might still be pending)
+    // Order model uses 'completed' status for successful payments
     const cartRevenue = await Order.aggregate([
       { 
         $match: { 
