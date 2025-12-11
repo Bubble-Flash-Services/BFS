@@ -136,7 +136,7 @@ const VehicleCheckupPage = () => {
       id: `checkup-${vehicleType}-${selectedPackage}-${Date.now()}`,
       serviceId: `checkup-${vehicleType}-${selectedPackage}`,
       name: serviceName,
-      serviceName: serviceName,
+      serviceName: 'checkup', // Hardcoded serviceName
       packageName: packageData.name,
       price: totalPrice,
       quantity: 1,

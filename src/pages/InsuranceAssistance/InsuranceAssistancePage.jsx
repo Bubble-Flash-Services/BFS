@@ -188,7 +188,7 @@ export default function InsuranceAssistancePage() {
       id: `ins-${selectedVariant}-${Date.now()}`,
       serviceId: `ins-${selectedVariant}`,
       name: serviceData.title,
-      serviceName: serviceData.title,
+      serviceName: 'insurance', // Hardcoded serviceName
       packageName: selectedVariantData.name,
       variant: selectedVariantData.name,
       price: selectedVariantData.priceModifier,

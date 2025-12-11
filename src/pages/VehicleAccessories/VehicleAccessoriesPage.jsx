@@ -452,7 +452,7 @@ const QuickViewModal = ({ accessory, onClose }) => {
       id: _id,
       serviceId: _id,
       name: selectedVariant ? `${name} - ${selectedVariant.name}` : name,
-      serviceName: selectedVariant ? `${name} - ${selectedVariant.name}` : name,
+      serviceName: 'accessories', // Hardcoded serviceName
       price: displayPrice,
       image: images?.[0] || '/car/car1.png',
       img: images?.[0] || '/car/car1.png',

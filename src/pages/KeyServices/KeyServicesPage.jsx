@@ -182,7 +182,7 @@ const KeyServicesPage = () => {
       type: "key-services",
       category: category.title,
       name: service.name,
-      serviceName: service.name,
+      serviceName: 'key', // Hardcoded serviceName
       image: "/services/keys/key-duplication.jpg", // Use generic key image
       icon: service.icon, // Store emoji icon separately
       price: priceQuote?.totalPrice || service.price,
