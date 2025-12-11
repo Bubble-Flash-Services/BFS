@@ -116,9 +116,24 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       keyServicesDirectBookings,
       vehicleAccessoriesOrders
     ] = await Promise.all([
-      Order.countDocuments({ 'items.category': 'Car Wash' }),
-      Order.countDocuments({ 'items.category': 'Bike Wash' }),
-      Order.countDocuments({ 'items.category': 'Helmet Wash' }),
+      Order.countDocuments({ 
+        $or: [
+          { 'items.category': { $in: ['Car Wash', 'Hatchbacks', 'Sedans', 'Luxuries', 'SUV', 'MID-SUV'] } },
+          { 'items.serviceName': 'washing', 'items.type': 'car-wash' }
+        ]
+      }),
+      Order.countDocuments({ 
+        $or: [
+          { 'items.category': 'Bike Wash' },
+          { 'items.serviceName': 'washing', 'items.type': 'bike-wash' }
+        ]
+      }),
+      Order.countDocuments({ 
+        $or: [
+          { 'items.category': 'Helmet Wash' },
+          { 'items.serviceName': 'washing', 'items.type': 'helmet-wash' }
+        ]
+      }),
       Order.countDocuments({ 'items.category': { $regex: 'Green.*Clean', $options: 'i' } }),
       GreenBooking.countDocuments(),
       MoversPackers.countDocuments(),
@@ -130,7 +145,12 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       VehicleCheckupBooking.countDocuments(),
       Order.countDocuments({ 'items.category': 'Insurance' }),
       Order.countDocuments({ 'items.category': 'PUC Certificate' }),
-      Order.countDocuments({ 'items.type': 'key-services' }),
+      Order.countDocuments({ 
+        $or: [
+          { 'items.type': 'key-services' },
+          { 'items.serviceName': 'key' }
+        ]
+      }),
       KeyServiceBooking.countDocuments(),
       // Match accessories by type field - exact match for 'accessory' or by category field
       Order.countDocuments({ 

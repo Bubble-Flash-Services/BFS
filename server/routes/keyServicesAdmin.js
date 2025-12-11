@@ -33,7 +33,12 @@ router.get("/bookings", authenticateAdmin, async (req, res) => {
     }
 
     // Build filter for cart orders
-    const orderFilter = { 'items.type': 'key-services' };
+    const orderFilter = { 
+      $or: [
+        { 'items.type': 'key-services' },
+        { 'items.serviceName': 'key' }
+      ]
+    };
     if (status) {
       // Map KeyServiceBooking status to Order status
       // KeyServiceBooking: pending, assigned, in-progress, completed, cancelled
@@ -117,7 +122,12 @@ router.get("/bookings", authenticateAdmin, async (req, res) => {
     ]);
 
     const orderStats = await Order.aggregate([
-      { $match: { 'items.type': 'key-services' } },
+      { $match: { 
+        $or: [
+          { 'items.type': 'key-services' },
+          { 'items.serviceName': 'key' }
+        ]
+      } },
       {
         $group: {
           _id: "$orderStatus",
@@ -339,7 +349,13 @@ router.get("/stats", authenticateAdmin, async (req, res) => {
     });
 
     // Get counts from cart orders
-    const orderFilter = { 'items.type': 'key-services', ...dateFilter };
+    const orderFilter = { 
+      $or: [
+        { 'items.type': 'key-services' },
+        { 'items.serviceName': 'key' }
+      ],
+      ...dateFilter 
+    };
     const totalCartOrders = await Order.countDocuments(orderFilter);
 
     const statusCounts = await KeyServiceBooking.aggregate([
