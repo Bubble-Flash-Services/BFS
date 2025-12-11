@@ -9,6 +9,9 @@ const router = express.Router();
 
 // Constants for service filtering
 const CAR_WASH_CATEGORIES = ["Car Wash", "Hatchbacks", "Sedans", "Luxuries", "SUV", "MID-SUV"];
+const BIKE_WASH_CATEGORIES = ["Bike Wash"];
+const HELMET_WASH_CATEGORIES = ["Helmet Wash"];
+const ALL_WASHING_CATEGORIES = [...CAR_WASH_CATEGORIES, ...BIKE_WASH_CATEGORIES, ...HELMET_WASH_CATEGORIES];
 const WASHING_SERVICE_TYPES = ["car-wash", "bike-wash", "helmet-wash"];
 
 // Get all orders (admin view) with service type filtering
@@ -145,9 +148,7 @@ router.get("/", authenticateAdmin, async (req, res) => {
           const washingFilter = {
             $or: [
               {
-                "items.category": {
-                  $in: ["Car Wash", "Bike Wash", "Helmet Wash", ...CAR_WASH_CATEGORIES],
-                },
+                "items.category": { $in: ALL_WASHING_CATEGORIES },
               },
               {
                 "items.serviceName": "washing",
