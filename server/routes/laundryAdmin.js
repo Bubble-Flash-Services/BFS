@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Order from '../models/Order.js';
 import Employee from '../models/Employee.js';
 import { authenticateAdmin } from '../middleware/authAdmin.js';
@@ -104,8 +105,26 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
     const dateFilter = { 'items.category': 'Laundry' };
     if (startDate || endDate) {
       dateFilter.createdAt = {};
-      if (startDate) dateFilter.createdAt.$gte = new Date(startDate);
-      if (endDate) dateFilter.createdAt.$lte = new Date(endDate);
+      if (startDate) {
+        const parsedStartDate = new Date(startDate);
+        if (isNaN(parsedStartDate.getTime())) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid start date format'
+          });
+        }
+        dateFilter.createdAt.$gte = parsedStartDate;
+      }
+      if (endDate) {
+        const parsedEndDate = new Date(endDate);
+        if (isNaN(parsedEndDate.getTime())) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid end date format'
+          });
+        }
+        dateFilter.createdAt.$lte = parsedEndDate;
+      }
     }
 
     // Get total bookings
@@ -188,6 +207,14 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
 // Get specific booking by ID
 router.get('/booking/:id', authenticateAdmin, async (req, res) => {
   try {
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid booking ID format'
+      });
+    }
+
     const booking = await Order.findById(req.params.id)
       .populate('userId', 'name email phone')
       .populate('assignedEmployee', 'name email phone specialization');
@@ -227,10 +254,26 @@ router.patch('/booking/:id/assign', authenticateAdmin, async (req, res) => {
   try {
     const { employeeId } = req.body;
 
+    // Validate booking ID
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid booking ID format'
+      });
+    }
+
     if (!employeeId) {
       return res.status(400).json({
         success: false,
         message: 'Employee ID is required'
+      });
+    }
+
+    // Validate employee ID
+    if (!mongoose.Types.ObjectId.isValid(employeeId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid employee ID format'
       });
     }
 
@@ -285,6 +328,14 @@ router.patch('/booking/:id/status', authenticateAdmin, async (req, res) => {
   try {
     const { status, adminNotes } = req.body;
 
+    // Validate booking ID
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid booking ID format'
+      });
+    }
+
     const validStatuses = ['pending', 'confirmed', 'assigned', 'in_progress', 'completed', 'cancelled'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
@@ -335,6 +386,14 @@ router.patch('/booking/:id/status', authenticateAdmin, async (req, res) => {
 router.patch('/booking/:id/notes', authenticateAdmin, async (req, res) => {
   try {
     const { adminNotes } = req.body;
+
+    // Validate booking ID
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid booking ID format'
+      });
+    }
 
     const booking = await Order.findById(req.params.id);
 
