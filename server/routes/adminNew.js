@@ -106,7 +106,8 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       moversPackersOrders,
       paintingOrders,
       laundryOrders,
-      vehicleCheckupOrders,
+      vehicleCheckupCartOrders,
+      vehicleCheckupDirectBookings,
       insuranceOrders,
       pucOrders,
       keyServicesCartOrders,
@@ -119,6 +120,9 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       MoversPackers.countDocuments(),
       PaintingQuote.countDocuments(),
       Order.countDocuments({ 'items.category': 'Laundry' }),
+      // Count vehicle checkup from Orders like PUC and Insurance
+      Order.countDocuments({ 'items.category': 'Vehicle Checkup' }),
+      // Also count from VehicleCheckupBooking model (legacy direct bookings)
       VehicleCheckupBooking.countDocuments(),
       Order.countDocuments({ 'items.category': 'Insurance' }),
       Order.countDocuments({ 'items.category': 'PUC Certificate' }),
@@ -129,9 +133,10 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       Order.countDocuments({ 'items.category': { $regex: 'Accessories', $options: 'i' } })
     ]);
 
-    // Total key services and green clean includes both cart orders and direct bookings
+    // Total key services, green clean, and vehicle checkup include both cart orders and direct bookings
     const keyServicesOrders = keyServicesCartOrders + keyServicesDirectBookings;
     const greenCleanOrders = greenCleanCartOrders + greenCleanDirectBookings;
+    const vehicleCheckupOrders = vehicleCheckupCartOrders + vehicleCheckupDirectBookings;
 
     res.json({
       success: true,

@@ -33,7 +33,7 @@ router.post('/quote', authenticateToken, async (req, res) => {
 
     // Create new quote
     const paintingQuote = new PaintingQuote({
-      userId: req.user.userId,
+      userId: req.user.id, // Fix: use req.user.id instead of req.user.userId
       name,
       phone,
       email,
@@ -69,7 +69,7 @@ router.post('/quote', authenticateToken, async (req, res) => {
 // Get user's painting quote requests
 router.get('/my-quotes', authenticateToken, async (req, res) => {
   try {
-    const quotes = await PaintingQuote.find({ userId: req.user.userId })
+    const quotes = await PaintingQuote.find({ userId: req.user.id }) // Fix: use req.user.id
       .sort({ createdAt: -1 });
 
     res.json({
@@ -90,7 +90,7 @@ router.get('/quote/:id', authenticateToken, async (req, res) => {
   try {
     const quote = await PaintingQuote.findOne({
       _id: req.params.id,
-      userId: req.user.userId
+      userId: req.user.id // Fix: use req.user.id
     });
 
     if (!quote) {
