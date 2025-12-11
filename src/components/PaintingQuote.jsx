@@ -20,7 +20,7 @@ const FORM_SUBMISSION_DELAY = 2000; // milliseconds
 const AUTO_CLOSE_DELAY = 3000; // milliseconds
 
 const PaintingQuote = ({ onClose }) => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -104,7 +104,7 @@ const PaintingQuote = ({ onClose }) => {
 
     try {
       // Check if user is authenticated
-      if (!user || !user.token) {
+      if (!user || !token) {
         toast.error("Please login to submit a quote request");
         setLoading(false);
         return;
@@ -140,7 +140,7 @@ const PaintingQuote = ({ onClose }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(quoteData)
       });
