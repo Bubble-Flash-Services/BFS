@@ -46,29 +46,106 @@ function calculatePrice(moveType, homeSize, vehicleShifting, extraServices) {
 
   // Calculate painting cost
   if (extraServices?.painting?.required) {
-    const paintingServices = extraServices.painting.services;
-    if (paintingServices?.interiorPainting) {
-      const interiorPrices = {
-        "1BHK": 8000,
-        "2BHK": 12000,
-        "3BHK": 16000,
-        "4BHK": 20000,
-        Villa: 30000,
+    const painting = extraServices.painting;
+    
+    // Package-based pricing
+    if (painting.packageType) {
+      const packagePrices = {
+        "basic-touch-up": {
+          "1BHK": 3000,
+          "2BHK": 4500,
+          "3BHK": 6000,
+          "4BHK": 8000,
+          Villa: 12000,
+        },
+        "standard-room": {
+          "1BHK": 8000,
+          "2BHK": 12000,
+          "3BHK": 16000,
+          "4BHK": 20000,
+          Villa: 30000,
+        },
+        "premium-full": {
+          "1BHK": 15000,
+          "2BHK": 22000,
+          "3BHK": 30000,
+          "4BHK": 40000,
+          Villa: 60000,
+        },
+        "rental-vacate": {
+          "1BHK": 10000,
+          "2BHK": 15000,
+          "3BHK": 20000,
+          "4BHK": 26000,
+          Villa: 40000,
+        },
       };
-      paintingCost += interiorPrices[homeSize] || 10000;
+      paintingCost += packagePrices[painting.packageType]?.[homeSize] || 10000;
+      
+      // Add move type multiplier
+      if (painting.paintingType === 'both') {
+        paintingCost *= 1.8; // Discount for both move-out and move-in
+      } else if (painting.paintingType === 'move-out') {
+        paintingCost *= 0.9; // Slight discount for move-out only
+      }
     }
-    if (paintingServices?.exteriorPainting) {
-      const exteriorPrices = {
-        "1BHK": 5000,
-        "2BHK": 7000,
-        "3BHK": 9000,
-        "4BHK": 12000,
-        Villa: 18000,
+    
+    // Per square feet pricing (if specified)
+    if (painting.totalSquareFeet && painting.perSqFtRate) {
+      paintingCost += painting.totalSquareFeet * painting.perSqFtRate;
+    } else if (painting.totalSquareFeet) {
+      // Default per sq ft rates based on package type
+      const defaultRates = {
+        "basic-touch-up": 8,
+        "standard-room": 15,
+        "premium-full": 25,
+        "rental-vacate": 18,
       };
-      paintingCost += exteriorPrices[homeSize] || 7000;
+      const rate = defaultRates[painting.packageType] || 15;
+      paintingCost += painting.totalSquareFeet * rate;
     }
-    if (paintingServices?.woodPolishing) {
-      paintingCost += 3000; // Flat rate for wood polishing
+    
+    // Room-based pricing (alternative calculation)
+    if (painting.rooms && painting.rooms.length > 0) {
+      let roomBasedCost = 0;
+      painting.rooms.forEach(room => {
+        if (room.squareFeet) {
+          const scopeMultiplier = room.paintingScope === 'touch-up' ? 0.4 : 1;
+          roomBasedCost += room.squareFeet * 15 * scopeMultiplier;
+        }
+      });
+      // Use the higher of package or room-based pricing
+      if (roomBasedCost > paintingCost) {
+        paintingCost = roomBasedCost;
+      }
+    }
+    
+    // Add legacy service costs if specified
+    const paintingServices = painting.services;
+    if (paintingServices) {
+      if (paintingServices.interiorPainting) {
+        const interiorPrices = {
+          "1BHK": 8000,
+          "2BHK": 12000,
+          "3BHK": 16000,
+          "4BHK": 20000,
+          Villa: 30000,
+        };
+        paintingCost += interiorPrices[homeSize] || 10000;
+      }
+      if (paintingServices.exteriorPainting) {
+        const exteriorPrices = {
+          "1BHK": 5000,
+          "2BHK": 7000,
+          "3BHK": 9000,
+          "4BHK": 12000,
+          Villa: 18000,
+        };
+        paintingCost += exteriorPrices[homeSize] || 7000;
+      }
+      if (paintingServices.woodPolishing) {
+        paintingCost += 3000; // Flat rate for wood polishing
+      }
     }
   }
 
