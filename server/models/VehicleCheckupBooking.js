@@ -25,7 +25,7 @@ const VehicleCheckupBookingSchema = new Schema({
     required: true,
   },
   packageName: { type: String, required: true },
-  serviceName: { type: String },
+  serviceName: { type: String, default: 'checkup' },
   basePrice: { type: Number, required: true },
   addOns: [AddOnSchema],
   totalAmount: { type: Number, required: true },

@@ -10,6 +10,48 @@ import mongoose from 'mongoose';
 import { broadcastToAdmins, formatOrderMessage } from '../services/telegramService.js';
 import { bangalorePincodes } from '../utils/bangalorePincodes.js';
 
+// Helper to get hardcoded serviceName based on service type
+const getHardcodedServiceName = (item) => {
+  const type = String(item.type || '').toLowerCase();
+  const category = String(item.category || '').toLowerCase();
+  const name = String(item.serviceName || item.name || '').toLowerCase();
+  
+  // Check for each service type
+  if (/key.*service|key.*duplication|lock.*service/i.test(name) || /key/i.test(type) || /key/i.test(category)) {
+    return 'key';
+  }
+  if (/movers.*packers|packers.*movers|relocation/i.test(name) || /movers|packers/i.test(type) || /movers|packers/i.test(category)) {
+    return 'packers&movers';
+  }
+  if (/green.*clean|green.*service/i.test(name) || /green/i.test(type) || /green/i.test(category)) {
+    return 'green&clean';
+  }
+  if (/vehicle.*checkup|full.*body.*checkup/i.test(name) || /vehicle.*checkup/i.test(type) || /vehicle.*checkup/i.test(category)) {
+    return 'checkup';
+  }
+  if (/insurance/i.test(name) || /insurance/i.test(type) || /insurance/i.test(category)) {
+    return 'insurance';
+  }
+  if (/puc.*certificate|puc/i.test(name) || /puc/i.test(type) || /puc/i.test(category)) {
+    return 'puc';
+  }
+  if (/painting/i.test(name) || /painting/i.test(type) || /painting/i.test(category)) {
+    return 'painting';
+  }
+  if (/accessor/i.test(name) || /accessor/i.test(type) || /accessor/i.test(category)) {
+    return 'accessories';
+  }
+  // Car wash, bike wash, helmet wash, laundry - all become "washing"
+  if (/car.*wash|bike.*wash|helmet.*wash|laundry|cleaning/i.test(name) || 
+      /car-wash|bike-wash|helmet-wash|laundry|cleaning/i.test(type) || 
+      /wash|laundry|cleaning/i.test(category)) {
+    return 'washing';
+  }
+  
+  // Default to 'washing' for any service without specific mapping
+  return 'washing';
+};
+
 // Helper function to process UI-only add-ons
 const processUiAddOns = (uiAddOns) => {
   return (uiAddOns || []).map(addon => ({
@@ -159,7 +201,7 @@ export const createOrder = async (req, res) => {
         orderItems.push({
           serviceId: service._id,
           packageId: packageData?._id,
-          serviceName: item.serviceName || service.name,  // Use cart name first, then fallback
+          serviceName: getHardcodedServiceName({ type: item.type, category: item.category, serviceName: item.serviceName, name: service.name }),
           image: item.image || item.img || service.image || '',
           type: item.type || '',
           category: item.category || '',
@@ -202,7 +244,7 @@ export const createOrder = async (req, res) => {
         const orderItem = {
           serviceId: item.serviceId._id || item.serviceId,
           packageId: item.packageId?._id || item.packageId,
-          serviceName: item.serviceName || item.name || item.serviceId?.name || 'Service',
+          serviceName: getHardcodedServiceName({ type: item.type, category: item.category, serviceName: item.serviceName, name: item.name || item.serviceId?.name }),
           image: item.image || item.img || item.serviceId?.image || '',
           type: item.type || '',
           category: item.category || '',

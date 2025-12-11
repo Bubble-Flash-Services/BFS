@@ -30,7 +30,8 @@ const greenBookingSchema = new mongoose.Schema({
   },
   serviceName: {
     type: String,
-    required: true
+    required: true,
+    default: 'green&clean'
   },
   serviceCategory: {
     type: String,

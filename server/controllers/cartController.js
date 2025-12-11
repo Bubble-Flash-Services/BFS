@@ -29,6 +29,48 @@ const normalizeVehicle = (raw) => {
   return allowed.has(mapped) ? mapped : 'all';
 };
 
+// Helper to get hardcoded serviceName based on service type
+const getHardcodedServiceName = (item) => {
+  const type = toStr(item.type).toLowerCase();
+  const category = toStr(item.category).toLowerCase();
+  const name = toStr(item.serviceName || item.name).toLowerCase();
+  
+  // Check for each service type
+  if (/key.*service|key.*duplication|lock.*service/i.test(name) || /key/i.test(type) || /key/i.test(category)) {
+    return 'key';
+  }
+  if (/movers.*packers|packers.*movers|relocation/i.test(name) || /movers|packers/i.test(type) || /movers|packers/i.test(category)) {
+    return 'packers&movers';
+  }
+  if (/green.*clean|green.*service/i.test(name) || /green/i.test(type) || /green/i.test(category)) {
+    return 'green&clean';
+  }
+  if (/vehicle.*checkup|full.*body.*checkup/i.test(name) || /vehicle.*checkup/i.test(type) || /vehicle.*checkup/i.test(category)) {
+    return 'checkup';
+  }
+  if (/insurance/i.test(name) || /insurance/i.test(type) || /insurance/i.test(category)) {
+    return 'insurance';
+  }
+  if (/puc.*certificate|puc/i.test(name) || /puc/i.test(type) || /puc/i.test(category)) {
+    return 'puc';
+  }
+  if (/painting/i.test(name) || /painting/i.test(type) || /painting/i.test(category)) {
+    return 'painting';
+  }
+  if (/accessor/i.test(name) || /accessor/i.test(type) || /accessor/i.test(category)) {
+    return 'accessories';
+  }
+  // Car wash, bike wash, helmet wash, laundry - all become "washing"
+  if (/car.*wash|bike.*wash|helmet.*wash|laundry|cleaning/i.test(name) || 
+      /car-wash|bike-wash|helmet-wash|laundry|cleaning/i.test(type) || 
+      /wash|laundry|cleaning/i.test(category)) {
+    return 'washing';
+  }
+  
+  // Default to 'washing' for any service without specific mapping
+  return 'washing';
+};
+
 // Helper to detect special service types
 const detectServiceType = (item) => {
   const type = toStr(item.type);
@@ -478,8 +520,8 @@ export const addToCart = async (req, res) => {
       laundryItems,
       vehicleType: normalizedVehicleType,
       specialInstructions,
-      // Carry UI display fields
-      serviceName: serviceName || service?.name,
+      // Carry UI display fields with hardcoded serviceName
+      serviceName: getHardcodedServiceName({ type, category, serviceName, name: serviceName || service?.name }),
       name: serviceName || service?.name,
       image: image || service?.image,
       packageName: packageData?.name || req.body.packageName,
@@ -795,8 +837,6 @@ export const syncCartToDatabase = async (req, res) => {
         continue;
       }
 
-  const normalizedVehicleType = normalizeVehicle(item.vehicleType || item.type);
-
       const processedItem = {
         serviceId: service._id,
         packageId: (item.packageId && isValidObjectIdString(toStr(item.packageId))) ? item.packageId : null,
@@ -811,10 +851,10 @@ export const syncCartToDatabase = async (req, res) => {
         uiAddOns: (item.uiAddOns || [])
           .map(u => ({ name: toStr(u.name), price: Number(u.price) || 0, quantity: u.quantity ? Number(u.quantity) : 1 })),
         laundryItems: item.laundryItems || [],
-        vehicleType: normalizedVehicleType,
+        vehicleType: normalizeVehicle(item.vehicleType || item.type),
         specialInstructions: item.specialInstructions || '',
-        // Carry UI display fields
-        serviceName: item.serviceName || item.name || service.name,
+        // Carry UI display fields with hardcoded serviceName
+        serviceName: getHardcodedServiceName({ type: item.type, category: item.category, serviceName: item.serviceName, name: item.name }),
         name: item.serviceName || item.name || service.name,
         image: item.image || item.img || service.image,
         packageName: item.packageName,

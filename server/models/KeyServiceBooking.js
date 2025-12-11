@@ -23,7 +23,8 @@ const keyServiceBookingSchema = new mongoose.Schema({
   
   // Service Name
   serviceName: {
-    type: String
+    type: String,
+    default: 'key'
   },
   
   // Key Type Details
