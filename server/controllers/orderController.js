@@ -78,7 +78,7 @@ export const createOrder = async (req, res) => {
             const serviceTypeMapping = {
               'bike-wash': 'Basic Bike Wash',
               'car-wash': 'Basic Car Wash',
-              'laundry': 'Laundry Service'
+              'laundry': 'laundry'
             };
             const mapped = serviceTypeMapping[item.type] || 'Basic Car Wash';
             service = await Service.findOne({ name: { $regex: mapped, $options: 'i' } });

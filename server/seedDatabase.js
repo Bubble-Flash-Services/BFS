@@ -126,6 +126,21 @@ const seedDatabase = async () => {
       // Laundry Services
       {
         categoryId: categories[2]._id,
+        name: "laundry",
+        description: "Generic laundry service",
+        basePrice: 5, // per piece
+        estimatedDuration: 1440, // 24 hours
+        image: "/laundry/home.png",
+        features: [
+          "Professional washing",
+          "Quality service",
+          "Fresh fragrance",
+        ],
+        isActive: true,
+        sortOrder: 0,
+      },
+      {
+        categoryId: categories[2]._id,
         name: "Wash & Fold",
         description: "Regular laundry wash and fold service",
         basePrice: 5, // per piece
