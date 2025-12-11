@@ -1628,18 +1628,43 @@ export default function LaundryPage() {
   const proceedToAddToCart = () => {
     // Check all categories for items with quantities, regardless of active category
     const allCategoryItems = [
-      { items: clothingItems, categoryName: 'Laundry Service' },
-      { items: ironingItems, categoryName: 'Ironing Service' },
-      { items: dryCleanItems, categoryName: 'Dry Clean Service' },
-      { items: shoeCleanItems, categoryName: 'Shoe Clean Service' },
-      { items: bedsheetWashItems, categoryName: 'Bedsheet/Heavy Wash Service' }
+      { items: clothingItems, categoryName: 'Laundry Service', serviceName: 'Wash & Fold' },
+      { items: ironingItems, categoryName: 'Ironing Service', serviceName: 'Ironing Service' },
+      { items: dryCleanItems, categoryName: 'Dry Clean Service', serviceName: 'Dry Clean Service' },
+      { items: shoeCleanItems, categoryName: 'Shoe Clean Service', serviceName: 'Shoe Clean Service' },
+      { items: bedsheetWashItems, categoryName: 'Bedsheet/Heavy Wash Service', serviceName: 'Bedsheet/Heavy Wash Service' }
     ];
     
-    // Collect selected addons
+    // Collect selected addons as uiAddOns
     const allAddons = [...addOns.shoeClean, ...addOns.washFold, ...addOns.ironing, ...addOns.dryClean];
     const selectedAddonsList = allAddons.filter(addon => tempSelectedAddons[addon.id]);
     
-    allCategoryItems.forEach(({ items, categoryName }) => {
+    // Build uiAddOns array for laundry items
+    const uiAddOns = [];
+    
+    // Add selected add-ons to uiAddOns
+    selectedAddonsList.forEach(addon => {
+      uiAddOns.push({
+        name: addon.name,
+        price: addon.price,
+        quantity: 1
+      });
+    });
+    
+    // Add detergent selection to uiAddOns if selected
+    if (selectedDetergent) {
+      const detergent = detergentOptions.find(d => d.id === selectedDetergent);
+      if (detergent) {
+        uiAddOns.push({
+          name: `Detergent: ${detergent.name}`,
+          price: detergent.price,
+          quantity: 1
+        });
+      }
+    }
+    
+    // Add items to cart with addons and detergent as uiAddOns
+    allCategoryItems.forEach(({ items, categoryName, serviceName }) => {
       Object.entries(items).forEach(([category, itemsList]) => {
         itemsList.forEach(item => {
           const quantity = quantities[item.id];
@@ -1647,11 +1672,13 @@ export default function LaundryPage() {
             const cartItem = {
               id: `laundry-${item.id}`,
               name: item.name,
+              serviceName: `${serviceName} - ${item.name}`, // Include serviceName parameter
               image: item.image,
               price: item.price,
               category: categoryName,
               type: 'laundry',
-              description: item.description
+              description: item.description,
+              uiAddOns: uiAddOns.length > 0 ? uiAddOns : [] // Attach addons and detergent to the item
             };
             
             // Add the item first, then update quantity to the correct amount
@@ -1662,37 +1689,6 @@ export default function LaundryPage() {
         });
       });
     });
-    
-    // Add selected addons to cart
-    selectedAddonsList.forEach(addon => {
-      const addonCartItem = {
-        id: `addon-${addon.id}`,
-        name: addon.name,
-        image: '/laundry/laundry1.png', // Default addon image
-        price: addon.price,
-        category: 'Laundry Add-on',
-        type: 'laundry-addon',
-        description: addon.description
-      };
-      addToCart(addonCartItem);
-    });
-    
-    // Add detergent selection if selected
-    if (selectedDetergent) {
-      const detergent = detergentOptions.find(d => d.id === selectedDetergent);
-      if (detergent) {
-        const detergentCartItem = {
-          id: detergent.id,
-          name: `Detergent: ${detergent.name}`,
-          image: '/laundry/laundry1.png',
-          price: detergent.price,
-          category: 'Detergent Preference',
-          type: 'laundry-detergent',
-          description: `Your preferred detergent: ${detergent.name}`
-        };
-        addToCart(detergentCartItem);
-      }
-    }
     
     // Clear quantities and addons
     setQuantities({});
