@@ -441,7 +441,7 @@ const GreenCleanManagement = () => {
                         setAdminNotes(booking.adminNotes || '');
                         setShowStatusModal(true);
                       }}
-                      className={`${booking.isFromOrderModel ? 'flex-1' : 'flex-1'} px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium`}
+                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                     >
                       Update Status
                     </button>
@@ -533,18 +533,20 @@ const GreenCleanManagement = () => {
                     )}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Admin Notes (Optional)
-                  </label>
-                  <textarea
-                    value={adminNotes}
-                    onChange={(e) => setAdminNotes(e.target.value)}
-                    rows="3"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-                    placeholder="Add any notes or comments..."
-                  />
-                </div>
+                {!selectedBooking?.isFromOrderModel && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Admin Notes (Optional)
+                    </label>
+                    <textarea
+                      value={adminNotes}
+                      onChange={(e) => setAdminNotes(e.target.value)}
+                      rows="3"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                      placeholder="Add any notes or comments..."
+                    />
+                  </div>
+                )}
               </div>
               <div className="flex gap-3">
                 <button
