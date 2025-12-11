@@ -5,6 +5,17 @@ import toast from 'react-hot-toast';
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
+// Default stats structure
+const DEFAULT_KEY_SERVICES_STATS = {
+  totalBookings: 0,
+  directBookings: 0,
+  cartOrders: 0,
+  emergencyBookings: 0,
+  statusCounts: {},
+  serviceTypeCounts: {},
+  totalRevenue: 0
+};
+
 const KeyServicesManagement = () => {
   const [bookings, setBookings] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -84,9 +95,16 @@ const KeyServicesManagement = () => {
       const result = await response.json();
       if (result.success) {
         setStats(result.data);
+      } else {
+        // Set default stats if API returns unsuccessful response
+        setStats(DEFAULT_KEY_SERVICES_STATS);
+        toast.error(result.message || 'Failed to fetch statistics');
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Set default stats on error
+      setStats(DEFAULT_KEY_SERVICES_STATS);
+      toast.error('Failed to fetch statistics');
     }
   };
 

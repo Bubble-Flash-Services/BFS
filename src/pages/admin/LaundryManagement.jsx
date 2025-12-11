@@ -5,6 +5,14 @@ import toast from 'react-hot-toast';
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
+// Default stats structure
+const DEFAULT_LAUNDRY_STATS = {
+  totalBookings: 0,
+  totalRevenue: 0,
+  statusCounts: {},
+  itemTypes: []
+};
+
 const LaundryManagement = () => {
   const [bookings, setBookings] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -84,9 +92,16 @@ const LaundryManagement = () => {
       const result = await response.json();
       if (result.success) {
         setStats(result.data);
+      } else {
+        // Set default stats if API returns unsuccessful response
+        setStats(DEFAULT_LAUNDRY_STATS);
+        toast.error(result.message || 'Failed to fetch statistics');
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Set default stats on error
+      setStats(DEFAULT_LAUNDRY_STATS);
+      toast.error('Failed to fetch statistics');
     }
   };
 
