@@ -10,6 +10,7 @@ import {
   Truck,
   ShieldCheck,
   PaintBucket,
+  ShoppingBag,
 } from "lucide-react";
 
 export default function ServiceCategories() {
@@ -253,6 +254,18 @@ export default function ServiceCategories() {
       gradient: "from-yellow-500 to-amber-500",
       bgColor: "bg-yellow-50",
       hoverColor: "hover:bg-yellow-100",
+    },
+    {
+      name: "Vehicle Accessories Store",
+      image: "/car accessories/car cover.jpg",
+      category: "vehicle-accessories",
+      description: "Quality accessories for cars & bikes",
+      fallbackIcon: ShoppingBag,
+      gradient: "from-teal-500 to-cyan-500",
+      bgColor: "bg-teal-50",
+      hoverColor: "hover:bg-teal-100",
+      isNew: true,
+      isPopular: true,
     },
   ];
 
