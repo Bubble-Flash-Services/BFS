@@ -297,6 +297,8 @@ const OrdersManagement = () => {
             >
               <option value="all">All Services</option>
               <option value="car-wash">Car Wash</option>
+              <option value="bike-wash">Bike Wash</option>
+              <option value="helmet-wash">Helmet Wash</option>
               <option value="green-clean">Green & Clean</option>
               <option value="movers-packers">Movers & Packers</option>
               <option value="painting">Painting Services</option>

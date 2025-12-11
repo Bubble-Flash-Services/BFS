@@ -101,6 +101,8 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
     // Get service-specific order counts
     const [
       carWashOrders,
+      bikeWashOrders,
+      helmetWashOrders,
       greenCleanCartOrders,
       greenCleanDirectBookings,
       moversPackersOrders,
@@ -115,6 +117,8 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       vehicleAccessoriesOrders
     ] = await Promise.all([
       Order.countDocuments({ 'items.category': 'Car Wash' }),
+      Order.countDocuments({ 'items.category': 'Bike Wash' }),
+      Order.countDocuments({ 'items.category': 'Helmet Wash' }),
       Order.countDocuments({ 'items.category': 'Green & Clean' }),
       GreenBooking.countDocuments(),
       MoversPackers.countDocuments(),
@@ -153,6 +157,8 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
         },
         serviceBreakdown: {
           carWash: carWashOrders,
+          bikeWash: bikeWashOrders,
+          helmetWash: helmetWashOrders,
           greenClean: greenCleanOrders,
           moversPackers: moversPackersOrders,
           painting: paintingOrders,

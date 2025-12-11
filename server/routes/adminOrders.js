@@ -95,6 +95,24 @@ router.get('/', authenticateAdmin, async (req, res) => {
             .limit(1000);
           break;
           
+        case 'bike-wash':
+          const bikeWashFilter = { 'items.category': 'Bike Wash' };
+          if (status && status !== 'all') bikeWashFilter.orderStatus = status;
+          serviceOrders = await Order.find(bikeWashFilter)
+            .populate('userId', 'name email phone')
+            .sort({ createdAt: -1 })
+            .limit(1000);
+          break;
+          
+        case 'helmet-wash':
+          const helmetWashFilter = { 'items.category': 'Helmet Wash' };
+          if (status && status !== 'all') helmetWashFilter.orderStatus = status;
+          serviceOrders = await Order.find(helmetWashFilter)
+            .populate('userId', 'name email phone')
+            .sort({ createdAt: -1 })
+            .limit(1000);
+          break;
+          
         case 'green-clean':
           const greenCleanFilter = { 'items.category': 'Green & Clean' };
           if (status && status !== 'all') greenCleanFilter.orderStatus = status;

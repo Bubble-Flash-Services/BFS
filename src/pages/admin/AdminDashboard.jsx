@@ -36,6 +36,8 @@ const AdminDashboard = () => {
 
   const [serviceBreakdown, setServiceBreakdown] = useState({
     carWash: 0,
+    bikeWash: 0,
+    helmetWash: 0,
     greenClean: 0,
     moversPackers: 0,
     painting: 0,
@@ -78,6 +80,8 @@ const AdminDashboard = () => {
         // Service breakdown
         setServiceBreakdown({
           carWash: serviceBreakdown?.carWash ?? 0,
+          bikeWash: serviceBreakdown?.bikeWash ?? 0,
+          helmetWash: serviceBreakdown?.helmetWash ?? 0,
           greenClean: serviceBreakdown?.greenClean ?? 0,
           moversPackers: serviceBreakdown?.moversPackers ?? 0,
           painting: serviceBreakdown?.painting ?? 0,
@@ -305,6 +309,34 @@ const AdminDashboard = () => {
                   <p className="text-xs mt-2 opacity-75">Click to view orders</p>
                 </div>
                 <div className="text-4xl opacity-80">🚗</div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate('/admin/orders?serviceType=bike-wash')}
+              className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <p className="text-sm font-medium opacity-90">Bike Wash</p>
+                  <p className="text-3xl font-bold mt-2">{serviceBreakdown.bikeWash}</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                </div>
+                <div className="text-4xl opacity-80">🏍️</div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate('/admin/orders?serviceType=helmet-wash')}
+              className="bg-gradient-to-br from-slate-500 to-slate-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <p className="text-sm font-medium opacity-90">Helmet Wash</p>
+                  <p className="text-3xl font-bold mt-2">{serviceBreakdown.helmetWash}</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                </div>
+                <div className="text-4xl opacity-80">🪖</div>
               </div>
             </div>
 
