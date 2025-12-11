@@ -7,6 +7,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import GlobalBackButton from "./components/GlobalBackButton";
 import HeroSection from "./pages/Homepage/HeroSection.jsx";
 import Footer from "./components/Footer";
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
 // Placeholder imports for new pages
 import CarsPage from "./pages/Homepage/services/CarsPage";
 import BikesPage from "./pages/Homepage/services/BikesPage";
@@ -349,6 +350,7 @@ function AppContent() {
       </CartProviderForGreenandClean>
 
       {!isAdminRoute && !isEmployeeRoute && <Footer />}
+      {!isAdminRoute && !isEmployeeRoute && <FloatingWhatsApp />}
     </div>
   );
 }
