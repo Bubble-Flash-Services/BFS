@@ -337,7 +337,7 @@ const AdminDashboard = () => {
             </div>
 
             <div 
-              onClick={() => navigate('/admin/orders?serviceType=laundry')}
+              onClick={() => navigate('/admin/laundry')}
               className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
             >
               <div className="flex items-center justify-between text-white">
