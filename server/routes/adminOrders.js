@@ -121,6 +121,30 @@ router.get("/", authenticateAdmin, async (req, res) => {
             .limit(1000);
           break;
 
+        case "washing-services":
+          // Combine all washing services
+          const washingFilter = {
+            "items.category": {
+              $in: ["Car Wash", "Bike Wash", "Helmet Wash"],
+            },
+          };
+          if (status && status !== "all") washingFilter.orderStatus = status;
+          serviceOrders = await Order.find(washingFilter)
+            .populate("userId", "name email phone")
+            .sort({ createdAt: -1 })
+            .limit(1000);
+          break;
+
+        case "key-services":
+          // Key services from orders
+          const keyServicesFilter = { "items.type": "key-services" };
+          if (status && status !== "all") keyServicesFilter.orderStatus = status;
+          serviceOrders = await Order.find(keyServicesFilter)
+            .populate("userId", "name email phone")
+            .sort({ createdAt: -1 })
+            .limit(1000);
+          break;
+
         case "green-clean":
           const greenCleanFilter = {
             "items.category": {

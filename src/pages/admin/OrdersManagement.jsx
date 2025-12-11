@@ -296,6 +296,7 @@ const OrdersManagement = () => {
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Services</option>
+              <option value="washing-services">Washing Services</option>
               <option value="car-wash">Car Wash</option>
               <option value="bike-wash">Bike Wash</option>
               <option value="helmet-wash">Helmet Wash</option>
@@ -305,6 +306,7 @@ const OrdersManagement = () => {
               <option value="laundry">Laundry</option>
               <option value="vehicle-checkup">Vehicle Checkup</option>
               <option value="insurance">Insurance</option>
+              <option value="key-services">Key Services</option>
             </select>
 
             {/* Status Filter */}
