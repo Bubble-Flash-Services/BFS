@@ -137,7 +137,7 @@ router.get("/", authenticateAdmin, async (req, res) => {
           break;
 
         case "washing-services":
-          // Combine all washing services - check both category and serviceName
+          // Combine all washing services (car/bike/helmet wash, but NOT laundry) - check both category and serviceName
           const washingFilter = {
             $or: [
               {
@@ -147,6 +147,7 @@ router.get("/", authenticateAdmin, async (req, res) => {
               },
               {
                 "items.serviceName": "washing",
+                "items.type": { $in: ["car-wash", "bike-wash", "helmet-wash"] }
               },
             ],
           };

@@ -138,7 +138,12 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       GreenBooking.countDocuments(),
       MoversPackers.countDocuments(),
       PaintingQuote.countDocuments(),
-      Order.countDocuments({ 'items.category': { $regex: 'Laundry', $options: 'i' } }),
+      Order.countDocuments({ 
+        $or: [
+          { 'items.category': { $regex: 'Laundry', $options: 'i' } },
+          { 'items.serviceName': 'washing', 'items.type': 'laundry' }
+        ]
+      }),
       // Count vehicle checkup from Orders like PUC and Insurance
       Order.countDocuments({ 'items.category': 'Vehicle Checkup' }),
       // Also count from VehicleCheckupBooking model (legacy direct bookings)
