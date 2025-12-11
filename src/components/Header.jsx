@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Phone, Menu, ShoppingCart, User, Wrench } from "lucide-react";
+import { Phone, Menu, ShoppingCart, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
@@ -171,16 +171,6 @@ export default function Header() {
                 Team
               </button>
               <button
-                onClick={() => {
-                  navigate("/vehicle-accessories");
-                  setMobileMenuOpen(false);
-                }}
-                className="text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
-              >
-                {/* <Wrench size={16} /> */}
-                Store
-              </button>
-              <button
                 onClick={() => handleNavigation("contact")}
                 className="text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
               >
@@ -317,16 +307,6 @@ export default function Header() {
               className="block w-full text-left text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer"
             >
               Team
-            </button>
-            <button
-              onClick={() => {
-                navigate("/vehicle-accessories");
-                setMobileMenuOpen(false);
-              }}
-              className="w-full text-left text-gray-700 hover:text-blue-500 font-medium transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
-            >
-              <Wrench size={16} />
-              Accessories
             </button>
             <button
               onClick={() => handleNavigation("contact")}
