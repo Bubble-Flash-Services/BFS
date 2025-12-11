@@ -10,6 +10,7 @@ const BookingItemSchema = new Schema(
       required: true,
     },
     title: { type: String, required: true },
+    serviceName: { type: String },
     price: { type: Number, required: true },
     quantity: { type: Number, default: 1 },
     durationMinutes: { type: Number, default: 0 },

@@ -7,6 +7,12 @@ const paintingQuoteSchema = new mongoose.Schema({
     required: true
   },
   
+  // Service Name
+  serviceName: {
+    type: String,
+    default: 'Painting Service'
+  },
+  
   // Personal Information
   name: {
     type: String,

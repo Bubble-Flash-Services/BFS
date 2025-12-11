@@ -6,6 +6,11 @@ const moversPackersSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  // Service Name
+  serviceName: {
+    type: String,
+    default: 'Movers & Packers'
+  },
   // Basic Information
   moveType: {
     type: String,

@@ -21,6 +21,11 @@ const keyServiceBookingSchema = new mongoose.Schema({
     // Examples: 'house-key', 'bike-key', 'emergency-lock-opening', etc.
   },
   
+  // Service Name
+  serviceName: {
+    type: String
+  },
+  
   // Key Type Details
   keyType: {
     name: String,

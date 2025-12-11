@@ -11,6 +11,10 @@ const serviceSchema = new mongoose.Schema({
     required: true,
     maxlength: 100
   },
+  serviceName: {
+    type: String,
+    maxlength: 100
+  },
   description: {
     type: String,
     maxlength: 1000
