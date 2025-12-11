@@ -10,6 +10,7 @@ import PaintingQuote from '../models/PaintingQuote.js';
 import MoversPackers from '../models/MoversPackers.js';
 import VehicleCheckupBooking from '../models/VehicleCheckupBooking.js';
 import KeyServiceBooking from '../models/KeyServiceBooking.js';
+import GreenBooking from '../models/GreenBooking.js';
 import { authenticateAdmin, requirePermission } from '../middleware/authAdmin.js';
 import { searchByFolder } from '../services/cloudinary.js';
 import jwt from 'jsonwebtoken';
@@ -100,7 +101,8 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
     // Get service-specific order counts
     const [
       carWashOrders,
-      greenCleanOrders,
+      greenCleanCartOrders,
+      greenCleanDirectBookings,
       moversPackersOrders,
       paintingOrders,
       laundryOrders,
@@ -113,6 +115,7 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
     ] = await Promise.all([
       Order.countDocuments({ 'items.category': 'Car Wash' }),
       Order.countDocuments({ 'items.category': 'Green & Clean' }),
+      GreenBooking.countDocuments(),
       MoversPackers.countDocuments(),
       PaintingQuote.countDocuments(),
       Order.countDocuments({ 'items.category': 'Laundry' }),
@@ -124,8 +127,9 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       Order.countDocuments({ 'items.category': { $regex: 'Accessories', $options: 'i' } })
     ]);
 
-    // Total key services includes both cart orders and direct bookings
+    // Total key services and green clean includes both cart orders and direct bookings
     const keyServicesOrders = keyServicesCartOrders + keyServicesDirectBookings;
+    const greenCleanOrders = greenCleanCartOrders + greenCleanDirectBookings;
 
     res.json({
       success: true,
