@@ -1672,7 +1672,7 @@ export default function LaundryPage() {
             const cartItem = {
               id: `laundry-${item.id}`,
               name: item.name,
-              serviceName: serviceName, // Use generic service name
+              serviceName: serviceName, // Uses hardcoded generic service name 'laundry'
               image: item.image,
               price: item.price,
               category: categoryName,
