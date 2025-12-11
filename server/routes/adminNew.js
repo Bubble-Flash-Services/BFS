@@ -10,6 +10,7 @@ import PaintingQuote from '../models/PaintingQuote.js';
 import MoversPackers from '../models/MoversPackers.js';
 import VehicleCheckupBooking from '../models/VehicleCheckupBooking.js';
 import KeyServiceBooking from '../models/KeyServiceBooking.js';
+import GreenBooking from '../models/GreenBooking.js';
 import { authenticateAdmin, requirePermission } from '../middleware/authAdmin.js';
 import { searchByFolder } from '../services/cloudinary.js';
 import jwt from 'jsonwebtoken';
@@ -100,27 +101,37 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
     // Get service-specific order counts
     const [
       carWashOrders,
-      greenCleanOrders,
+      greenCleanCartOrders,
+      greenCleanDirectBookings,
       moversPackersOrders,
       paintingOrders,
       laundryOrders,
       vehicleCheckupOrders,
       insuranceOrders,
       pucOrders,
-      keyServicesOrders,
+      keyServicesCartOrders,
+      keyServicesDirectBookings,
       vehicleAccessoriesOrders
     ] = await Promise.all([
       Order.countDocuments({ 'items.category': 'Car Wash' }),
       Order.countDocuments({ 'items.category': 'Green & Clean' }),
+      GreenBooking.countDocuments(),
       MoversPackers.countDocuments(),
       PaintingQuote.countDocuments(),
       Order.countDocuments({ 'items.category': 'Laundry' }),
       VehicleCheckupBooking.countDocuments(),
       Order.countDocuments({ 'items.category': 'Insurance' }),
       Order.countDocuments({ 'items.category': 'PUC Certificate' }),
+      Order.countDocuments({ 'items.type': 'key-services' }),
       KeyServiceBooking.countDocuments(),
-      Order.countDocuments({ 'items.category': 'Car Accessories' })
+      // Regex match for accessories - matches 'car Accessories', 'bike Accessories', 'common Accessories'
+      // Note: If performance becomes an issue, create index on items.category or use exact matches
+      Order.countDocuments({ 'items.category': { $regex: 'Accessories', $options: 'i' } })
     ]);
+
+    // Total key services and green clean includes both cart orders and direct bookings
+    const keyServicesOrders = keyServicesCartOrders + keyServicesDirectBookings;
+    const greenCleanOrders = greenCleanCartOrders + greenCleanDirectBookings;
 
     res.json({
       success: true,
