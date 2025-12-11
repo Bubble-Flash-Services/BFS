@@ -254,6 +254,7 @@ export default function ServiceCategories() {
       gradient: "from-yellow-500 to-amber-500",
       bgColor: "bg-yellow-50",
       hoverColor: "hover:bg-yellow-100",
+      isNew: true,
     },
     {
       name: "Vehicle Accessories Store",
@@ -262,6 +263,7 @@ export default function ServiceCategories() {
       description: "Quality accessories for cars & bikes",
       fallbackIcon: ShoppingBag,
       gradient: "from-teal-500 to-cyan-500",
+      price: "From ₹149",
       bgColor: "bg-teal-50",
       hoverColor: "hover:bg-teal-100",
       isNew: true,
