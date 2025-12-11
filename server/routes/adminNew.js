@@ -9,6 +9,7 @@ import Coupon from '../models/Coupon.js';
 import PaintingQuote from '../models/PaintingQuote.js';
 import MoversPackers from '../models/MoversPackers.js';
 import VehicleCheckupBooking from '../models/VehicleCheckupBooking.js';
+import KeyServiceBooking from '../models/KeyServiceBooking.js';
 import { authenticateAdmin, requirePermission } from '../middleware/authAdmin.js';
 import { searchByFolder } from '../services/cloudinary.js';
 import jwt from 'jsonwebtoken';
@@ -104,7 +105,10 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       paintingOrders,
       laundryOrders,
       vehicleCheckupOrders,
-      insuranceOrders
+      insuranceOrders,
+      pucOrders,
+      keyServicesOrders,
+      vehicleAccessoriesOrders
     ] = await Promise.all([
       Order.countDocuments({ 'items.category': 'Car Wash' }),
       Order.countDocuments({ 'items.category': 'Green & Clean' }),
@@ -112,7 +116,10 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       PaintingQuote.countDocuments(),
       Order.countDocuments({ 'items.category': 'Laundry' }),
       VehicleCheckupBooking.countDocuments(),
-      Order.countDocuments({ 'items.category': 'Insurance' })
+      Order.countDocuments({ 'items.category': 'Insurance' }),
+      Order.countDocuments({ 'items.category': 'PUC Certificate' }),
+      KeyServiceBooking.countDocuments(),
+      Order.countDocuments({ 'items.category': 'Car Accessories' })
     ]);
 
     res.json({
@@ -135,7 +142,10 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
           painting: paintingOrders,
           laundry: laundryOrders,
           vehicleCheckup: vehicleCheckupOrders,
-          insurance: insuranceOrders
+          insurance: insuranceOrders,
+          puc: pucOrders,
+          keyServices: keyServicesOrders,
+          vehicleAccessories: vehicleAccessoriesOrders
         },
         monthlyRevenue: monthlyRevenue.map(item => ({
           month: item._id.month,
