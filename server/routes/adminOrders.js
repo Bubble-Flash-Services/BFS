@@ -7,6 +7,10 @@ import { authenticateAdmin } from "../middleware/authAdmin.js";
 
 const router = express.Router();
 
+// Constants for service filtering
+const CAR_WASH_CATEGORIES = ["Car Wash", "Hatchbacks", "Sedans", "Luxuries", "SUV", "MID-SUV"];
+const WASHING_SERVICE_TYPES = ["car-wash", "bike-wash", "helmet-wash"];
+
 // Get all orders (admin view) with service type filtering
 router.get("/", authenticateAdmin, async (req, res) => {
   try {
@@ -97,7 +101,7 @@ router.get("/", authenticateAdmin, async (req, res) => {
         case "car-wash":
           const carWashFilter = {
             $or: [
-              { "items.category": { $in: ["Car Wash", "Hatchbacks", "Sedans", "Luxuries", "SUV", "MID-SUV"] } },
+              { "items.category": { $in: CAR_WASH_CATEGORIES } },
               { "items.serviceName": "washing", "items.type": "car-wash" },
             ],
           };
@@ -142,12 +146,12 @@ router.get("/", authenticateAdmin, async (req, res) => {
             $or: [
               {
                 "items.category": {
-                  $in: ["Car Wash", "Bike Wash", "Helmet Wash", "SUV", "Hatchbacks", "Sedans", "Luxuries", "MID-SUV"],
+                  $in: ["Car Wash", "Bike Wash", "Helmet Wash", ...CAR_WASH_CATEGORIES],
                 },
               },
               {
                 "items.serviceName": "washing",
-                "items.type": { $in: ["car-wash", "bike-wash", "helmet-wash"] }
+                "items.type": { $in: WASHING_SERVICE_TYPES }
               },
             ],
           };
