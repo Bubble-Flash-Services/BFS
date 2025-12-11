@@ -309,28 +309,28 @@ const AdminDashboard = () => {
             </div>
 
             <div 
-              onClick={() => navigate('/admin/orders?serviceType=green-clean')}
+              onClick={() => navigate('/admin/green-clean')}
               className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
             >
               <div className="flex items-center justify-between text-white">
                 <div>
                   <p className="text-sm font-medium opacity-90">Green & Clean</p>
                   <p className="text-3xl font-bold mt-2">{serviceBreakdown.greenClean}</p>
-                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view bookings</p>
                 </div>
                 <div className="text-4xl opacity-80">🌿</div>
               </div>
             </div>
 
             <div 
-              onClick={() => navigate('/admin/orders?serviceType=movers-packers')}
+              onClick={() => navigate('/admin/movers-packers')}
               className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
             >
               <div className="flex items-center justify-between text-white">
                 <div>
                   <p className="text-sm font-medium opacity-90">Movers & Packers</p>
                   <p className="text-3xl font-bold mt-2">{serviceBreakdown.moversPackers}</p>
-                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view bookings</p>
                 </div>
                 <div className="text-4xl opacity-80">📦</div>
               </div>
@@ -365,28 +365,28 @@ const AdminDashboard = () => {
             </div>
 
             <div 
-              onClick={() => navigate('/admin/orders?serviceType=vehicle-checkup')}
+              onClick={() => navigate('/admin/vehicle-checkup')}
               className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
             >
               <div className="flex items-center justify-between text-white">
                 <div>
                   <p className="text-sm font-medium opacity-90">Vehicle Checkup</p>
                   <p className="text-3xl font-bold mt-2">{serviceBreakdown.vehicleCheckup}</p>
-                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view bookings</p>
                 </div>
                 <div className="text-4xl opacity-80">🔧</div>
               </div>
             </div>
 
             <div 
-              onClick={() => navigate('/admin/orders?serviceType=insurance')}
+              onClick={() => navigate('/admin/insurance-bookings')}
               className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
             >
               <div className="flex items-center justify-between text-white">
                 <div>
                   <p className="text-sm font-medium opacity-90">Insurance</p>
                   <p className="text-3xl font-bold mt-2">{serviceBreakdown.insurance}</p>
-                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view bookings</p>
                 </div>
                 <div className="text-4xl opacity-80">🛡️</div>
               </div>
@@ -400,7 +400,7 @@ const AdminDashboard = () => {
                 <div>
                   <p className="text-sm font-medium opacity-90">PUC Bookings</p>
                   <p className="text-3xl font-bold mt-2">{serviceBreakdown.puc}</p>
-                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view bookings</p>
                 </div>
                 <div className="text-4xl opacity-80">📋</div>
               </div>
@@ -414,7 +414,7 @@ const AdminDashboard = () => {
                 <div>
                   <p className="text-sm font-medium opacity-90">Key Services</p>
                   <p className="text-3xl font-bold mt-2">{serviceBreakdown.keyServices}</p>
-                  <p className="text-xs mt-2 opacity-75">Click to view orders</p>
+                  <p className="text-xs mt-2 opacity-75">Click to view bookings</p>
                 </div>
                 <div className="text-4xl opacity-80">🔑</div>
               </div>
