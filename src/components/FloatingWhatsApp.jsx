@@ -1,8 +1,10 @@
-import React from 'react';
+import React from "react";
 
 const FloatingWhatsApp = () => {
-  const phoneNumber = '919980123452'; // WhatsApp format without + or spaces
-  const message = encodeURIComponent('Hi! I would like to know more about your services.');
+  const phoneNumber = "919591572775"; // WhatsApp format without + or spaces
+  const message = encodeURIComponent(
+    "Hi! I would like to know more about your services."
+  );
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
   return (
@@ -16,7 +18,7 @@ const FloatingWhatsApp = () => {
       <div className="relative">
         {/* Pulsing ring animation */}
         <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75"></div>
-        
+
         {/* Main WhatsApp button */}
         <div className="relative bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg transition-all duration-300 transform hover:scale-110">
           <svg
