@@ -54,7 +54,7 @@ const MoversPackersManagement = () => {
   const fetchEmployees = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${API}/api/admin/employees`, {
+      const response = await fetch(`${API}/api/adminNew/employees`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -62,7 +62,7 @@ const MoversPackersManagement = () => {
 
       const result = await response.json();
       if (result.success) {
-        setEmployees(result.employees || []);
+        setEmployees(result.data?.employees || []);
       }
     } catch (error) {
       console.error('Error fetching employees:', error);
