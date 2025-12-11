@@ -5,7 +5,7 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Header from "./components/Header";
 import ScrollToTop from "./components/ScrollToTop";
 import GlobalBackButton from "./components/GlobalBackButton";
-import HeroSection from "./pages/Homepage/HeroSection";
+import HeroSection from "./pages/Homepage/HeroSection.jsx";
 import Footer from "./components/Footer";
 // Placeholder imports for new pages
 import CarsPage from "./pages/Homepage/services/CarsPage";
@@ -178,10 +178,7 @@ function AppContent() {
           />
           <Route path="/movers-packers" element={<MoversPackersPage />} />
           <Route path="/key-services" element={<KeyServicesPage />} />
-          <Route
-            path="/painting-services"
-            element={<PaintingServicesPage />}
-          />
+          <Route path="/painting-services" element={<PaintingServicesPage />} />
           <Route
             path="/admin/users"
             element={
