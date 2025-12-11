@@ -161,9 +161,16 @@ const MoversPackersPage = () => {
     }
   };
 
+  // Default room structure
+  const DEFAULT_ROOM = { 
+    roomType: 'bedroom', 
+    squareFeet: 0, 
+    paintingScope: 'full-room' 
+  };
+
   // Helper functions for room management
   const addRoom = () => {
-    setRooms([...rooms, { roomType: 'bedroom', squareFeet: 0, paintingScope: 'full-room' }]);
+    setRooms([...rooms, { ...DEFAULT_ROOM }]);
   };
 
   const removeRoom = (index) => {

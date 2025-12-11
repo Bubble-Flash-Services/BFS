@@ -47,6 +47,7 @@ function calculatePrice(moveType, homeSize, vehicleShifting, extraServices) {
   // Calculate painting cost
   if (extraServices?.painting?.required) {
     const painting = extraServices.painting;
+    let basePaintingCost = 0;
     
     // Package-based pricing
     if (painting.packageType) {
@@ -80,19 +81,19 @@ function calculatePrice(moveType, homeSize, vehicleShifting, extraServices) {
           Villa: 40000,
         },
       };
-      paintingCost += packagePrices[painting.packageType]?.[homeSize] || 10000;
+      basePaintingCost = packagePrices[painting.packageType]?.[homeSize] || 10000;
       
       // Add move type multiplier
       if (painting.paintingType === 'both') {
-        paintingCost *= 1.8; // Discount for both move-out and move-in
+        basePaintingCost *= 1.8; // Discount for both move-out and move-in
       } else if (painting.paintingType === 'move-out') {
-        paintingCost *= 0.9; // Slight discount for move-out only
+        basePaintingCost *= 0.9; // Slight discount for move-out only
       }
     }
     
     // Per square feet pricing (if specified)
     if (painting.totalSquareFeet && painting.perSqFtRate) {
-      paintingCost += painting.totalSquareFeet * painting.perSqFtRate;
+      basePaintingCost += painting.totalSquareFeet * painting.perSqFtRate;
     } else if (painting.totalSquareFeet) {
       // Default per sq ft rates based on package type
       const defaultRates = {
@@ -102,23 +103,27 @@ function calculatePrice(moveType, homeSize, vehicleShifting, extraServices) {
         "rental-vacate": 18,
       };
       const rate = defaultRates[painting.packageType] || 15;
-      paintingCost += painting.totalSquareFeet * rate;
+      basePaintingCost += painting.totalSquareFeet * rate;
     }
     
     // Room-based pricing (alternative calculation)
     if (painting.rooms && painting.rooms.length > 0) {
+      const DEFAULT_ROOM_RATE = 15; // Default rate per sq.ft for room-based pricing
       let roomBasedCost = 0;
       painting.rooms.forEach(room => {
         if (room.squareFeet) {
           const scopeMultiplier = room.paintingScope === 'touch-up' ? 0.4 : 1;
-          roomBasedCost += room.squareFeet * 15 * scopeMultiplier;
+          roomBasedCost += room.squareFeet * DEFAULT_ROOM_RATE * scopeMultiplier;
         }
       });
       // Use the higher of package or room-based pricing
-      if (roomBasedCost > paintingCost) {
-        paintingCost = roomBasedCost;
+      if (roomBasedCost > basePaintingCost) {
+        basePaintingCost = roomBasedCost;
       }
     }
+    
+    // Set the painting cost
+    paintingCost = basePaintingCost;
     
     // Add legacy service costs if specified
     const paintingServices = painting.services;
