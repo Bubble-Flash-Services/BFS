@@ -29,22 +29,70 @@ const GreenCleanManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const url = selectedStatus 
+      
+      // Fetch Green & Clean bookings from GreenBooking model
+      const greenBookingsUrl = selectedStatus 
         ? `${API}/api/green/admin/bookings?status=${selectedStatus}`
         : `${API}/api/green/admin/bookings`;
       
-      const response = await fetch(url, {
+      const greenBookingsResponse = await fetch(greenBookingsUrl, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
 
-      const result = await response.json();
-      if (result.success) {
-        setBookings(result.bookings || []);
-      } else {
-        toast.error('Failed to fetch bookings');
-      }
+      const greenBookingsResult = await greenBookingsResponse.json();
+      const greenBookings = greenBookingsResult.success ? (greenBookingsResult.bookings || []) : [];
+      
+      // Also fetch Green & Clean orders from Order model
+      const ordersUrl = selectedStatus
+        ? `${API}/api/admin/orders?serviceType=green-clean&status=${selectedStatus}`
+        : `${API}/api/admin/orders?serviceType=green-clean`;
+      
+      const ordersResponse = await fetch(ordersUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const ordersResult = await ordersResponse.json();
+      const greenOrders = ordersResult.success ? (ordersResult.data || []) : [];
+      
+      // Transform orders to match the booking format for unified display
+      const transformedOrders = greenOrders.map(order => ({
+        _id: order._id,
+        bookingNumber: order.orderNumber,
+        user: {
+          name: order.userId?.name || 'N/A',
+          phone: order.userId?.phone || order.serviceAddress?.phone || 'N/A',
+          userId: order.userId?._id
+        },
+        serviceName: order.items?.[0]?.serviceName || 'Green & Clean Service',
+        serviceCategory: 'Green & Clean',
+        address: {
+          full: order.serviceAddress?.fullAddress || 'N/A',
+          pincode: order.serviceAddress?.pincode || ''
+        },
+        totalAmount: order.totalAmount || 0,
+        status: order.orderStatus || 'pending',
+        scheduledAt: order.scheduledDate || order.createdAt,
+        createdAt: order.createdAt,
+        payment: {
+          status: order.paymentStatus || 'pending',
+          method: order.paymentMethod || 'razorpay'
+        },
+        notes: order.customerNotes || '',
+        adminNotes: '',
+        isFromOrderModel: true // Flag to identify orders vs bookings
+      }));
+      
+      // Combine both arrays
+      const allBookings = [...greenBookings, ...transformedOrders];
+      
+      // Sort by creation date (newest first)
+      allBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      setBookings(allBookings);
     } catch (error) {
       console.error('Error fetching bookings:', error);
       toast.error('Failed to fetch bookings');
@@ -132,25 +180,50 @@ const GreenCleanManagement = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      // Note: You'll need to create this endpoint in the backend
-      const response = await fetch(`${API}/api/green/admin/bookings/${selectedBooking._id}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus, adminNotes }),
-      });
+      
+      // Check if this is from Order model or GreenBooking model
+      if (selectedBooking.isFromOrderModel) {
+        // Update order status via admin orders endpoint
+        const response = await fetch(`${API}/api/admin/orders/${selectedBooking._id}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: newStatus }),
+        });
 
-      const result = await response.json();
-      if (result.success) {
-        toast.success('Status updated successfully');
-        setShowStatusModal(false);
-        setNewStatus('');
-        setAdminNotes('');
-        fetchBookings();
+        const result = await response.json();
+        if (result.success) {
+          toast.success('Status updated successfully');
+          setShowStatusModal(false);
+          setNewStatus('');
+          setAdminNotes('');
+          fetchBookings();
+        } else {
+          toast.error(result.message || 'Failed to update status');
+        }
       } else {
-        toast.error(result.message || 'Failed to update status');
+        // Update GreenBooking status
+        const response = await fetch(`${API}/api/green/admin/bookings/${selectedBooking._id}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: newStatus, adminNotes }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          toast.success('Status updated successfully');
+          setShowStatusModal(false);
+          setNewStatus('');
+          setAdminNotes('');
+          fetchBookings();
+        } else {
+          toast.error(result.message || 'Failed to update status');
+        }
       }
     } catch (error) {
       console.error('Error updating status:', error);
@@ -160,22 +233,32 @@ const GreenCleanManagement = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      created: 'bg-yellow-100 text-yellow-800',
-      assigned: 'bg-blue-100 text-blue-800',
+      // Shared statuses
       in_progress: 'bg-purple-100 text-purple-800',
       completed: 'bg-green-100 text-green-800',
       cancelled: 'bg-red-100 text-red-800',
+      // GreenBooking specific
+      created: 'bg-yellow-100 text-yellow-800',
+      assigned: 'bg-blue-100 text-blue-800',
+      // Order model specific
+      pending: 'bg-yellow-100 text-yellow-800',
+      confirmed: 'bg-blue-100 text-blue-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
   const getStatusIcon = (status) => {
     const icons = {
-      created: Clock,
-      assigned: CheckCircle,
+      // Shared statuses
       in_progress: Package,
       completed: CheckCircle,
       cancelled: XCircle,
+      // GreenBooking specific
+      created: Clock,
+      assigned: CheckCircle,
+      // Order model specific
+      pending: Clock,
+      confirmed: CheckCircle,
     };
     return icons[status] || Clock;
   };
@@ -340,15 +423,17 @@ const GreenCleanManagement = () => {
                   )}
 
                   <div className="flex gap-2 pt-4 border-t">
-                    <button
-                      onClick={() => {
-                        setSelectedBooking(booking);
-                        setShowAssignModal(true);
-                      }}
-                      className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
-                    >
-                      Assign Provider
-                    </button>
+                    {!booking.isFromOrderModel && (
+                      <button
+                        onClick={() => {
+                          setSelectedBooking(booking);
+                          setShowAssignModal(true);
+                        }}
+                        className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                      >
+                        Assign Provider
+                      </button>
+                    )}
                     <button
                       onClick={() => {
                         setSelectedBooking(booking);
@@ -425,25 +510,43 @@ const GreenCleanManagement = () => {
                     onChange={(e) => setNewStatus(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
-                    <option value="created">Created</option>
-                    <option value="assigned">Assigned</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+                    <option value="">Select Status</option>
+                    {selectedBooking?.isFromOrderModel ? (
+                      // Order model statuses
+                      <>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </>
+                    ) : (
+                      // GreenBooking statuses
+                      <>
+                        <option value="created">Created</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </>
+                    )}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Admin Notes (Optional)
-                  </label>
-                  <textarea
-                    value={adminNotes}
-                    onChange={(e) => setAdminNotes(e.target.value)}
-                    rows="3"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-                    placeholder="Add any notes or comments..."
-                  />
-                </div>
+                {!selectedBooking?.isFromOrderModel && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Admin Notes (Optional)
+                    </label>
+                    <textarea
+                      value={adminNotes}
+                      onChange={(e) => setAdminNotes(e.target.value)}
+                      rows="3"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                      placeholder="Add any notes or comments..."
+                    />
+                  </div>
+                )}
               </div>
               <div className="flex gap-3">
                 <button
