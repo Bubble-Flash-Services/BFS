@@ -119,11 +119,11 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       Order.countDocuments({ 'items.category': 'Car Wash' }),
       Order.countDocuments({ 'items.category': 'Bike Wash' }),
       Order.countDocuments({ 'items.category': 'Helmet Wash' }),
-      Order.countDocuments({ 'items.category': 'Green & Clean' }),
+      Order.countDocuments({ 'items.category': { $regex: 'Green.*Clean', $options: 'i' } }),
       GreenBooking.countDocuments(),
       MoversPackers.countDocuments(),
       PaintingQuote.countDocuments(),
-      Order.countDocuments({ 'items.category': 'Laundry' }),
+      Order.countDocuments({ 'items.category': { $regex: 'Laundry', $options: 'i' } }),
       // Count vehicle checkup from Orders like PUC and Insurance
       Order.countDocuments({ 'items.category': 'Vehicle Checkup' }),
       // Also count from VehicleCheckupBooking model (legacy direct bookings)

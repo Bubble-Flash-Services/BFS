@@ -1675,7 +1675,7 @@ export default function LaundryPage() {
               serviceName: 'washing', // Hardcoded serviceName
               image: item.image,
               price: item.price,
-              category: categoryName,
+              category: 'Laundry', // Standardized category for proper filtering in admin
               type: 'laundry',
               description: item.description,
               uiAddOns: uiAddOns.length > 0 ? uiAddOns : [] // Attach addons and detergent to the item
