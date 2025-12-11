@@ -364,56 +364,20 @@ const AdminDashboard = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div
-              onClick={() => navigate("/admin/orders?serviceType=car-wash")}
-              className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+              onClick={() => navigate("/admin/orders?serviceType=washing-services")}
+              className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
             >
               <div className="flex items-center justify-between text-white">
                 <div>
-                  <p className="text-sm font-medium opacity-90">Car Wash</p>
+                  <p className="text-sm font-medium opacity-90">Washing Services</p>
                   <p className="text-3xl font-bold mt-2">
-                    {serviceBreakdown.carWash}
+                    {serviceBreakdown.carWash + serviceBreakdown.bikeWash + serviceBreakdown.helmetWash}
                   </p>
                   <p className="text-xs mt-2 opacity-75">
-                    Click to view orders
+                    Car, Bike & Helmet Wash
                   </p>
                 </div>
-                <div className="text-4xl opacity-80">🚗</div>
-              </div>
-            </div>
-
-            <div
-              onClick={() => navigate("/admin/orders?serviceType=bike-wash")}
-              className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
-            >
-              <div className="flex items-center justify-between text-white">
-                <div>
-                  <p className="text-sm font-medium opacity-90">Bike Wash</p>
-                  <p className="text-3xl font-bold mt-2">
-                    {serviceBreakdown.bikeWash}
-                  </p>
-                  <p className="text-xs mt-2 opacity-75">
-                    Click to view orders
-                  </p>
-                </div>
-                <div className="text-4xl opacity-80">🏍️</div>
-              </div>
-            </div>
-
-            <div
-              onClick={() => navigate("/admin/orders?serviceType=helmet-wash")}
-              className="bg-gradient-to-br from-slate-500 to-slate-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
-            >
-              <div className="flex items-center justify-between text-white">
-                <div>
-                  <p className="text-sm font-medium opacity-90">Helmet Wash</p>
-                  <p className="text-3xl font-bold mt-2">
-                    {serviceBreakdown.helmetWash}
-                  </p>
-                  <p className="text-xs mt-2 opacity-75">
-                    Click to view orders
-                  </p>
-                </div>
-                <div className="text-4xl opacity-80">🪖</div>
+                <div className="text-4xl opacity-80">💧</div>
               </div>
             </div>
 
@@ -532,7 +496,7 @@ const AdminDashboard = () => {
             </div>
 
             <div
-              onClick={() => navigate("/admin/key-services")}
+              onClick={() => navigate("/admin/orders?serviceType=key-services")}
               className="bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
             >
               <div className="flex items-center justify-between text-white">
@@ -542,7 +506,7 @@ const AdminDashboard = () => {
                     {serviceBreakdown.keyServices}
                   </p>
                   <p className="text-xs mt-2 opacity-75">
-                    Click to view bookings
+                    Click to view orders
                   </p>
                 </div>
                 <div className="text-4xl opacity-80">🔑</div>
