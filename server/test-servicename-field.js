@@ -10,7 +10,7 @@ import GreenBooking from './models/GreenBooking.js';
 import Booking from './models/Booking.js';
 
 console.log('✅ All models imported successfully\n');
-console.log('Field verification:');
+console.log('Field verification (serviceName field added in this PR):');
 console.log('Service schema includes serviceName:', Service.schema.paths.serviceName ? '✓' : '✗');
 console.log('CleaningService schema includes serviceName:', CleaningService.schema.paths.serviceName ? '✓' : '✗');
 console.log('GreenService schema includes serviceName:', GreenService.schema.paths.serviceName ? '✓' : '✗');
@@ -19,6 +19,7 @@ console.log('VehicleCheckupBooking schema includes serviceName:', VehicleCheckup
 console.log('KeyServiceBooking schema includes serviceName:', KeyServiceBooking.schema.paths.serviceName ? '✓' : '✗');
 console.log('MoversPackers schema includes serviceName:', MoversPackers.schema.paths.serviceName ? '✓' : '✗');
 console.log('PaintingQuote schema includes serviceName:', PaintingQuote.schema.paths.serviceName ? '✓' : '✗');
-console.log('GreenBooking schema includes serviceName:', GreenBooking.schema.paths.serviceName ? '✓' : '✗');
+console.log('\nPre-existing fields (already had serviceName):');
+console.log('GreenBooking schema includes serviceName:', GreenBooking.schema.paths.serviceName ? '✓ (pre-existing)' : '✗');
 
 process.exit(0);
