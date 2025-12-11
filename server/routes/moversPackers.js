@@ -91,22 +91,7 @@ function calculatePrice(moveType, homeSize, vehicleShifting, extraServices) {
       }
     }
     
-    // Per square feet pricing (if specified)
-    if (painting.totalSquareFeet && painting.perSqFtRate) {
-      basePaintingCost += painting.totalSquareFeet * painting.perSqFtRate;
-    } else if (painting.totalSquareFeet) {
-      // Default per sq ft rates based on package type
-      const defaultRates = {
-        "basic-touch-up": 8,
-        "standard-room": 15,
-        "premium-full": 25,
-        "rental-vacate": 18,
-      };
-      const rate = defaultRates[painting.packageType] || 15;
-      basePaintingCost += painting.totalSquareFeet * rate;
-    }
-    
-    // Room-based pricing (alternative calculation)
+    // Room-based pricing (alternative to package pricing - uses higher value)
     if (painting.rooms && painting.rooms.length > 0) {
       const DEFAULT_ROOM_RATE = 15; // Default rate per sq.ft for room-based pricing
       let roomBasedCost = 0;
@@ -122,10 +107,20 @@ function calculatePrice(moveType, homeSize, vehicleShifting, extraServices) {
       }
     }
     
+    // Per square feet pricing override (only if explicitly provided with custom rate)
+    // This allows for custom per-sq-ft pricing that overrides package pricing
+    if (painting.totalSquareFeet && painting.perSqFtRate) {
+      const customSqFtCost = painting.totalSquareFeet * painting.perSqFtRate;
+      // Use custom sq.ft pricing if higher than package/room pricing
+      if (customSqFtCost > basePaintingCost) {
+        basePaintingCost = customSqFtCost;
+      }
+    }
+    
     // Set the painting cost
     paintingCost = basePaintingCost;
     
-    // Add legacy service costs if specified
+    // Add legacy service costs if specified (these are always additive)
     const paintingServices = painting.services;
     if (paintingServices) {
       if (paintingServices.interiorPainting) {

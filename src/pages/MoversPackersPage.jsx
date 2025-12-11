@@ -24,6 +24,13 @@ import { useAuth } from "../components/AuthContext";
 import MapboxLocationPicker from "../components/MapboxLocationPicker";
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
+// Default room structure for painting service
+const DEFAULT_ROOM = { 
+  roomType: 'bedroom', 
+  squareFeet: 0, 
+  paintingScope: 'full-room' 
+};
+
 const MoversPackersPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -159,13 +166,6 @@ const MoversPackersPage = () => {
     } else {
       setVehicles(vehicles.filter((v) => v.type !== type));
     }
-  };
-
-  // Default room structure
-  const DEFAULT_ROOM = { 
-    roomType: 'bedroom', 
-    squareFeet: 0, 
-    paintingScope: 'full-room' 
   };
 
   // Helper functions for room management
@@ -671,6 +671,7 @@ const MoversPackersPage = () => {
                           key={type.value}
                           type="button"
                           onClick={() => setPaintingType(type.value)}
+                          aria-pressed={paintingType === type.value}
                           className={`p-4 rounded-xl border-2 transition-all transform hover:scale-105 ${
                             paintingType === type.value
                               ? "border-orange-500 bg-white text-[#1F3C88] shadow-lg"
@@ -725,6 +726,7 @@ const MoversPackersPage = () => {
                           key={pkg.value}
                           type="button"
                           onClick={() => setPackageType(pkg.value)}
+                          aria-pressed={packageType === pkg.value}
                           className={`p-5 rounded-xl border-2 transition-all transform hover:scale-105 text-left ${
                             packageType === pkg.value
                               ? "border-blue-500 bg-white text-[#1F3C88] shadow-lg ring-2 ring-blue-200"
