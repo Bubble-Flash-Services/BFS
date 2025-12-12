@@ -11,12 +11,12 @@ router.get('/bookings', authenticateAdmin, async (req, res) => {
   try {
     const { status, page = 1, limit = 20, search } = req.query;
     
-    // Base query - find orders with laundry items (match both old and new category formats)
+    // Base query - find orders with laundry items (match both old and new category formats, and serviceName)
     const query = { 
-      'items.category': { 
-        $regex: 'Laundry', 
-        $options: 'i' 
-      } 
+      $or: [
+        { 'items.category': { $regex: 'Laundry', $options: 'i' } },
+        { 'items.serviceName': 'washing', 'items.type': 'laundry' }
+      ]
     };
     
     // Validate and sanitize status input
@@ -108,10 +108,10 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     const dateFilter = { 
-      'items.category': { 
-        $regex: 'Laundry', 
-        $options: 'i' 
-      } 
+      $or: [
+        { 'items.category': { $regex: 'Laundry', $options: 'i' } },
+        { 'items.serviceName': 'washing', 'items.type': 'laundry' }
+      ]
     };
     if (startDate || endDate) {
       dateFilter.createdAt = {};
@@ -174,7 +174,12 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
     const itemTypesResult = await Order.aggregate([
       { $match: dateFilter },
       { $unwind: '$items' },
-      { $match: { 'items.category': 'Laundry' } },
+      { $match: { 
+        $or: [
+          { 'items.category': /Laundry/i },
+          { 'items.serviceName': 'washing', 'items.type': 'laundry' }
+        ]
+      } },
       { $unwind: '$items.laundryItems' },
       {
         $group: {

@@ -7,6 +7,13 @@ import { authenticateAdmin } from "../middleware/authAdmin.js";
 
 const router = express.Router();
 
+// Constants for service filtering
+const CAR_WASH_CATEGORIES = ["Car Wash", "Hatchbacks", "Sedans", "Luxuries", "SUV", "MID-SUV"];
+const BIKE_WASH_CATEGORIES = ["Bike Wash"];
+const HELMET_WASH_CATEGORIES = ["Helmet Wash"];
+const ALL_WASHING_CATEGORIES = [...CAR_WASH_CATEGORIES, ...BIKE_WASH_CATEGORIES, ...HELMET_WASH_CATEGORIES];
+const WASHING_SERVICE_TYPES = ["car-wash", "bike-wash", "helmet-wash"];
+
 // Get all orders (admin view) with service type filtering
 router.get("/", authenticateAdmin, async (req, res) => {
   try {
@@ -95,7 +102,12 @@ router.get("/", authenticateAdmin, async (req, res) => {
           break;
 
         case "car-wash":
-          const carWashFilter = { "items.category": "Car Wash" };
+          const carWashFilter = {
+            $or: [
+              { "items.category": { $in: CAR_WASH_CATEGORIES } },
+              { "items.serviceName": "washing", "items.type": "car-wash" },
+            ],
+          };
           if (status && status !== "all") carWashFilter.orderStatus = status;
           serviceOrders = await Order.find(carWashFilter)
             .populate("userId", "name email phone")
@@ -104,7 +116,12 @@ router.get("/", authenticateAdmin, async (req, res) => {
           break;
 
         case "bike-wash":
-          const bikeWashFilter = { "items.category": "Bike Wash" };
+          const bikeWashFilter = {
+            $or: [
+              { "items.category": "Bike Wash" },
+              { "items.serviceName": "washing", "items.type": "bike-wash" },
+            ],
+          };
           if (status && status !== "all") bikeWashFilter.orderStatus = status;
           serviceOrders = await Order.find(bikeWashFilter)
             .populate("userId", "name email phone")
@@ -113,7 +130,12 @@ router.get("/", authenticateAdmin, async (req, res) => {
           break;
 
         case "helmet-wash":
-          const helmetWashFilter = { "items.category": "Helmet Wash" };
+          const helmetWashFilter = {
+            $or: [
+              { "items.category": "Helmet Wash" },
+              { "items.serviceName": "washing", "items.type": "helmet-wash" },
+            ],
+          };
           if (status && status !== "all") helmetWashFilter.orderStatus = status;
           serviceOrders = await Order.find(helmetWashFilter)
             .populate("userId", "name email phone")
@@ -122,11 +144,17 @@ router.get("/", authenticateAdmin, async (req, res) => {
           break;
 
         case "washing-services":
-          // Combine all washing services
+          // Combine all washing services (car/bike/helmet wash, but NOT laundry) - check both category and serviceName
           const washingFilter = {
-            "items.category": {
-              $in: ["Car Wash", "Bike Wash", "Helmet Wash"],
-            },
+            $or: [
+              {
+                "items.category": { $in: ALL_WASHING_CATEGORIES },
+              },
+              {
+                "items.serviceName": "washing",
+                "items.type": { $in: WASHING_SERVICE_TYPES }
+              },
+            ],
           };
           if (status && status !== "all") washingFilter.orderStatus = status;
           serviceOrders = await Order.find(washingFilter)
@@ -136,8 +164,13 @@ router.get("/", authenticateAdmin, async (req, res) => {
           break;
 
         case "key-services":
-          // Key services from orders
-          const keyServicesFilter = { "items.type": "key-services" };
+          // Key services from orders - check both type and serviceName
+          const keyServicesFilter = {
+            $or: [
+              { "items.type": "key-services" },
+              { "items.serviceName": "key" },
+            ],
+          };
           if (status && status !== "all") keyServicesFilter.orderStatus = status;
           serviceOrders = await Order.find(keyServicesFilter)
             .populate("userId", "name email phone")
