@@ -11,6 +11,11 @@ const serviceSchema = new mongoose.Schema({
     required: true,
     maxlength: 100
   },
+  serviceName: {
+    type: String,
+    maxlength: 100,
+    default: 'washing'
+  },
   description: {
     type: String,
     maxlength: 1000

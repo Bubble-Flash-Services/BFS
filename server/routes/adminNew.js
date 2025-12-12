@@ -6,6 +6,11 @@ import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Address from '../models/Address.js';
 import Coupon from '../models/Coupon.js';
+import PaintingQuote from '../models/PaintingQuote.js';
+import MoversPackers from '../models/MoversPackers.js';
+import VehicleCheckupBooking from '../models/VehicleCheckupBooking.js';
+import KeyServiceBooking from '../models/KeyServiceBooking.js';
+import GreenBooking from '../models/GreenBooking.js';
 import { authenticateAdmin, requirePermission } from '../middleware/authAdmin.js';
 import { searchByFolder } from '../services/cloudinary.js';
 import jwt from 'jsonwebtoken';
@@ -93,6 +98,79 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       .limit(5)
       .select('_id serviceType status totalAmount paymentMethod serviceAddress items createdAt customerNotes paymentDetails');
 
+    // Get service-specific order counts
+    const [
+      carWashOrders,
+      bikeWashOrders,
+      helmetWashOrders,
+      greenCleanCartOrders,
+      greenCleanDirectBookings,
+      moversPackersOrders,
+      paintingOrders,
+      laundryOrders,
+      vehicleCheckupCartOrders,
+      vehicleCheckupDirectBookings,
+      insuranceOrders,
+      pucOrders,
+      keyServicesCartOrders,
+      keyServicesDirectBookings,
+      vehicleAccessoriesOrders
+    ] = await Promise.all([
+      Order.countDocuments({ 
+        $or: [
+          { 'items.category': { $in: ['Car Wash', 'Hatchbacks', 'Sedans', 'Luxuries', 'SUV', 'MID-SUV'] } },
+          { 'items.serviceName': 'washing', 'items.type': 'car-wash' }
+        ]
+      }),
+      Order.countDocuments({ 
+        $or: [
+          { 'items.category': 'Bike Wash' },
+          { 'items.serviceName': 'washing', 'items.type': 'bike-wash' }
+        ]
+      }),
+      Order.countDocuments({ 
+        $or: [
+          { 'items.category': 'Helmet Wash' },
+          { 'items.serviceName': 'washing', 'items.type': 'helmet-wash' }
+        ]
+      }),
+      Order.countDocuments({ 'items.category': { $regex: 'Green.*Clean', $options: 'i' } }),
+      GreenBooking.countDocuments(),
+      MoversPackers.countDocuments(),
+      PaintingQuote.countDocuments(),
+      Order.countDocuments({ 
+        $or: [
+          { 'items.category': { $regex: 'Laundry', $options: 'i' } },
+          { 'items.serviceName': 'washing', 'items.type': 'laundry' }
+        ]
+      }),
+      // Count vehicle checkup from Orders like PUC and Insurance
+      Order.countDocuments({ 'items.category': 'Vehicle Checkup' }),
+      // Also count from VehicleCheckupBooking model (legacy direct bookings)
+      VehicleCheckupBooking.countDocuments(),
+      Order.countDocuments({ 'items.category': 'Insurance' }),
+      Order.countDocuments({ 'items.category': 'PUC Certificate' }),
+      Order.countDocuments({ 
+        $or: [
+          { 'items.type': 'key-services' },
+          { 'items.serviceName': 'key' }
+        ]
+      }),
+      KeyServiceBooking.countDocuments(),
+      // Match accessories by type field - exact match for 'accessory' or by category field
+      Order.countDocuments({ 
+        $or: [
+          { 'items.type': 'accessory' },
+          { 'items.category': { $in: ['Car Accessories', 'Bike Accessories', 'Common Accessories'] } }
+        ]
+      })
+    ]);
+
+    // Total key services, green clean, and vehicle checkup include both cart orders and direct bookings
+    const keyServicesOrders = keyServicesCartOrders + keyServicesDirectBookings;
+    const greenCleanOrders = greenCleanCartOrders + greenCleanDirectBookings;
+    const vehicleCheckupOrders = vehicleCheckupCartOrders + vehicleCheckupDirectBookings;
+
     res.json({
       success: true,
       data: {
@@ -105,6 +183,20 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
           pendingBookings,
           completedBookings,
           cancelledBookings
+        },
+        serviceBreakdown: {
+          carWash: carWashOrders,
+          bikeWash: bikeWashOrders,
+          helmetWash: helmetWashOrders,
+          greenClean: greenCleanOrders,
+          moversPackers: moversPackersOrders,
+          painting: paintingOrders,
+          laundry: laundryOrders,
+          vehicleCheckup: vehicleCheckupOrders,
+          insurance: insuranceOrders,
+          puc: pucOrders,
+          keyServices: keyServicesOrders,
+          vehicleAccessories: vehicleAccessoriesOrders
         },
         monthlyRevenue: monthlyRevenue.map(item => ({
           month: item._id.month,

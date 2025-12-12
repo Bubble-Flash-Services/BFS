@@ -123,7 +123,7 @@ export const createGreenBooking = async (req, res) => {
         userId: req.user?.id || null
       },
       serviceId: service._id,
-      serviceName: serviceName,
+      serviceName: 'green&clean', // Hardcoded serviceName
       serviceCategory: serviceCategory || service.category,
       branchId: branch._id,
       address: {

@@ -15,6 +15,7 @@ const AddonSchema = new Schema(
 
 const CleaningServiceSchema = new Schema({
   title: { type: String, required: true, index: true },
+  serviceName: { type: String, index: true, default: 'washing' },
   slug: { type: String, unique: true, index: true },
   shortDescription: { type: String, required: true },
   longDescription: { type: String },

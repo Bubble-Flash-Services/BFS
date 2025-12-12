@@ -29,6 +29,85 @@ const normalizeVehicle = (raw) => {
   return allowed.has(mapped) ? mapped : 'all';
 };
 
+// Helper to get hardcoded serviceName based on service type
+const getHardcodedServiceName = (item) => {
+  const type = toStr(item.type).toLowerCase();
+  const category = toStr(item.category).toLowerCase();
+  const name = toStr(item.serviceName || item.name).toLowerCase();
+  
+  // Check for each service type
+  if (/key.*service|key.*duplication|lock.*service/i.test(name) || /key/i.test(type) || /key/i.test(category)) {
+    return 'key';
+  }
+  if (/movers.*packers|packers.*movers|relocation/i.test(name) || /movers|packers/i.test(type) || /movers|packers/i.test(category)) {
+    return 'packers&movers';
+  }
+  if (/green.*clean|green.*service/i.test(name) || /green/i.test(type) || /green/i.test(category)) {
+    return 'green&clean';
+  }
+  if (/vehicle.*checkup|full.*body.*checkup/i.test(name) || /vehicle.*checkup/i.test(type) || /vehicle.*checkup/i.test(category)) {
+    return 'checkup';
+  }
+  if (/insurance/i.test(name) || /insurance/i.test(type) || /insurance/i.test(category)) {
+    return 'insurance';
+  }
+  if (/puc.*certificate|puc/i.test(name) || /puc/i.test(type) || /puc/i.test(category)) {
+    return 'puc';
+  }
+  if (/painting/i.test(name) || /painting/i.test(type) || /painting/i.test(category)) {
+    return 'painting';
+  }
+  if (/accessor/i.test(name) || /accessor/i.test(type) || /accessor/i.test(category)) {
+    return 'accessories';
+  }
+  // Car wash, bike wash, helmet wash, laundry - all become "washing"
+  if (/car.*wash|bike.*wash|helmet.*wash|laundry|cleaning/i.test(name) || 
+      /car-wash|bike-wash|helmet-wash|laundry|cleaning/i.test(type) || 
+      /wash|laundry|cleaning/i.test(category)) {
+    return 'washing';
+  }
+  
+  // Default to 'washing' for any service without specific mapping
+  return 'washing';
+};
+
+// Helper to detect special service types
+const detectServiceType = (item) => {
+  const type = toStr(item.type);
+  const category = toStr(item.category);
+  const serviceName = toStr(item.serviceName || item.name);
+  
+  return {
+    isVehicleCheckup: /vehicle.*checkup|full.*body.*checkup/i.test(type) || /vehicle.*checkup/i.test(category) || /vehicle.*checkup|full.*body.*checkup/i.test(serviceName),
+    isPUC: /puc.*certificate|puc/i.test(type) || /puc/i.test(category) || /puc/i.test(serviceName),
+    isInsurance: /insurance/i.test(type) || /insurance/i.test(category) || /insurance/i.test(serviceName)
+  };
+};
+
+// Helper to get service category details based on service type
+const getServiceCategoryDetails = (isVehicleCheckup, isPUC, isInsurance) => {
+  if (isVehicleCheckup) {
+    return {
+      name: 'Vehicle Checkup',
+      description: 'Vehicle inspection services',
+      icon: '🔧'
+    };
+  } else if (isPUC) {
+    return {
+      name: 'PUC Certificate',
+      description: 'PUC certificate services',
+      icon: '📜'
+    };
+  } else if (isInsurance) {
+    return {
+      name: 'Insurance Assistance',
+      description: 'Insurance assistance services',
+      icon: '🛡️'
+    };
+  }
+  return null;
+};
+
 // Remove or repair legacy-bad items before populate/save to avoid cast errors
 const sanitizeCartItems = async (cart) => {
   if (!cart || !Array.isArray(cart.items)) return false;
@@ -278,13 +357,58 @@ export const addToCart = async (req, res) => {
           }
         }
 
+        // Special handling for vehicle checkup, PUC, and insurance services
+        const serviceTypes = detectServiceType({ type, category, serviceName });
+        const { isVehicleCheckup, isPUC, isInsurance } = serviceTypes;
+
+        if ((isVehicleCheckup || isPUC || isInsurance) && process.env.ALLOW_SERVICE_AUTOCREATE !== 'false') {
+          try {
+            const ServiceCategory = (await import('../models/ServiceCategory.js')).default;
+            const categoryDetails = getServiceCategoryDetails(isVehicleCheckup, isPUC, isInsurance);
+            
+            let planCat = await ServiceCategory.findOne({ name: { $regex: `^${categoryDetails.name}$`, $options: 'i' } });
+            if (!planCat) {
+              planCat = await ServiceCategory.create({ 
+                name: categoryDetails.name, 
+                description: categoryDetails.description, 
+                image: '/car/car1.png', 
+                icon: categoryDetails.icon 
+              });
+            }
+            
+            // Use serviceName as-is for these special services
+            const serviceItemName = serviceName || categoryDetails.name;
+            service = await Service.findOne({ name: serviceItemName });
+            if (!service) {
+              service = await Service.create({
+                categoryId: planCat._id,
+                name: serviceItemName,
+                description: `${categoryDetails.name} service`,
+                basePrice: customPrice || 0,
+                estimatedDuration: 0,
+                image: image || '/car/car1.png',
+                features: [],
+                isActive: true
+              });
+            } else if (customPrice && service.basePrice !== customPrice) {
+              service.basePrice = customPrice; 
+              if (image && service.image !== image) service.image = image; 
+              await service.save();
+            }
+            actualServiceId = service._id;
+            console.log(`🧩 Using ${categoryDetails.name} service ${service.name} (${service._id})`);
+          } catch (serviceErr) {
+            console.warn('Special service handling failed:', serviceErr.message);
+          }
+        }
+
         // Fallback: find a default service based on category keywords
         if (!service) {
           const categoryMap = {
             bikewash: 'Basic Bike Wash',
             carwash: 'Basic Car Wash',
             helmet: 'Basic Helmet Wash',
-            laundry: 'Basic Laundry'
+            laundry: 'laundry'
           };
           const idStr = toStr(serviceId).toLowerCase();
           const key = Object.keys(categoryMap).find(cat => idStr.includes(cat));
@@ -299,7 +423,7 @@ export const addToCart = async (req, res) => {
             } else if (/(helmet)/i.test(toStr(type))) {
               fallbackServiceName = 'Basic Helmet Wash';
             } else if (/(laundry|wash & fold|dry)/i.test(toStr(type))) {
-              fallbackServiceName = 'Basic Laundry';
+              fallbackServiceName = 'laundry';
             } else {
               fallbackServiceName = 'Basic Car Wash';
             }
@@ -396,8 +520,8 @@ export const addToCart = async (req, res) => {
       laundryItems,
       vehicleType: normalizedVehicleType,
       specialInstructions,
-      // Carry UI display fields
-      serviceName: serviceName || service?.name,
+      // Carry UI display fields with hardcoded serviceName
+      serviceName: getHardcodedServiceName({ type, category, serviceName, name: serviceName || service?.name }),
       name: serviceName || service?.name,
       image: image || service?.image,
       packageName: packageData?.name || req.body.packageName,
@@ -659,6 +783,47 @@ export const syncCartToDatabase = async (req, res) => {
         }
       }
 
+      // Handle vehicle checkup, PUC, and insurance services
+      if (!service && process.env.ALLOW_SERVICE_AUTOCREATE !== 'false') {
+        const serviceTypes = detectServiceType(item);
+        const { isVehicleCheckup, isPUC, isInsurance } = serviceTypes;
+
+        if (isVehicleCheckup || isPUC || isInsurance) {
+          try {
+            const ServiceCategory = (await import('../models/ServiceCategory.js')).default;
+            const categoryDetails = getServiceCategoryDetails(isVehicleCheckup, isPUC, isInsurance);
+            
+            let planCat = await ServiceCategory.findOne({ name: { $regex: `^${categoryDetails.name}$`, $options: 'i' } });
+            if (!planCat) {
+              planCat = await ServiceCategory.create({ 
+                name: categoryDetails.name, 
+                description: categoryDetails.description, 
+                image: '/car/car1.png', 
+                icon: categoryDetails.icon 
+              });
+            }
+            
+            const serviceItemName = item.serviceName || item.name || categoryDetails.name;
+            service = await Service.findOne({ name: serviceItemName });
+            if (!service) {
+              service = await Service.create({
+                categoryId: planCat._id,
+                name: serviceItemName,
+                description: `${categoryDetails.name} service`,
+                basePrice: item.price || 0,
+                estimatedDuration: 0,
+                image: item.image || item.img || '/car/car1.png',
+                features: [],
+                isActive: true
+              });
+            }
+            console.log(`🧩 Sync: Using ${categoryDetails.name} service ${service.name} (${service._id})`);
+          } catch (err) {
+            console.warn('Special service resolution failed during sync:', err.message);
+          }
+        }
+      }
+
       // Ultimate fallback to any existing default service
       if (!service) {
         // Choose fallback based on type/vehicle
@@ -671,8 +836,6 @@ export const syncCartToDatabase = async (req, res) => {
         console.warn('No resolvable service for item, skipping:', item);
         continue;
       }
-
-  const normalizedVehicleType = normalizeVehicle(item.vehicleType || item.type);
 
       const processedItem = {
         serviceId: service._id,
@@ -688,10 +851,10 @@ export const syncCartToDatabase = async (req, res) => {
         uiAddOns: (item.uiAddOns || [])
           .map(u => ({ name: toStr(u.name), price: Number(u.price) || 0, quantity: u.quantity ? Number(u.quantity) : 1 })),
         laundryItems: item.laundryItems || [],
-        vehicleType: normalizedVehicleType,
+        vehicleType: normalizeVehicle(item.vehicleType || item.type),
         specialInstructions: item.specialInstructions || '',
-        // Carry UI display fields
-        serviceName: item.serviceName || item.name || service.name,
+        // Carry UI display fields with hardcoded serviceName
+        serviceName: getHardcodedServiceName({ type: item.type, category: item.category, serviceName: item.serviceName, name: item.name }),
         name: item.serviceName || item.name || service.name,
         image: item.image || item.img || service.image,
         packageName: item.packageName,

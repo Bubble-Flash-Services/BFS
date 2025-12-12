@@ -7,6 +7,7 @@ import { useCart } from "../../components/CartContext";
 import { useAuth } from "../../components/AuthContext";
 import { Sparkles, Info, Clock, ShoppingCart, CheckCircle } from "lucide-react";
 import servicesData from "../../data/services.json";
+import { commercialAddons } from "../../data/commercialAddons";
 
 export default function ServiceByCategory() {
   const { categoryName } = useParams();
@@ -17,6 +18,7 @@ export default function ServiceByCategory() {
   const [deep, setDeep] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAddons, setSelectedAddons] = useState([]);
 
   // 🔹 Load data
   useEffect(() => {
@@ -67,12 +69,14 @@ export default function ServiceByCategory() {
         packageName: item.packageName || item.plan,
         packageId: item.packageId,
         quantity: 1,
-        price: item.price || item.basePrice,
+        price: calculateTotal(),
         duration: item.durationMinutes,
         image: item.images?.[0] || "/default-service.jpg",
         packageDetails: item.packageDetails || {
           basePrice: item.basePrice,
           features: item.features || [],
+          addons: selectedAddons, // For display in cart details
+          addonsTotal: getAddonsTotal(),
         },
         includedFeatures:
           item.includedFeatures ||
@@ -82,12 +86,40 @@ export default function ServiceByCategory() {
         vehicleType: item.vehicleType,
         specialInstructions: item.specialInstructions,
         type: item.type || "cleaning",
-        category: item.subcategory,
+        category: 'Green & Clean', // Standardized category for proper filtering in admin
+        // uiAddOns is used by cart backend for calculating totals
+        // packageDetails.addons is used for frontend display
+        uiAddOns: selectedAddons.map(addon => ({
+          name: addon.name,
+          price: addon.price,
+          quantity: 1
+        }))
       };
 
       addToCart(cartData);
       toast.success(`${cartData.serviceName} added to cart 🧺`);
+      setSelectedAddons([]);
     });
+  };
+
+  const handleAddonToggle = (addon) => {
+    setSelectedAddons(prev => {
+      const isSelected = prev.find(item => item.id === addon.id);
+      if (isSelected) {
+        return prev.filter(item => item.id !== addon.id);
+      } else {
+        return [...prev, addon];
+      }
+    });
+  };
+
+  const getAddonsTotal = () => {
+    return selectedAddons.reduce((total, addon) => total + addon.price, 0);
+  };
+
+  const calculateTotal = () => {
+    const basePrice = selectedService?.basePrice || 0;
+    return basePrice + getAddonsTotal();
   };
 
   const buyNow = (item) => {
@@ -97,6 +129,7 @@ export default function ServiceByCategory() {
 
   const openModal = (item) => {
     setSelectedService(item);
+    setSelectedAddons([]);
     setIsModalOpen(true);
   };
 
@@ -188,7 +221,10 @@ export default function ServiceByCategory() {
       <Modal
         open={isModalOpen}
         footer={null}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setSelectedAddons([]);
+        }}
         centered
         width={700}
       >
@@ -222,12 +258,79 @@ export default function ServiceByCategory() {
             {selectedService.features?.length > 0 && (
               <>
                 <h4 className="font-semibold text-[#1F3C88] mb-2">Features:</h4>
-                <ul className="list-disc list-inside text-gray-600">
+                <ul className="list-disc list-inside text-gray-600 mb-4">
                   {selectedService.features.map((f, idx) => (
                     <li key={idx}>{f}</li>
                   ))}
                 </ul>
               </>
+            )}
+
+            {/* Add-ons Section - Show only for deep cleaning services */}
+            {deep.some(s => s._id === selectedService._id) && (
+              <div className="mb-6 mt-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                  Commercial Add-ons
+                </h3>
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {commercialAddons.map((addon) => (
+                    <div
+                      key={addon.id}
+                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                    >
+                      <div className="flex items-center flex-1">
+                        <input
+                          type="checkbox"
+                          id={`addon-${addon.id}`}
+                          checked={Boolean(
+                            selectedAddons.find((item) => item.id === addon.id)
+                          )}
+                          onChange={() => handleAddonToggle(addon)}
+                          className="w-4 h-4 text-[#1F3C88] border-gray-300 rounded focus:ring-[#FFB400]"
+                        />
+                        <label
+                          htmlFor={`addon-${addon.id}`}
+                          className="ml-3 text-gray-800 font-medium cursor-pointer"
+                        >
+                          {addon.name}
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {addon.description}
+                          </p>
+                        </label>
+                      </div>
+                      <span className="font-semibold text-gray-800 ml-2">
+                        ₹{addon.price}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Price Breakdown - Show if addons are selected */}
+            {selectedAddons.length > 0 && (
+              <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-600">Service Price</span>
+                  <span className="text-gray-800">
+                    ₹{selectedService.basePrice}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-gray-600">Add-ons</span>
+                  <span className="text-gray-800">₹{getAddonsTotal()}</span>
+                </div>
+                <div className="border-t pt-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold text-[#1F3C88]">
+                      Total
+                    </span>
+                    <span className="text-xl font-bold text-[#1F3C88]">
+                      ₹{calculateTotal()}
+                    </span>
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* 🔹 Buttons */}

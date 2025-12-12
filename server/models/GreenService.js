@@ -12,6 +12,11 @@ const greenServiceSchema = new mongoose.Schema({
     required: true,
     maxlength: 200
   },
+  serviceName: {
+    type: String,
+    maxlength: 200,
+    default: 'green&clean'
+  },
   description: {
     type: String,
     maxlength: 1000

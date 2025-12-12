@@ -427,7 +427,7 @@ export default function BikeWashDeals() {
         price: totalPrice,
         category: getCategoryDisplayName(),
         type: 'bike-wash',
-        serviceName: getCategoryDisplayName(),
+        serviceName: 'washing', // Hardcoded serviceName
         packageName: selectedPackage.name,
         includedFeatures: selectedPackage.features,
         vehicleType: categoryKey,
@@ -460,7 +460,7 @@ export default function BikeWashDeals() {
         price: totalPrice,
         category: getCategoryDisplayName(),
         type: 'bike-wash',
-        serviceName: getCategoryDisplayName(),
+        serviceName: 'washing', // Hardcoded serviceName
         packageName: selectedPackage.name,
         includedFeatures: selectedPackage.features,
         vehicleType: categoryKey,

@@ -1,4 +1,73 @@
 {
+  "keyServices": [
+    {
+      "_id": "key-001",
+      "category": "key-duplication",
+      "subcategory": "Key Duplication",
+      "title": "House/Door Key",
+      "description": "Duplicate your house or door keys with precision cutting",
+      "basePrice": 99,
+      "durationMinutes": 15,
+      "active": true,
+      "icon": "🏠",
+      "features": [
+        "On-site key cutting",
+        "Quality tested",
+        "3-month warranty",
+        "Multiple copies available"
+      ]
+    },
+    {
+      "_id": "key-002",
+      "category": "key-duplication",
+      "subcategory": "Key Duplication",
+      "title": "Bike Key (Non-Digital)",
+      "description": "Non-digital bike key duplication service",
+      "basePrice": 149,
+      "durationMinutes": 20,
+      "active": true,
+      "icon": "🏍️",
+      "features": [
+        "Mobile key cutting",
+        "Tested before handover",
+        "3-month warranty"
+      ]
+    },
+    {
+      "_id": "key-003",
+      "category": "lock-services",
+      "subcategory": "Lock Services",
+      "title": "Emergency Lock Opening",
+      "description": "24/7 emergency lock opening service for lockout situations",
+      "basePrice": 499,
+      "nightPrice": 799,
+      "durationMinutes": 30,
+      "active": true,
+      "icon": "🚨",
+      "features": [
+        "24/7 availability",
+        "30-min response time",
+        "No damage guarantee",
+        "ID verification required"
+      ]
+    },
+    {
+      "_id": "key-004",
+      "category": "specialized-keys",
+      "subcategory": "Specialized Keys",
+      "title": "Car Remote Key Programming",
+      "description": "Programming service for car remote keys",
+      "basePrice": 1499,
+      "durationMinutes": 45,
+      "active": true,
+      "icon": "📡",
+      "features": [
+        "All car brands supported",
+        "Programming & testing",
+        "Warranty included"
+      ]
+    }
+  ],
   "instantServices": [
     {
       "_id": "inst-home-001",

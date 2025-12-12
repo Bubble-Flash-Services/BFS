@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 import { useAuth } from "../components/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -35,6 +35,40 @@ export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState("services"); // 'services' or 'movers-packers'
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [serviceNameFilter, setServiceNameFilter] = useState("all");
+
+  // Memoize unique service names for filter dropdown
+  const uniqueServiceNames = useMemo(() => {
+    return Array.from(
+      new Set(
+        orders.flatMap((order) =>
+          (order.items || []).map(
+            (item) =>
+              item.serviceName ||
+              item.serviceId?.name ||
+              item.category ||
+              "Unknown"
+          )
+        )
+      )
+    ).sort();
+  }, [orders]);
+
+  // Memoize filtered orders
+  const filteredOrders = useMemo(() => {
+    if (serviceNameFilter === "all") {
+      return orders;
+    }
+    return orders.filter((order) =>
+      (order.items || []).some(
+        (item) =>
+          (item.serviceName ||
+            item.serviceId?.name ||
+            item.category ||
+            "Unknown") === serviceNameFilter
+      )
+    );
+  }, [orders, serviceNameFilter]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -227,6 +261,7 @@ export default function OrdersPage() {
         </tr>`;
         const rows = arr.map((item) => {
           const addOns = item.addOns || [];
+          const uiAddOns = item.uiAddOns || [];
           const baseTotal = (item.price || 0) * (item.quantity || 1);
           const laundryTotal = (item.laundryItems || []).reduce(
             (s, l) => s + (l.pricePerItem || 0) * (l.quantity || 1),
@@ -287,7 +322,19 @@ export default function OrdersPage() {
         </tr>`
             )
             .join("");
-          return mainRow + addOnRows;
+          const uiAddOnRows = uiAddOns
+            .map(
+              (a) => `
+        <tr>
+          <td></td>
+          <td style="padding-left:18px">+ Add-on: ${a.name}</td>
+          <td>${a.quantity || 1}</td>
+          <td>₹${a.price}</td>
+          <td>₹${(a.price || 0) * (a.quantity || 1)}</td>
+        </tr>`
+            )
+            .join("");
+          return mainRow + addOnRows + uiAddOnRows;
         });
         return [headerRow, ...rows];
       })
@@ -876,6 +923,31 @@ export default function OrdersPage() {
                               </div>
                             </div>
                           )}
+                          {item.uiAddOns && item.uiAddOns.length > 0 && (
+                            <div className="mt-3">
+                              <p className="text-xs font-semibold text-gray-700 mb-1">
+                                {item.addOns && item.addOns.length > 0 ? "Additional Add-ons:" : "Add-ons:"}
+                              </p>
+                              <div className="space-y-1">
+                                {item.uiAddOns.map((addon, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="flex justify-between text-xs"
+                                  >
+                                    <span className="text-gray-600">
+                                      + {addon.name}{" "}
+                                      {addon.quantity > 1
+                                        ? `× ${addon.quantity}`
+                                        : ""}
+                                    </span>
+                                    <span className="text-green-600 font-medium">
+                                      ₹{(addon.price || 0) * (addon.quantity || 1)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="text-right">
@@ -1030,6 +1102,29 @@ export default function OrdersPage() {
           </div>
         </div>
 
+        {/* Service Name Filter - Only show for Services tab */}
+        {activeTab === "services" && orders.length > 0 && (
+          <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <label className="text-sm font-medium text-gray-700">
+                Filter by Service:
+              </label>
+              <select
+                value={serviceNameFilter}
+                onChange={(e) => setServiceNameFilter(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Services</option>
+                {uniqueServiceNames.map((serviceName) => (
+                  <option key={serviceName} value={serviceName}>
+                    {serviceName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
         {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
@@ -1055,26 +1150,29 @@ export default function OrdersPage() {
         {!loadingOrders &&
           !error &&
           activeTab === "services" &&
-          (orders.length === 0 ? (
+          (filteredOrders.length === 0 ? (
             <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
               <Package size={64} className="text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                No Orders Yet
+                {orders.length === 0 ? "No Orders Yet" : "No Matching Orders"}
               </h3>
               <p className="text-gray-600 mb-6">
-                You haven't placed any orders yet. Start by browsing our
-                services!
+                {orders.length === 0
+                  ? "You haven't placed any orders yet. Start by browsing our services!"
+                  : "No orders found for the selected service. Try selecting a different service."}
               </p>
-              <button
-                onClick={() => navigate("/")}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Browse Services
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {orders.map((order) => (
+              {orders.length === 0 && (
+                <button
+                  onClick={() => navigate("/")}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Browse Services
+                </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredOrders.map((order) => (
                 <div
                   key={order._id}
                   className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow"

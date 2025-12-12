@@ -6,6 +6,11 @@ const moversPackersSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  // Service Name
+  serviceName: {
+    type: String,
+    default: 'packers&movers'
+  },
   // Basic Information
   moveType: {
     type: String,
@@ -59,11 +64,35 @@ const moversPackersSchema = new mongoose.Schema({
   extraServices: {
     painting: {
       required: { type: Boolean, default: false },
+      paintingType: {
+        type: String,
+        enum: ['move-out', 'move-in', 'both', 'touch-up', 'full-room', 'rental-vacate'],
+        default: 'move-in'
+      },
       services: {
         interiorPainting: { type: Boolean, default: false },
         exteriorPainting: { type: Boolean, default: false },
         woodPolishing: { type: Boolean, default: false }
-      }
+      },
+      rooms: [{
+        roomType: {
+          type: String,
+          enum: ['bedroom', 'living-room', 'kitchen', 'bathroom', 'dining-room', 'other']
+        },
+        squareFeet: Number,
+        paintingScope: {
+          type: String,
+          enum: ['touch-up', 'full-room'],
+          default: 'full-room'
+        }
+      }],
+      totalSquareFeet: Number,
+      packageType: {
+        type: String,
+        enum: ['basic-touch-up', 'standard-room', 'premium-full', 'rental-vacate'],
+        default: 'standard-room'
+      },
+      perSqFtRate: Number
     }
   },
   

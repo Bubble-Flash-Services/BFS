@@ -5,8 +5,9 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Header from "./components/Header";
 import ScrollToTop from "./components/ScrollToTop";
 import GlobalBackButton from "./components/GlobalBackButton";
-import HeroSection from "./pages/Homepage/HeroSection";
+import HeroSection from "./pages/Homepage/HeroSection.jsx";
 import Footer from "./components/Footer";
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
 // Placeholder imports for new pages
 import CarsPage from "./pages/Homepage/services/CarsPage";
 import BikesPage from "./pages/Homepage/services/BikesPage";
@@ -38,10 +39,18 @@ import AddressesPage from "./pages/AddressesPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import BookingHistory from "./pages/admin/BookingHistory";
+import OrdersManagement from "./pages/admin/OrdersManagement";
+import PUCBookingManagement from "./pages/admin/PUCBookingManagement";
+import InsuranceBookingManagement from "./pages/admin/InsuranceBookingManagement";
 import CouponManagement from "./pages/admin/CouponManagement";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
 import MoversPackersManagement from "./pages/admin/MoversPackersManagement";
 import GreenCleanManagement from "./pages/admin/GreenCleanManagement";
+import VehicleCheckupManagement from "./pages/admin/VehicleCheckupManagement";
+import VehicleAccessoriesManagement from "./pages/admin/VehicleAccessoriesManagement";
+import KeyServicesManagement from "./pages/admin/KeyServicesManagement";
+import LaundryManagement from "./pages/admin/LaundryManagement";
+import PaintingServicesManagement from "./pages/admin/PaintingServicesManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
 import EmployeeCompleted from "./pages/employee/EmployeeCompleted";
@@ -57,7 +66,12 @@ import GreenandClean from "./pages/green&clean/Green&Clean";
 import ServicePage from "./pages/green&clean/ServicePage";
 import ServiceByCategory from "./pages/green&clean/ServiceByCategory";
 import MoversPackersPage from "./pages/MoversPackersPage";
-import MapDemo from "./pages/MapDemo";
+import PUCCertificatePage from "./pages/PUCCertificate/PUCCertificatePage";
+import InsuranceAssistancePage from "./pages/InsuranceAssistance/InsuranceAssistancePage";
+import VehicleCheckupPage from "./pages/VehicleCheckup/VehicleCheckupPage";
+import VehicleAccessoriesPage from "./pages/VehicleAccessories/VehicleAccessoriesPage";
+import PaintingServicesPage from "./pages/PaintingServices/PaintingServicesPage";
+import KeyServicesPage from "./pages/KeyServices/KeyServicesPage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -111,6 +125,22 @@ function AppContent() {
             path="/helmet-wash-deals/:category"
             element={<HelmetWashDeals />}
           />
+          <Route
+            path="/services/puc-certificate"
+            element={<PUCCertificatePage />}
+          />
+          <Route
+            path="/services/insurance-assistance"
+            element={<InsuranceAssistancePage />}
+          />
+          <Route
+            path="/services/vehicle-checkup"
+            element={<VehicleCheckupPage />}
+          />
+          <Route
+            path="/vehicle-accessories"
+            element={<VehicleAccessoriesPage />}
+          />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services-browser" element={<ServicesBrowser />} />
@@ -124,7 +154,6 @@ function AppContent() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/addresses" element={<AddressesPage />} />
-          <Route path="/map-demo" element={<MapDemo />} />
           <Route path="/google-success" element={<GoogleSuccess />} />
           <Route path="/impersonate" element={<Impersonate />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -150,6 +179,8 @@ function AppContent() {
             element={<ServiceByCategory />}
           />
           <Route path="/movers-packers" element={<MoversPackersPage />} />
+          <Route path="/key-services" element={<KeyServicesPage />} />
+          <Route path="/painting-services" element={<PaintingServicesPage />} />
           <Route
             path="/admin/users"
             element={
@@ -163,6 +194,38 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <BookingHistory />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <ProtectedAdminRoute>
+                <OrdersManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/puc-bookings"
+            element={
+              <ProtectedAdminRoute>
+                <PUCBookingManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/insurance-bookings"
+            element={
+              <ProtectedAdminRoute>
+                <InsuranceBookingManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/vehicle-checkup"
+            element={
+              <ProtectedAdminRoute>
+                <VehicleCheckupManagement />
               </ProtectedAdminRoute>
             }
           />
@@ -191,10 +254,42 @@ function AppContent() {
             }
           />
           <Route
+            path="/admin/key-services"
+            element={
+              <ProtectedAdminRoute>
+                <KeyServicesManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/laundry"
+            element={
+              <ProtectedAdminRoute>
+                <LaundryManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
             path="/admin/green-clean"
             element={
               <ProtectedAdminRoute>
                 <GreenCleanManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/vehicle-accessories"
+            element={
+              <ProtectedAdminRoute>
+                <VehicleAccessoriesManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/painting-services"
+            element={
+              <ProtectedAdminRoute>
+                <PaintingServicesManagement />
               </ProtectedAdminRoute>
             }
           />
@@ -255,6 +350,7 @@ function AppContent() {
       </CartProviderForGreenandClean>
 
       {!isAdminRoute && !isEmployeeRoute && <Footer />}
+      {!isAdminRoute && !isEmployeeRoute && <FloatingWhatsApp />}
     </div>
   );
 }

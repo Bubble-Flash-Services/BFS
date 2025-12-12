@@ -10,6 +10,57 @@ import mongoose from 'mongoose';
 import { broadcastToAdmins, formatOrderMessage } from '../services/telegramService.js';
 import { bangalorePincodes } from '../utils/bangalorePincodes.js';
 
+// Helper to get hardcoded serviceName based on service type
+const getHardcodedServiceName = (item) => {
+  const type = String(item.type || '').toLowerCase();
+  const category = String(item.category || '').toLowerCase();
+  const name = String(item.serviceName || item.name || '').toLowerCase();
+  
+  // Check for each service type
+  if (/key.*service|key.*duplication|lock.*service/i.test(name) || /key/i.test(type) || /key/i.test(category)) {
+    return 'key';
+  }
+  if (/movers.*packers|packers.*movers|relocation/i.test(name) || /movers|packers/i.test(type) || /movers|packers/i.test(category)) {
+    return 'packers&movers';
+  }
+  if (/green.*clean|green.*service/i.test(name) || /green/i.test(type) || /green/i.test(category)) {
+    return 'green&clean';
+  }
+  if (/vehicle.*checkup|full.*body.*checkup/i.test(name) || /vehicle.*checkup/i.test(type) || /vehicle.*checkup/i.test(category)) {
+    return 'checkup';
+  }
+  if (/insurance/i.test(name) || /insurance/i.test(type) || /insurance/i.test(category)) {
+    return 'insurance';
+  }
+  if (/puc.*certificate|puc/i.test(name) || /puc/i.test(type) || /puc/i.test(category)) {
+    return 'puc';
+  }
+  if (/painting/i.test(name) || /painting/i.test(type) || /painting/i.test(category)) {
+    return 'painting';
+  }
+  if (/accessor/i.test(name) || /accessor/i.test(type) || /accessor/i.test(category)) {
+    return 'accessories';
+  }
+  // Car wash, bike wash, helmet wash, laundry - all become "washing"
+  if (/car.*wash|bike.*wash|helmet.*wash|laundry|cleaning/i.test(name) || 
+      /car-wash|bike-wash|helmet-wash|laundry|cleaning/i.test(type) || 
+      /wash|laundry|cleaning/i.test(category)) {
+    return 'washing';
+  }
+  
+  // Default to 'washing' for any service without specific mapping
+  return 'washing';
+};
+
+// Helper function to process UI-only add-ons
+const processUiAddOns = (uiAddOns) => {
+  return (uiAddOns || []).map(addon => ({
+    name: addon.name,
+    price: addon.price || 0,
+    quantity: addon.quantity || 1
+  }));
+};
+
 // Create new order
 export const createOrder = async (req, res) => {
   try {
@@ -69,7 +120,7 @@ export const createOrder = async (req, res) => {
             const serviceTypeMapping = {
               'bike-wash': 'Basic Bike Wash',
               'car-wash': 'Basic Car Wash',
-              'laundry': 'Laundry Service'
+              'laundry': 'laundry'
             };
             const mapped = serviceTypeMapping[item.type] || 'Basic Car Wash';
             service = await Service.findOne({ name: { $regex: mapped, $options: 'i' } });
@@ -115,6 +166,9 @@ export const createOrder = async (req, res) => {
         // Process add-ons (keep as provided since they're custom)
         const processedAddOns = item.addOns || [];
 
+        // Process UI-only add-ons (no database reference)
+        const processedUiAddOns = processUiAddOns(item.uiAddOns);
+
         // Process laundry items (keep as provided since they're custom)
         const laundryItems = item.laundryItems || [];
 
@@ -126,6 +180,14 @@ export const createOrder = async (req, res) => {
           });
         }
 
+        // Add UI-only add-ons to total
+        let uiAddOnTotal = 0;
+        if (processedUiAddOns.length > 0) {
+          processedUiAddOns.forEach(addOn => {
+            uiAddOnTotal += (addOn.price || 0) * (addOn.quantity || 1);
+          });
+        }
+
         let laundryTotal = 0;
         if (laundryItems.length > 0) {
           laundryItems.forEach(laundryItem => {
@@ -133,13 +195,13 @@ export const createOrder = async (req, res) => {
           });
         }
 
-        const itemTotal = (price * (item.quantity || 1)) + addOnTotal + laundryTotal;
+        const itemTotal = (price * (item.quantity || 1)) + addOnTotal + uiAddOnTotal + laundryTotal;
         subtotal += itemTotal;
 
         orderItems.push({
           serviceId: service._id,
           packageId: packageData?._id,
-          serviceName: item.serviceName || service.name,  // Use cart name first, then fallback
+          serviceName: getHardcodedServiceName({ type: item.type, category: item.category, serviceName: item.serviceName, name: service.name }),
           image: item.image || item.img || service.image || '',
           type: item.type || '',
           category: item.category || '',
@@ -147,6 +209,7 @@ export const createOrder = async (req, res) => {
           quantity: item.quantity || 1,
           price: price,
           addOns: processedAddOns,
+          uiAddOns: processedUiAddOns,
           laundryItems: laundryItems,
           vehicleType: item.vehicleType || item.category || 'standard',
           specialInstructions: item.specialInstructions || item.notes || '',
@@ -176,8 +239,36 @@ export const createOrder = async (req, res) => {
         });
       }
 
-      orderItems = cart.items;
-      subtotal = cart.totalAmount;
+      // Transform cart items to order items format
+      orderItems = cart.items.map(item => {
+        const orderItem = {
+          serviceId: item.serviceId._id || item.serviceId,
+          packageId: item.packageId?._id || item.packageId,
+          serviceName: getHardcodedServiceName({ type: item.type, category: item.category, serviceName: item.serviceName, name: item.name || item.serviceId?.name }),
+          image: item.image || item.img || item.serviceId?.image || '',
+          type: item.type || '',
+          category: item.category || '',
+          packageName: item.packageName || item.packageId?.name || '',
+          quantity: item.quantity || 1,
+          price: item.price,
+          addOns: (item.addOns || []).map(addon => ({
+            addOnId: addon.addOnId?._id || addon.addOnId,
+            name: addon.addOnId?.name || addon.name || '',
+            quantity: addon.quantity || 1,
+            price: addon.price
+          })),
+          uiAddOns: processUiAddOns(item.uiAddOns),
+          laundryItems: item.laundryItems || [],
+          vehicleType: item.vehicleType || '',
+          specialInstructions: item.specialInstructions || '',
+          includedFeatures: item.includedFeatures || [],
+          planDetails: item.planDetails || {}
+        };
+        return orderItem;
+      });
+      
+      // Use subtotalAmount which doesn't include tax
+      subtotal = cart.subtotalAmount || cart.totalAmount;
     }
 
     // Apply coupon if provided

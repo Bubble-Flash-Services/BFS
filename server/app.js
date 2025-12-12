@@ -10,6 +10,7 @@ import userRoutes from './routes/user.js';
 import serviceRoutes from './routes/services.js';
 import cartRoutes from './routes/cart.js';
 import orderRoutes from './routes/orders.js';
+import adminOrderRoutes from './routes/adminOrders.js';
 import addressRoutes from './routes/addresses.js';
 import couponRoutes from './routes/coupons.js';
 import paymentRoutes from './routes/payments.js';
@@ -23,6 +24,14 @@ import greenProvidersRoutes from './routes/greenProviders.js';
 import greenAdminRoutes from './routes/greenAdmin.js';
 import moversPackersRoutes from './routes/moversPackers.js';
 import moversPackersAdminRoutes from './routes/moversPackersAdmin.js';
+import vehicleCheckupRoutes from './routes/vehicleCheckup.js';
+import vehicleAccessoriesRoutes from './routes/vehicleAccessories.js';
+import vehicleAccessoriesAdminRoutes from './routes/vehicleAccessoriesAdmin.js';
+import paintingQuotesRoutes from './routes/paintingQuotes.js';
+import paintingQuotesAdminRoutes from './routes/paintingQuotesAdmin.js';
+import keyServicesRoutes from './routes/keyServices.js';
+import keyServicesAdminRoutes from './routes/keyServicesAdmin.js';
+import laundryAdminRoutes from './routes/laundryAdmin.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import { configureCloudinary } from './services/cloudinary.js';
@@ -59,6 +68,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/admin/orders', adminOrderRoutes);
 app.use('/api/addresses', addressRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/payments', paymentRoutes);
@@ -76,6 +86,24 @@ app.use('/api/green/admin', greenAdminRoutes);
 // Movers & Packers routes
 app.use('/api/movers-packers', moversPackersRoutes);
 app.use('/api/admin/movers-packers', moversPackersAdminRoutes);
+
+// Vehicle Checkup routes
+app.use('/api/vehicle-checkup', vehicleCheckupRoutes);
+
+// Vehicle Accessories routes
+app.use('/api/vehicle-accessories', vehicleAccessoriesRoutes);
+app.use('/api/admin/vehicle-accessories', vehicleAccessoriesAdminRoutes);
+
+// Painting Services routes
+app.use('/api/painting', paintingQuotesRoutes);
+app.use('/api/admin/painting-quotes', paintingQuotesAdminRoutes);
+
+// Key Services routes
+app.use('/api/key-services', keyServicesRoutes);
+app.use('/api/admin/key-services', keyServicesAdminRoutes);
+
+// Laundry Services routes
+app.use('/api/admin/laundry', laundryAdminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
