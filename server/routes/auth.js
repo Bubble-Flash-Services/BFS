@@ -27,26 +27,28 @@ function generateToken(user) {
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password, phone, address } = req.body;
-    if (!name || !email || !password || !phone || !address) {
+    if (!name || !email || !password) {
       return res
         .status(400)
         .json({
-          message: "Name, email, password, phone and address are required",
+          message: "Name, email, and password are required",
         });
     }
     const existingEmail = await User.findOne({ email });
     if (existingEmail)
       return res.status(400).json({ message: "User already exists" });
-    const existingPhone = await User.findOne({ phone });
-    if (existingPhone)
-      return res.status(400).json({ message: "Phone already in use" });
+    if (phone) {
+      const existingPhone = await User.findOne({ phone });
+      if (existingPhone)
+        return res.status(400).json({ message: "Phone already in use" });
+    }
     // Create user; pre-save hook hashes password
     const user = await User.create({
       name,
       email,
       password,
-      phone,
-      address,
+      phone: phone || undefined,
+      address: address || undefined,
       provider: "local",
     });
     const token = generateToken(user);
