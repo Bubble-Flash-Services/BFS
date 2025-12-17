@@ -23,8 +23,6 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
     }
     setLoading(true);
     try {
-      if (!phone.trim()) { setLoading(false); setError('Phone is required'); return; }
-      if (!address.trim()) { setLoading(false); setError('Address is required'); return; }
       const res = await signup({ email, password, name: name || email.split('@')[0], phone, address });
       if (res.token && res.user) {
         console.log('✅ Signup successful, fetching complete profile...');
@@ -114,25 +112,23 @@ export default function SignupModal({ open, onClose, onSignup, onLoginNow }) {
                 />
               </div>
               <div className="w-full">
-                <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Phone</label>
+                <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Phone (optional)</label>
                 <input
                   type="tel"
                   className="w-full rounded-2xl px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   placeholder="Enter your phone number"
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
-                  required
                 />
               </div>
               <div className="w-full">
-                <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Address</label>
+                <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Address (optional)</label>
                 <textarea
                   className="w-full rounded-2xl px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   placeholder="Enter your full address"
                   rows="3"
                   value={address}
                   onChange={e => setAddress(e.target.value)}
-                  required
                 />
               </div>
               <div className="w-full flex flex-col md:flex-row gap-4">

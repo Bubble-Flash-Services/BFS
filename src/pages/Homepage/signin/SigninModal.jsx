@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { login, getProfile, updateProfile } from '../../../api/auth';
+import { login, getProfile } from '../../../api/auth';
 import { useAuth } from '../../../components/AuthContext';
 import ForgotPasswordModal from '../../../components/ForgotPasswordModal';
 
@@ -10,10 +10,6 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showForgot, setShowForgot] = useState(false);
-  const [needsDetails, setNeedsDetails] = useState(false);
-  const [pendingToken, setPendingToken] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,50 +21,17 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
         console.log('✅ Email login successful, fetching complete profile...');
         
         try {
-          // Fetch complete profile data to ensure we have phone, address, etc.
+          // Fetch complete profile data
           const fullProfile = await getProfile(res.token);
           if (fullProfile && !fullProfile.error) {
             console.log('✅ Complete profile data fetched:', fullProfile);
-            // If phone or address missing, request completion before proceeding
-            const hasPhone = typeof fullProfile.phone === 'string' && fullProfile.phone.trim().length >= 8;
-            const hasAddress = typeof fullProfile.address === 'string' && fullProfile.address.trim().length >= 5;
-            if (!hasPhone || !hasAddress) {
-              setNeedsDetails(true);
-              setPendingToken(res.token);
-              if (fullProfile.phone) setPhone(fullProfile.phone);
-              if (fullProfile.address) setAddress(fullProfile.address);
-              setLoading(false);
-              return;
-            }
             updateAuth(res.token, fullProfile);
           } else {
             console.log('⚠️ Using login response data as fallback');
-            // Fallback response may also miss phone/address — enforce completion if needed
-            const hasPhone = typeof res.user?.phone === 'string' && res.user.phone.trim().length >= 8;
-            const hasAddress = typeof res.user?.address === 'string' && res.user.address.trim().length >= 5;
-            if (!hasPhone || !hasAddress) {
-              setNeedsDetails(true);
-              setPendingToken(res.token);
-              if (res.user?.phone) setPhone(res.user.phone);
-              if (res.user?.address) setAddress(res.user.address);
-              setLoading(false);
-              return;
-            }
             updateAuth(res.token, res.user);
           }
         } catch (profileError) {
           console.error('❌ Error fetching profile after login:', profileError);
-          // Fallback to login response data, but still enforce completion if missing
-          const hasPhone = typeof res.user?.phone === 'string' && res.user.phone.trim().length >= 8;
-          const hasAddress = typeof res.user?.address === 'string' && res.user.address.trim().length >= 5;
-          if (!hasPhone || !hasAddress) {
-            setNeedsDetails(true);
-            setPendingToken(res.token);
-            if (res.user?.phone) setPhone(res.user.phone);
-            if (res.user?.address) setAddress(res.user.address);
-            setLoading(false);
-            return;
-          }
           updateAuth(res.token, res.user);
         }
         
@@ -82,26 +45,6 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
     } catch (err) {
       setLoading(false);
       setError('Login failed');
-    }
-  };
-
-  const handleSaveDetails = async (e) => {
-    e.preventDefault();
-    if (!phone.trim() || !address.trim()) {
-      setError('Phone and address are required');
-      return;
-    }
-    try {
-      setLoading(true);
-      const updated = await updateProfile(pendingToken, { phone, address });
-      updateAuth(pendingToken, updated);
-      setLoading(false);
-      setNeedsDetails(false);
-      onLogin && onLogin(updated);
-      onClose();
-    } catch (e) {
-      setLoading(false);
-      setError('Failed to save details, please try again');
     }
   };
 
@@ -122,8 +65,7 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
           <span className="inline-block align-middle w-full overflow-visible">Log in</span>
         </h2>
         <div className="w-2/3 sm:w-3/4 border-t border-black mb-4 sm:mb-6 md:mb-8" />
-        {/* Form or completion step */}
-        {!needsDetails ? (
+        {/* Form */}
         <form className="w-full flex flex-col items-center gap-3 sm:gap-4 md:gap-8" onSubmit={handleLogin}>
             <div className="w-full">
               <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Email</label>
@@ -159,40 +101,6 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
               Forgot password?
             </button>
           </form>
-        ) : (
-          <form className="w-full flex flex-col items-center gap-3 sm:gap-4 md:gap-6" onSubmit={handleSaveDetails}>
-            <div className="w-full">
-              <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Phone</label>
-              <input
-                type="tel"
-                className="w-full rounded-2xl px-3 sm:px-4 py-2 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                placeholder="Enter your phone number"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                required
-              />
-            </div>
-            <div className="w-full">
-              <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Address</label>
-              <textarea
-                className="w-full rounded-2xl px-3 sm:px-4 py-2 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                placeholder="Enter your full address"
-                rows="3"
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                required
-              />
-            </div>
-            {error && <div className="text-red-500 text-xs sm:text-sm">{error}</div>}
-            <button
-              type="submit"
-              className="w-40 bg-yellow-400 text-black font-bold text-base sm:text-xl md:text-2xl rounded-full py-2 shadow-md hover:bg-yellow-500 transition mb-2"
-              disabled={loading}
-            >
-              {loading ? 'Saving...' : 'Save & Continue'}
-            </button>
-          </form>
-        )}
         <a
           href={(import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/google'}
           className="flex items-center gap-2 border border-black rounded-lg px-3 sm:px-4 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center"

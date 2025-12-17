@@ -28,10 +28,10 @@ export const signup = async (req, res) => {
     // Accept both 'name' and 'username' as aliases
     let { name, username, email, phone, password, address } = req.body;
     name = name || username;
-    // Require phone and address as mandatory fields
+    // Require name, email and password for local signup
     if (!name) return res.status(400).json({ error: 'Name is required' });
-    if (!phone) return res.status(400).json({ error: 'Phone is required' });
-    if (!address) return res.status(400).json({ error: 'Address is required' });
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+    if (!password) return res.status(400).json({ error: 'Password is required' });
     // Optional email; if provided ensure uniqueness
     if (email && await User.findOne({ email })) return res.status(400).json({ error: 'Email already exists' });
     if (phone && await User.findOne({ phone })) return res.status(400).json({ error: 'Phone already exists' });
