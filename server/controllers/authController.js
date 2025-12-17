@@ -32,8 +32,8 @@ export const signup = async (req, res) => {
     if (!name) return res.status(400).json({ error: 'Name is required' });
     if (!email) return res.status(400).json({ error: 'Email is required' });
     if (!password) return res.status(400).json({ error: 'Password is required' });
-    // Optional email; if provided ensure uniqueness
-    if (email && await User.findOne({ email })) return res.status(400).json({ error: 'Email already exists' });
+    // Check for existing email and phone to ensure uniqueness
+    if (await User.findOne({ email })) return res.status(400).json({ error: 'Email already exists' });
     if (phone && await User.findOne({ phone })) return res.status(400).json({ error: 'Phone already exists' });
     const user = await User.create({ name, email, phone, password, address });
     const token = genToken(user);
