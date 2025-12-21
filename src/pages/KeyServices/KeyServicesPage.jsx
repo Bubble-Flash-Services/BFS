@@ -375,7 +375,7 @@ const KeyServicesPage = () => {
                 ))}
               </div>
 
-              {specificService && serviceType === "house-apartment" && (
+              {(specificService && (serviceType === "house-apartment" || specificService.includes("duplicate"))) && (
                 <div className="mt-8 p-4 bg-blue-50 rounded-lg">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Quantity
