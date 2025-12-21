@@ -39,91 +39,148 @@ const KeyServicesPage = () => {
 
   // Service categories data
   const serviceCategories = {
-    "key-duplication": {
-      title: "Key Duplication",
-      services: [
-        { id: "house-key", name: "House/Door Key", price: 99, icon: "🏠" },
-        {
-          id: "bike-key",
-          name: "Bike Key (Non-Digital)",
-          price: 149,
-          icon: "🏍️",
-        },
-        { id: "car-key", name: "Car Key (Non-Remote)", price: 299, icon: "🚗" },
-        {
-          id: "cupboard-key",
-          name: "Cupboard/Drawer Key",
-          price: 79,
-          icon: "🗄️",
-        },
-        { id: "mailbox-key", name: "Mailbox Key", price: 69, icon: "📬" },
-        { id: "padlock-key", name: "Padlock Key", price: 49, icon: "🔐" },
-      ],
-    },
-    "lock-services": {
-      title: "Lock Services",
+    "house-apartment": {
+      title: "🏠 House & Apartment Door Services",
       services: [
         {
-          id: "emergency-lock-opening",
-          name: "Emergency Lock Opening",
-          price: "₹499 (day) / ₹799 (night)",
-          icon: "🚨",
-        },
-        { id: "lock-repair", name: "Lock Repair", price: 299, icon: "🔧" },
-        {
-          id: "lock-replacement",
-          name: "Lock Replacement",
-          price: "₹599 + lock cost",
-          icon: "🔄",
+          id: "house-duplicate-key",
+          name: "Duplicate Key (Key Available)",
+          price: "₹200 - ₹400",
+          icon: "🔑",
+          description: "Quick key duplication service",
         },
         {
-          id: "lock-installation",
-          name: "Lock Installation",
-          price: "₹399 + lock cost",
-          icon: "🔨",
-        },
-      ],
-    },
-    "advanced-services": {
-      title: "Advanced Services",
-      services: [
-        {
-          id: "safe-key-services",
-          name: "Safe Key Services",
-          price: "Starting ₹1,999",
-          icon: "🏦",
+          id: "house-lost-normal",
+          name: "Lost Key - Normal Door Locks",
+          price: "₹1,200 - ₹1,800",
+          icon: "🚪",
+          description: "Professional lock opening for normal doors",
         },
         {
-          id: "digital-lock-programming",
-          name: "Digital Lock Programming",
-          price: 799,
-          icon: "🔢",
-        },
-        {
-          id: "master-key-system",
-          name: "Master Key System Setup",
-          price: "Starting ₹2,999",
-          icon: "👑",
-        },
-        { id: "lock-rekeying", name: "Lock Rekeying", price: 399, icon: "🔑" },
-      ],
-    },
-    "specialized-keys": {
-      title: "Specialized Keys",
-      services: [
-        {
-          id: "car-remote-key",
-          name: "Car Remote Key Programming",
-          price: 1499,
-          icon: "📡",
-        },
-        {
-          id: "transponder-key",
-          name: "Transponder Key",
-          price: 2499,
+          id: "house-lost-security",
+          name: "Lost Key - High-Security Locks",
+          price: "₹1,800 - ₹2,800",
           icon: "🔐",
+          description: "Advanced security lock opening",
         },
-        { id: "smart-key-fob", name: "Smart Key Fob", price: 3499, icon: "📱" },
+        {
+          id: "house-apartment-main",
+          name: "Apartment Main Doors",
+          price: "₹2,000 - ₹3,500",
+          icon: "🏢",
+          description: "Complex apartment door systems",
+        },
+      ],
+    },
+    "cupboard-locker": {
+      title: "🗄️ Cupboard, Locker & Almirah Services",
+      services: [
+        {
+          id: "wooden-cupboard",
+          name: "Wooden Cupboards",
+          price: "₹1,000 - ₹1,500",
+          icon: "🪵",
+          description: "Wooden cupboard lock opening",
+        },
+        {
+          id: "steel-almirah",
+          name: "Steel Almirahs",
+          price: "₹1,500 - ₹2,500",
+          icon: "🔒",
+          description: "Steel almirah lock services",
+        },
+        {
+          id: "office-drawers",
+          name: "Office Drawers & File Lockers",
+          price: "₹1,200 - ₹2,000",
+          icon: "📁",
+          description: "Office furniture lock services",
+        },
+      ],
+    },
+    "bike-key": {
+      title: "🏍️ Bike Key Services",
+      services: [
+        {
+          id: "bike-duplicate",
+          name: "Duplicate Bike Key (Key Available)",
+          price: "₹400 - ₹700",
+          icon: "🔑",
+          description: "Bike key duplication",
+        },
+        {
+          id: "bike-lost-normal",
+          name: "Lost Bike Key - Normal Bikes",
+          price: "₹800 - ₹1,200",
+          icon: "🏍️",
+          description: "Standard bike key replacement",
+        },
+        {
+          id: "bike-lost-chip",
+          name: "Lost Bike Key - Chip/Transponder",
+          price: "₹1,200 - ₹2,000",
+          icon: "🔐",
+          description: "Advanced transponder bike keys",
+        },
+      ],
+    },
+    "car-key": {
+      title: "🚗 Car Key & Unlock Services",
+      services: [
+        {
+          id: "car-lost-normal",
+          name: "Lost Car Key - Normal Key",
+          price: "₹3,000 - ₹5,000",
+          icon: "🔑",
+          description: "Basic car key replacement",
+        },
+        {
+          id: "car-lost-remote",
+          name: "Lost Car Key - Remote Key",
+          price: "₹5,000 - ₹8,000",
+          icon: "📡",
+          description: "Remote car key programming",
+        },
+        {
+          id: "car-lost-smart",
+          name: "Lost Car Key - Smart Key/FOB",
+          price: "₹8,000 - ₹15,000+",
+          icon: "📱",
+          description: "Advanced smart key systems",
+        },
+        {
+          id: "car-unlock-day",
+          name: "Car Door Unlock (Day)",
+          price: "₹1,200 - ₹2,000",
+          icon: "🚗",
+          description: "Key locked inside - Day service",
+        },
+        {
+          id: "car-unlock-night",
+          name: "Car Door Unlock (Night)",
+          price: "₹2,000 - ₹3,000",
+          icon: "🌙",
+          description: "Key locked inside - Night service",
+        },
+      ],
+    },
+    "digital-smart": {
+      title: "🔐 Digital & Smart Lock Services",
+      services: [
+        {
+          id: "digital-opening",
+          name: "Digital Lock Opening & Reset",
+          price: "₹2,500 - ₹5,000",
+          icon: "🔢",
+          description: "Digital lock services",
+        },
+        {
+          id: "digital-programming",
+          name: "Programming & Configuration",
+          price: "₹3,000 - ₹6,000",
+          icon: "⚙️",
+          description: "Smart lock setup and programming",
+        },
       ],
     },
   };
@@ -236,25 +293,31 @@ const KeyServicesPage = () => {
           <div className="flex items-center justify-center gap-3 mb-4">
             <Key className="w-12 h-12 text-blue-600" />
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-              Doorstep Key Services
+              BFS KeyCare Pro
             </h1>
           </div>
           <p className="text-xl text-gray-600 mb-6">
-            Professional key duplication and lock services at your doorstep
+            Lost Keys? Locked Out? We Fix It — Fast & Safely
+          </p>
+          <p className="text-md text-gray-500 mb-4">
+            Professional doorstep locksmith services for homes, bikes, cars, and apartments across Bangalore
+          </p>
+          <p className="text-sm text-gray-500 italic">
+            No shortcuts. No illegal methods. Transparent pricing based on real situations.
           </p>
 
           <div className="flex flex-wrap justify-center gap-6 mt-8">
             <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
               <Shield className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium">Police Verified</span>
+              <span className="text-sm font-medium">Verified Locksmiths</span>
             </div>
             <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
               <Clock className="w-5 h-5 text-orange-600" />
-              <span className="text-sm font-medium">30-Min Response</span>
+              <span className="text-sm font-medium">24/7 Emergency Support</span>
             </div>
             <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
               <CheckCircle className="w-5 h-5 text-blue-600" />
-              <span className="text-sm font-medium">3-Month Warranty</span>
+              <span className="text-sm font-medium">Transparent Pricing</span>
             </div>
           </div>
         </motion.div>
@@ -312,7 +375,7 @@ const KeyServicesPage = () => {
                 ))}
               </div>
 
-              {specificService && serviceType === "key-duplication" && (
+              {specificService && serviceType === "house-apartment" && (
                 <div className="mt-8 p-4 bg-blue-50 rounded-lg">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Quantity
@@ -328,7 +391,7 @@ const KeyServicesPage = () => {
                 </div>
               )}
 
-              {specificService === "emergency-lock-opening" && (
+              {(specificService === "car-unlock-night" || specificService === "house-apartment-main") && (
                 <div className="mt-4 p-4 bg-orange-50 rounded-lg">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -338,7 +401,7 @@ const KeyServicesPage = () => {
                       className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
                     <span className="text-sm font-medium text-gray-700">
-                      Night Service (10PM - 6AM) - Additional ₹300
+                      Night Service (10PM - 6AM) - Additional charges apply
                     </span>
                   </label>
                 </div>
@@ -359,13 +422,31 @@ const KeyServicesPage = () => {
                   <div className="flex gap-2">
                     <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-yellow-800">
-                      <p className="font-medium mb-1">Service Information:</p>
+                      <p className="font-medium mb-1">Important Service Information:</p>
                       <ul className="list-disc list-inside space-y-1 text-xs">
                         <li>Add to cart and proceed to checkout</li>
-                        <li>Provide location, date, time, and contact details in cart</li>
-                        <li>ID verification required before service</li>
+                        <li>Provide location, date, time, and contact details</li>
+                        <li>Ownership proof required before service</li>
                         <li>All technicians are police-verified</li>
+                        <li>Night & emergency services may have additional charges</li>
+                        <li>Final price confirmed before starting the job</li>
                       </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                  <div className="flex gap-2">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-red-800">
+                      <p className="font-medium mb-1">❌ What We Do NOT Do:</p>
+                      <ul className="list-disc list-inside space-y-1 text-xs">
+                        <li>Illegal lock breaking</li>
+                        <li>Safe cracking without proof</li>
+                        <li>ECU hacking</li>
+                        <li>Forced entry methods</li>
+                      </ul>
+                      <p className="mt-2 text-xs italic">We follow ethical and legal locksmith practices only.</p>
                     </div>
                   </div>
                 </div>
@@ -426,26 +507,38 @@ const KeyServicesPage = () => {
 
                   <div className="border-t pt-4 space-y-2">
                     <p className="text-sm font-medium text-gray-700 mb-2">
-                      Includes:
+                      Service Includes:
                     </p>
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span>On-site service</span>
+                        <span>Doorstep service</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span>Quality tested keys</span>
+                        <span>Professional technician</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span>3-month warranty</span>
+                        <span>Quality work guarantee</span>
                       </div>
                       {isEmergency && (
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <CheckCircle className="w-4 h-4 text-green-500" />
-                          <span>30-min response</span>
+                          <span>Professional service</span>
                         </div>
+                      )}
+                      {(serviceType === "digital-smart") && (
+                        <>
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <AlertCircle className="w-4 h-4 text-orange-500" />
+                            <span>Ownership proof required</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <AlertCircle className="w-4 h-4 text-orange-500" />
+                            <span>Supported brands only</span>
+                          </div>
+                        </>
                       )}
                     </div>
                   </div>
@@ -459,14 +552,26 @@ const KeyServicesPage = () => {
 
               <div className="mt-6 pt-6 border-t">
                 <p className="text-sm font-medium text-gray-700 mb-3">
-                  Need immediate help?
+                  📲 Need Help Now?
+                </p>
+                <p className="text-xs text-gray-600 mb-3">
+                  Locked out or lost your key? We'll help you safely and quickly.
                 </p>
                 <a
                   href="tel:+919591572775"
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all mb-2"
                 >
                   <Phone className="w-4 h-4" />
-                  Call: 9591572775
+                  Call Now: 9591572775
+                </a>
+                <a
+                  href="https://wa.me/919591572775"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all"
+                >
+                  <Phone className="w-4 h-4" />
+                  WhatsApp Us
                 </a>
               </div>
             </motion.div>
@@ -479,38 +584,38 @@ const KeyServicesPage = () => {
           className="mt-16 bg-white rounded-2xl shadow-lg p-8"
         >
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            How We Do It
+            🚐 How BFS KeyCare Pro Works
           </h2>
           <div className="grid md:grid-cols-5 gap-6">
             {[
               {
                 step: "1",
-                title: "Book Service",
-                desc: "Online or call",
+                title: "Contact Us",
+                desc: "Call or WhatsApp",
                 icon: "📱",
               },
               {
                 step: "2",
-                title: "Technician Arrives",
-                desc: "With mobile key machine",
-                icon: "🚐",
+                title: "Share Details",
+                desc: "Share photos if possible",
+                icon: "📸",
               },
               {
                 step: "3",
-                title: "Verify Ownership",
-                desc: "ID verification",
-                icon: "🆔",
+                title: "Get Price Confirmation",
+                desc: "Expert confirms pricing",
+                icon: "💰",
               },
               {
                 step: "4",
-                title: "Create Keys",
-                desc: "On-site key making",
-                icon: "🔑",
+                title: "Doorstep Service",
+                desc: "Technician with tools",
+                icon: "🔧",
               },
               {
                 step: "5",
-                title: "Test & Pay",
-                desc: "Test all keys",
+                title: "Pay After Work",
+                desc: "No hidden charges",
                 icon: "✅",
               },
             ].map((item, index) => (
@@ -527,6 +632,89 @@ const KeyServicesPage = () => {
                 <p className="text-sm text-gray-600">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-8"
+        >
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            💡 Why Choose BFS KeyCare Pro
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Real-Market Pricing</h3>
+                <p className="text-sm text-gray-600">No fake low prices - transparent quotes</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Experienced Locksmiths</h3>
+                <p className="text-sm text-gray-600">Professional and verified technicians</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Doorstep Service</h3>
+                <p className="text-sm text-gray-600">Available across Bangalore</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">24/7 Emergency Support</h3>
+                <p className="text-sm text-gray-600">Night and emergency services available</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Trusted BFS Network</h3>
+                <p className="text-sm text-gray-600">Part of reliable service network</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">Transparent Pricing</h3>
+                <p className="text-sm text-gray-600">Final price confirmed before work</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-6 p-4 bg-white rounded-lg border border-blue-200">
+            <p className="text-sm text-gray-700 text-center">
+              <strong>📌 Important Pricing Note:</strong> Prices vary based on lock type, vehicle model, and time of service. 
+              Night and emergency services may include additional charges. Final price is always confirmed before starting the job.
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl shadow-lg p-8 text-center"
+        >
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            🌙 Night & Emergency Services
+          </h2>
+          <p className="text-gray-700 mb-4">
+            We offer 24/7 emergency locksmith support across Bangalore.
+          </p>
+          <div className="max-w-2xl mx-auto">
+            <p className="text-sm text-gray-600 mb-2">Additional charges apply for:</p>
+            <div className="flex flex-wrap justify-center gap-3 mb-4">
+              <span className="bg-white px-4 py-2 rounded-full text-sm font-medium">Late night (10 PM – 6 AM)</span>
+              <span className="bg-white px-4 py-2 rounded-full text-sm font-medium">Heavy rain</span>
+              <span className="bg-white px-4 py-2 rounded-full text-sm font-medium">Remote locations</span>
+            </div>
+            <p className="text-xs text-gray-500 italic">This is standard practice across Bangalore.</p>
           </div>
         </motion.div>
       </div>
