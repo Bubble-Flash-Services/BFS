@@ -99,10 +99,12 @@ const AutoFixManagement = () => {
         setStats(result.data);
       } else {
         setStats(DEFAULT_AUTOFIX_STATS);
+        toast.error(result.message || 'Failed to fetch statistics');
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
       setStats(DEFAULT_AUTOFIX_STATS);
+      toast.error('Failed to fetch statistics');
     }
   };
 
@@ -429,7 +431,7 @@ const AutoFixManagement = () => {
                             <button
                               onClick={() => {
                                 setSelectedBooking(booking);
-                                setAdminApprovedPrice(booking.pricing?.basePrice?.toString() || '');
+                                setAdminApprovedPrice('');
                                 setShowPriceModal(true);
                               }}
                               className="text-green-600 hover:text-green-800"

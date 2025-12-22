@@ -224,10 +224,19 @@ export const getStats = async (req, res) => {
     const inProgress = await AutoFixBooking.countDocuments({ status: 'in-progress' });
     const completed = await AutoFixBooking.countDocuments({ status: 'completed' });
     
-    // Revenue calculation
+    // Revenue calculation - use adminApprovedPrice if available, otherwise finalPrice
     const revenueResult = await AutoFixBooking.aggregate([
       { $match: { status: 'completed', paymentStatus: 'paid' } },
-      { $group: { _id: null, total: { $sum: '$pricing.finalPrice' } } }
+      { 
+        $group: { 
+          _id: null, 
+          total: { 
+            $sum: { 
+              $ifNull: ['$adminApprovedPrice', '$pricing.finalPrice'] 
+            } 
+          } 
+        } 
+      }
     ]);
     const totalRevenue = revenueResult.length > 0 ? revenueResult[0].total : 0;
     

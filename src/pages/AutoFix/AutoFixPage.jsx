@@ -248,7 +248,7 @@ const AutoFixPage = () => {
         serviceType: selectedService.id,
         carCategory: selectedCategory,
         polishingType: polishingType?.id,
-        damagePhotos: [], // Photos would be uploaded separately
+        damagePhotos: [], // Photos will be uploaded to Cloudinary in a separate API call
         serviceLocation: location,
         contactPhone,
         preferredDate,
@@ -259,6 +259,9 @@ const AutoFixPage = () => {
         },
       };
 
+      // Note: In production, photos should be uploaded first using a file upload endpoint
+      // that stores them in Cloudinary and returns URLs before creating the booking
+      
       const token = localStorage.getItem("token");
       const response = await fetch(`${API}/api/autofix/booking`, {
         method: "POST",
@@ -335,7 +338,7 @@ const AutoFixPage = () => {
               </div>
               <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
                 <Clock className="w-5 h-5" />
-                <span>🚀 Instant service in 10 minutes</span>
+                <span>Quick doorstep service</span>
               </div>
               <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
                 <Tag className="w-5 h-5" />
@@ -753,7 +756,7 @@ const AutoFixPage = () => {
                 <div className="space-y-4 mb-8">
                   <div className="flex items-center justify-center gap-2 text-lg">
                     <Clock className="w-5 h-5 text-orange-600" />
-                    <span>⚡ Instant service in 10 minutes</span>
+                    <span>⚡ Fast doorstep service</span>
                   </div>
                   <div className="flex items-center justify-center gap-2 text-lg">
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
