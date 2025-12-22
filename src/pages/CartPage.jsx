@@ -342,7 +342,9 @@ export default function CartPage() {
       (item.vehicleType || "")
     ).toLowerCase();
 
-    // Prefer explicit type classification
+    // Prefer explicit type classification (fastest check, most reliable)
+    if (type.includes("autofix") || categoryField.includes("autofix"))
+      return "AutoFix";
     if (type.includes("green") || categoryField.includes("green"))
       return "Green & Clean";
     if (type.includes("car") || type.includes("monthly")) return "Car";
@@ -350,7 +352,10 @@ export default function CartPage() {
     if (type.includes("helmet")) return "Helmet";
     if (type.includes("laundry") || item.laundryDetails) return "Laundry";
 
-    // Then use category derived on server/client
+    // Then use category derived on server/client (catches items with incomplete type field)
+    // Note: Including various AutoFix service keywords as safety fallback
+    if (/(autofix|auto.*fix|dent|scratch|bumper|(rubbing.*)?polish)/.test(categoryField))
+      return "AutoFix";
     if (
       /(green.*clean|home.*clean|sofa.*clean|carpet.*clean|bathroom.*clean|kitchen.*clean|office.*clean)/.test(
         categoryField
@@ -365,7 +370,7 @@ export default function CartPage() {
     if (/(laundry|wash & fold|dry clean|ironing)/.test(categoryField))
       return "Laundry";
 
-    // Fallback to combined name + vehicleType keywords
+    // Fallback to combined name + vehicleType keywords (last resort for legacy items)
     if (/helmet/.test(nameField)) return "Helmet";
     if (/scooter|motorbike|cruiser|bike/.test(nameField)) return "Bike";
     if (/hatch|sedan|suv|mid\s*-\s*suv|luxur|car/.test(nameField)) return "Car";
@@ -376,6 +381,7 @@ export default function CartPage() {
     "Car",
     "Bike",
     "Helmet",
+    "AutoFix",
     "Laundry",
     "Green & Clean",
     "Others",
