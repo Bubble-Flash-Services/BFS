@@ -65,7 +65,7 @@ export const getPricing = async (req, res) => {
 // Create booking
 export const createBooking = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     const bookingData = req.body;
     
     // Check if this is user's first order
@@ -114,7 +114,7 @@ export const createBooking = async (req, res) => {
 // Get user bookings
 export const getUserBookings = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     
     const bookings = await AutoFixBooking.find({ userId })
       .sort({ createdAt: -1 })
@@ -137,7 +137,7 @@ export const getUserBookings = async (req, res) => {
 export const getBookingById = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.userId;
+    const userId = req.user.id;
     
     const booking = await AutoFixBooking.findOne({ _id: id, userId })
       .populate('assignedTechnician', 'name phone');
@@ -166,7 +166,7 @@ export const getBookingById = async (req, res) => {
 export const cancelBooking = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.userId;
+    const userId = req.user.id;
     
     const booking = await AutoFixBooking.findOne({ _id: id, userId });
     
@@ -204,7 +204,7 @@ export const cancelBooking = async (req, res) => {
 export const addReview = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.userId;
+    const userId = req.user.id;
     const { rating, review } = req.body;
     
     const booking = await AutoFixBooking.findOne({ _id: id, userId });
@@ -267,7 +267,7 @@ export const getCarCategories = async (req, res) => {
 // Check if user is first time customer
 export const checkFirstTimeUser = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     
     const existingOrders = await AutoFixBooking.countDocuments({ userId });
     const isFirstTime = existingOrders === 0;

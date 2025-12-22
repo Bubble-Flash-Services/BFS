@@ -9,7 +9,7 @@ import {
   getStats,
   deleteBooking
 } from '../controllers/autofixAdminController.js';
-import { authenticateAdmin } from '../middleware/auth.js';
+import { authenticateAdmin } from '../middleware/authAdmin.js';
 
 const router = express.Router();
 
