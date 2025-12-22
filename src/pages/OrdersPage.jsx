@@ -235,6 +235,7 @@ export default function OrdersPage() {
         " " +
         (item.vehicleType || "")
       ).toLowerCase();
+      if (type.includes("autofix")) return "AutoFix";
       if (type.includes("car")) return "Car";
       if (type.includes("bike")) return "Bike";
       if (type.includes("helmet")) return "Helmet";
@@ -243,7 +244,7 @@ export default function OrdersPage() {
       if (/helmet/.test(label)) return "Helmet";
       return "Others";
     };
-    const orderGroups = ["Car", "Bike", "Helmet", "Others"];
+    const orderGroups = ["Car", "Bike", "Helmet", "AutoFix", "Others"];
     const itemsByGroup = {};
     (order.items || []).forEach((it) => {
       const g = getItemGroup(it);
