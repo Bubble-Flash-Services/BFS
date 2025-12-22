@@ -60,6 +60,9 @@ export default function CartPage() {
   const [couponLoading, setCouponLoading] = useState(false);
   const [showCouponSection, setShowCouponSection] = useState(false);
 
+  // Track failed image loads for cart items
+  const [failedImages, setFailedImages] = useState(new Set());
+
   // Try to get live location first; fallback to profile address if unavailable
   useEffect(() => {
     const getLiveLocation = async () => {
@@ -726,21 +729,24 @@ export default function CartPage() {
                 <div className="space-y-4">
                   {group.items.map((item, index) => {
                     // Determine what to show for the item visual
+                    const itemKey = item.id || `${item.serviceId}-${item.packageId}-${index}`;
                     const hasImage = Boolean(item.img || item.image);
                     const hasIcon = Boolean(item.icon);
                     
-                    // State for tracking image load failure
-                    const [imageLoadFailed, setImageLoadFailed] = React.useState(false);
+                    // Check if this item's image has failed to load
+                    const imageLoadFailed = failedImages.has(itemKey);
                     
                     // Determine if we should show icon
                     const shouldShowIcon = !hasImage || imageLoadFailed || hasIcon;
                     
+                    // Handle image error
+                    const handleImageError = () => {
+                      setFailedImages(prev => new Set(prev).add(itemKey));
+                    };
+                    
                     return (
                     <div
-                      key={
-                        item.id ||
-                        `${item.serviceId}-${item.packageId}-${index}`
-                      }
+                      key={itemKey}
                       className="group bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
                     >
                       {/* Item Header with Gradient */}
@@ -790,7 +796,7 @@ export default function CartPage() {
                                 src={item.img || item.image}
                                 alt={item.title || item.name}
                                 className="w-16 h-16 object-cover rounded-xl border-2 border-gray-100"
-                                onError={() => setImageLoadFailed(true)}
+                                onError={handleImageError}
                               />
                             ) : null}
                             

@@ -250,8 +250,8 @@ const KeyServicesPage = () => {
     const totalPrice = priceQuote?.totalPrice || basePrice;
 
     // Check if this is user's first booking (15% discount for first-time users)
-    // User is considered first-time if totalOrders is 0 or undefined
-    const isFirstTimeBooking = !user?.totalOrders || user.totalOrders === 0;
+    // User is considered first-time if totalOrders is 0, undefined, or null
+    const isFirstTimeBooking = !user?.totalOrders;
     const firstTimeDiscount = isFirstTimeBooking ? 0.15 : 0;
     const discountAmount = Math.round(totalPrice * firstTimeDiscount);
     const finalPrice = totalPrice - discountAmount;
@@ -335,7 +335,7 @@ const KeyServicesPage = () => {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full shadow-lg animate-pulse"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full shadow-lg"
             >
               <Clock className="w-6 h-6" />
               <span className="text-lg font-bold">Service in 10 Minutes! ⚡</span>
