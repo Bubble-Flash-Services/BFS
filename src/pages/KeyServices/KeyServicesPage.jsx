@@ -187,27 +187,30 @@ const KeyServicesPage = () => {
 
   useEffect(() => {
     if (serviceType && specificService) {
-      fetchPriceQuote();
+      calculatePriceQuote();
     }
   }, [serviceType, specificService, quantity, nightService]);
 
-  const fetchPriceQuote = async () => {
+  const calculatePriceQuote = () => {
     setLoadingQuote(true);
     try {
-      const response = await fetch(`${API}/api/key-services/quote`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          serviceType,
-          specificService,
-          quantity,
-          nightService,
-        }),
-      });
-      const data = await response.json();
-      if (data.success) setPriceQuote(data.data);
+      const category = serviceCategories[serviceType];
+      const service = category.services.find((s) => s.id === specificService);
+      
+      if (service) {
+        const basePrice = extractBasePrice(service.price);
+        const nightSurcharge = nightService ? Math.round(basePrice * 0.3) : 0; // 30% surcharge for night service
+        const totalPrice = (basePrice * quantity) + nightSurcharge;
+        
+        setPriceQuote({
+          basePrice: basePrice,
+          nightSurcharge: nightSurcharge,
+          totalPrice: totalPrice,
+          quantity: quantity
+        });
+      }
     } catch (error) {
-      console.error("Error fetching quote:", error);
+      console.error("Error calculating quote:", error);
     } finally {
       setLoadingQuote(false);
     }

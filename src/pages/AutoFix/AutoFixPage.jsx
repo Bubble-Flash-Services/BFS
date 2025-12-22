@@ -5,22 +5,16 @@ import toast from "react-hot-toast";
 import {
   Car,
   Wrench,
-  CheckCircle2,
-  Star,
-  Award,
   Shield,
   Clock,
   Camera,
   MapPin,
-  Calendar,
   Upload,
   Sparkles,
-  ChevronRight,
   Tag,
 } from "lucide-react";
 import { useAuth } from "../../components/AuthContext";
 import { useCart } from "../../components/CartContext";
-import AddressAutocomplete from "../../components/AddressAutocomplete";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -34,10 +28,6 @@ const AutoFixPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [polishingType, setPolishingType] = useState(null);
   const [damagePhotos, setDamagePhotos] = useState([]);
-  const [location, setLocation] = useState(null);
-  const [contactPhone, setContactPhone] = useState("");
-  const [preferredDate, setPreferredDate] = useState("");
-  const [preferredTimeSlot, setPreferredTimeSlot] = useState("");
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [pricing, setPricing] = useState(null);
   const [isFirstTime, setIsFirstTime] = useState(false);
@@ -92,13 +82,6 @@ const AutoFixPage = () => {
   ];
 
   // Time slots
-  const timeSlots = [
-    "09:00 AM - 11:00 AM",
-    "11:00 AM - 01:00 PM",
-    "01:00 PM - 03:00 PM",
-    "03:00 PM - 05:00 PM",
-    "05:00 PM - 07:00 PM",
-  ];
 
   // Check if user is first time
   useEffect(() => {
@@ -228,77 +211,86 @@ const AutoFixPage = () => {
   const handleContinueToUpload = () => {
     if (!user) {
       toast.error("Please login to continue");
+      navigate("/login");
       return;
     }
     setCurrentStep(4);
   };
 
-  const handleContinueToLocation = () => {
+  const handleContinueToAddToCart = () => {
     if (damagePhotos.length < 2) {
-      toast.error("Please upload at least 2 photos");
+      toast.error("Please upload at least 2 photos of the damage");
       return;
     }
-    setCurrentStep(5);
+    handleAddToCart();
   };
 
-  const handleAddToCart = async () => {
-    if (!location) {
-      toast.error("Please select a location");
-      return;
-    }
-    if (!contactPhone) {
-      toast.error("Please enter contact phone");
-      return;
-    }
-    if (!preferredDate) {
-      toast.error("Please select preferred date");
-      return;
-    }
-    if (!preferredTimeSlot) {
-      toast.error("Please select time slot");
+  const handleAddToCart = () => {
+    if (!user) {
+      toast.error("Please login to add items to cart");
+      navigate("/login");
       return;
     }
 
-    try {
-      const bookingData = {
+    if (!selectedService || !pricing) {
+      toast.error("Service information is missing");
+      return;
+    }
+
+    // Check if this is user's first booking (15% discount for first-time users)
+    const isFirstTimeBooking = !user?.totalOrders;
+    const firstTimeDiscount = isFirstTimeBooking ? 0.15 : 0;
+    const basePrice = pricing.basePrice;
+    const discountAmount = Math.round(basePrice * firstTimeDiscount);
+    const finalPrice = basePrice - discountAmount;
+
+    // Convert damage photos to base64 or URLs for storage
+    const photoData = damagePhotos.map((photo, index) => ({
+      preview: photo.preview,
+      name: `damage-photo-${index + 1}`,
+    }));
+
+    // Create cart item in the format expected by CartContext
+    const cartItem = {
+      id: `autofix-${selectedService.id}-${selectedCategory || polishingType?.id}-${Date.now()}`,
+      type: "autofix",
+      category: "AutoFix Pro",
+      name: selectedService.title,
+      serviceName: "autofix", // Hardcoded serviceName for cart compatibility
+      description: selectedService.description,
+      image: "/car/car1.png", // Default AutoFix image
+      price: finalPrice,
+      basePrice: basePrice,
+      originalPrice: basePrice,
+      discount: discountAmount,
+      isFirstTimeBooking: isFirstTimeBooking,
+      quantity: 1,
+      features: [selectedService.title],
+      metadata: {
         serviceType: selectedService.id,
         carCategory: selectedCategory,
         polishingType: polishingType?.id,
-        damagePhotos: [], // Photos will be uploaded to Cloudinary in a separate API call
-        serviceLocation: location,
-        contactPhone,
-        preferredDate,
-        preferredTimeSlot,
-        specialInstructions,
-        pricing: {
-          basePrice: pricing.basePrice,
-        },
-      };
+        polishingTypeName: polishingType?.name,
+        damagePhotos: photoData,
+        specialInstructions: specialInstructions,
+        isFirstTime: isFirstTimeBooking,
+      },
+    };
 
-      // Note: In production, photos should be uploaded first using a file upload endpoint
-      // that stores them in Cloudinary and returns URLs before creating the booking
-      
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API}/api/autofix/booking`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(bookingData),
-      });
+    addToCart(cartItem);
 
-      const result = await response.json();
-      if (result.success) {
-        toast.success("Booking added successfully!");
-        setCurrentStep(6);
-      } else {
-        toast.error(result.message || "Failed to create booking");
-      }
-    } catch (error) {
-      console.error("Error creating booking:", error);
-      toast.error("Failed to create booking");
+    let successMessage = `${selectedService.title} added to cart!`;
+    if (isFirstTimeBooking) {
+      successMessage += ` 🎉 15% First-Time Discount Applied!`;
     }
+
+    toast.success(successMessage, {
+      icon: "🚗",
+      duration: 3000,
+    });
+
+    // Navigate to cart
+    setTimeout(() => navigate("/cart"), 500);
   };
 
   const calculateFinalPrice = () => {
@@ -635,155 +627,29 @@ const AutoFixPage = () => {
                   )}
                 </div>
 
+                <div className="bg-orange-50 p-6 rounded-lg mb-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-lg font-semibold">Estimated Price:</span>
+                    <span className="text-3xl font-bold text-orange-600">
+                      ₹{calculateFinalPrice()}
+                    </span>
+                  </div>
+                  {isFirstTime && (
+                    <p className="text-sm text-green-600 text-center">
+                      🎉 15% first order discount applied!
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-500 text-center mt-2">
+                    Add to cart and provide location details during checkout
+                  </p>
+                </div>
+
                 <button
-                  onClick={handleContinueToLocation}
+                  onClick={handleContinueToAddToCart}
                   disabled={damagePhotos.length < 2}
                   className="w-full bg-orange-600 text-white py-4 rounded-full font-semibold text-lg hover:bg-orange-700 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
-                  Get Final Price
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {currentStep === 5 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="max-w-2xl mx-auto"
-            >
-              <button
-                onClick={() => setCurrentStep(4)}
-                className="mb-6 text-orange-600 hover:underline flex items-center"
-              >
-                ← Back
-              </button>
-              <div className="bg-white rounded-2xl shadow-lg p-8">
-                <h2 className="text-3xl font-bold mb-6 text-center">
-                  Location & Booking Details
-                </h2>
-
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Service Location *
-                    </label>
-                    <AddressAutocomplete
-                      onAddressSelect={(address) => setLocation(address)}
-                      placeholder="Enter your address"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Contact Phone *
-                    </label>
-                    <input
-                      type="tel"
-                      value={contactPhone}
-                      onChange={(e) => setContactPhone(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      placeholder="Enter your phone number"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Preferred Date *
-                    </label>
-                    <input
-                      type="date"
-                      value={preferredDate}
-                      onChange={(e) => setPreferredDate(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Time Slot *
-                    </label>
-                    <select
-                      value={preferredTimeSlot}
-                      onChange={(e) => setPreferredTimeSlot(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    >
-                      <option value="">Select time slot</option>
-                      {timeSlots.map((slot) => (
-                        <option key={slot} value={slot}>
-                          {slot}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Special Instructions (Optional)
-                    </label>
-                    <textarea
-                      value={specialInstructions}
-                      onChange={(e) => setSpecialInstructions(e.target.value)}
-                      rows="3"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      placeholder="Any specific requirements?"
-                    />
-                  </div>
-
-                  <div className="bg-orange-50 p-6 rounded-lg">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-lg font-semibold">Final Price:</span>
-                      <span className="text-3xl font-bold text-orange-600">
-                        ₹{calculateFinalPrice()}
-                      </span>
-                    </div>
-                    {isFirstTime && (
-                      <p className="text-sm text-green-600 text-center">
-                        🎉 15% first order discount applied!
-                      </p>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={handleAddToCart}
-                    className="w-full bg-orange-600 text-white py-4 rounded-full font-semibold text-lg hover:bg-orange-700 transition-all"
-                  >
-                    Confirm & Book Doorstep Service
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {currentStep === 6 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="max-w-2xl mx-auto text-center"
-            >
-              <div className="bg-white rounded-2xl shadow-lg p-12">
-                <CheckCircle2 className="w-24 h-24 text-green-500 mx-auto mb-6" />
-                <h2 className="text-3xl font-bold mb-4">Booking Confirmed!</h2>
-                <p className="text-gray-600 mb-8">
-                  Our technician will arrive with BFS mobile service van at your
-                  doorstep
-                </p>
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center justify-center gap-2 text-lg">
-                    <Clock className="w-5 h-5 text-orange-600" />
-                    <span>⚡ Fast doorstep service</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2 text-lg">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    <span>WhatsApp updates enabled</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => navigate("/orders")}
-                  className="bg-orange-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-orange-700 transition-all"
-                >
-                  View My Bookings
+                  Add to Cart & Checkout
                 </button>
               </div>
             </motion.div>
