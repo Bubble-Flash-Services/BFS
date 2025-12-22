@@ -8,7 +8,9 @@ const getDefaultServiceImage = (serviceName) => {
 
   const name = serviceName.toLowerCase();
 
-  if (name.includes("car") || name.includes("vehicle")) {
+  if (name.includes("autofix") || name.includes("dent") || name.includes("scratch") || name.includes("bumper")) {
+    return "/car/car1.png";
+  } else if (name.includes("car") || name.includes("vehicle")) {
     return "/car/car1.png";
   } else if (
     name.includes("bike") ||
@@ -65,6 +67,15 @@ export function CartProvider({ children }) {
       const vt = (rawItem.vehicleType || "").toLowerCase();
       const kind = (rawItem.type || "").toLowerCase();
       const cat = (rawItem.category || "").toLowerCase();
+
+      // Check for AutoFix service
+      if (
+        kind.includes("autofix") ||
+        cat.includes("autofix") ||
+        /autofix|dent|scratch|bumper|rubbing|polishing/i.test(svcName)
+      ) {
+        return "AutoFix Pro";
+      }
 
       // Check for Green & Clean services
       if (
