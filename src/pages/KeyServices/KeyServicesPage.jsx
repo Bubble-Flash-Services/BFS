@@ -217,7 +217,8 @@ const KeyServicesPage = () => {
   const extractBasePrice = (priceString) => {
     if (typeof priceString === 'number') return priceString;
     if (typeof priceString === 'string') {
-      const match = priceString.match(/₹?(\d+(?:,\d+)*)/);
+      // Match price format: ₹200, 200, ₹1,200 etc.
+      const match = priceString.match(/^₹?(\d+(?:,\d+)*)/);
       if (match) {
         return parseInt(match[1].replace(/,/g, ''));
       }

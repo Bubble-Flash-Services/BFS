@@ -736,8 +736,8 @@ export default function CartPage() {
                     // Check if this item's image has failed to load
                     const imageLoadFailed = failedImages.has(itemKey);
                     
-                    // Determine if we should show icon
-                    const shouldShowIcon = !hasImage || imageLoadFailed || hasIcon;
+                    // Show icon if: no image available, OR image failed to load
+                    const shouldShowIcon = !hasImage || imageLoadFailed;
                     
                     // Handle image error
                     const handleImageError = () => {
