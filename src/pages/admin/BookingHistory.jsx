@@ -33,6 +33,7 @@ const BookingHistory = () => {
     const getItemGroup = (item) => {
       const type = (item?.type || '').toLowerCase();
       const label = ((item?.serviceName || '') + ' ' + (item?.vehicleType || '')).toLowerCase();
+      if (type.includes('autofix')) return 'AutoFix';
       if (type.includes('car')) return 'Car';
       if (type.includes('bike')) return 'Bike';
       if (type.includes('helmet')) return 'Helmet';
@@ -42,7 +43,7 @@ const BookingHistory = () => {
       return 'Others';
     };
 
-    const orderGroups = ['Car','Bike','Helmet','Others'];
+    const orderGroups = ['Car','Bike','Helmet','AutoFix','Others'];
     const items = booking.items || [];
     const itemsByGroup = {};
     items.forEach((it) => {
@@ -1081,6 +1082,7 @@ const BookingHistory = () => {
                       const getItemGroup = (item) => {
                         const type = (item.type || '').toLowerCase();
                         const label = ((item.serviceName || '') + ' ' + (item.vehicleType || '')).toLowerCase();
+                        if (type.includes('autofix')) return 'AutoFix';
                         if (type.includes('car')) return 'Car';
                         if (type.includes('bike')) return 'Bike';
                         if (type.includes('helmet')) return 'Helmet';
@@ -1095,7 +1097,7 @@ const BookingHistory = () => {
                         if (!groups[g]) groups[g] = [];
                         groups[g].push(it);
                       });
-                      const order = ['Car','Bike','Helmet','Others'];
+                      const order = ['Car','Bike','Helmet','AutoFix','Others'];
                       return order.filter(k=>groups[k]?.length).map((gk) => (
                         <div key={gk}>
                           <div className="flex items-center gap-2 mb-2">

@@ -13,6 +13,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
   const getItemGroup = (it) => {
     const type = (it.type || '').toLowerCase();
     const label = ((it.serviceName || '') + ' ' + (it.vehicleType || '')).toLowerCase();
+    if (type.includes('autofix')) return 'AutoFix';
     if (type.includes('car')) return 'Car';
     if (type.includes('bike')) return 'Bike';
     if (type.includes('helmet')) return 'Helmet';
@@ -21,7 +22,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
     if (/helmet/.test(label)) return 'Helmet';
     return 'Others';
   };
-  const groupOrder = ['Car','Bike','Helmet','Others'];
+  const groupOrder = ['Car','Bike','Helmet','AutoFix','Others'];
   const grouped = groupOrder
     .map((g) => ({ key: g, items: items.filter((it) => getItemGroup(it) === g) }))
     .filter((g) => g.items.length);
