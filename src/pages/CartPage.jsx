@@ -343,6 +343,8 @@ export default function CartPage() {
     ).toLowerCase();
 
     // Prefer explicit type classification
+    if (type.includes("autofix") || categoryField.includes("autofix"))
+      return "AutoFix";
     if (type.includes("green") || categoryField.includes("green"))
       return "Green & Clean";
     if (type.includes("car") || type.includes("monthly")) return "Car";
@@ -351,6 +353,8 @@ export default function CartPage() {
     if (type.includes("laundry") || item.laundryDetails) return "Laundry";
 
     // Then use category derived on server/client
+    if (/(autofix|auto.*fix|dent|scratch|bumper|polish)/.test(categoryField))
+      return "AutoFix";
     if (
       /(green.*clean|home.*clean|sofa.*clean|carpet.*clean|bathroom.*clean|kitchen.*clean|office.*clean)/.test(
         categoryField
@@ -376,6 +380,7 @@ export default function CartPage() {
     "Car",
     "Bike",
     "Helmet",
+    "AutoFix",
     "Laundry",
     "Green & Clean",
     "Others",
