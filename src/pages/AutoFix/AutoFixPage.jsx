@@ -18,6 +18,9 @@ import { useCart } from "../../components/CartContext";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
+// Constants
+const AUTOFIX_SERVICE_NAME = "autofix"; // Service name for cart compatibility
+
 const AutoFixPage = () => {
   const { user } = useAuth();
   const { addToCart } = useCart();
@@ -238,7 +241,8 @@ const AutoFixPage = () => {
     }
 
     // Check if this is user's first booking (15% discount for first-time users)
-    const isFirstTimeBooking = !user?.totalOrders;
+    // User is considered first-time if totalOrders is 0, undefined, or null
+    const isFirstTimeBooking = !user?.totalOrders || user.totalOrders === 0;
     const firstTimeDiscount = isFirstTimeBooking ? 0.15 : 0;
     const basePrice = pricing.basePrice;
     const discountAmount = Math.round(basePrice * firstTimeDiscount);
@@ -250,13 +254,16 @@ const AutoFixPage = () => {
       name: `damage-photo-${index + 1}`,
     }));
 
+    // Generate a unique identifier for the cart item
+    const categoryIdentifier = selectedCategory || polishingType?.id || 'general';
+
     // Create cart item in the format expected by CartContext
     const cartItem = {
-      id: `autofix-${selectedService.id}-${selectedCategory || polishingType?.id}-${Date.now()}`,
+      id: `autofix-${selectedService.id}-${categoryIdentifier}-${Date.now()}`,
       type: "autofix",
       category: "AutoFix Pro",
       name: selectedService.title,
-      serviceName: "autofix", // Hardcoded serviceName for cart compatibility
+      serviceName: AUTOFIX_SERVICE_NAME,
       description: selectedService.description,
       image: "/car/car1.png", // Default AutoFix image
       price: finalPrice,
