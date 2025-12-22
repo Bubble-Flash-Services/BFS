@@ -353,8 +353,8 @@ export default function CartPage() {
     if (type.includes("laundry") || item.laundryDetails) return "Laundry";
 
     // Then use category derived on server/client (catches items with incomplete type field)
-    // Note: "polish" in regex catches AutoFix rubbing/polishing services specifically
-    if (/(autofix|auto.*fix|dent|scratch|bumper|rubbing.*polish)/.test(categoryField))
+    // Note: Including various AutoFix service keywords as safety fallback
+    if (/(autofix|auto.*fix|dent|scratch|bumper|(rubbing.*)?polish)/.test(categoryField))
       return "AutoFix";
     if (
       /(green.*clean|home.*clean|sofa.*clean|carpet.*clean|bathroom.*clean|kitchen.*clean|office.*clean)/.test(
