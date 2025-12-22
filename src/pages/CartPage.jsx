@@ -17,6 +17,8 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
+  Key,
+  Package,
 } from "lucide-react";
 import MapboxLocationPicker from "../components/MapboxLocationPicker";
 import RazorpayPayment from "../components/RazorpayPayment";
@@ -771,13 +773,41 @@ export default function CartPage() {
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center space-x-4">
-                            {/* Image */}
-                            {(item.img || item.image) && (
+                            {/* Image or Icon Fallback */}
+                            {(item.img || item.image) ? (
                               <img
                                 src={item.img || item.image}
                                 alt={item.title || item.name}
                                 className="w-16 h-16 object-cover rounded-xl border-2 border-gray-100"
+                                onError={(e) => {
+                                  // If image fails to load, hide it and show icon fallback
+                                  e.target.style.display = 'none';
+                                  e.target.nextElementSibling.style.display = 'flex';
+                                }}
                               />
+                            ) : null}
+                            {/* Icon Fallback - Show if no image or image fails */}
+                            {(!item.img && !item.image) || item.icon ? (
+                              <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl border-2 border-gray-100">
+                                {item.icon ? (
+                                  <span className="text-3xl">{item.icon}</span>
+                                ) : item.type === "key-services" ? (
+                                  <Key className="w-8 h-8 text-blue-600" />
+                                ) : (
+                                  <Package className="w-8 h-8 text-purple-600" />
+                                )}
+                              </div>
+                            ) : (
+                              // Hidden fallback icon for image error handling
+                              <div className="w-16 h-16 items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl border-2 border-gray-100" style={{display: 'none'}}>
+                                {item.icon ? (
+                                  <span className="text-3xl">{item.icon}</span>
+                                ) : item.type === "key-services" ? (
+                                  <Key className="w-8 h-8 text-blue-600" />
+                                ) : (
+                                  <Package className="w-8 h-8 text-purple-600" />
+                                )}
+                              </div>
                             )}
                             <div className="flex flex-col space-y-2">
                               {/* Removed rating and duration display */}
@@ -787,6 +817,18 @@ export default function CartPage() {
                             <div className="text-2xl font-bold text-gray-900">
                               ₹{item.price * item.quantity}
                             </div>
+                            {/* Show original price with strikethrough if there's a discount */}
+                            {item.originalPrice && item.originalPrice > item.price && (
+                              <div className="text-sm text-gray-500 line-through">
+                                ₹{item.originalPrice * item.quantity}
+                              </div>
+                            )}
+                            {/* Show first-time booking discount badge */}
+                            {item.isFirstTimeBooking && item.discount > 0 && (
+                              <div className="text-xs text-green-600 font-semibold mt-1">
+                                🎉 15% First-Time Discount: -₹{item.discount * item.quantity}
+                              </div>
+                            )}
                             {item.oldPrice && item.oldPrice > item.price && (
                               <div className="text-sm text-gray-500 line-through">
                                 ₹{item.oldPrice * item.quantity}

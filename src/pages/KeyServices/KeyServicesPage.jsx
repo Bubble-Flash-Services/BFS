@@ -233,6 +233,28 @@ const KeyServicesPage = () => {
       return;
     }
 
+    // Extract base price from price range string (e.g., "₹200 - ₹400" -> 200)
+    const extractBasePrice = (priceString) => {
+      if (typeof priceString === 'number') return priceString;
+      if (typeof priceString === 'string') {
+        const match = priceString.match(/₹?(\d+(?:,\d+)*)/);
+        if (match) {
+          return parseInt(match[1].replace(/,/g, ''));
+        }
+      }
+      return 0;
+    };
+
+    // Use priceQuote if available, otherwise extract from price string
+    const basePrice = priceQuote?.basePrice || extractBasePrice(service.price);
+    const totalPrice = priceQuote?.totalPrice || basePrice;
+
+    // Check if this is user's first booking (15% discount for first-time users)
+    const isFirstTimeBooking = !user?.hasBooked; // Assuming user object has hasBooked field
+    const firstTimeDiscount = isFirstTimeBooking ? 0.15 : 0;
+    const discountAmount = Math.round(totalPrice * firstTimeDiscount);
+    const finalPrice = totalPrice - discountAmount;
+
     // Create cart item
     const cartItem = {
       id: `key-${specificService}-${Date.now()}`,
@@ -242,8 +264,11 @@ const KeyServicesPage = () => {
       serviceName: 'key', // Hardcoded serviceName
       image: "/services/keys/key-duplication.jpg", // Use generic key image
       icon: service.icon, // Store emoji icon separately
-      price: priceQuote?.totalPrice || service.price,
-      basePrice: priceQuote?.basePrice || service.price,
+      price: finalPrice,
+      basePrice: basePrice,
+      originalPrice: totalPrice,
+      discount: discountAmount,
+      isFirstTimeBooking: isFirstTimeBooking,
       quantity: quantity,
       isEmergency: isEmergency,
       nightService: nightService,
@@ -259,9 +284,15 @@ const KeyServicesPage = () => {
     };
 
     addToCart(cartItem);
-    toast.success(`${service.name} added to cart!`, {
+    
+    let successMessage = `${service.name} added to cart!`;
+    if (isFirstTimeBooking) {
+      successMessage += ` 🎉 15% First-Time Discount Applied!`;
+    }
+    
+    toast.success(successMessage, {
       icon: "🔑",
-      duration: 2000,
+      duration: 3000,
     });
 
     // Navigate to cart
@@ -296,6 +327,20 @@ const KeyServicesPage = () => {
               BFS KeyCare Pro
             </h1>
           </div>
+          
+          {/* Highlighted Service in 10 mins Badge */}
+          <div className="flex justify-center mb-4">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full shadow-lg animate-pulse"
+            >
+              <Clock className="w-6 h-6" />
+              <span className="text-lg font-bold">Service in 10 Minutes! ⚡</span>
+            </motion.div>
+          </div>
+          
           <p className="text-xl text-gray-600 mb-6">
             Lost Keys? Locked Out? We Fix It — Fast & Safely
           </p>
