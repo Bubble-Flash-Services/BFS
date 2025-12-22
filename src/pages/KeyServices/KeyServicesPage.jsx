@@ -79,7 +79,7 @@ const KeyServicesPage = () => {
           id: "wooden-cupboard",
           name: "Wooden Cupboards",
           price: "₹1,000 - ₹1,500",
-          icon: "🪵",
+          icon: "🗄️",
           description: "Wooden cupboard lock opening",
         },
         {
@@ -138,7 +138,7 @@ const KeyServicesPage = () => {
           id: "car-lost-remote",
           name: "Lost Car Key - Remote Key",
           price: "₹5,000 - ₹8,000",
-          icon: "📡",
+          icon: "🚗",
           description: "Remote car key programming",
         },
         {
@@ -213,6 +213,19 @@ const KeyServicesPage = () => {
     }
   };
 
+  // Extract base price from price range string (e.g., "₹200 - ₹400" -> 200)
+  const extractBasePrice = (priceString) => {
+    if (typeof priceString === "number") return priceString;
+    if (typeof priceString === "string") {
+      // Match price format: ₹200, 200, ₹1,200 etc.
+      const match = priceString.match(/^₹?(\d+(?:,\d+)*)/);
+      if (match) {
+        return parseInt(match[1].replace(/,/g, ""));
+      }
+    }
+    return 0;
+  };
+
   const handleAddToCart = () => {
     if (!user) {
       toast.error("Please sign in to book a service");
@@ -233,17 +246,31 @@ const KeyServicesPage = () => {
       return;
     }
 
+    // Use priceQuote if available, otherwise extract from price string
+    const basePrice = priceQuote?.basePrice || extractBasePrice(service.price);
+    const totalPrice = priceQuote?.totalPrice || basePrice;
+
+    // Check if this is user's first booking (15% discount for first-time users)
+    // User is considered first-time if totalOrders is 0, undefined, or null
+    const isFirstTimeBooking = !user?.totalOrders;
+    const firstTimeDiscount = isFirstTimeBooking ? 0.15 : 0;
+    const discountAmount = Math.round(totalPrice * firstTimeDiscount);
+    const finalPrice = totalPrice - discountAmount;
+
     // Create cart item
     const cartItem = {
       id: `key-${specificService}-${Date.now()}`,
       type: "key-services",
       category: category.title,
       name: service.name,
-      serviceName: 'key', // Hardcoded serviceName
+      serviceName: "key", // Hardcoded serviceName
       image: "/services/keys/key-duplication.jpg", // Use generic key image
       icon: service.icon, // Store emoji icon separately
-      price: priceQuote?.totalPrice || service.price,
-      basePrice: priceQuote?.basePrice || service.price,
+      price: finalPrice,
+      basePrice: basePrice,
+      originalPrice: totalPrice,
+      discount: discountAmount,
+      isFirstTimeBooking: isFirstTimeBooking,
       quantity: quantity,
       isEmergency: isEmergency,
       nightService: nightService,
@@ -259,9 +286,15 @@ const KeyServicesPage = () => {
     };
 
     addToCart(cartItem);
-    toast.success(`${service.name} added to cart!`, {
+
+    let successMessage = `${service.name} added to cart!`;
+    if (isFirstTimeBooking) {
+      successMessage += ` 🎉 15% First-Time Discount Applied!`;
+    }
+
+    toast.success(successMessage, {
       icon: "🔑",
-      duration: 2000,
+      duration: 3000,
     });
 
     // Navigate to cart
@@ -296,14 +329,32 @@ const KeyServicesPage = () => {
               BFS KeyCare Pro
             </h1>
           </div>
+
+          {/* Highlighted Service in 10 mins Badge */}
+          <div className="flex justify-center mb-4">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full shadow-lg"
+            >
+              <Clock className="w-6 h-6" />
+              <span className="text-lg font-bold">
+                Service in 10 Minutes! ⚡
+              </span>
+            </motion.div>
+          </div>
+
           <p className="text-xl text-gray-600 mb-6">
             Lost Keys? Locked Out? We Fix It — Fast & Safely
           </p>
           <p className="text-md text-gray-500 mb-4">
-            Professional doorstep locksmith services for homes, bikes, cars, and apartments across Bangalore
+            Professional doorstep locksmith services for homes, bikes, cars, and
+            apartments across Bangalore
           </p>
           <p className="text-sm text-gray-500 italic">
-            No shortcuts. No illegal methods. Transparent pricing based on real situations.
+            No shortcuts. No illegal methods. Transparent pricing based on real
+            situations.
           </p>
 
           <div className="flex flex-wrap justify-center gap-6 mt-8">
@@ -313,7 +364,9 @@ const KeyServicesPage = () => {
             </div>
             <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
               <Clock className="w-5 h-5 text-orange-600" />
-              <span className="text-sm font-medium">24/7 Emergency Support</span>
+              <span className="text-sm font-medium">
+                24/7 Emergency Support
+              </span>
             </div>
             <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
               <CheckCircle className="w-5 h-5 text-blue-600" />
@@ -375,23 +428,28 @@ const KeyServicesPage = () => {
                 ))}
               </div>
 
-              {(specificService && (serviceType === "house-apartment" || specificService.includes("duplicate"))) && (
-                <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Quantity
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={quantity}
-                    onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              )}
+              {specificService &&
+                (serviceType === "house-apartment" ||
+                  specificService.includes("duplicate")) && (
+                  <div className="mt-8 p-4 bg-blue-50 rounded-lg">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Quantity
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={quantity}
+                      onChange={(e) =>
+                        setQuantity(parseInt(e.target.value) || 1)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                )}
 
-              {(specificService === "car-unlock-night" || specificService === "house-apartment-main") && (
+              {(specificService === "car-unlock-night" ||
+                specificService === "house-apartment-main") && (
                 <div className="mt-4 p-4 bg-orange-50 rounded-lg">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -415,20 +473,28 @@ const KeyServicesPage = () => {
                 className="bg-white rounded-2xl shadow-lg p-6 mt-8"
               >
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  {isEmergency ? "Emergency Service Selected" : "Selected Service"}
+                  {isEmergency
+                    ? "Emergency Service Selected"
+                    : "Selected Service"}
                 </h2>
 
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                   <div className="flex gap-2">
                     <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-yellow-800">
-                      <p className="font-medium mb-1">Important Service Information:</p>
+                      <p className="font-medium mb-1">
+                        Important Service Information:
+                      </p>
                       <ul className="list-disc list-inside space-y-1 text-xs">
                         <li>Add to cart and proceed to checkout</li>
-                        <li>Provide location, date, time, and contact details</li>
+                        <li>
+                          Provide location, date, time, and contact details
+                        </li>
                         <li>Ownership proof required before service</li>
                         <li>All technicians are police-verified</li>
-                        <li>Night & emergency services may have additional charges</li>
+                        <li>
+                          Night & emergency services may have additional charges
+                        </li>
                         <li>Final price confirmed before starting the job</li>
                       </ul>
                     </div>
@@ -446,7 +512,9 @@ const KeyServicesPage = () => {
                         <li>ECU hacking</li>
                         <li>Forced entry methods</li>
                       </ul>
-                      <p className="mt-2 text-xs italic">We follow ethical and legal locksmith practices only.</p>
+                      <p className="mt-2 text-xs italic">
+                        We follow ethical and legal locksmith practices only.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -459,7 +527,9 @@ const KeyServicesPage = () => {
                       : "bg-blue-600 hover:bg-blue-700"
                   }`}
                 >
-                  {isEmergency ? "🚨 Add Emergency Service to Cart" : "🔑 Book Service"}
+                  {isEmergency
+                    ? "🚨 Add Emergency Service to Cart"
+                    : "🔑 Book Service"}
                 </button>
               </motion.div>
             )}
@@ -528,7 +598,7 @@ const KeyServicesPage = () => {
                           <span>Professional service</span>
                         </div>
                       )}
-                      {(serviceType === "digital-smart") && (
+                      {serviceType === "digital-smart" && (
                         <>
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <AlertCircle className="w-4 h-4 text-orange-500" />
@@ -555,7 +625,8 @@ const KeyServicesPage = () => {
                   📲 Need Help Now?
                 </p>
                 <p className="text-xs text-gray-600 mb-3">
-                  Locked out or lost your key? We'll help you safely and quickly.
+                  Locked out or lost your key? We'll help you safely and
+                  quickly.
                 </p>
                 <a
                   href="tel:+919591572775"
@@ -647,51 +718,77 @@ const KeyServicesPage = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Real-Market Pricing</h3>
-                <p className="text-sm text-gray-600">No fake low prices - transparent quotes</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Real-Market Pricing
+                </h3>
+                <p className="text-sm text-gray-600">
+                  No fake low prices - transparent quotes
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Experienced Locksmiths</h3>
-                <p className="text-sm text-gray-600">Professional and verified technicians</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Experienced Locksmiths
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Professional and verified technicians
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Doorstep Service</h3>
-                <p className="text-sm text-gray-600">Available across Bangalore</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Doorstep Service
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Available across Bangalore
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">24/7 Emergency Support</h3>
-                <p className="text-sm text-gray-600">Night and emergency services available</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  24/7 Emergency Support
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Night and emergency services available
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Trusted BFS Network</h3>
-                <p className="text-sm text-gray-600">Part of reliable service network</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Trusted BFS Network
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Part of reliable service network
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Transparent Pricing</h3>
-                <p className="text-sm text-gray-600">Final price confirmed before work</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Transparent Pricing
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Final price confirmed before work
+                </p>
               </div>
             </div>
           </div>
-          
+
           <div className="mt-6 p-4 bg-white rounded-lg border border-blue-200">
             <p className="text-sm text-gray-700 text-center">
-              <strong>📌 Important Pricing Note:</strong> Prices vary based on lock type, vehicle model, and time of service. 
-              Night and emergency services may include additional charges. Final price is always confirmed before starting the job.
+              <strong>📌 Important Pricing Note:</strong> Prices vary based on
+              lock type, vehicle model, and time of service. Night and emergency
+              services may include additional charges. Final price is always
+              confirmed before starting the job.
             </p>
           </div>
         </motion.div>
@@ -708,13 +805,23 @@ const KeyServicesPage = () => {
             We offer 24/7 emergency locksmith support across Bangalore.
           </p>
           <div className="max-w-2xl mx-auto">
-            <p className="text-sm text-gray-600 mb-2">Additional charges apply for:</p>
+            <p className="text-sm text-gray-600 mb-2">
+              Additional charges apply for:
+            </p>
             <div className="flex flex-wrap justify-center gap-3 mb-4">
-              <span className="bg-white px-4 py-2 rounded-full text-sm font-medium">Late night (10 PM – 6 AM)</span>
-              <span className="bg-white px-4 py-2 rounded-full text-sm font-medium">Heavy rain</span>
-              <span className="bg-white px-4 py-2 rounded-full text-sm font-medium">Remote locations</span>
+              <span className="bg-white px-4 py-2 rounded-full text-sm font-medium">
+                Late night (10 PM – 6 AM)
+              </span>
+              <span className="bg-white px-4 py-2 rounded-full text-sm font-medium">
+                Heavy rain
+              </span>
+              <span className="bg-white px-4 py-2 rounded-full text-sm font-medium">
+                Remote locations
+              </span>
             </div>
-            <p className="text-xs text-gray-500 italic">This is standard practice across Bangalore.</p>
+            <p className="text-xs text-gray-500 italic">
+              This is standard practice across Bangalore.
+            </p>
           </div>
         </motion.div>
       </div>
