@@ -17,7 +17,8 @@ import {
   Wrench,
   ShoppingBag,
   Key,
-  Shirt
+  Shirt,
+  Car
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -102,6 +103,12 @@ const AdminLayout = ({ children }) => {
       href: "/admin/laundry",
       icon: Shirt,
       active: location.pathname === "/admin/laundry",
+    },
+    {
+      name: "AutoFix Pro",
+      href: "/admin/autofix",
+      icon: Car,
+      active: location.pathname === "/admin/autofix",
     },
     {
       name: "Coupons",
