@@ -20,6 +20,7 @@ const API = import.meta.env.VITE_API_URL || window.location.origin;
 
 // Constants
 const AUTOFIX_SERVICE_NAME = "autofix"; // Service name for cart compatibility
+const DEFAULT_CATEGORY_IDENTIFIER = "general"; // Fallback for cart item ID when category is not selected
 
 const AutoFixPage = () => {
   const { user } = useAuth();
@@ -255,7 +256,7 @@ const AutoFixPage = () => {
     }));
 
     // Generate a unique identifier for the cart item
-    const categoryIdentifier = selectedCategory || polishingType?.id || 'general';
+    const categoryIdentifier = selectedCategory || polishingType?.id || DEFAULT_CATEGORY_IDENTIFIER;
 
     // Create cart item in the format expected by CartContext
     const cartItem = {

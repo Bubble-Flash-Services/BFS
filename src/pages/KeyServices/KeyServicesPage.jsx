@@ -255,7 +255,7 @@ const KeyServicesPage = () => {
 
     // Check if this is user's first booking (15% discount for first-time users)
     // User is considered first-time if totalOrders is 0, undefined, or null
-    const isFirstTimeBooking = !user?.totalOrders;
+    const isFirstTimeBooking = !user?.totalOrders || user.totalOrders === 0;
     const firstTimeDiscount = isFirstTimeBooking ? 0.15 : 0;
     const discountAmount = Math.round(totalPrice * firstTimeDiscount);
     const finalPrice = totalPrice - discountAmount;
