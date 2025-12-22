@@ -205,9 +205,25 @@ const AutoFixPage = () => {
   };
 
   const removePhoto = (index) => {
+    const photoToRemove = damagePhotos[index];
+    // Revoke the object URL to prevent memory leaks
+    if (photoToRemove.preview) {
+      URL.revokeObjectURL(photoToRemove.preview);
+    }
     const newPhotos = damagePhotos.filter((_, i) => i !== index);
     setDamagePhotos(newPhotos);
   };
+
+  // Cleanup effect to revoke all object URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      damagePhotos.forEach((photo) => {
+        if (photo.preview) {
+          URL.revokeObjectURL(photo.preview);
+        }
+      });
+    };
+  }, [damagePhotos]);
 
   const handleContinueToUpload = () => {
     if (!user) {

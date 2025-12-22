@@ -79,7 +79,8 @@ export const approvePrice = async (req, res) => {
     
     await booking.save();
     
-    // Here you would trigger WhatsApp notification
+    // TODO: Integrate with WhatsApp notification service
+    // This should trigger a WhatsApp message to the customer with the approved price
     // For now, we'll just mark it as sent
     booking.whatsappNotificationSent = true;
     await booking.save();

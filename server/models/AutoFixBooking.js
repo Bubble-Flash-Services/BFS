@@ -71,16 +71,30 @@ const autoFixBookingSchema = new mongoose.Schema({
   
   // Pricing
   pricing: {
-    basePrice: Number,
-    discount: Number,
-    discountPercentage: Number,
-    finalPrice: Number,
+    basePrice: {
+      type: Number,
+      min: 0
+    },
+    discount: {
+      type: Number,
+      min: 0
+    },
+    discountPercentage: {
+      type: Number,
+      min: 0,
+      max: 100
+    },
+    finalPrice: {
+      type: Number,
+      min: 0
+    },
     isFirstOrder: Boolean
   },
   
   // Admin approved pricing
   adminApprovedPrice: {
-    type: Number
+    type: Number,
+    min: 0
   },
   isPriceApproved: {
     type: Boolean,

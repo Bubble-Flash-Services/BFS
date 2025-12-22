@@ -212,7 +212,9 @@ const AutoFixManagement = () => {
   };
 
   const handleDeleteBooking = async (id) => {
-    if (!confirm('Are you sure you want to delete this booking?')) {
+    // Simple confirmation - using window.confirm as it's consistent with other parts of the app
+    const confirmed = window.confirm('Are you sure you want to delete this booking?');
+    if (!confirmed) {
       return;
     }
 
@@ -237,6 +239,11 @@ const AutoFixManagement = () => {
       console.error('Error deleting booking:', error);
       toast.error('Failed to delete booking');
     }
+  };
+
+  // Utility function for getting display price
+  const getDisplayPrice = (booking) => {
+    return booking.adminApprovedPrice || booking.pricing?.finalPrice || booking.pricing?.basePrice;
   };
 
   const getStatusBadge = (status) => {
@@ -406,7 +413,7 @@ const AutoFixManagement = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          ₹{booking.adminApprovedPrice || booking.pricing?.finalPrice || booking.pricing?.basePrice}
+                          ₹{getDisplayPrice(booking)}
                         </div>
                         {booking.pricing?.isFirstOrder && (
                           <div className="text-xs text-green-600">First order</div>
@@ -704,7 +711,7 @@ const AutoFixManagement = () => {
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700">Final Price</label>
-                    <p className="text-gray-900">₹{selectedBooking.adminApprovedPrice || selectedBooking.pricing?.finalPrice}</p>
+                    <p className="text-gray-900">₹{getDisplayPrice(selectedBooking)}</p>
                   </div>
                   {selectedBooking.adminNotes && (
                     <div className="col-span-2">
