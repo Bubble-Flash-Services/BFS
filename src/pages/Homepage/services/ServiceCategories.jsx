@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   PaintBucket,
   ShoppingBag,
+  Wrench,
 } from "lucide-react";
 
 export default function ServiceCategories() {
@@ -266,6 +267,19 @@ export default function ServiceCategories() {
       price: "From ₹149",
       bgColor: "bg-teal-50",
       hoverColor: "hover:bg-teal-100",
+      isNew: true,
+      isPopular: true,
+    },
+    {
+      name: "BFS AutoFix Pro",
+      image: "/services/autofix/car-repair.jpg",
+      category: "autofix",
+      description: "Doorstep Car Denting, Painting & Polishing",
+      fallbackIcon: Wrench,
+      gradient: "from-orange-500 to-red-500",
+      price: "From ₹799",
+      bgColor: "bg-orange-50",
+      hoverColor: "hover:bg-orange-100",
       isNew: true,
       isPopular: true,
     },

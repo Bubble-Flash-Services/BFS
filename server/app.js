@@ -32,6 +32,8 @@ import paintingQuotesAdminRoutes from './routes/paintingQuotesAdmin.js';
 import keyServicesRoutes from './routes/keyServices.js';
 import keyServicesAdminRoutes from './routes/keyServicesAdmin.js';
 import laundryAdminRoutes from './routes/laundryAdmin.js';
+import autofixRoutes from './routes/autofix.js';
+import autofixAdminRoutes from './routes/autofixAdmin.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import { configureCloudinary } from './services/cloudinary.js';
@@ -104,6 +106,10 @@ app.use('/api/admin/key-services', keyServicesAdminRoutes);
 
 // Laundry Services routes
 app.use('/api/admin/laundry', laundryAdminRoutes);
+
+// AutoFix Pro routes
+app.use('/api/autofix', autofixRoutes);
+app.use('/api/admin/autofix', autofixAdminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
