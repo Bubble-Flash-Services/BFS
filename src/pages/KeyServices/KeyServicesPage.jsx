@@ -213,6 +213,18 @@ const KeyServicesPage = () => {
     }
   };
 
+  // Extract base price from price range string (e.g., "₹200 - ₹400" -> 200)
+  const extractBasePrice = (priceString) => {
+    if (typeof priceString === 'number') return priceString;
+    if (typeof priceString === 'string') {
+      const match = priceString.match(/₹?(\d+(?:,\d+)*)/);
+      if (match) {
+        return parseInt(match[1].replace(/,/g, ''));
+      }
+    }
+    return 0;
+  };
+
   const handleAddToCart = () => {
     if (!user) {
       toast.error("Please sign in to book a service");
@@ -232,18 +244,6 @@ const KeyServicesPage = () => {
       toast.error("Service not found");
       return;
     }
-
-    // Extract base price from price range string (e.g., "₹200 - ₹400" -> 200)
-    const extractBasePrice = (priceString) => {
-      if (typeof priceString === 'number') return priceString;
-      if (typeof priceString === 'string') {
-        const match = priceString.match(/₹?(\d+(?:,\d+)*)/);
-        if (match) {
-          return parseInt(match[1].replace(/,/g, ''));
-        }
-      }
-      return 0;
-    };
 
     // Use priceQuote if available, otherwise extract from price string
     const basePrice = priceQuote?.basePrice || extractBasePrice(service.price);

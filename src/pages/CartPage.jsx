@@ -724,7 +724,18 @@ export default function CartPage() {
                   </span>
                 </div>
                 <div className="space-y-4">
-                  {group.items.map((item, index) => (
+                  {group.items.map((item, index) => {
+                    // Determine what to show for the item visual
+                    const hasImage = Boolean(item.img || item.image);
+                    const hasIcon = Boolean(item.icon);
+                    
+                    // State for tracking image load failure
+                    const [imageLoadFailed, setImageLoadFailed] = React.useState(false);
+                    
+                    // Determine if we should show icon
+                    const shouldShowIcon = !hasImage || imageLoadFailed || hasIcon;
+                    
+                    return (
                     <div
                       key={
                         item.id ||
@@ -774,32 +785,18 @@ export default function CartPage() {
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center space-x-4">
                             {/* Image or Icon Fallback */}
-                            {(item.img || item.image) ? (
+                            {hasImage && !imageLoadFailed ? (
                               <img
                                 src={item.img || item.image}
                                 alt={item.title || item.name}
                                 className="w-16 h-16 object-cover rounded-xl border-2 border-gray-100"
-                                onError={(e) => {
-                                  // If image fails to load, hide it and show icon fallback
-                                  e.target.style.display = 'none';
-                                  e.target.nextElementSibling.style.display = 'flex';
-                                }}
+                                onError={() => setImageLoadFailed(true)}
                               />
                             ) : null}
-                            {/* Icon Fallback - Show if no image or image fails */}
-                            {(!item.img && !item.image) || item.icon ? (
+                            
+                            {/* Icon Fallback - Show if no image, image failed, or has icon */}
+                            {shouldShowIcon && (
                               <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl border-2 border-gray-100">
-                                {item.icon ? (
-                                  <span className="text-3xl">{item.icon}</span>
-                                ) : item.type === "key-services" ? (
-                                  <Key className="w-8 h-8 text-blue-600" />
-                                ) : (
-                                  <Package className="w-8 h-8 text-purple-600" />
-                                )}
-                              </div>
-                            ) : (
-                              // Hidden fallback icon for image error handling
-                              <div className="w-16 h-16 items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl border-2 border-gray-100" style={{display: 'none'}}>
                                 {item.icon ? (
                                   <span className="text-3xl">{item.icon}</span>
                                 ) : item.type === "key-services" ? (
@@ -1093,7 +1090,8 @@ export default function CartPage() {
                         )}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}
