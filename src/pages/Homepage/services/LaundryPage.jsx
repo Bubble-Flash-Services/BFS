@@ -1755,6 +1755,14 @@ export default function LaundryPage() {
       { items: bedsheetWashItems, categoryName: 'Bedsheet/Heavy Wash Service', serviceName: 'laundry' }
     ];
     
+    // Also add new category items as flat arrays
+    const newCategoryItemsFlat = [
+      ...mensWashFold,
+      ...mensWashIron,
+      ...womensWashFold,
+      ...womensWashIron
+    ];
+    
     // Collect selected addons as uiAddOns
     const allAddons = [...addOns.shoeClean, ...addOns.washFold, ...addOns.ironing, ...addOns.dryClean];
     const selectedAddonsList = allAddons.filter(addon => tempSelectedAddons[addon.id]);
@@ -1783,7 +1791,7 @@ export default function LaundryPage() {
       }
     }
     
-    // Add items to cart with addons and detergent as uiAddOns
+    // Add items from old structure to cart with addons and detergent as uiAddOns
     allCategoryItems.forEach(({ items, categoryName, serviceName }) => {
       Object.entries(items).forEach(([category, itemsList]) => {
         itemsList.forEach(item => {
@@ -1808,6 +1816,27 @@ export default function LaundryPage() {
           }
         });
       });
+    });
+    
+    // Add items from new category structure to cart
+    newCategoryItemsFlat.forEach(item => {
+      const quantity = quantities[item.id];
+      if (quantity && quantity > 0) {
+        const cartItem = {
+          id: `laundry-${item.id}`,
+          name: item.name,
+          serviceName: 'washing',
+          image: item.image,
+          price: item.price,
+          category: 'Laundry',
+          type: 'laundry',
+          description: item.description,
+          uiAddOns: uiAddOns.length > 0 ? uiAddOns : []
+        };
+        
+        addToCart(cartItem);
+        updateQuantity(`laundry-${item.id}`, quantity);
+      }
     });
     
     // Clear quantities and addons
@@ -1841,6 +1870,15 @@ export default function LaundryPage() {
       bedsheetWashItems
     ];
     
+    // Also check new category items
+    const newCategoryItems = [
+      ...mensWashFold,
+      ...mensWashIron,
+      ...womensWashFold,
+      ...womensWashIron
+    ];
+    
+    // Calculate total from old structure
     allCategoryItems.forEach(categoryItems => {
       Object.entries(categoryItems).forEach(([category, items]) => {
         items.forEach(item => {
@@ -1848,6 +1886,12 @@ export default function LaundryPage() {
           total += item.price * quantity;
         });
       });
+    });
+    
+    // Calculate total from new category items
+    newCategoryItems.forEach(item => {
+      const quantity = quantities[item.id] || 0;
+      total += item.price * quantity;
     });
     
     // Add addon prices
