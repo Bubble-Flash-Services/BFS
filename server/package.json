@@ -10,6 +10,7 @@
     "seed:dev": "nodemon seedDatabase.js",
     "seed:admin": "node seedAdminEmployee.js",
     "seed:green": "node seedGreenClean.js",
+    "seed:mobilefix": "node seedMobileFix.js",
     "migrate": "node scripts/migrateDatabase.js",
     "test:routes": "node test-routes.js",
     "test:telegram": "node scripts/testTelegram.js"
