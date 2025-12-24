@@ -53,24 +53,56 @@ const FlowerServicesPage = () => {
           name: "🌹 Classic Bouquets",
           items: [
             { id: "rose-bouquet", name: "Rose Bouquet", price: "₹499 - ₹999" },
-            { id: "mixed-flower-bouquet", name: "Mixed Flower Bouquet", price: "₹499 - ₹999" },
-            { id: "seasonal-flower-bouquet", name: "Seasonal Flower Bouquet", price: "₹499 - ₹999" },
+            {
+              id: "mixed-flower-bouquet",
+              name: "Mixed Flower Bouquet",
+              price: "₹499 - ₹999",
+            },
+            {
+              id: "seasonal-flower-bouquet",
+              name: "Seasonal Flower Bouquet",
+              price: "₹499 - ₹999",
+            },
           ],
         },
         "love-couple-bouquet": {
           name: "❤️ Love & Couple Bouquets",
           items: [
-            { id: "red-rose-bouquet", name: "Red Rose Bouquet", price: "₹799 - ₹1,499" },
-            { id: "heart-style-bouquet", name: "Heart-Style Bouquet", price: "₹799 - ₹1,499" },
-            { id: "rose-filler-flowers", name: "Rose + Filler Flowers", price: "₹799 - ₹1,499" },
+            {
+              id: "red-rose-bouquet",
+              name: "Red Rose Bouquet",
+              price: "₹799 - ₹1,499",
+            },
+            {
+              id: "heart-style-bouquet",
+              name: "Heart-Style Bouquet",
+              price: "₹799 - ₹1,499",
+            },
+            {
+              id: "rose-filler-flowers",
+              name: "Rose + Filler Flowers",
+              price: "₹799 - ₹1,499",
+            },
           ],
         },
         "premium-bouquet": {
           name: "👑 Premium Bouquets",
           items: [
-            { id: "imported-exotic-flowers", name: "Imported / Exotic Flowers", price: "₹1,499 - ₹2,999+" },
-            { id: "designer-wrapping", name: "Designer Wrapping", price: "₹1,499 - ₹2,999+" },
-            { id: "bigger-size-bouquets", name: "Bigger Size Bouquets", price: "₹1,499 - ₹2,999+" },
+            {
+              id: "imported-exotic-flowers",
+              name: "Imported / Exotic Flowers",
+              price: "₹1,499 - ₹2,999+",
+            },
+            {
+              id: "designer-wrapping",
+              name: "Designer Wrapping",
+              price: "₹1,499 - ₹2,999+",
+            },
+            {
+              id: "bigger-size-bouquets",
+              name: "Bigger Size Bouquets",
+              price: "₹1,499 - ₹2,999+",
+            },
           ],
         },
       },
@@ -82,8 +114,16 @@ const FlowerServicesPage = () => {
           name: "🧸 Gift Box Options",
           items: [
             { id: "teddy-bears", name: "Teddy Bears", price: "₹399 - ₹1,999+" },
-            { id: "chocolate-boxes", name: "Chocolate Boxes", price: "₹399 - ₹1,999+" },
-            { id: "greeting-cards", name: "Greeting Cards", price: "₹399 - ₹1,999+" },
+            {
+              id: "chocolate-boxes",
+              name: "Chocolate Boxes",
+              price: "₹399 - ₹1,999+",
+            },
+            {
+              id: "greeting-cards",
+              name: "Greeting Cards",
+              price: "₹399 - ₹1,999+",
+            },
             { id: "perfumes", name: "Perfumes", price: "₹399 - ₹1,999+" },
             { id: "soft-toys", name: "Soft Toys", price: "₹399 - ₹1,999+" },
           ],
@@ -91,17 +131,41 @@ const FlowerServicesPage = () => {
         "photo-gift": {
           name: "📸 Photo Gifts",
           items: [
-            { id: "printed-photo-frames", name: "Printed Photo Frames", price: "₹299 - ₹999" },
-            { id: "mini-photo-albums", name: "Mini Photo Albums", price: "₹299 - ₹999" },
-            { id: "personalized-photo-cards", name: "Personalized Photo Cards", price: "₹299 - ₹999" },
+            {
+              id: "printed-photo-frames",
+              name: "Printed Photo Frames",
+              price: "₹299 - ₹999",
+            },
+            {
+              id: "mini-photo-albums",
+              name: "Mini Photo Albums",
+              price: "₹299 - ₹999",
+            },
+            {
+              id: "personalized-photo-cards",
+              name: "Personalized Photo Cards",
+              price: "₹299 - ₹999",
+            },
           ],
         },
         "love-surprise-box": {
           name: "💖 Love Surprise Boxes",
           items: [
-            { id: "bouquet-teddy", name: "Bouquet + Teddy", price: "₹999 - ₹2,499+" },
-            { id: "bouquet-chocolates", name: "Bouquet + Chocolates", price: "₹999 - ₹2,499+" },
-            { id: "bouquet-photo-gift", name: "Bouquet + Photo Gift", price: "₹999 - ₹2,499+" },
+            {
+              id: "bouquet-teddy",
+              name: "Bouquet + Teddy",
+              price: "₹999 - ₹2,499+",
+            },
+            {
+              id: "bouquet-chocolates",
+              name: "Bouquet + Chocolates",
+              price: "₹999 - ₹2,499+",
+            },
+            {
+              id: "bouquet-photo-gift",
+              name: "Bouquet + Photo Gift",
+              price: "₹999 - ₹2,499+",
+            },
           ],
         },
       },
@@ -112,25 +176,57 @@ const FlowerServicesPage = () => {
         "birthday-decoration": {
           name: "🎂 Birthday Decoration",
           items: [
-            { id: "balloon-decoration", name: "Balloon Decoration", price: "₹1,499 - ₹3,999" },
-            { id: "name-banner", name: "Name Banner", price: "₹1,499 - ₹3,999" },
-            { id: "table-room-decor", name: "Table & Room Decor", price: "₹1,499 - ₹3,999" },
+            {
+              id: "balloon-decoration",
+              name: "Balloon Decoration",
+              price: "₹1,499 - ₹3,999",
+            },
+            {
+              id: "name-banner",
+              name: "Name Banner",
+              price: "₹1,499 - ₹3,999",
+            },
+            {
+              id: "table-room-decor",
+              name: "Table & Room Decor",
+              price: "₹1,499 - ₹3,999",
+            },
           ],
         },
         "couple-decoration": {
           name: "❤️ Couple / Anniversary Decoration",
           items: [
-            { id: "romantic-balloon-decor", name: "Romantic Balloon Decor", price: "₹1,999 - ₹4,999" },
-            { id: "rose-petals", name: "Rose Petals", price: "₹1,999 - ₹4,999" },
+            {
+              id: "romantic-balloon-decor",
+              name: "Romantic Balloon Decor",
+              price: "₹1,999 - ₹4,999",
+            },
+            {
+              id: "rose-petals",
+              name: "Rose Petals",
+              price: "₹1,999 - ₹4,999",
+            },
             { id: "led-lights", name: "LED Lights", price: "₹1,999 - ₹4,999" },
           ],
         },
         "party-decoration": {
           name: "🎉 Party & Function Decorations",
           items: [
-            { id: "small-home-parties", name: "Small Home Parties", price: "₹2,999+ (custom)" },
-            { id: "surprise-celebrations", name: "Surprise Celebrations", price: "₹2,999+ (custom)" },
-            { id: "family-functions", name: "Family Functions", price: "₹2,999+ (custom)" },
+            {
+              id: "small-home-parties",
+              name: "Small Home Parties",
+              price: "₹2,999+ (custom)",
+            },
+            {
+              id: "surprise-celebrations",
+              name: "Surprise Celebrations",
+              price: "₹2,999+ (custom)",
+            },
+            {
+              id: "family-functions",
+              name: "Family Functions",
+              price: "₹2,999+ (custom)",
+            },
           ],
         },
       },
@@ -150,12 +246,19 @@ const FlowerServicesPage = () => {
       // Find the selected item details
       let itemDetails = null;
       let serviceTypeKey = "";
-      
+
       for (const [key, value] of Object.entries(serviceCategories)) {
         for (const [catKey, catValue] of Object.entries(value.categories)) {
           if (catKey === category) {
-            itemDetails = catValue.items.find((item) => item.id === selectedItem);
-            serviceTypeKey = key === "bouquets" ? "bouquet" : key === "gifts" ? "gift-box" : "decoration";
+            itemDetails = catValue.items.find(
+              (item) => item.id === selectedItem
+            );
+            serviceTypeKey =
+              key === "bouquets"
+                ? "bouquet"
+                : key === "gifts"
+                ? "gift-box"
+                : "decoration";
             break;
           }
         }
@@ -166,14 +269,15 @@ const FlowerServicesPage = () => {
         const basePrice = extractBasePrice(itemDetails.price);
         const lateNightSurcharge = deliveryTime === "late-night" ? 299 : 0;
         const customizationCharge = customMessage ? 199 : 0;
-        const totalPrice = (basePrice * quantity) + lateNightSurcharge + customizationCharge;
-        
+        const totalPrice =
+          basePrice * quantity + lateNightSurcharge + customizationCharge;
+
         setPriceQuote({
           basePrice: basePrice,
           lateNightSurcharge: lateNightSurcharge,
           customizationCharge: customizationCharge,
           totalPrice: totalPrice,
-          quantity: quantity
+          quantity: quantity,
         });
       }
     } catch (error) {
@@ -209,13 +313,18 @@ const FlowerServicesPage = () => {
     let itemDetails = null;
     let categoryDetails = null;
     let serviceTypeKey = "";
-    
+
     for (const [key, value] of Object.entries(serviceCategories)) {
       for (const [catKey, catValue] of Object.entries(value.categories)) {
         if (catKey === category) {
           itemDetails = catValue.items.find((item) => item.id === selectedItem);
           categoryDetails = catValue;
-          serviceTypeKey = key === "bouquets" ? "bouquet" : key === "gifts" ? "gift-box" : "decoration";
+          serviceTypeKey =
+            key === "bouquets"
+              ? "bouquet"
+              : key === "gifts"
+              ? "gift-box"
+              : "decoration";
           break;
         }
       }
@@ -227,7 +336,8 @@ const FlowerServicesPage = () => {
       return;
     }
 
-    const basePrice = priceQuote?.basePrice || extractBasePrice(itemDetails.price);
+    const basePrice =
+      priceQuote?.basePrice || extractBasePrice(itemDetails.price);
     const totalPrice = priceQuote?.totalPrice || basePrice;
 
     // Check if first-time booking
@@ -294,7 +404,7 @@ const FlowerServicesPage = () => {
   // Get minimum date (today)
   const getMinDate = () => {
     const today = new Date();
-    return today.toISOString().split('T')[0];
+    return today.toISOString().split("T")[0];
   };
 
   return (
@@ -327,18 +437,6 @@ const FlowerServicesPage = () => {
               <span>Flowers, gifts & surprise decorations</span>
             </div>
           </div>
-
-          {/* Important Note - Cakes NOT provided */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-6 inline-flex items-center gap-2 bg-red-100 border-2 border-red-400 text-red-800 px-6 py-3 rounded-lg"
-          >
-            <X className="w-5 h-5" />
-            <Cake className="w-5 h-5" />
-            <span className="font-semibold">Cakes are NOT provided</span>
-          </motion.div>
         </motion.div>
 
         {/* What We Specialise In */}
@@ -353,12 +451,36 @@ const FlowerServicesPage = () => {
           </h3>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: <PartyPopper className="w-8 h-8" />, title: "Birthday Surprises", color: "blue" },
-              { icon: <Heart className="w-8 h-8" />, title: "Love & Anniversary Bouquets", color: "pink" },
-              { icon: <Flower className="w-8 h-8" />, title: "Party & Function Flower Bookings", color: "purple" },
-              { icon: <Home className="w-8 h-8" />, title: "Room & Small-Event Decorations", color: "indigo" },
-              { icon: <Package className="w-8 h-8" />, title: "Customized Gift Boxes", color: "green" },
-              { icon: <X className="w-8 h-8" />, title: "Cakes NOT Provided", color: "red" },
+              {
+                icon: <PartyPopper className="w-8 h-8" />,
+                title: "Birthday Surprises",
+                color: "blue",
+              },
+              {
+                icon: <Heart className="w-8 h-8" />,
+                title: "Love & Anniversary Bouquets",
+                color: "pink",
+              },
+              {
+                icon: <Flower className="w-8 h-8" />,
+                title: "Party & Function Flower Bookings",
+                color: "purple",
+              },
+              {
+                icon: <Home className="w-8 h-8" />,
+                title: "Room & Small-Event Decorations",
+                color: "indigo",
+              },
+              {
+                icon: <Package className="w-8 h-8" />,
+                title: "Customized Gift Boxes",
+                color: "green",
+              },
+              {
+                icon: <X className="w-8 h-8" />,
+                title: "Cakes NOT Provided",
+                color: "red",
+              },
             ].map((item, index) => (
               <div
                 key={index}
@@ -381,31 +503,40 @@ const FlowerServicesPage = () => {
           <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">
             💐 Flower Bouquets
           </h3>
-          {Object.entries(serviceCategories.bouquets.categories).map(([key, categoryData]) => (
-            <div key={key} className="mb-8 bg-white rounded-2xl shadow-lg p-6">
-              <h4 className="text-xl font-bold text-gray-800 mb-4">{categoryData.name}</h4>
-              <div className="grid md:grid-cols-3 gap-4">
-                {categoryData.items.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={() => handleItemSelect("bouquets", key, item.id)}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedItem === item.id && category === key
-                        ? "border-pink-500 bg-pink-50"
-                        : "border-gray-200 hover:border-pink-300"
-                    }`}
-                  >
-                    <h5 className="font-semibold text-gray-900 mb-2">{item.name}</h5>
-                    <p className="text-pink-600 font-bold">{item.price}</p>
-                    {selectedItem === item.id && category === key && (
-                      <CheckCircle className="w-5 h-5 text-pink-600 mt-2" />
-                    )}
-                  </motion.div>
-                ))}
+          {Object.entries(serviceCategories.bouquets.categories).map(
+            ([key, categoryData]) => (
+              <div
+                key={key}
+                className="mb-8 bg-white rounded-2xl shadow-lg p-6"
+              >
+                <h4 className="text-xl font-bold text-gray-800 mb-4">
+                  {categoryData.name}
+                </h4>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {categoryData.items.map((item) => (
+                    <motion.div
+                      key={item.id}
+                      whileHover={{ scale: 1.05 }}
+                      onClick={() => handleItemSelect("bouquets", key, item.id)}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        selectedItem === item.id && category === key
+                          ? "border-pink-500 bg-pink-50"
+                          : "border-gray-200 hover:border-pink-300"
+                      }`}
+                    >
+                      <h5 className="font-semibold text-gray-900 mb-2">
+                        {item.name}
+                      </h5>
+                      <p className="text-pink-600 font-bold">{item.price}</p>
+                      {selectedItem === item.id && category === key && (
+                        <CheckCircle className="w-5 h-5 text-pink-600 mt-2" />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </motion.div>
 
         {/* Gift Boxes & Surprise Combos Section */}
@@ -418,31 +549,40 @@ const FlowerServicesPage = () => {
           <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">
             🎁 Gift Boxes & Surprise Combos
           </h3>
-          {Object.entries(serviceCategories.gifts.categories).map(([key, categoryData]) => (
-            <div key={key} className="mb-8 bg-white rounded-2xl shadow-lg p-6">
-              <h4 className="text-xl font-bold text-gray-800 mb-4">{categoryData.name}</h4>
-              <div className="grid md:grid-cols-3 gap-4">
-                {categoryData.items.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={() => handleItemSelect("gifts", key, item.id)}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedItem === item.id && category === key
-                        ? "border-purple-500 bg-purple-50"
-                        : "border-gray-200 hover:border-purple-300"
-                    }`}
-                  >
-                    <h5 className="font-semibold text-gray-900 mb-2">{item.name}</h5>
-                    <p className="text-purple-600 font-bold">{item.price}</p>
-                    {selectedItem === item.id && category === key && (
-                      <CheckCircle className="w-5 h-5 text-purple-600 mt-2" />
-                    )}
-                  </motion.div>
-                ))}
+          {Object.entries(serviceCategories.gifts.categories).map(
+            ([key, categoryData]) => (
+              <div
+                key={key}
+                className="mb-8 bg-white rounded-2xl shadow-lg p-6"
+              >
+                <h4 className="text-xl font-bold text-gray-800 mb-4">
+                  {categoryData.name}
+                </h4>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {categoryData.items.map((item) => (
+                    <motion.div
+                      key={item.id}
+                      whileHover={{ scale: 1.05 }}
+                      onClick={() => handleItemSelect("gifts", key, item.id)}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        selectedItem === item.id && category === key
+                          ? "border-purple-500 bg-purple-50"
+                          : "border-gray-200 hover:border-purple-300"
+                      }`}
+                    >
+                      <h5 className="font-semibold text-gray-900 mb-2">
+                        {item.name}
+                      </h5>
+                      <p className="text-purple-600 font-bold">{item.price}</p>
+                      {selectedItem === item.id && category === key && (
+                        <CheckCircle className="w-5 h-5 text-purple-600 mt-2" />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </motion.div>
 
         {/* Decoration Services Section */}
@@ -455,31 +595,42 @@ const FlowerServicesPage = () => {
           <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">
             🎈 Decoration Services (Small Events)
           </h3>
-          {Object.entries(serviceCategories.decorations.categories).map(([key, categoryData]) => (
-            <div key={key} className="mb-8 bg-white rounded-2xl shadow-lg p-6">
-              <h4 className="text-xl font-bold text-gray-800 mb-4">{categoryData.name}</h4>
-              <div className="grid md:grid-cols-3 gap-4">
-                {categoryData.items.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={() => handleItemSelect("decorations", key, item.id)}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedItem === item.id && category === key
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 hover:border-blue-300"
-                    }`}
-                  >
-                    <h5 className="font-semibold text-gray-900 mb-2">{item.name}</h5>
-                    <p className="text-blue-600 font-bold">{item.price}</p>
-                    {selectedItem === item.id && category === key && (
-                      <CheckCircle className="w-5 h-5 text-blue-600 mt-2" />
-                    )}
-                  </motion.div>
-                ))}
+          {Object.entries(serviceCategories.decorations.categories).map(
+            ([key, categoryData]) => (
+              <div
+                key={key}
+                className="mb-8 bg-white rounded-2xl shadow-lg p-6"
+              >
+                <h4 className="text-xl font-bold text-gray-800 mb-4">
+                  {categoryData.name}
+                </h4>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {categoryData.items.map((item) => (
+                    <motion.div
+                      key={item.id}
+                      whileHover={{ scale: 1.05 }}
+                      onClick={() =>
+                        handleItemSelect("decorations", key, item.id)
+                      }
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        selectedItem === item.id && category === key
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 hover:border-blue-300"
+                      }`}
+                    >
+                      <h5 className="font-semibold text-gray-900 mb-2">
+                        {item.name}
+                      </h5>
+                      <p className="text-blue-600 font-bold">{item.price}</p>
+                      {selectedItem === item.id && category === key && (
+                        <CheckCircle className="w-5 h-5 text-blue-600 mt-2" />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </motion.div>
 
         {/* Bulk & Event Flower Bookings */}
@@ -500,11 +651,15 @@ const FlowerServicesPage = () => {
               <p className="font-semibold text-gray-800">Welcome Bouquets</p>
             </div>
             <div className="text-center">
-              <p className="font-semibold text-gray-800">Stage Flower Bunches</p>
+              <p className="font-semibold text-gray-800">
+                Stage Flower Bunches
+              </p>
             </div>
           </div>
           <div className="text-center space-y-2">
-            <p className="text-orange-600 font-bold">📌 Advance booking required</p>
+            <p className="text-orange-600 font-bold">
+              📌 Advance booking required
+            </p>
             <p className="text-orange-600 font-bold">📌 Custom pricing only</p>
           </div>
         </motion.div>
@@ -516,8 +671,10 @@ const FlowerServicesPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-2xl shadow-2xl p-8 mb-12"
           >
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Complete Your Booking</h3>
-            
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+              Complete Your Booking
+            </h3>
+
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               {/* Quantity */}
               <div>
@@ -562,7 +719,9 @@ const FlowerServicesPage = () => {
                   <option value="morning">Morning (6 AM - 12 PM)</option>
                   <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
                   <option value="evening">Evening (5 PM - 10 PM)</option>
-                  <option value="late-night">Late Night (10 PM - 6 AM) +₹299</option>
+                  <option value="late-night">
+                    Late Night (10 PM - 6 AM) +₹299
+                  </option>
                 </select>
               </div>
 
@@ -618,7 +777,9 @@ const FlowerServicesPage = () => {
                   )}
                   <div className="border-t-2 border-gray-300 pt-2 flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span className="text-pink-600">₹{priceQuote.totalPrice}</span>
+                    <span className="text-pink-600">
+                      ₹{priceQuote.totalPrice}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -651,28 +812,40 @@ const FlowerServicesPage = () => {
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
                 <p className="font-semibold text-gray-900">Same-day delivery</p>
-                <p className="text-gray-600 text-sm">Available in selected areas</p>
+                <p className="text-gray-600 text-sm">
+                  Available in selected areas
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
-                <p className="font-semibold text-gray-900">Scheduled delivery</p>
-                <p className="text-gray-600 text-sm">Plan your perfect moment</p>
+                <p className="font-semibold text-gray-900">
+                  Scheduled delivery
+                </p>
+                <p className="text-gray-600 text-sm">
+                  Plan your perfect moment
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
-                <p className="font-semibold text-gray-900">Doorstep delivery only</p>
+                <p className="font-semibold text-gray-900">
+                  Doorstep delivery only
+                </p>
                 <p className="text-gray-600 text-sm">Across Bangalore</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <AlertCircle className="w-6 h-6 text-orange-600 flex-shrink-0 mt-1" />
               <div>
-                <p className="font-semibold text-gray-900">Late-night / urgent delivery</p>
-                <p className="text-orange-600 text-sm font-semibold">+₹299 - ₹499 surcharge</p>
+                <p className="font-semibold text-gray-900">
+                  Late-night / urgent delivery
+                </p>
+                <p className="text-orange-600 text-sm font-semibold">
+                  +₹299 - ₹499 surcharge
+                </p>
               </div>
             </div>
           </div>
@@ -718,18 +891,34 @@ const FlowerServicesPage = () => {
           </h3>
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              { icon: <Cake className="w-8 h-8" />, text: "Cakes", important: true },
-              { icon: <Sparkles className="w-8 h-8" />, text: "Large-scale wedding decorations" },
-              { icon: <AlertCircle className="w-8 h-8" />, text: "Outdoor stage events without advance planning" },
+              {
+                icon: <Cake className="w-8 h-8" />,
+                text: "Cakes",
+                important: true,
+              },
+              {
+                icon: <Sparkles className="w-8 h-8" />,
+                text: "Large-scale wedding decorations",
+              },
+              {
+                icon: <AlertCircle className="w-8 h-8" />,
+                text: "Outdoor stage events without advance planning",
+              },
             ].map((item, index) => (
               <div
                 key={index}
                 className={`flex items-center gap-3 p-4 rounded-lg ${
-                  item.important ? "bg-red-200 border-2 border-red-500" : "bg-red-100"
+                  item.important
+                    ? "bg-red-200 border-2 border-red-500"
+                    : "bg-red-100"
                 }`}
               >
                 <div className="text-red-600">{item.icon}</div>
-                <span className={`font-semibold ${item.important ? "text-red-900 text-lg" : "text-red-700"}`}>
+                <span
+                  className={`font-semibold ${
+                    item.important ? "text-red-900 text-lg" : "text-red-700"
+                  }`}
+                >
                   {item.text}
                 </span>
               </div>
@@ -749,14 +938,38 @@ const FlowerServicesPage = () => {
           </h3>
           <div className="grid md:grid-cols-5 gap-6">
             {[
-              { icon: <Flower className="w-10 h-10" />, text: "Fresh Flowers", color: "pink" },
-              { icon: <Sparkles className="w-10 h-10" />, text: "Beautiful Presentation", color: "purple" },
-              { icon: <Clock className="w-10 h-10" />, text: "Fast Delivery", color: "blue" },
-              { icon: <Heart className="w-10 h-10" />, text: "Custom Surprises", color: "red" },
-              { icon: <CheckCircle className="w-10 h-10" />, text: "Trusted BFS Service", color: "green" },
+              {
+                icon: <Flower className="w-10 h-10" />,
+                text: "Fresh Flowers",
+                color: "pink",
+              },
+              {
+                icon: <Sparkles className="w-10 h-10" />,
+                text: "Beautiful Presentation",
+                color: "purple",
+              },
+              {
+                icon: <Clock className="w-10 h-10" />,
+                text: "Fast Delivery",
+                color: "blue",
+              },
+              {
+                icon: <Heart className="w-10 h-10" />,
+                text: "Custom Surprises",
+                color: "red",
+              },
+              {
+                icon: <CheckCircle className="w-10 h-10" />,
+                text: "Trusted BFS Service",
+                color: "green",
+              },
             ].map((item, index) => (
               <div key={index} className="text-center">
-                <div className={`text-${item.color}-600 mb-3 flex justify-center`}>{item.icon}</div>
+                <div
+                  className={`text-${item.color}-600 mb-3 flex justify-center`}
+                >
+                  {item.icon}
+                </div>
                 <p className="font-semibold text-gray-800">{item.text}</p>
               </div>
             ))}
@@ -776,7 +989,10 @@ const FlowerServicesPage = () => {
           </h4>
           <ul className="space-y-2 text-gray-700">
             <li>• Flower availability varies by season</li>
-            <li>• Final design may slightly differ while maintaining quality and value</li>
+            <li>
+              • Final design may slightly differ while maintaining quality and
+              value
+            </li>
           </ul>
         </motion.div>
 
@@ -787,16 +1003,18 @@ const FlowerServicesPage = () => {
           transition={{ delay: 1.2 }}
           className="text-center"
         >
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Ready to Create Perfect Moments?</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">
+            Ready to Create Perfect Moments?
+          </h3>
           <div className="flex flex-wrap justify-center gap-4">
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all"
             >
               Order Bouquets
             </button>
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:from-blue-600 hover:to-indigo-600 transition-all"
             >
               Book Decoration
