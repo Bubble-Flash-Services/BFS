@@ -1618,7 +1618,7 @@ export default function LaundryPage() {
   const [selectedDetergent, setSelectedDetergent] = useState(null);
   const [tempSelectedAddons, setTempSelectedAddons] = useState({});
   const navigate = useNavigate();
-  const { addToCart, updateQuantity } = useCart();
+  const { addToCart } = useCart();
   const sliderRef = useRef(null);
   const startX = useRef(0);
   const isDragging = useRef(false);
@@ -1803,16 +1803,15 @@ export default function LaundryPage() {
               serviceName: 'washing', // Hardcoded serviceName
               image: item.image,
               price: item.price,
+              quantity: quantity, // Include quantity directly
               category: 'Laundry', // Standardized category for proper filtering in admin
               type: 'laundry',
               description: item.description,
               uiAddOns: uiAddOns.length > 0 ? uiAddOns : [] // Attach addons and detergent to the item
             };
             
-            // Add the item first, then update quantity to the correct amount
+            // Add the item with the correct quantity
             addToCart(cartItem);
-            // Update the quantity to match the selected quantity
-            updateQuantity(`laundry-${item.id}`, quantity);
           }
         });
       });
@@ -1828,6 +1827,7 @@ export default function LaundryPage() {
           serviceName: 'washing',
           image: item.image,
           price: item.price,
+          quantity: quantity, // Include quantity directly
           category: 'Laundry',
           type: 'laundry',
           description: item.description,
@@ -1835,7 +1835,6 @@ export default function LaundryPage() {
         };
         
         addToCart(cartItem);
-        updateQuantity(`laundry-${item.id}`, quantity);
       }
     });
     
@@ -2631,51 +2630,53 @@ export default function LaundryPage() {
             </div>
 
             {/* Add-ons Section for Wash & Fold */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-green-300 pb-2">
-                <span className="bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-                  Premium Add-ons for Wash & Fold
-                </span>
-              </h3>
-              <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6 shadow-lg">
-                <p className="text-center text-gray-600 mb-6">
-                  ✨ Enhance your wash & fold service with these premium add-ons
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {addOns.washFold.map((addon) => (
-                    <div 
-                      key={addon.id} 
-                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                        selectedAddons[addon.id] ? 'ring-2 ring-green-500 bg-green-50' : ''
-                      }`}
-                      onClick={() => toggleAddon(addon.id)}
-                    >
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                            selectedAddons[addon.id] ? 'bg-green-600 border-green-600' : 'border-gray-300'
-                          }`}>
-                            {selectedAddons[addon.id] && (
-                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M5 13l4 4L19 7"></path>
-                              </svg>
-                            )}
+            {addOns.washFold && addOns.washFold.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-green-300 pb-2">
+                  <span className="bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Wash & Fold
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your wash & fold service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.washFold.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-green-500 bg-green-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-green-600 border-green-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-green-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-green-600">₹{addon.price}</span>
-                          <span className="text-xs text-gray-500">
-                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -3001,51 +3002,53 @@ export default function LaundryPage() {
             </div>
 
             {/* Add-ons Section for Ironing */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-blue-300 pb-2">
-                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Premium Add-ons for Ironing
-                </span>
-              </h3>
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-lg">
-                <p className="text-center text-gray-600 mb-6">
-                  ✨ Enhance your ironing service with these premium add-ons
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {addOns.ironing.map((addon) => (
-                    <div 
-                      key={addon.id} 
-                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                        selectedAddons[addon.id] ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-                      }`}
-                      onClick={() => toggleAddon(addon.id)}
-                    >
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                            selectedAddons[addon.id] ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
-                          }`}>
-                            {selectedAddons[addon.id] && (
-                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M5 13l4 4L19 7"></path>
-                              </svg>
-                            )}
+            {addOns.ironing && addOns.ironing.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-blue-300 pb-2">
+                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Ironing
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your ironing service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.ironing.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-blue-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-blue-600">₹{addon.price}</span>
-                          <span className="text-xs text-gray-500">
-                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -3371,51 +3374,53 @@ export default function LaundryPage() {
             </div>
 
             {/* Add-ons Section for Dry Clean */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-orange-300 pb-2">
-                <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                  Premium Add-ons for Dry Clean
-                </span>
-              </h3>
-              <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 shadow-lg">
-                <p className="text-center text-gray-600 mb-6">
-                  ✨ Enhance your dry clean service with these premium add-ons
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {addOns.dryClean.map((addon) => (
-                    <div 
-                      key={addon.id} 
-                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                        selectedAddons[addon.id] ? 'ring-2 ring-orange-500 bg-orange-50' : ''
-                      }`}
-                      onClick={() => toggleAddon(addon.id)}
-                    >
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                            selectedAddons[addon.id] ? 'bg-orange-600 border-orange-600' : 'border-gray-300'
-                          }`}>
-                            {selectedAddons[addon.id] && (
-                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M5 13l4 4L19 7"></path>
-                              </svg>
-                            )}
+            {addOns.dryClean && addOns.dryClean.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-orange-300 pb-2">
+                  <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Dry Clean
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your dry clean service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.dryClean.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-orange-500 bg-orange-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-orange-600 border-orange-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-orange-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-orange-600">₹{addon.price}</span>
-                          <span className="text-xs text-gray-500">
-                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -3476,51 +3481,53 @@ export default function LaundryPage() {
             </div>
 
             {/* Add-ons Section for Shoes */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-purple-300 pb-2">
-                <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  Premium Add-ons for Shoes
-                </span>
-              </h3>
-              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 shadow-lg">
-                <p className="text-center text-gray-600 mb-6">
-                  ✨ Enhance your shoe cleaning service with these premium add-ons
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {addOns.shoeClean.map((addon) => (
-                    <div 
-                      key={addon.id} 
-                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                        selectedAddons[addon.id] ? 'ring-2 ring-purple-500 bg-purple-50' : ''
-                      }`}
-                      onClick={() => toggleAddon(addon.id)}
-                    >
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                            selectedAddons[addon.id] ? 'bg-purple-600 border-purple-600' : 'border-gray-300'
-                          }`}>
-                            {selectedAddons[addon.id] && (
-                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M5 13l4 4L19 7"></path>
-                              </svg>
-                            )}
+            {addOns.shoeClean && addOns.shoeClean.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-purple-300 pb-2">
+                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Shoes
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your shoe cleaning service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.shoeClean.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-purple-500 bg-purple-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-purple-600 border-purple-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-purple-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-purple-600">₹{addon.price}</span>
-                          <span className="text-xs text-gray-500">
-                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

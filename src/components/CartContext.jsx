@@ -612,7 +612,7 @@ export function CartProvider({ children }) {
           packageId: onlyValidObjectId(product.packageId)
             ? product.packageId
             : undefined,
-          quantity: 1,
+          quantity: product.quantity || 1,
           price: product.price || product.basePrice,
           addOns: sanitizeAddOns(
             product.addOns || product.packageDetails?.addons
@@ -666,21 +666,22 @@ export function CartProvider({ children }) {
 
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
+      const productQuantity = product.quantity || 1;
 
       if (existingItem) {
-        // If item already exists, increase quantity
-        console.log("Item exists, increasing quantity");
+        // If item already exists, increase quantity by the product's quantity
+        console.log("Item exists, increasing quantity by", productQuantity);
         return prevItems.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + productQuantity }
             : item
         );
       } else {
-        // If new item, add to cart with quantity 1
-        console.log("New item, adding to cart");
+        // If new item, add to cart with specified quantity
+        console.log("New item, adding to cart with quantity", productQuantity);
         return [
           ...prevItems,
-          { ...product, quantity: 1, id: product.id || Date.now() },
+          { ...product, quantity: productQuantity, id: product.id || Date.now() },
         ];
       }
     });
