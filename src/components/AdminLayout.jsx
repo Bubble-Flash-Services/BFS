@@ -18,7 +18,9 @@ import {
   ShoppingBag,
   Key,
   Shirt,
-  Car
+  Car,
+  Smartphone,
+  DollarSign
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -109,6 +111,18 @@ const AdminLayout = ({ children }) => {
       href: "/admin/autofix",
       icon: Car,
       active: location.pathname === "/admin/autofix",
+    },
+    {
+      name: "MobileFix Pro",
+      href: "/admin/mobilefix",
+      icon: Smartphone,
+      active: location.pathname === "/admin/mobilefix",
+    },
+    {
+      name: "Mobile Pricing",
+      href: "/admin/mobile-pricing",
+      icon: DollarSign,
+      active: location.pathname === "/admin/mobile-pricing",
     },
     {
       name: "Coupons",
