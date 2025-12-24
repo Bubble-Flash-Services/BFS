@@ -3538,8 +3538,93 @@ export default function LaundryPage() {
           </div>
         )}
 
+        {/* Sarees & Rolling Category */}
+        {activeCategory === 'sarees-rolling' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                🥻 Sarees & Rolling Services
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Premium saree care with hand washing, rolling, and preservation services</p>
+              <p className="text-gray-500 mt-4">From daily cotton sarees to bridal Kanjeevarams - specialized care for all types</p>
+            </div>
+          </div>
+        )}
+
+        {/* Kids Clothes Category */}
+        {activeCategory === 'kids-clothes' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                👶 Kids Clothes Laundry
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Gentle care for kids clothing with separate washing</p>
+              <p className="text-gray-500 mt-4">Special attention to soft fabrics and hygienic cleaning</p>
+            </div>
+          </div>
+        )}
+
+        {/* Blazers & Coats Category */}
+        {activeCategory === 'blazers-coats' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-gray-700 to-blue-600 bg-clip-text text-transparent">
+                🧥 Blazers & Coats Care
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Professional cleaning for formal wear with steam press and shape retention</p>
+              <p className="text-gray-500 mt-4">Delivered on hangers with premium care for both regular and designer brands</p>
+            </div>
+          </div>
+        )}
+
+        {/* Winter Wear Category */}
+        {activeCategory === 'winter-wear' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+                ❄️ Winter Wear Cleaning
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Specialized care for jackets, hoodies, sweaters, and shawls</p>
+              <p className="text-gray-500 mt-4">Suitable for woollen and padded clothing</p>
+            </div>
+          </div>
+        )}
+
+        {/* Home Linen Category */}
+        {activeCategory === 'home-linen' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-teal-600 to-green-600 bg-clip-text text-transparent">
+                🛏️ Home Linen Services
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Complete care for bedsheets, pillow covers, curtains, blankets, and towels</p>
+              <p className="text-gray-500 mt-4">Cleaned hygienically and packed neatly</p>
+            </div>
+          </div>
+        )}
+
         {/* Placeholder for other categories */}
-        {activeCategory !== 'wash-fold' && activeCategory !== 'wash-iron' && activeCategory !== 'ironing' && activeCategory !== 'dry-clean' && activeCategory !== 'shoe-clean' && activeCategory !== 'bedsheet-wash' && (
+        {activeCategory !== 'mens-wash' && activeCategory !== 'womens-wash' && activeCategory !== 'wash-fold' && activeCategory !== 'wash-iron' && activeCategory !== 'ironing' && activeCategory !== 'dry-clean' && activeCategory !== 'shoe-clean' && activeCategory !== 'bedsheet-wash' && activeCategory !== 'sarees-rolling' && activeCategory !== 'kids-clothes' && activeCategory !== 'blazers-coats' && activeCategory !== 'winter-wear' && activeCategory !== 'home-linen' && (
           <div className="text-center py-20">
             <h3 className="text-2xl font-bold text-gray-600 mb-4">Coming Soon</h3>
             <p className="text-gray-500">This service category will be available soon.</p>
@@ -3692,6 +3777,28 @@ export default function LaundryPage() {
             </div>
           </div>
         )}
+
+        {/* Final Branding Section */}
+        <div className="mt-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl shadow-2xl p-8 text-center text-white">
+          <div className="mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">BFS SmartLaundry™</h2>
+            <p className="text-xl md:text-2xl font-medium">From daily wear to designer care — cleaned right.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 text-sm">
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+              <p className="font-semibold">💰 Transparent Pricing</p>
+              <p className="text-white/90 text-xs mt-1">All prices are per piece unless mentioned</p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+              <p className="font-semibold">📸 Photo Inspection</p>
+              <p className="text-white/90 text-xs mt-1">Premium & VIP items may require photo inspection</p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+              <p className="font-semibold">🚚 Doorstep Service</p>
+              <p className="text-white/90 text-xs mt-1">Pickup & delivery within serviceable areas</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
