@@ -21,6 +21,8 @@ import {
   Cake,
   Home,
   PartyPopper,
+  Plus,
+  Minus,
 } from "lucide-react";
 import { useAuth } from "../../components/AuthContext";
 import { useCart } from "../../components/CartContext";
@@ -37,12 +39,6 @@ const FlowerServicesPage = () => {
   const [category, setCategory] = useState("");
   const [selectedItem, setSelectedItem] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [deliveryDate, setDeliveryDate] = useState("");
-  const [deliveryTime, setDeliveryTime] = useState("anytime");
-  const [customMessage, setCustomMessage] = useState("");
-  const [recipientName, setRecipientName] = useState("");
-  const [priceQuote, setPriceQuote] = useState(null);
-  const [loadingQuote, setLoadingQuote] = useState(false);
 
   // Service categories data
   const serviceCategories = {
@@ -233,60 +229,6 @@ const FlowerServicesPage = () => {
     },
   };
 
-  // Calculate price quote when selections change
-  useEffect(() => {
-    if (selectedItem && category) {
-      calculateQuote();
-    }
-  }, [selectedItem, category, quantity, deliveryTime]);
-
-  const calculateQuote = async () => {
-    setLoadingQuote(true);
-    try {
-      // Find the selected item details
-      let itemDetails = null;
-      let serviceTypeKey = "";
-
-      for (const [key, value] of Object.entries(serviceCategories)) {
-        for (const [catKey, catValue] of Object.entries(value.categories)) {
-          if (catKey === category) {
-            itemDetails = catValue.items.find(
-              (item) => item.id === selectedItem
-            );
-            serviceTypeKey =
-              key === "bouquets"
-                ? "bouquet"
-                : key === "gifts"
-                ? "gift-box"
-                : "decoration";
-            break;
-          }
-        }
-        if (itemDetails) break;
-      }
-
-      if (itemDetails) {
-        const basePrice = extractBasePrice(itemDetails.price);
-        const lateNightSurcharge = deliveryTime === "late-night" ? 299 : 0;
-        const customizationCharge = customMessage ? 199 : 0;
-        const totalPrice =
-          basePrice * quantity + lateNightSurcharge + customizationCharge;
-
-        setPriceQuote({
-          basePrice: basePrice,
-          lateNightSurcharge: lateNightSurcharge,
-          customizationCharge: customizationCharge,
-          totalPrice: totalPrice,
-          quantity: quantity,
-        });
-      }
-    } catch (error) {
-      console.error("Error calculating quote:", error);
-    } finally {
-      setLoadingQuote(false);
-    }
-  };
-
   // Extract base price from price range string
   const extractBasePrice = (priceString) => {
     if (typeof priceString === "number") return priceString;
@@ -304,8 +246,8 @@ const FlowerServicesPage = () => {
       toast.error("Please sign in to book a service");
       return;
     }
-    if (!selectedItem || !category || !deliveryDate) {
-      toast.error("Please select a service and delivery date");
+    if (!selectedItem || !category) {
+      toast.error("Please select a service");
       return;
     }
 
@@ -336,15 +278,13 @@ const FlowerServicesPage = () => {
       return;
     }
 
-    const basePrice =
-      priceQuote?.basePrice || extractBasePrice(itemDetails.price);
-    const totalPrice = priceQuote?.totalPrice || basePrice;
+    const basePrice = extractBasePrice(itemDetails.price);
 
     // Check if first-time booking
     const isFirstTimeBooking = !user?.totalOrders || user.totalOrders === 0;
     const firstTimeDiscount = isFirstTimeBooking ? 0.15 : 0;
-    const discountAmount = Math.round(totalPrice * firstTimeDiscount);
-    const finalPrice = totalPrice - discountAmount;
+    const discountAmount = Math.round(basePrice * firstTimeDiscount);
+    const finalPrice = basePrice - discountAmount;
 
     // Create cart item
     const cartItem = {
@@ -356,23 +296,16 @@ const FlowerServicesPage = () => {
       image: "/services/flowers/bouquet.jpg",
       price: finalPrice,
       basePrice: basePrice,
-      originalPrice: totalPrice,
+      originalPrice: basePrice,
       discount: discountAmount,
       isFirstTimeBooking: isFirstTimeBooking,
       quantity: quantity,
       features: [itemDetails.name],
       serviceCategory: categoryDetails.name,
-      deliveryDate: deliveryDate,
-      deliveryTime: deliveryTime,
-      customMessage: customMessage,
-      recipientName: recipientName,
       metadata: {
         serviceType: serviceTypeKey,
         category: category,
         itemId: selectedItem,
-        deliveryDate: deliveryDate,
-        deliveryTime: deliveryTime,
-        isLateNightDelivery: deliveryTime === "late-night",
       },
     };
 
@@ -399,12 +332,6 @@ const FlowerServicesPage = () => {
 
   const getCartItemCount = () => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
-
-  // Get minimum date (today)
-  const getMinDate = () => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
   };
 
   return (
@@ -664,7 +591,7 @@ const FlowerServicesPage = () => {
           </div>
         </motion.div>
 
-        {/* Booking Form */}
+        {/* Add to Cart Section */}
         {selectedItem && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -672,124 +599,75 @@ const FlowerServicesPage = () => {
             className="bg-white rounded-2xl shadow-2xl p-8 mb-12"
           >
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Complete Your Booking
+              Add to Cart
             </h3>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <div className="mb-6">
               {/* Quantity */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Quantity
                 </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              {/* Delivery Date */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Delivery Date *
-                </label>
-                <input
-                  type="date"
-                  min={getMinDate()}
-                  value={deliveryDate}
-                  onChange={(e) => setDeliveryDate(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-                  required
-                />
-              </div>
-
-              {/* Delivery Time */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Delivery Time
-                </label>
-                <select
-                  value={deliveryTime}
-                  onChange={(e) => setDeliveryTime(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-                >
-                  <option value="anytime">Anytime</option>
-                  <option value="morning">Morning (6 AM - 12 PM)</option>
-                  <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
-                  <option value="evening">Evening (5 PM - 10 PM)</option>
-                  <option value="late-night">
-                    Late Night (10 PM - 6 AM) +₹299
-                  </option>
-                </select>
-              </div>
-
-              {/* Recipient Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Recipient Name (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={recipientName}
-                  onChange={(e) => setRecipientName(e.target.value)}
-                  placeholder="Enter recipient's name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-            </div>
-
-            {/* Custom Message */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Custom Message (Optional) +₹199
-              </label>
-              <textarea
-                value={customMessage}
-                onChange={(e) => setCustomMessage(e.target.value)}
-                placeholder="Write a personalized message..."
-                rows="3"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-              />
-            </div>
-
-            {/* Price Quote */}
-            {priceQuote && (
-              <div className="bg-pink-50 rounded-lg p-6 mb-6">
-                <h4 className="font-bold text-gray-900 mb-4">Price Summary</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>Base Price (×{priceQuote.quantity})</span>
-                    <span>₹{priceQuote.basePrice * priceQuote.quantity}</span>
-                  </div>
-                  {priceQuote.lateNightSurcharge > 0 && (
-                    <div className="flex justify-between text-orange-600">
-                      <span>Late Night Delivery</span>
-                      <span>+₹{priceQuote.lateNightSurcharge}</span>
-                    </div>
-                  )}
-                  {priceQuote.customizationCharge > 0 && (
-                    <div className="flex justify-between text-purple-600">
-                      <span>Customization</span>
-                      <span>+₹{priceQuote.customizationCharge}</span>
-                    </div>
-                  )}
-                  <div className="border-t-2 border-gray-300 pt-2 flex justify-between font-bold text-lg">
-                    <span>Total</span>
-                    <span className="text-pink-600">
-                      ₹{priceQuote.totalPrice}
-                    </span>
-                  </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-all"
+                  >
+                    <Minus className="h-4 w-4 text-gray-600" />
+                  </button>
+                  <span className="w-12 text-center font-semibold text-lg">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 rounded-full flex items-center justify-center transition-all"
+                  >
+                    <Plus className="h-4 w-4 text-white" />
+                  </button>
                 </div>
               </div>
-            )}
+            </div>
+
+            {/* Price Display */}
+            <div className="bg-pink-50 rounded-lg p-6 mb-6">
+              <h4 className="font-bold text-gray-900 mb-4">Price Summary</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span>Quantity</span>
+                  <span>{quantity}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Price per item</span>
+                  <span>
+                    ₹
+                    {extractBasePrice(
+                      serviceCategories[serviceType]?.categories[category]
+                        ?.items.find((item) => item.id === selectedItem)?.price
+                    )}
+                  </span>
+                </div>
+                <div className="border-t-2 border-gray-300 pt-2 flex justify-between font-bold text-lg">
+                  <span>Subtotal</span>
+                  <span className="text-pink-600">
+                    ₹
+                    {quantity *
+                      extractBasePrice(
+                        serviceCategories[serviceType]?.categories[category]
+                          ?.items.find((item) => item.id === selectedItem)
+                          ?.price
+                      )}
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-3">
+                * Delivery details, custom messages, and timing preferences can be added during checkout
+              </p>
+            </div>
 
             {/* Add to Cart Button */}
             <button
               onClick={handleAddToCart}
-              disabled={!deliveryDate}
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-4 rounded-lg font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-4 rounded-lg font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all flex items-center justify-center gap-2"
             >
               <ShoppingCart className="w-6 h-6" />
               Add to Cart
