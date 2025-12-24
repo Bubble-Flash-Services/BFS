@@ -316,6 +316,10 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <FlowerServicesManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
             path="/admin/mobilefix"
             element={
               <ProtectedAdminRoute>
