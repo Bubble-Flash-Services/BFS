@@ -314,7 +314,7 @@ const AutoFixPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-orange-600 via-red-600 to-pink-600 text-white py-20 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white py-20 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
@@ -339,7 +339,7 @@ const AutoFixPage = () => {
             <h1 className="text-4xl md:text-6xl font-bold mb-4">
               Doorstep Car Denting, Painting & Polishing
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-orange-100">
+            <p className="text-xl md:text-2xl mb-8 text-blue-100">
               Professional car repair at your location using BFS mobile service
               van
             </p>
@@ -368,7 +368,7 @@ const AutoFixPage = () => {
                     behavior: "smooth",
                   })
                 }
-                className="bg-white text-orange-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-orange-50 transition-all transform hover:scale-105 shadow-lg"
+                className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-50 transition-all transform hover:scale-105 shadow-lg"
               >
                 Upload Damage Photos
               </button>
@@ -408,7 +408,7 @@ const AutoFixPage = () => {
                   <motion.div
                     key={service.id}
                     whileHover={{ scale: 1.05 }}
-                    className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-orange-500 transition-all"
+                    className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
                     onClick={() => handleServiceSelect(service)}
                   >
                     <div
@@ -421,7 +421,7 @@ const AutoFixPage = () => {
                       {service.subtitle}
                     </p>
                     <p className="text-gray-600 mb-4">{service.description}</p>
-                    <p className="text-2xl font-bold text-orange-600">
+                    <p className="text-2xl font-bold text-blue-600">
                       {service.startingPrice}
                     </p>
                   </motion.div>
@@ -438,7 +438,7 @@ const AutoFixPage = () => {
             >
               <button
                 onClick={() => setCurrentStep(1)}
-                className="mb-6 text-orange-600 hover:underline flex items-center mx-auto"
+                className="mb-6 text-blue-600 hover:underline flex items-center mx-auto"
               >
                 ← Back to Services
               </button>
@@ -454,10 +454,10 @@ const AutoFixPage = () => {
                   <motion.div
                     key={category.id}
                     whileHover={{ scale: 1.05 }}
-                    className="bg-white rounded-xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-orange-500 transition-all"
+                    className="bg-white rounded-xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
                     onClick={() => handleCategorySelect(category.id)}
                   >
-                    <Car className="w-12 h-12 text-orange-600 mx-auto mb-4" />
+                    <Car className="w-12 h-12 text-blue-600 mx-auto mb-4" />
                     <h3 className="text-lg font-bold mb-2">{category.name}</h3>
                     <p className="text-sm text-gray-500">
                       {category.description}
@@ -476,7 +476,7 @@ const AutoFixPage = () => {
             >
               <button
                 onClick={() => setCurrentStep(2)}
-                className="mb-6 text-orange-600 hover:underline flex items-center mx-auto"
+                className="mb-6 text-blue-600 hover:underline flex items-center mx-auto"
               >
                 ← Back to Categories
               </button>
@@ -492,12 +492,12 @@ const AutoFixPage = () => {
                   <motion.div
                     key={type.id}
                     whileHover={{ scale: 1.05 }}
-                    className="bg-white rounded-xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-orange-500 transition-all"
+                    className="bg-white rounded-xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
                     onClick={() => handlePolishingTypeSelect(type)}
                   >
-                    <Sparkles className="w-12 h-12 text-orange-600 mx-auto mb-4" />
+                    <Sparkles className="w-12 h-12 text-blue-600 mx-auto mb-4" />
                     <h3 className="text-lg font-bold mb-2">{type.name}</h3>
-                    <p className="text-2xl font-bold text-orange-600">
+                    <p className="text-2xl font-bold text-blue-600">
                       ₹{type.price}
                     </p>
                   </motion.div>
@@ -514,7 +514,7 @@ const AutoFixPage = () => {
             >
               <button
                 onClick={() => setCurrentStep(selectedService.id === "rubbing-polishing" ? 3.5 : 2)}
-                className="mb-6 text-orange-600 hover:underline flex items-center"
+                className="mb-6 text-blue-600 hover:underline flex items-center"
               >
                 ← Back
               </button>
@@ -561,7 +561,7 @@ const AutoFixPage = () => {
                             -₹{Math.round((pricing.basePrice * 15) / 100)}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center text-2xl font-bold text-orange-600 mt-4 pt-4 border-t">
+                        <div className="flex justify-between items-center text-2xl font-bold text-blue-600 mt-4 pt-4 border-t">
                           <span>Final Price:</span>
                           <span>₹{calculateFinalPrice()}</span>
                         </div>
@@ -576,7 +576,7 @@ const AutoFixPage = () => {
 
                 <button
                   onClick={handleContinueToUpload}
-                  className="w-full bg-orange-600 text-white py-4 rounded-full font-semibold text-lg hover:bg-orange-700 transition-all"
+                  className="w-full bg-blue-600 text-white py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition-all"
                 >
                   Upload Damage Photos
                 </button>
@@ -592,7 +592,7 @@ const AutoFixPage = () => {
             >
               <button
                 onClick={() => setCurrentStep(3)}
-                className="mb-6 text-orange-600 hover:underline flex items-center"
+                className="mb-6 text-blue-600 hover:underline flex items-center"
               >
                 ← Back
               </button>
@@ -621,7 +621,7 @@ const AutoFixPage = () => {
                     </div>
                   ))}
                   {damagePhotos.length < 4 && (
-                    <label className="border-2 border-dashed border-gray-300 rounded-lg h-40 flex flex-col items-center justify-center cursor-pointer hover:border-orange-500 transition-all">
+                    <label className="border-2 border-dashed border-gray-300 rounded-lg h-40 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-all">
                       <Upload className="w-12 h-12 text-gray-400 mb-2" />
                       <span className="text-gray-500">Upload Photo</span>
                       <input
@@ -635,10 +635,10 @@ const AutoFixPage = () => {
                   )}
                 </div>
 
-                <div className="bg-orange-50 p-6 rounded-lg mb-6">
+                <div className="bg-blue-50 p-6 rounded-lg mb-6">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-lg font-semibold">Estimated Price:</span>
-                    <span className="text-3xl font-bold text-orange-600">
+                    <span className="text-3xl font-bold text-blue-600">
                       ₹{calculateFinalPrice()}
                     </span>
                   </div>
@@ -655,7 +655,7 @@ const AutoFixPage = () => {
                 <button
                   onClick={handleContinueToAddToCart}
                   disabled={damagePhotos.length < 2}
-                  className="w-full bg-orange-600 text-white py-4 rounded-full font-semibold text-lg hover:bg-orange-700 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  className="w-full bg-blue-600 text-white py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
                   Add to Cart & Checkout
                 </button>
