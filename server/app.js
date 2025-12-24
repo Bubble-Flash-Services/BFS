@@ -34,6 +34,8 @@ import keyServicesAdminRoutes from './routes/keyServicesAdmin.js';
 import laundryAdminRoutes from './routes/laundryAdmin.js';
 import autofixRoutes from './routes/autofix.js';
 import autofixAdminRoutes from './routes/autofixAdmin.js';
+import flowerServicesRoutes from './routes/flowerServices.js';
+import flowerServicesAdminRoutes from './routes/flowerServicesAdmin.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import { configureCloudinary } from './services/cloudinary.js';
@@ -110,6 +112,10 @@ app.use('/api/admin/laundry', laundryAdminRoutes);
 // AutoFix Pro routes
 app.use('/api/autofix', autofixRoutes);
 app.use('/api/admin/autofix', autofixAdminRoutes);
+
+// Flower Services routes
+app.use('/api/flower-services', flowerServicesRoutes);
+app.use('/api/admin/flower-services', flowerServicesAdminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

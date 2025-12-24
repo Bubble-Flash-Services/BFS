@@ -52,6 +52,7 @@ import KeyServicesManagement from "./pages/admin/KeyServicesManagement";
 import LaundryManagement from "./pages/admin/LaundryManagement";
 import PaintingServicesManagement from "./pages/admin/PaintingServicesManagement";
 import AutoFixManagement from "./pages/admin/AutoFixManagement";
+import FlowerServicesManagement from "./pages/admin/FlowerServicesManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
 import EmployeeCompleted from "./pages/employee/EmployeeCompleted";
@@ -74,6 +75,7 @@ import VehicleAccessoriesPage from "./pages/VehicleAccessories/VehicleAccessorie
 import PaintingServicesPage from "./pages/PaintingServices/PaintingServicesPage";
 import KeyServicesPage from "./pages/KeyServices/KeyServicesPage";
 import AutoFixPage from "./pages/AutoFix/AutoFixPage";
+import FlowerServicesPage from "./pages/FlowerServices/FlowerServicesPage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -184,6 +186,7 @@ function AppContent() {
           <Route path="/key-services" element={<KeyServicesPage />} />
           <Route path="/painting-services" element={<PaintingServicesPage />} />
           <Route path="/autofix" element={<AutoFixPage />} />
+          <Route path="/flower-services" element={<FlowerServicesPage />} />
           <Route
             path="/admin/users"
             element={
@@ -301,6 +304,14 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <AutoFixManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/flower-services"
+            element={
+              <ProtectedAdminRoute>
+                <FlowerServicesManagement />
               </ProtectedAdminRoute>
             }
           />
