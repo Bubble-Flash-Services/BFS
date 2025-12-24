@@ -111,6 +111,13 @@ export const createBooking = async (req, res) => {
     const userId = req.user.id;
     const bookingData = req.body;
     
+    if (!bookingData.brandId || !bookingData.modelId || !bookingData.serviceType) {
+      return res.status(400).json({
+        success: false,
+        message: 'Brand, model, and service type are required'
+      });
+    }
+    
     const existingOrders = await MobileFixBooking.countDocuments({ userId });
     const isFirstOrder = existingOrders === 0;
     
@@ -145,6 +152,14 @@ export const createBooking = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating booking:', error);
+    
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error: ' + error.message
+      });
+    }
+    
     res.status(500).json({
       success: false,
       message: 'Failed to create booking'

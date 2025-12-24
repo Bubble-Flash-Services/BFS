@@ -222,7 +222,7 @@ const MobileFixPage = () => {
       return;
     }
 
-    const isFirstTimeBooking = !user?.totalOrders || user.totalOrders === 0;
+    const isFirstTimeBooking = isFirstTime;
     const firstTimeDiscount = isFirstTimeBooking ? 0.15 : 0;
     const basePrice = pricing.price;
     const discountAmount = Math.round(basePrice * firstTimeDiscount);
@@ -251,7 +251,6 @@ const MobileFixPage = () => {
         serviceType: selectedService.id,
         estimatedTime: pricing.estimatedTime,
         specialInstructions: specialInstructions,
-        isFirstTime: isFirstTimeBooking,
       },
     };
 
