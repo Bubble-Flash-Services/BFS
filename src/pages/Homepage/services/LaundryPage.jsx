@@ -2,6 +2,126 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../../components/CartContext';
 
+// Men's Wash Pricing (Wash & Fold)
+const mensWashFold = [
+  {
+    id: 'mw-wf-shirt',
+    name: 'Shirt / T-Shirt',
+    image: '/laundry/wash & fold/top waer.jpg',
+    price: 25,
+    category: 'Wash & Fold',
+    description: 'Hygienically washed and neatly packed'
+  },
+  {
+    id: 'mw-wf-jeans',
+    name: 'Jeans / Trouser',
+    image: '/laundry/wash & fold/bottom wear.jpg',
+    price: 30,
+    category: 'Wash & Fold',
+    description: 'Hygienically washed and neatly packed'
+  },
+  {
+    id: 'mw-wf-shorts',
+    name: 'Shorts',
+    image: '/laundry/wash & fold/bottom wear half.jpg',
+    price: 20,
+    category: 'Wash & Fold',
+    description: 'Hygienically washed and neatly packed'
+  },
+  {
+    id: 'mw-wf-under',
+    name: 'Undergarments',
+    image: '/laundry/wash & fold/undergarment.webp',
+    price: 15,
+    category: 'Wash & Fold',
+    description: 'Hygienically washed and neatly packed'
+  }
+];
+
+// Men's Wash & Iron Pricing
+const mensWashIron = [
+  {
+    id: 'mw-wi-shirt',
+    name: 'Shirt / T-Shirt',
+    image: '/laundry/ironing/top wear.webp',
+    price: 40,
+    category: 'Wash & Iron',
+    description: 'Washed, dried, and neatly packed'
+  },
+  {
+    id: 'mw-wi-jeans',
+    name: 'Jeans / Trouser',
+    image: '/laundry/ironing/Bottom Wear.webp',
+    price: 45,
+    category: 'Wash & Iron',
+    description: 'Washed, dried, and neatly packed'
+  }
+];
+
+// Women's Wash Pricing (Wash & Fold)
+const womensWashFold = [
+  {
+    id: 'ww-wf-top',
+    name: 'Top / Blouse',
+    image: '/laundry/wash & fold/top wear women.jpg',
+    price: 25,
+    category: 'Wash & Fold',
+    description: 'Suitable for casual and office wear'
+  },
+  {
+    id: 'ww-wf-kurta',
+    name: 'Kurta',
+    image: '/laundry/wash & fold/top wear women.jpg',
+    price: 30,
+    category: 'Wash & Fold',
+    description: 'Suitable for casual and office wear'
+  },
+  {
+    id: 'ww-wf-jeans',
+    name: 'Jeans / Skirt',
+    image: '/laundry/wash & fold/bottom wear women.jpg',
+    price: 30,
+    category: 'Wash & Fold',
+    description: 'Suitable for casual and office wear'
+  },
+  {
+    id: 'ww-wf-inner',
+    name: 'Innerwear',
+    image: '/laundry/wash & fold/bottom wear half women.jpg',
+    price: 15,
+    category: 'Wash & Fold',
+    description: 'Suitable for casual and office wear'
+  }
+];
+
+// Women's Wash & Iron Pricing
+const womensWashIron = [
+  {
+    id: 'ww-wi-top',
+    name: 'Top / Blouse',
+    image: '/laundry/ironing/top wear women.webp',
+    price: 40,
+    category: 'Wash & Iron',
+    description: 'Suitable for casual and office wear'
+  },
+  {
+    id: 'ww-wi-kurta',
+    name: 'Kurta',
+    image: '/laundry/ironing/top wear women.webp',
+    price: 45,
+    category: 'Wash & Iron',
+    description: 'Suitable for casual and office wear'
+  },
+  {
+    id: 'ww-wi-jeans',
+    name: 'Jeans / Skirt',
+    image: '/laundry/ironing/bottom wear women.webp',
+    price: 45,
+    category: 'Wash & Iron',
+    description: 'Suitable for casual and office wear'
+  }
+];
+
 const clothingItems = {
   men: [
     {
@@ -1491,14 +1611,14 @@ export default function LaundryPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [bookingData, setBookingData] = useState(null);
-  const [activeCategory, setActiveCategory] = useState('wash-fold');
+  const [activeCategory, setActiveCategory] = useState('mens-wash');
   const [quantities, setQuantities] = useState({});
   const [selectedAddons, setSelectedAddons] = useState({});
   const [showAddonsModal, setShowAddonsModal] = useState(false);
   const [selectedDetergent, setSelectedDetergent] = useState(null);
   const [tempSelectedAddons, setTempSelectedAddons] = useState({});
   const navigate = useNavigate();
-  const { addToCart, updateQuantity } = useCart();
+  const { addToCart } = useCart();
   const sliderRef = useRef(null);
   const startX = useRef(0);
   const isDragging = useRef(false);
@@ -1635,6 +1755,14 @@ export default function LaundryPage() {
       { items: bedsheetWashItems, categoryName: 'Bedsheet/Heavy Wash Service', serviceName: 'laundry' }
     ];
     
+    // Also add new category items as flat arrays
+    const newCategoryItemsFlat = [
+      ...mensWashFold,
+      ...mensWashIron,
+      ...womensWashFold,
+      ...womensWashIron
+    ];
+    
     // Collect selected addons as uiAddOns
     const allAddons = [...addOns.shoeClean, ...addOns.washFold, ...addOns.ironing, ...addOns.dryClean];
     const selectedAddonsList = allAddons.filter(addon => tempSelectedAddons[addon.id]);
@@ -1663,7 +1791,7 @@ export default function LaundryPage() {
       }
     }
     
-    // Add items to cart with addons and detergent as uiAddOns
+    // Add items from old structure to cart with addons and detergent as uiAddOns
     allCategoryItems.forEach(({ items, categoryName, serviceName }) => {
       Object.entries(items).forEach(([category, itemsList]) => {
         itemsList.forEach(item => {
@@ -1675,19 +1803,39 @@ export default function LaundryPage() {
               serviceName: 'washing', // Hardcoded serviceName
               image: item.image,
               price: item.price,
+              quantity: quantity, // Include quantity directly
               category: 'Laundry', // Standardized category for proper filtering in admin
               type: 'laundry',
               description: item.description,
               uiAddOns: uiAddOns.length > 0 ? uiAddOns : [] // Attach addons and detergent to the item
             };
             
-            // Add the item first, then update quantity to the correct amount
+            // Add the item with the correct quantity
             addToCart(cartItem);
-            // Update the quantity to match the selected quantity
-            updateQuantity(`laundry-${item.id}`, quantity);
           }
         });
       });
+    });
+    
+    // Add items from new category structure to cart
+    newCategoryItemsFlat.forEach(item => {
+      const quantity = quantities[item.id];
+      if (quantity && quantity > 0) {
+        const cartItem = {
+          id: `laundry-${item.id}`,
+          name: item.name,
+          serviceName: 'washing',
+          image: item.image,
+          price: item.price,
+          quantity: quantity, // Include quantity directly
+          category: 'Laundry',
+          type: 'laundry',
+          description: item.description,
+          uiAddOns: uiAddOns.length > 0 ? uiAddOns : []
+        };
+        
+        addToCart(cartItem);
+      }
     });
     
     // Clear quantities and addons
@@ -1721,6 +1869,15 @@ export default function LaundryPage() {
       bedsheetWashItems
     ];
     
+    // Also check new category items
+    const newCategoryItems = [
+      ...mensWashFold,
+      ...mensWashIron,
+      ...womensWashFold,
+      ...womensWashIron
+    ];
+    
+    // Calculate total from old structure
     allCategoryItems.forEach(categoryItems => {
       Object.entries(categoryItems).forEach(([category, items]) => {
         items.forEach(item => {
@@ -1728,6 +1885,12 @@ export default function LaundryPage() {
           total += item.price * quantity;
         });
       });
+    });
+    
+    // Calculate total from new category items
+    newCategoryItems.forEach(item => {
+      const quantity = quantities[item.id] || 0;
+      total += item.price * quantity;
     });
     
     // Add addon prices
@@ -1800,16 +1963,19 @@ export default function LaundryPage() {
         <div className="text-center mb-12">
           <div className="inline-block mb-4">
             <span className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-md">
-              PREMIUM LAUNDRY SERVICES
+              BFS SMARTLAUNDRY™
             </span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Professional Laundry Care
+              BFS Laundry Services
             </span>
           </h1>
+          <p className="text-gray-700 text-xl font-semibold max-w-2xl mx-auto mb-3">
+            Professional Laundry & Fabric Care at Your Doorstep
+          </p>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Choose from our wide range of laundry services with premium add-ons for the perfect clean
+            From daily wear to designer fabrics, BFS offers specialized laundry care with transparent pricing and doorstep convenience.
           </p>
         </div>
 
@@ -1817,12 +1983,15 @@ export default function LaundryPage() {
         <div className="mb-8">
           <div className="flex flex-wrap justify-center gap-3 mb-6">
             {[
-              { id: 'wash-fold', label: 'Wash & Fold', icon: '🧺' },
-              { id: 'wash-iron', label: 'Wash & Iron', icon: '👕' },
-              { id: 'ironing', label: 'Ironing', icon: '🎽' },
-              { id: 'dry-clean', label: 'Dry Clean', icon: '✨' },
-              { id: 'shoe-clean', label: 'Shoe Clean', icon: '👟' },
-              { id: 'bedsheet-wash', label: 'Bedsheet Wash', icon: '🛏️' }
+              { id: 'mens-wash', label: "Men's Wash", icon: '👔' },
+              { id: 'womens-wash', label: "Women's Wash", icon: '👗' },
+              { id: 'dry-clean', label: 'Dry Cleaning', icon: '✨' },
+              { id: 'sarees-rolling', label: 'Sarees & Rolling', icon: '🥻' },
+              { id: 'shoe-clean', label: 'Shoe Cleaning', icon: '👟' },
+              { id: 'kids-clothes', label: 'Kids Clothes', icon: '👶' },
+              { id: 'blazers-coats', label: 'Blazers & Coats', icon: '🧥' },
+              { id: 'winter-wear', label: 'Winter Wear', icon: '❄️' },
+              { id: 'home-linen', label: 'Home Linen', icon: '🛏️' }
             ].map((category) => (
               <button
                 key={category.id}
@@ -1840,7 +2009,253 @@ export default function LaundryPage() {
           </div>
         </div>
 
+        {/* Why BFS Laundry Section */}
+        <div className="mb-12 bg-white rounded-2xl shadow-lg p-8">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              ✅ WHY BFS LAUNDRY?
+            </span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { icon: '🚪', text: 'Doorstep pickup & delivery' },
+              { icon: '👔', text: 'Separate handling for premium items' },
+              { icon: '👟', text: 'Brand-wise shoe care' },
+              { icon: '🥻', text: 'Saree & blazer specialists' },
+              { icon: '💰', text: 'Transparent per-item pricing' },
+              { icon: '⭐', text: 'Trusted BFS service quality' }
+            ].map((feature, index) => (
+              <div key={index} className="flex items-center space-x-3 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg hover:shadow-md transition-shadow">
+                <span className="text-3xl">{feature.icon}</span>
+                <p className="text-gray-700 font-medium">{feature.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Content based on active category */}
+        {(activeCategory === 'mens-wash') && (
+          <div>
+            {/* Men's Wash & Fold Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-purple-600 mb-4">
+                Men's Wash - Wash & Fold
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {mensWashFold.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div className="aspect-square bg-gray-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-semibold text-gray-800 text-sm mb-1">{item.name}</h4>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-lg font-bold text-purple-600">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-purple-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-gray-600 mt-4">📌 Clothes are hygienically washed, dried, and neatly packed.</p>
+            </div>
+
+            {/* Men's Wash & Iron Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-blue-600 mb-4">
+                Men's Wash - Wash & Iron
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {mensWashIron.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div className="aspect-square bg-gray-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-semibold text-gray-800 text-sm mb-1">{item.name}</h4>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-lg font-bold text-blue-600">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-blue-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-gray-600 mt-4">📌 Clothes are hygienically washed, dried, and neatly packed.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Women's Wash Category */}
+        {(activeCategory === 'womens-wash') && (
+          <div>
+            {/* Women's Wash & Fold Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-pink-600 mb-4">
+                Women's Wash - Wash & Fold
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {womensWashFold.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div className="aspect-square bg-gray-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-semibold text-gray-800 text-sm mb-1">{item.name}</h4>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-lg font-bold text-pink-600">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-pink-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-pink-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-pink-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-pink-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-gray-600 mt-4">📌 Suitable for both casual and office wear.</p>
+            </div>
+
+            {/* Women's Wash & Iron Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-indigo-600 mb-4">
+                Women's Wash - Wash & Iron
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {womensWashIron.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div className="aspect-square bg-gray-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-semibold text-gray-800 text-sm mb-1">{item.name}</h4>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-lg font-bold text-indigo-600">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-indigo-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-indigo-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-gray-600 mt-4">📌 Suitable for both casual and office wear.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Original wash-fold content for backward compatibility */}
         {(activeCategory === 'wash-fold' || activeCategory === 'wash-iron') && (
           <div>
             {/* Men's Clothing Section */}
@@ -2215,51 +2630,53 @@ export default function LaundryPage() {
             </div>
 
             {/* Add-ons Section for Wash & Fold */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-green-300 pb-2">
-                <span className="bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-                  Premium Add-ons for Wash & Fold
-                </span>
-              </h3>
-              <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6 shadow-lg">
-                <p className="text-center text-gray-600 mb-6">
-                  ✨ Enhance your wash & fold service with these premium add-ons
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {addOns.washFold.map((addon) => (
-                    <div 
-                      key={addon.id} 
-                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                        selectedAddons[addon.id] ? 'ring-2 ring-green-500 bg-green-50' : ''
-                      }`}
-                      onClick={() => toggleAddon(addon.id)}
-                    >
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                            selectedAddons[addon.id] ? 'bg-green-600 border-green-600' : 'border-gray-300'
-                          }`}>
-                            {selectedAddons[addon.id] && (
-                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M5 13l4 4L19 7"></path>
-                              </svg>
-                            )}
+            {addOns.washFold && addOns.washFold.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-green-300 pb-2">
+                  <span className="bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Wash & Fold
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your wash & fold service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.washFold.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-green-500 bg-green-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-green-600 border-green-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-green-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-green-600">₹{addon.price}</span>
-                          <span className="text-xs text-gray-500">
-                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -2585,51 +3002,53 @@ export default function LaundryPage() {
             </div>
 
             {/* Add-ons Section for Ironing */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-blue-300 pb-2">
-                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Premium Add-ons for Ironing
-                </span>
-              </h3>
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-lg">
-                <p className="text-center text-gray-600 mb-6">
-                  ✨ Enhance your ironing service with these premium add-ons
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {addOns.ironing.map((addon) => (
-                    <div 
-                      key={addon.id} 
-                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                        selectedAddons[addon.id] ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-                      }`}
-                      onClick={() => toggleAddon(addon.id)}
-                    >
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                            selectedAddons[addon.id] ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
-                          }`}>
-                            {selectedAddons[addon.id] && (
-                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M5 13l4 4L19 7"></path>
-                              </svg>
-                            )}
+            {addOns.ironing && addOns.ironing.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-blue-300 pb-2">
+                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Ironing
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your ironing service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.ironing.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-blue-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-blue-600">₹{addon.price}</span>
-                          <span className="text-xs text-gray-500">
-                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -2955,51 +3374,53 @@ export default function LaundryPage() {
             </div>
 
             {/* Add-ons Section for Dry Clean */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-orange-300 pb-2">
-                <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                  Premium Add-ons for Dry Clean
-                </span>
-              </h3>
-              <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 shadow-lg">
-                <p className="text-center text-gray-600 mb-6">
-                  ✨ Enhance your dry clean service with these premium add-ons
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {addOns.dryClean.map((addon) => (
-                    <div 
-                      key={addon.id} 
-                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                        selectedAddons[addon.id] ? 'ring-2 ring-orange-500 bg-orange-50' : ''
-                      }`}
-                      onClick={() => toggleAddon(addon.id)}
-                    >
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                            selectedAddons[addon.id] ? 'bg-orange-600 border-orange-600' : 'border-gray-300'
-                          }`}>
-                            {selectedAddons[addon.id] && (
-                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M5 13l4 4L19 7"></path>
-                              </svg>
-                            )}
+            {addOns.dryClean && addOns.dryClean.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-orange-300 pb-2">
+                  <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Dry Clean
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your dry clean service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.dryClean.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-orange-500 bg-orange-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-orange-600 border-orange-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-orange-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-orange-600">₹{addon.price}</span>
-                          <span className="text-xs text-gray-500">
-                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -3060,51 +3481,53 @@ export default function LaundryPage() {
             </div>
 
             {/* Add-ons Section for Shoes */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-purple-300 pb-2">
-                <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  Premium Add-ons for Shoes
-                </span>
-              </h3>
-              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 shadow-lg">
-                <p className="text-center text-gray-600 mb-6">
-                  ✨ Enhance your shoe cleaning service with these premium add-ons
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {addOns.shoeClean.map((addon) => (
-                    <div 
-                      key={addon.id} 
-                      className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
-                        selectedAddons[addon.id] ? 'ring-2 ring-purple-500 bg-purple-50' : ''
-                      }`}
-                      onClick={() => toggleAddon(addon.id)}
-                    >
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                            selectedAddons[addon.id] ? 'bg-purple-600 border-purple-600' : 'border-gray-300'
-                          }`}>
-                            {selectedAddons[addon.id] && (
-                              <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M5 13l4 4L19 7"></path>
-                              </svg>
-                            )}
+            {addOns.shoeClean && addOns.shoeClean.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-purple-300 pb-2">
+                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Shoes
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your shoe cleaning service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.shoeClean.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-purple-500 bg-purple-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-purple-600 border-purple-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-purple-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-purple-600">₹{addon.price}</span>
-                          <span className="text-xs text-gray-500">
-                            {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -3166,8 +3589,93 @@ export default function LaundryPage() {
           </div>
         )}
 
+        {/* Sarees & Rolling Category */}
+        {activeCategory === 'sarees-rolling' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                🥻 Sarees & Rolling Services
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Premium saree care with hand washing, rolling, and preservation services</p>
+              <p className="text-gray-500 mt-4">From daily cotton sarees to bridal Kanjeevarams - specialized care for all types</p>
+            </div>
+          </div>
+        )}
+
+        {/* Kids Clothes Category */}
+        {activeCategory === 'kids-clothes' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                👶 Kids Clothes Laundry
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Gentle care for kids clothing with separate washing</p>
+              <p className="text-gray-500 mt-4">Special attention to soft fabrics and hygienic cleaning</p>
+            </div>
+          </div>
+        )}
+
+        {/* Blazers & Coats Category */}
+        {activeCategory === 'blazers-coats' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-gray-700 to-blue-600 bg-clip-text text-transparent">
+                🧥 Blazers & Coats Care
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Professional cleaning for formal wear with steam press and shape retention</p>
+              <p className="text-gray-500 mt-4">Delivered on hangers with premium care for both regular and designer brands</p>
+            </div>
+          </div>
+        )}
+
+        {/* Winter Wear Category */}
+        {activeCategory === 'winter-wear' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+                ❄️ Winter Wear Cleaning
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Specialized care for jackets, hoodies, sweaters, and shawls</p>
+              <p className="text-gray-500 mt-4">Suitable for woollen and padded clothing</p>
+            </div>
+          </div>
+        )}
+
+        {/* Home Linen Category */}
+        {activeCategory === 'home-linen' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-teal-600 to-green-600 bg-clip-text text-transparent">
+                🛏️ Home Linen Services
+              </span>
+            </h2>
+            <div className="text-center py-10">
+              <div className="text-6xl mb-4">🔜</div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
+              <p className="text-gray-600">Complete care for bedsheets, pillow covers, curtains, blankets, and towels</p>
+              <p className="text-gray-500 mt-4">Cleaned hygienically and packed neatly</p>
+            </div>
+          </div>
+        )}
+
         {/* Placeholder for other categories */}
-        {activeCategory !== 'wash-fold' && activeCategory !== 'wash-iron' && activeCategory !== 'ironing' && activeCategory !== 'dry-clean' && activeCategory !== 'shoe-clean' && activeCategory !== 'bedsheet-wash' && (
+        {activeCategory !== 'mens-wash' && activeCategory !== 'womens-wash' && activeCategory !== 'wash-fold' && activeCategory !== 'wash-iron' && activeCategory !== 'ironing' && activeCategory !== 'dry-clean' && activeCategory !== 'shoe-clean' && activeCategory !== 'bedsheet-wash' && activeCategory !== 'sarees-rolling' && activeCategory !== 'kids-clothes' && activeCategory !== 'blazers-coats' && activeCategory !== 'winter-wear' && activeCategory !== 'home-linen' && (
           <div className="text-center py-20">
             <h3 className="text-2xl font-bold text-gray-600 mb-4">Coming Soon</h3>
             <p className="text-gray-500">This service category will be available soon.</p>
@@ -3320,6 +3828,28 @@ export default function LaundryPage() {
             </div>
           </div>
         )}
+
+        {/* Final Branding Section */}
+        <div className="mt-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl shadow-2xl p-8 text-center text-white">
+          <div className="mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">BFS SmartLaundry™</h2>
+            <p className="text-xl md:text-2xl font-medium">From daily wear to designer care — cleaned right.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 text-sm">
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+              <p className="font-semibold">💰 Transparent Pricing</p>
+              <p className="text-white/90 text-xs mt-1">All prices are per piece unless mentioned</p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+              <p className="font-semibold">📸 Photo Inspection</p>
+              <p className="text-white/90 text-xs mt-1">Premium & VIP items may require photo inspection</p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+              <p className="font-semibold">🚚 Doorstep Service</p>
+              <p className="text-white/90 text-xs mt-1">Pickup & delivery within serviceable areas</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

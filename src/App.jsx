@@ -52,6 +52,9 @@ import KeyServicesManagement from "./pages/admin/KeyServicesManagement";
 import LaundryManagement from "./pages/admin/LaundryManagement";
 import PaintingServicesManagement from "./pages/admin/PaintingServicesManagement";
 import AutoFixManagement from "./pages/admin/AutoFixManagement";
+import FlowerServicesManagement from "./pages/admin/FlowerServicesManagement";
+import MobileFixManagement from "./pages/admin/MobileFixManagement";
+import MobilePricingManagement from "./pages/admin/MobilePricingManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
 import EmployeeCompleted from "./pages/employee/EmployeeCompleted";
@@ -74,6 +77,8 @@ import VehicleAccessoriesPage from "./pages/VehicleAccessories/VehicleAccessorie
 import PaintingServicesPage from "./pages/PaintingServices/PaintingServicesPage";
 import KeyServicesPage from "./pages/KeyServices/KeyServicesPage";
 import AutoFixPage from "./pages/AutoFix/AutoFixPage";
+import FlowerServicesPage from "./pages/FlowerServices/FlowerServicesPage";
+import MobileFixPage from "./pages/MobileFix/MobileFixPage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -184,6 +189,8 @@ function AppContent() {
           <Route path="/key-services" element={<KeyServicesPage />} />
           <Route path="/painting-services" element={<PaintingServicesPage />} />
           <Route path="/autofix" element={<AutoFixPage />} />
+          <Route path="/flower-services" element={<FlowerServicesPage />} />
+          <Route path="/mobilefix" element={<MobileFixPage />} />
           <Route
             path="/admin/users"
             element={
@@ -301,6 +308,30 @@ function AppContent() {
             element={
               <ProtectedAdminRoute>
                 <AutoFixManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/flower-services"
+            element={
+              <ProtectedAdminRoute>
+                <FlowerServicesManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/mobilefix"
+            element={
+              <ProtectedAdminRoute>
+                <MobileFixManagement />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/mobile-pricing"
+            element={
+              <ProtectedAdminRoute>
+                <MobilePricingManagement />
               </ProtectedAdminRoute>
             }
           />
