@@ -1087,6 +1087,7 @@ export default function HeroSection() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => toast.success('Mobile app coming soon! Stay tuned for updates.', { duration: 3000 })}
                   className="px-8 py-4 border-2 border-white border-opacity-30 text-white font-semibold rounded-2xl backdrop-blur-sm hover:bg-white hover:bg-opacity-10 transition-colors flex items-center justify-center gap-2"
                 >
                   <Smartphone className="w-5 h-5" />
