@@ -905,7 +905,7 @@ export default function HeroSection() {
         )}
       </AnimatePresence>
 
-      {/* Hero Section with Modern Design */}
+      {/* Hero Section with Modern Design - Now includes services */}
       <section
         id="home"
         className="relative min-h-screen bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] overflow-hidden"
@@ -993,13 +993,13 @@ export default function HeroSection() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          <div className="flex flex-col items-center justify-center text-center min-h-[80vh]">
+          <div className="flex flex-col items-center justify-center text-center">
             {/* Hero Content - Centered */}
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-white space-y-8 max-w-4xl"
+              className="text-white space-y-6 max-w-4xl mb-12"
             >
               {/* Badge */}
               <motion.div
@@ -1019,11 +1019,11 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-5xl md:text-7xl font-bold leading-tight"
+                className="text-4xl md:text-6xl font-bold leading-tight"
               >
                 Branded & Professional
                 <span className="block text-[#FFB400]">Cleaning Services</span>
-                <span className="block text-3xl md:text-5xl font-normal text-gray-200 mt-2">
+                <span className="block text-2xl md:text-4xl font-normal text-gray-200 mt-2">
                   for Cars, Bikes & More
                 </span>
               </motion.h1>
@@ -1033,98 +1033,41 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
-                className="text-xl md:text-2xl text-gray-200 leading-relaxed"
+                className="text-lg md:text-xl text-gray-200 leading-relaxed"
               >
                 Experience top-tier car wash, bike detailing, and laundry care –
                 all under one roof in Bengaluru. Quality service, every time.
               </motion.p>
 
-              {/* CTA Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center"
-              >
-                <motion.button
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 10px 30px rgba(255, 180, 0, 0.3)",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    const element =
-                      document.getElementById("service-categories");
-                    if (element) {
-                      element.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
-                  className="px-10 py-5 bg-[#FFB400] text-[#1F3C88] font-bold rounded-2xl shadow-lg hover:bg-[#e0a000] transition-colors flex items-center justify-center gap-2 text-lg"
-                >
-                  View Our Services
-                  <ArrowRight className="w-6 h-6" />
-                </motion.button>
-              </motion.div>
-
               {/* Stats */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1, duration: 0.8 }}
-                className="flex justify-center gap-16 pt-8"
+                transition={{ delay: 0.8, duration: 0.8 }}
+                className="flex justify-center gap-8 md:gap-16 pt-4"
               >
                 <div>
-                  <div className="text-3xl font-bold text-[#FFB400]">2000+</div>
-                  <div className="text-sm text-gray-300">Happy Customers</div>
+                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">2000+</div>
+                  <div className="text-xs md:text-sm text-gray-300">Happy Customers</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-[#FFB400]">100%</div>
-                  <div className="text-sm text-gray-300">Satisfaction</div>
+                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">100%</div>
+                  <div className="text-xs md:text-sm text-gray-300">Satisfaction</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-[#FFB400]">15+</div>
-                  <div className="text-sm text-gray-300">Services</div>
+                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">15+</div>
+                  <div className="text-xs md:text-sm text-gray-300">Services</div>
                 </div>
               </motion.div>
             </motion.div>
+
+            {/* Service Categories - Integrated in first section */}
+            <div id="service-categories" className="w-full">
+              <ServiceCategories />
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Modern Service Categories - Moved to top */}
-      <div className="bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0">
-          <motion.div
-            animate={{
-              scale: [1, 1.3, 1],
-              rotate: [0, 15, 0],
-            }}
-            transition={{
-              duration: 30,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute top-32 right-32 w-96 h-96 bg-[#FFB400] rounded-full opacity-5 blur-3xl"
-          />
-          <motion.div
-            animate={{
-              scale: [1.3, 1, 1.3],
-              rotate: [0, -15, 0],
-            }}
-            transition={{
-              duration: 25,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute bottom-32 left-32 w-80 h-80 bg-[#FFB400] rounded-full opacity-3 blur-3xl"
-          />
-        </div>
-
-        <div id="service-categories">
-          <ServiceCategories />
-        </div>
-      </div>
 
       {/* About Us Section with Light Theme */}
       <div className="bg-gray-50">
