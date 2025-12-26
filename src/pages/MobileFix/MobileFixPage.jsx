@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { Select } from "antd";
 import {
   Smartphone,
   Wrench,
@@ -20,6 +21,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../components/AuthContext";
 import { useCart } from "../../components/CartContext";
+import "antd/dist/reset.css";
+import "./MobileFixPage.css";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -222,7 +225,8 @@ const MobileFixPage = () => {
     }
   };
 
-  const handleBrandSelect = (brand) => {
+  const handleBrandSelect = (brandId) => {
+    const brand = brands.find(b => b._id === brandId);
     setSelectedBrand(brand);
     setSelectedModel(null);
     setModels([]);
@@ -233,7 +237,8 @@ const MobileFixPage = () => {
     setCurrentStep(2);
   };
 
-  const handleModelSelect = (model) => {
+  const handleModelSelect = (modelId) => {
+    const model = models.find(m => m._id === modelId);
     setSelectedModel(model);
     setSelectedService(null);
     setPricing(null);
@@ -486,20 +491,37 @@ const MobileFixPage = () => {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
-                  {brands.map((brand) => (
-                    <motion.div
-                      key={brand._id}
-                      whileHover={{ scale: 1.05 }}
-                      className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
-                      onClick={() => handleBrandSelect(brand)}
-                    >
-                      <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="max-w-2xl mx-auto mt-12">
+                  <div className="bg-white rounded-2xl shadow-lg p-8">
+                    <div className="flex items-center justify-center mb-6">
+                      <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center">
                         <Smartphone className="w-8 h-8 text-white" />
                       </div>
-                      <h3 className="text-xl font-bold">{brand.name}</h3>
-                    </motion.div>
-                  ))}
+                    </div>
+                    <label className="block text-left text-gray-700 font-semibold mb-3 text-lg">
+                      Select Your Phone Brand
+                    </label>
+                    <Select
+                      showSearch
+                      size="large"
+                      placeholder="Search and select your phone brand"
+                      optionFilterProp="children"
+                      onChange={handleBrandSelect}
+                      value={selectedBrand?._id}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      className="w-full"
+                      style={{ width: '100%' }}
+                      options={brands.map(brand => ({
+                        value: brand._id,
+                        label: brand.name,
+                      }))}
+                    />
+                    <p className="text-sm text-gray-500 mt-3 text-left">
+                      💡 Tip: You can type to search for your brand
+                    </p>
+                  </div>
                 </div>
               )}
             </motion.div>
@@ -518,7 +540,7 @@ const MobileFixPage = () => {
                 ← Back to Brands
               </button>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Select {selectedBrand?.name} Model
+                📱 STEP 2 — Select {selectedBrand?.name} Model
               </h2>
               <p className="text-gray-600 text-lg mb-8">
                 Choose your exact phone model
@@ -556,20 +578,41 @@ const MobileFixPage = () => {
                   </button>
                 </div>
               ) : !error && models.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
-                  {models.map((model) => (
-                    <motion.div
-                      key={model._id}
-                      whileHover={{ scale: 1.05 }}
-                      className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
-                      onClick={() => handleModelSelect(model)}
-                    >
-                      <div className="bg-gradient-to-br from-purple-500 to-pink-500 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Smartphone className="w-6 h-6 text-white" />
+                <div className="max-w-2xl mx-auto mt-12">
+                  <div className="bg-white rounded-2xl shadow-lg p-8">
+                    <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4">
+                      <p className="text-sm text-gray-600 mb-1">Selected Brand</p>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-10 h-10 rounded-full flex items-center justify-center">
+                          <Smartphone className="w-5 h-5 text-white" />
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">{selectedBrand?.name}</p>
                       </div>
-                      <h3 className="text-lg font-bold">{model.name}</h3>
-                    </motion.div>
-                  ))}
+                    </div>
+                    <label className="block text-left text-gray-700 font-semibold mb-3 text-lg">
+                      Select Your Phone Model
+                    </label>
+                    <Select
+                      showSearch
+                      size="large"
+                      placeholder="Search and select your phone model"
+                      optionFilterProp="children"
+                      onChange={handleModelSelect}
+                      value={selectedModel?._id}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      className="w-full"
+                      style={{ width: '100%' }}
+                      options={models.map(model => ({
+                        value: model._id,
+                        label: model.name,
+                      }))}
+                    />
+                    <p className="text-sm text-gray-500 mt-3 text-left">
+                      💡 Tip: You can type to search for your model
+                    </p>
+                  </div>
                 </div>
               ) : null}
             </motion.div>
@@ -588,7 +631,7 @@ const MobileFixPage = () => {
                 ← Back to Models
               </button>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                🔧 STEP 2 — Select Repair Service
+                🔧 STEP 3 — Select Repair Service
               </h2>
               <p className="text-gray-600 text-lg mb-4">
                 Selected: <span className="font-bold">{selectedBrand?.name} {selectedModel?.name}</span>
