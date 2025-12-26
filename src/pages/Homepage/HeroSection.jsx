@@ -1081,7 +1081,7 @@ export default function HeroSection() {
               className="flex-1 max-w-lg hidden lg:block"
             >
               <img
-                src="public/bfs car image.png"
+                src="/bfs car image.png"
                 alt="Professional Car Cleaning Service"
                 className="rounded-3xl shadow-2xl w-full h-auto object-cover"
               />
