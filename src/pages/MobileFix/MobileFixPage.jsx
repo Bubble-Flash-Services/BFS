@@ -227,6 +227,10 @@ const MobileFixPage = () => {
 
   const handleBrandSelect = (brandId) => {
     const brand = brands.find(b => b._id === brandId);
+    if (!brand) {
+      toast.error("Invalid brand selection");
+      return;
+    }
     setSelectedBrand(brand);
     setSelectedModel(null);
     setModels([]);
@@ -239,6 +243,10 @@ const MobileFixPage = () => {
 
   const handleModelSelect = (modelId) => {
     const model = models.find(m => m._id === modelId);
+    if (!model) {
+      toast.error("Invalid model selection");
+      return;
+    }
     setSelectedModel(model);
     setSelectedService(null);
     setPricing(null);
