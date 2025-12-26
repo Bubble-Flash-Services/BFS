@@ -1079,13 +1079,11 @@ export default function HeroSection() {
           {/* Service Categories - Full Width Below */}
           <div className="mt-16">
             <div id="service-categories" className="w-full">
-
-            {/* Service Categories - Integrated in first section */}
-            <div id="service-categories" className="w-full">
               <ServiceCategories />
             </div>
           </div>
         </div>
+      </section>
 
       {/* About Us Section with Light Theme */}
       <div className="bg-gray-50">
