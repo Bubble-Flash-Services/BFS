@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
@@ -17,19 +17,6 @@ import {
 
 export default function ServiceCategories() {
   const navigate = useNavigate();
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   const handleCategoryClick = (category) => {
     if (category === "laundry") {
@@ -37,14 +24,6 @@ export default function ServiceCategories() {
       return;
     }
     navigate(`/${category}`);
-  };
-
-  const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev > 0 ? prev - 1 : categories.length - 1));
-  };
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev < categories.length - 1 ? prev + 1 : 0));
   };
 
   const categories = [
@@ -257,14 +236,14 @@ export default function ServiceCategories() {
           </p>
         </div>
 
-        {/* Desktop Grid Layout - 5 per row on large screens, 4 on medium */}
-        <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {/* Grid Layout - Responsive for all screen sizes */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
           {categories.map((category, index) => {
             return (
               <div
                 key={category.name}
                 onClick={() => handleCategoryClick(category.category)}
-                className="relative rounded-2xl cursor-pointer shadow-lg backdrop-blur-sm border border-white border-opacity-20 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col h-72 bg-white bg-opacity-5"
+                className="relative rounded-xl md:rounded-2xl cursor-pointer shadow-lg backdrop-blur-sm border border-white border-opacity-20 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col h-52 sm:h-60 md:h-72 bg-white bg-opacity-5"
               >
                 {/* Background Image with Overlay */}
                 <div
@@ -278,8 +257,8 @@ export default function ServiceCategories() {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
                 {/* New Badge */}
                 {category.isNew && (
-                  <div className="absolute top-3 right-3 z-20">
-                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg">
+                  <div className="absolute top-2 right-2 md:top-3 md:right-3 z-20">
+                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-1.5 py-0.5 md:px-2.5 md:py-1 rounded-full text-[8px] md:text-[10px] font-bold shadow-lg">
                       NEW
                     </div>
                   </div>
@@ -287,29 +266,29 @@ export default function ServiceCategories() {
 
                 {/* Popular Badge */}
                 {category.isPopular && !category.isNew && (
-                  <div className="absolute top-3 right-3 z-20">
-                    <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg">
+                  <div className="absolute top-2 right-2 md:top-3 md:right-3 z-20">
+                    <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-1.5 py-0.5 md:px-2.5 md:py-1 rounded-full text-[8px] md:text-[10px] font-bold shadow-lg">
                       POPULAR
                     </div>
                   </div>
                 )}
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col h-full justify-end p-4">
+                <div className="relative z-10 flex flex-col h-full justify-end p-2.5 sm:p-3 md:p-4">
                   {/* Title */}
-                  <h3 className="text-base font-bold text-white mb-1.5 group-hover:text-[#FFB400] transition-colors duration-300 line-clamp-2">
+                  <h3 className="text-xs sm:text-sm md:text-base font-bold text-white mb-1 md:mb-1.5 group-hover:text-[#FFB400] transition-colors duration-300 line-clamp-2">
                     {category.name}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-gray-200 mb-3 leading-tight text-xs line-clamp-2">
+                  <p className="text-gray-200 mb-2 md:mb-3 leading-tight text-[10px] sm:text-xs line-clamp-2">
                     {category.description}
                   </p>
 
                   {/* Price Display */}
                   {category.price && (
-                    <div className="mb-2">
-                      <span className="text-sm font-bold text-[#FFB400]">
+                    <div className="mb-1.5 md:mb-2">
+                      <span className="text-xs md:text-sm font-bold text-[#FFB400]">
                         {category.price}
                       </span>
                     </div>
@@ -317,118 +296,15 @@ export default function ServiceCategories() {
 
                   {/* CTA Button */}
                   <div>
-                    <button className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-4 py-2 rounded-lg font-semibold hover:from-[#e0a000] hover:to-[#FFB400] transition-all duration-300 shadow-lg hover:shadow-xl text-xs">
+                    <button className="inline-flex items-center gap-1 md:gap-1.5 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-2.5 py-1.5 md:px-4 md:py-2 rounded-md md:rounded-lg font-semibold hover:from-[#e0a000] hover:to-[#FFB400] transition-all duration-300 shadow-lg hover:shadow-xl text-[10px] sm:text-xs">
                       Book Now
-                      <ArrowRight className="w-3 h-3" />
+                      <ArrowRight className="w-2.5 h-2.5 md:w-3 md:h-3" />
                     </button>
                   </div>
                 </div>
               </div>
             );
           })}
-        </div>
-
-        {/* Mobile Carousel Layout */}
-        <div className="md:hidden relative">
-          <div className="overflow-hidden rounded-3xl">
-            <div
-              className="flex transition-transform duration-500 ease-out"
-              style={{
-                transform: `translateX(-${currentSlide * 100}%)`,
-              }}
-            >
-              {categories.map((category, index) => (
-                <div key={category.name} className="min-w-full px-4">
-                  <div
-                    onClick={() => handleCategoryClick(category.category)}
-                    className="rounded-2xl mx-2 cursor-pointer shadow-xl border border-white border-opacity-20 relative overflow-hidden h-96 flex flex-col justify-end p-8 bg-white bg-opacity-5"
-                  >
-                    {/* Background Image with Overlay */}
-                    <div
-                      className="absolute inset-0 z-0 opacity-50"
-                      style={{
-                        backgroundImage: `url('${category.image}')`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
-                    {/* Mobile Card Content */}
-                    <div className="text-center relative z-10">
-                      {category.isNew && (
-                        <div className="absolute top-4 right-4 z-20">
-                          <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                            NEW
-                          </div>
-                        </div>
-                      )}
-
-                      {category.isPopular && !category.isNew && (
-                        <div className="absolute top-4 right-4 z-20">
-                          <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                            POPULAR
-                          </div>
-                        </div>
-                      )}
-
-                      <h3 className="text-2xl font-bold text-white mb-3">
-                        {category.name}
-                      </h3>
-
-                      <p className="text-gray-200 mb-6 text-lg">
-                        {category.description}
-                      </p>
-
-                      {category.price && (
-                        <div className="mb-4">
-                          <span className="text-lg font-bold text-[#FFB400]">
-                            {category.price}
-                          </span>
-                        </div>
-                      )}
-
-                      <button className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-8 py-4 rounded-xl font-semibold hover:from-[#e0a000] hover:to-[#FFB400] transition-all duration-300 shadow-lg text-lg">
-                        Book Now
-                        <ArrowRight className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile Navigation Buttons */}
-          <div className="flex justify-center items-center mt-8 gap-4">
-            <button
-              onClick={handlePrevSlide}
-              className="bg-white bg-opacity-20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-opacity-30 transition-all duration-300"
-            >
-              <ArrowRight className="w-5 h-5 transform rotate-180" />
-            </button>
-
-            {/* Mobile Slide Indicators */}
-            <div className="flex justify-center space-x-3">
-              {categories.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentSlide
-                      ? "bg-[#FFB400] shadow-lg scale-125"
-                      : "bg-white bg-opacity-50 hover:bg-opacity-70"
-                  }`}
-                />
-              ))}
-            </div>
-
-            <button
-              onClick={handleNextSlide}
-              className="bg-white bg-opacity-20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-opacity-30 transition-all duration-300"
-            >
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
         </div>
       </div>
     </section>
