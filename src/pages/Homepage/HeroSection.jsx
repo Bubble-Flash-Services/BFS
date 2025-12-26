@@ -1047,16 +1047,28 @@ export default function HeroSection() {
                 className="flex justify-center lg:justify-start gap-8 md:gap-16 pt-4"
               >
                 <div>
-                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">2000+</div>
-                  <div className="text-xs md:text-sm text-gray-300">Happy Customers</div>
+                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">
+                    2000+
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-300">
+                    Happy Customers
+                  </div>
                 </div>
                 <div>
-                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">100%</div>
-                  <div className="text-xs md:text-sm text-gray-300">Satisfaction</div>
+                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">
+                    100%
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-300">
+                    Satisfaction
+                  </div>
                 </div>
                 <div>
-                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">15+</div>
-                  <div className="text-xs md:text-sm text-gray-300">Services</div>
+                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">
+                    15+
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-300">
+                    Services
+                  </div>
                 </div>
               </motion.div>
             </motion.div>
@@ -1069,7 +1081,7 @@ export default function HeroSection() {
               className="flex-1 max-w-lg hidden lg:block"
             >
               <img
-                src="https://images.unsplash.com/photo-1632823469820-3c7cfea4b94f?w=600&h=600&fit=crop"
+                src="public/bfs car image.png"
                 alt="Professional Car Cleaning Service"
                 className="rounded-3xl shadow-2xl w-full h-auto object-cover"
               />
@@ -2090,7 +2102,7 @@ export default function HeroSection() {
           </motion.div>
         </div>
         {/* Choose your package Section */}
-        <div className="py-16 relative bg-gradient-to-br from-gray-50 via-white to-gray-50">
+        {/* <div className="py-16 relative bg-gradient-to-br from-gray-50 via-white to-gray-50">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2101,7 +2113,6 @@ export default function HeroSection() {
             Choose your package
           </motion.h2>
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
-            {/* Quick shine car */}
             <motion.div
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -2115,7 +2126,6 @@ export default function HeroSection() {
               }}
               className="bg-gradient-to-br from-blue-100 via-blue-50 to-indigo-100 rounded-2xl border-2 border-blue-300 border-opacity-50 shadow-xl p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-300 hover:border-opacity-80 relative overflow-hidden"
             >
-              {/* Floating Elements */}
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -2207,7 +2217,6 @@ export default function HeroSection() {
                 Get Services
               </motion.button>
             </motion.div>
-            {/* Bike wash */}
             <motion.div
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -2221,7 +2230,6 @@ export default function HeroSection() {
               }}
               className="bg-gradient-to-br from-green-100 via-emerald-50 to-green-100 rounded-2xl border-2 border-green-300 border-opacity-50 shadow-xl p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-300 hover:border-opacity-80 relative overflow-hidden"
             >
-              {/* Floating Elements */}
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
@@ -2305,7 +2313,6 @@ export default function HeroSection() {
                 Get Services
               </motion.button>
             </motion.div>
-            {/* Laundry wash */}
             <motion.div
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -2319,7 +2326,6 @@ export default function HeroSection() {
               }}
               className="bg-gradient-to-br from-purple-100 via-purple-50 to-violet-100 rounded-2xl border-2 border-purple-300 border-opacity-50 shadow-xl p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-300 hover:border-opacity-80 relative overflow-hidden"
             >
-              {/* Floating Elements */}
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
@@ -2403,7 +2409,6 @@ export default function HeroSection() {
                 Get Services
               </motion.button>
             </motion.div>
-            {/* Helmet Deals */}
             <motion.div
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -2417,7 +2422,6 @@ export default function HeroSection() {
               }}
               className="bg-gradient-to-br from-red-100 via-red-50 to-orange-100 rounded-2xl border-2 border-red-300 border-opacity-50 shadow-xl p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-300 hover:border-opacity-80 relative overflow-hidden"
             >
-              {/* Floating Elements */}
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
@@ -2502,7 +2506,7 @@ export default function HeroSection() {
               </motion.button>
             </motion.div>
           </div>
-        </div>
+        </div> */}
         {/* What client says - true carousel */}
         <div className="mt-20 mb-8 py-12">
           <h2 className="text-2xl md:text-3xl font-serif font-semibold text-center mb-8">

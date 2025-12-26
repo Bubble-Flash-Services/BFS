@@ -97,77 +97,81 @@ export default function ServiceCategories() {
       gradient: "from-green-600 to-teal-600",
       bgColor: "bg-green-50",
       hoverColor: "hover:bg-green-100",
-      price: "From ₹599",
+      // price: "From ₹599",
       isNew: true,
       isPopular: true,
     },
     {
       name: "Doorstep Key Services",
-      image: "/services/keys/key-duplication.jpg",
+      image: "https://miro.medium.com/0*CfTIR5Aba91zLR9b.",
       category: "key-services",
       description: "Professional key duplication & lock services at doorstep",
       fallbackIcon: Shield,
       gradient: "from-amber-500 to-yellow-500",
       bgColor: "bg-amber-50",
       hoverColor: "hover:bg-amber-100",
-      price: "From ₹49",
+      // price: "From ₹49",
       isNew: true,
       isPopular: true,
     },
     {
       name: "Vehicle Check-up",
-      image: "/services/checkup/vehicle-inspection.jpg",
+      image:
+        "https://media.istockphoto.com/id/1165665234/photo/car-maintenance-and-repair-mechanic-writing-checklist-paper-on-clipboard.jpg?s=612x612&w=0&k=20&c=yjR4V79WTKf6rO00v0ZqCzAoM8AZTdIlA4lP7T_dctg=",
       category: "services/vehicle-checkup",
       description: "Complete health inspection with 50+ point checklist",
       fallbackIcon: ShieldCheck,
       gradient: "from-red-500 to-orange-500",
       bgColor: "bg-red-50",
       hoverColor: "hover:bg-red-100",
-      price: "From ₹199",
+      // price: "From ₹199",
       isNew: true,
       isPopular: true,
     },
     {
       name: "PUC Certificate",
-      image: "/services/puc/puc-testing.jpg",
+      image:
+        "https://static-cdn.cars24.com/prod/auto-news24-cms/CARS24-Blog-Images/2024/10/30/9a10ae67-cc18-49cf-ac7e-7839736c1889-How-to-renew-a-PUC-certificate-online-%26-offline_-2024-guide.jpg",
       category: "services/puc-certificate",
       description: "Government-approved emission testing at your doorstep",
       fallbackIcon: ShieldCheck,
       gradient: "from-green-500 to-emerald-500",
       bgColor: "bg-green-50",
       hoverColor: "hover:bg-green-100",
-      price: "From ₹149",
+      // price: "From ₹149",
       isNew: true,
     },
     {
       name: "Insurance Assistance",
-      image: "/services/insurance/insurance-main.jpg",
+      image:
+        "https://www.hdfcergo.com/images/default-source/car-insurance/benefits-of-roadside-assistance-cover-in-car-insurance.jpg",
       category: "services/insurance-assistance",
       description: "Compare & buy vehicle insurance from 10+ insurers",
       fallbackIcon: Shield,
       gradient: "from-blue-600 to-green-600",
       bgColor: "bg-blue-50",
       hoverColor: "hover:bg-blue-100",
-      price: "From ₹199",
+      // price: "From ₹199",
       isNew: true,
       isPopular: true,
     },
     {
       name: "Painting Services",
-      image: "/services/painting/painting-main.jpg",
+      image: "https://5.imimg.com/data5/TR/QI/MY-4746650/painting-services.jpg",
       category: "painting-services",
       description: "Professional painting services for home & office",
       fallbackIcon: PaintBucket,
       gradient: "from-indigo-500 to-purple-500",
       bgColor: "bg-indigo-50",
       hoverColor: "hover:bg-indigo-100",
-      price: "From ₹14/sq.ft",
+      // price: "From ₹14/sq.ft",
       isNew: true,
       isPopular: true,
     },
     {
       name: "Movers & Packers",
-      image: "/movers/truck.png",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrf-d-jS-tvWNRw5c3qUW51ArKXgFmFXZqpw&s",
       category: "movers-packers",
       description: "Professional relocation services",
       fallbackIcon: Truck,
@@ -183,7 +187,7 @@ export default function ServiceCategories() {
       description: "Quality accessories for cars & bikes",
       fallbackIcon: ShoppingBag,
       gradient: "from-teal-500 to-cyan-500",
-      price: "From ₹149",
+      // price: "From ₹149",
       bgColor: "bg-teal-50",
       hoverColor: "hover:bg-teal-100",
       isNew: true,
@@ -191,12 +195,13 @@ export default function ServiceCategories() {
     },
     {
       name: "BFS AutoFix Pro",
-      image: "/services/autofix/car-repair.jpg",
+      image:
+        "https://t4.ftcdn.net/jpg/05/21/93/17/360_F_521931702_TXOHZBa3tLVISome894Zc061ceab4Txm.jpg",
       category: "autofix",
       description: "Doorstep Car Denting, Painting & Polishing",
       fallbackIcon: Wrench,
       gradient: "from-orange-500 to-red-500",
-      price: "From ₹799",
+      // price: "From ₹799",
       bgColor: "bg-orange-50",
       hoverColor: "hover:bg-orange-100",
       isNew: true,
@@ -204,12 +209,13 @@ export default function ServiceCategories() {
     },
     {
       name: "Doorstep Mobile Repair",
-      image: "/services/mobile/mobile-repair.jpg",
+      image:
+        "https://www.fixma.in/storage/phonfix/img/blog/VQoN7ihOmvQldxdEqsVulqSCVQBJz254uF2j7Iwv.jpg",
       category: "mobilefix",
       description: "Professional mobile repair at your doorstep",
       fallbackIcon: Smartphone,
       gradient: "from-purple-500 to-indigo-500",
-      price: "From ₹299",
+      // price: "From ₹299",
       bgColor: "bg-purple-50",
       hoverColor: "hover:bg-purple-100",
       isNew: true,
@@ -217,12 +223,13 @@ export default function ServiceCategories() {
     },
     {
       name: "BFS Flowers",
-      image: "/services/flowers/flowers-main.jpg",
+      image:
+        "https://monsoonflowers.com/cdn/shop/articles/feature_image_1417065f-302c-49d7-8922-b7f884e3d8f5.webp?v=1735856265",
       category: "flower-services",
       description: "Fresh flowers & bouquets for every occasion",
       fallbackIcon: Flower,
       gradient: "from-pink-500 to-rose-500",
-      price: "From ₹199",
+      // price: "From ₹199",
       bgColor: "bg-pink-50",
       hoverColor: "hover:bg-pink-100",
       isNew: true,
@@ -260,12 +267,12 @@ export default function ServiceCategories() {
                 className="relative rounded-2xl cursor-pointer shadow-lg backdrop-blur-sm border border-white border-opacity-20 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col h-72 bg-white bg-opacity-5"
               >
                 {/* Background Image with Overlay */}
-                <div 
-                  className="absolute inset-0 z-0 opacity-40 group-hover:opacity-60 transition-opacity duration-300"
+                <div
+                  className="absolute inset-0 z-0 opacity-40 group-hover:opacity-90 transition-opacity duration-300"
                   style={{
                     backgroundImage: `url('${category.image}')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
@@ -331,21 +338,18 @@ export default function ServiceCategories() {
               }}
             >
               {categories.map((category, index) => (
-                <div
-                  key={category.name}
-                  className="min-w-full px-4"
-                >
+                <div key={category.name} className="min-w-full px-4">
                   <div
                     onClick={() => handleCategoryClick(category.category)}
                     className="rounded-2xl mx-2 cursor-pointer shadow-xl border border-white border-opacity-20 relative overflow-hidden h-96 flex flex-col justify-end p-8 bg-white bg-opacity-5"
                   >
                     {/* Background Image with Overlay */}
-                    <div 
+                    <div
                       className="absolute inset-0 z-0 opacity-50"
                       style={{
                         backgroundImage: `url('${category.image}')`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
@@ -402,7 +406,7 @@ export default function ServiceCategories() {
             >
               <ArrowRight className="w-5 h-5 transform rotate-180" />
             </button>
-            
+
             {/* Mobile Slide Indicators */}
             <div className="flex justify-center space-x-3">
               {categories.map((_, index) => (
