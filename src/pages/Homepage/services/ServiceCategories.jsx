@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Car,
@@ -20,10 +19,6 @@ export default function ServiceCategories() {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const sliderRef = useRef(null);
-  const startX = useRef(0);
-  const isDragging = useRef(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -36,98 +31,20 @@ export default function ServiceCategories() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Auto-slide functionality for mobile
-  useEffect(() => {
-    if (!isMobile) return;
-
-    const autoSlide = setInterval(() => {
-      setCurrentSlide((prev) => {
-        const nextSlide = prev + 1;
-        return nextSlide >= categories.length ? 0 : nextSlide;
-      });
-    }, 3000);
-
-    return () => clearInterval(autoSlide);
-  }, [isMobile]);
-
-  const handleTouchStart = (e) => {
-    if (!isMobile) return;
-    isDragging.current = true;
-    startX.current = e.touches[0].pageX;
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isMobile || !isDragging.current) return;
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = (e) => {
-    if (!isMobile || !isDragging.current) return;
-    isDragging.current = false;
-
-    const endX = e.changedTouches[0].pageX;
-    const diffX = startX.current - endX;
-    const threshold = 50;
-
-    if (Math.abs(diffX) > threshold) {
-      if (diffX > 0 && currentSlide < categories.length - 1) {
-        setCurrentSlide(currentSlide + 1);
-      } else if (diffX < 0 && currentSlide > 0) {
-        setCurrentSlide(currentSlide - 1);
-      }
-    }
-  };
-
   const handleCategoryClick = (category) => {
     if (category === "laundry") {
-      // Show coming soon page instead of navigating to old Laundry content
       navigate("/laundry");
       return;
     }
     navigate(`/${category}`);
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-      },
-    },
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => (prev > 0 ? prev - 1 : categories.length - 1));
   };
 
-  const cardVariants = {
-    hidden: {
-      opacity: 0,
-      y: 50,
-      scale: 0.9,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 15,
-      },
-    },
-  };
-
-  const iconVariants = {
-    hidden: { scale: 0, rotate: -180 },
-    visible: {
-      scale: 1,
-      rotate: 0,
-      transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 10,
-        delay: 0.3,
-      },
-    },
+  const handleNextSlide = () => {
+    setCurrentSlide((prev) => (prev < categories.length - 1 ? prev + 1 : 0));
   };
 
   const categories = [
@@ -180,77 +97,81 @@ export default function ServiceCategories() {
       gradient: "from-green-600 to-teal-600",
       bgColor: "bg-green-50",
       hoverColor: "hover:bg-green-100",
-      price: "From ₹599",
+      // price: "From ₹599",
       isNew: true,
       isPopular: true,
     },
     {
       name: "Doorstep Key Services",
-      image: "/services/keys/key-duplication.jpg",
+      image: "https://miro.medium.com/0*CfTIR5Aba91zLR9b.",
       category: "key-services",
       description: "Professional key duplication & lock services at doorstep",
       fallbackIcon: Shield,
       gradient: "from-amber-500 to-yellow-500",
       bgColor: "bg-amber-50",
       hoverColor: "hover:bg-amber-100",
-      price: "From ₹49",
+      // price: "From ₹49",
       isNew: true,
       isPopular: true,
     },
     {
       name: "Vehicle Check-up",
-      image: "/services/checkup/vehicle-inspection.jpg",
+      image:
+        "https://media.istockphoto.com/id/1165665234/photo/car-maintenance-and-repair-mechanic-writing-checklist-paper-on-clipboard.jpg?s=612x612&w=0&k=20&c=yjR4V79WTKf6rO00v0ZqCzAoM8AZTdIlA4lP7T_dctg=",
       category: "services/vehicle-checkup",
       description: "Complete health inspection with 50+ point checklist",
       fallbackIcon: ShieldCheck,
       gradient: "from-red-500 to-orange-500",
       bgColor: "bg-red-50",
       hoverColor: "hover:bg-red-100",
-      price: "From ₹199",
+      // price: "From ₹199",
       isNew: true,
       isPopular: true,
     },
     {
       name: "PUC Certificate",
-      image: "/services/puc/puc-testing.jpg",
+      image:
+        "https://static-cdn.cars24.com/prod/auto-news24-cms/CARS24-Blog-Images/2024/10/30/9a10ae67-cc18-49cf-ac7e-7839736c1889-How-to-renew-a-PUC-certificate-online-%26-offline_-2024-guide.jpg",
       category: "services/puc-certificate",
       description: "Government-approved emission testing at your doorstep",
       fallbackIcon: ShieldCheck,
       gradient: "from-green-500 to-emerald-500",
       bgColor: "bg-green-50",
       hoverColor: "hover:bg-green-100",
-      price: "From ₹149",
+      // price: "From ₹149",
       isNew: true,
     },
     {
       name: "Insurance Assistance",
-      image: "/services/insurance/insurance-main.jpg",
+      image:
+        "https://www.hdfcergo.com/images/default-source/car-insurance/benefits-of-roadside-assistance-cover-in-car-insurance.jpg",
       category: "services/insurance-assistance",
       description: "Compare & buy vehicle insurance from 10+ insurers",
       fallbackIcon: Shield,
       gradient: "from-blue-600 to-green-600",
       bgColor: "bg-blue-50",
       hoverColor: "hover:bg-blue-100",
-      price: "From ₹199",
+      // price: "From ₹199",
       isNew: true,
       isPopular: true,
     },
     {
       name: "Painting Services",
-      image: "/services/painting/painting-main.jpg",
+      image: "https://5.imimg.com/data5/TR/QI/MY-4746650/painting-services.jpg",
       category: "painting-services",
       description: "Professional painting services for home & office",
       fallbackIcon: PaintBucket,
       gradient: "from-indigo-500 to-purple-500",
       bgColor: "bg-indigo-50",
       hoverColor: "hover:bg-indigo-100",
-      price: "From ₹14/sq.ft",
+      // price: "From ₹14/sq.ft",
       isNew: true,
       isPopular: true,
     },
     {
       name: "Movers & Packers",
-      image: "/movers/truck.png",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrf-d-jS-tvWNRw5c3qUW51ArKXgFmFXZqpw&s",
       category: "movers-packers",
       description: "Professional relocation services",
       fallbackIcon: Truck,
@@ -266,7 +187,7 @@ export default function ServiceCategories() {
       description: "Quality accessories for cars & bikes",
       fallbackIcon: ShoppingBag,
       gradient: "from-teal-500 to-cyan-500",
-      price: "From ₹149",
+      // price: "From ₹149",
       bgColor: "bg-teal-50",
       hoverColor: "hover:bg-teal-100",
       isNew: true,
@@ -274,12 +195,13 @@ export default function ServiceCategories() {
     },
     {
       name: "BFS AutoFix Pro",
-      image: "/services/autofix/car-repair.jpg",
+      image:
+        "https://t4.ftcdn.net/jpg/05/21/93/17/360_F_521931702_TXOHZBa3tLVISome894Zc061ceab4Txm.jpg",
       category: "autofix",
       description: "Doorstep Car Denting, Painting & Polishing",
       fallbackIcon: Wrench,
       gradient: "from-orange-500 to-red-500",
-      price: "From ₹799",
+      // price: "From ₹799",
       bgColor: "bg-orange-50",
       hoverColor: "hover:bg-orange-100",
       isNew: true,
@@ -287,12 +209,13 @@ export default function ServiceCategories() {
     },
     {
       name: "Doorstep Mobile Repair",
-      image: "/services/mobile/mobile-repair.jpg",
+      image:
+        "https://www.fixma.in/storage/phonfix/img/blog/VQoN7ihOmvQldxdEqsVulqSCVQBJz254uF2j7Iwv.jpg",
       category: "mobilefix",
       description: "Professional mobile repair at your doorstep",
       fallbackIcon: Smartphone,
       gradient: "from-purple-500 to-indigo-500",
-      price: "From ₹299",
+      // price: "From ₹299",
       bgColor: "bg-purple-50",
       hoverColor: "hover:bg-purple-100",
       isNew: true,
@@ -300,12 +223,13 @@ export default function ServiceCategories() {
     },
     {
       name: "BFS Flowers",
-      image: "/services/flowers/flowers-main.jpg",
+      image:
+        "https://monsoonflowers.com/cdn/shop/articles/feature_image_1417065f-302c-49d7-8922-b7f884e3d8f5.webp?v=1735856265",
       category: "flower-services",
       description: "Fresh flowers & bouquets for every occasion",
       fallbackIcon: Flower,
       gradient: "from-pink-500 to-rose-500",
-      price: "From ₹199",
+      // price: "From ₹199",
       bgColor: "bg-pink-50",
       hoverColor: "hover:bg-pink-100",
       isNew: true,
@@ -314,325 +238,196 @@ export default function ServiceCategories() {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 10, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute top-20 right-20 w-96 h-96 bg-[#FFB400] rounded-full opacity-5 blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [0, -10, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute bottom-20 left-20 w-80 h-80 bg-[#FFB400] rounded-full opacity-3 blur-3xl"
-        />
-      </div>
-
+    <section className="py-12 relative overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="inline-flex items-center px-6 py-3 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30 mb-6"
-          >
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center px-6 py-3 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30 mb-6">
             <span className="text-[#FFB400] font-semibold text-sm">
               Our Services
             </span>
-          </motion.div>
+          </div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-4xl md:text-5xl font-bold text-white mb-4"
-          >
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Choose Your <span className="text-[#FFB400]">Service</span>
-          </motion.h2>
+          </h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-xl text-gray-200 max-w-2xl mx-auto"
-          >
+          <p className="text-lg text-gray-200 max-w-2xl mx-auto">
             Premium cleaning services delivered with care and precision
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
-        {/* Desktop Grid Layout */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-8"
-        >
-          {categories.map((category, index) => (
-            <motion.div
-              key={category.name}
-              variants={cardVariants}
-              whileHover={{
-                scale: 1.05,
-                y: -10,
-                transition: { type: "spring", stiffness: 300, damping: 20 },
-              }}
-              whileTap={{ scale: 0.95 }}
-              onHoverStart={() => setHoveredCard(index)}
-              onHoverEnd={() => setHoveredCard(null)}
-              onClick={() => handleCategoryClick(category.category)}
-              className="relative bg-white rounded-3xl p-8 cursor-pointer shadow-xl backdrop-blur-sm border border-gray-200 hover:shadow-2xl transition-all duration-300 group overflow-hidden"
-            >
-              {/* Gradient Overlay on Hover */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: hoveredCard === index ? 0.1 : 0 }}
-                transition={{ duration: 0.3 }}
-                className={`absolute inset-0 bg-gradient-to-br ${category.gradient} rounded-3xl`}
-              />
-
-              {/* New Badge */}
-              {category.isNew && (
-                <div className="absolute top-4 right-4 z-20">
-                  <motion.div
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 200, delay: 0.5 }}
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg"
-                  >
-                    NEW
-                  </motion.div>
-                </div>
-              )}
-
-              {/* Content */}
-              <div className="relative z-10">
-                {/* Icon/Image Container */}
-                <motion.div
-                  variants={iconVariants}
-                  className="relative w-28 h-28 mx-auto mb-6"
-                >
-                  <div
-                    className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-20 h-20 object-contain"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.nextSibling.style.display = "flex";
-                      }}
-                    />
-                    <div className="w-20 h-20 items-center justify-center hidden">
-                      <category.fallbackIcon className="w-16 h-16 text-[#1F3C88]" />
+        {/* Desktop Grid Layout - 5 per row on large screens, 4 on medium */}
+        <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {categories.map((category, index) => {
+            return (
+              <div
+                key={category.name}
+                onClick={() => handleCategoryClick(category.category)}
+                className="relative rounded-2xl cursor-pointer shadow-lg backdrop-blur-sm border border-white border-opacity-20 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col h-72 bg-white bg-opacity-5"
+              >
+                {/* Background Image with Overlay */}
+                <div
+                  className="absolute inset-0 z-0 opacity-40 group-hover:opacity-90 transition-opacity duration-300"
+                  style={{
+                    backgroundImage: `url('${category.image}')`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
+                {/* New Badge */}
+                {category.isNew && (
+                  <div className="absolute top-3 right-3 z-20">
+                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg">
+                      NEW
                     </div>
                   </div>
-
-                  {/* Floating Animation Ring */}
-                  <motion.div
-                    animate={{
-                      rotate: 360,
-                      scale: hoveredCard === index ? 1.2 : 1,
-                    }}
-                    transition={{
-                      rotate: { duration: 8, repeat: Infinity, ease: "linear" },
-                      scale: { duration: 0.3 },
-                    }}
-                    className="absolute inset-0 border-2 border-dashed border-[#FFB400] border-opacity-30 rounded-2xl"
-                  />
-                </motion.div>
-
-                {/* Title */}
-                <motion.h3
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                  className="text-xl font-bold text-[#1F3C88] mb-3 text-center group-hover:text-[#FFB400] transition-colors duration-300"
-                >
-                  {category.name}
-                </motion.h3>
-
-                {/* Description */}
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + index * 0.1 }}
-                  className="text-gray-600 text-center mb-6 leading-relaxed"
-                >
-                  {category.description}
-                </motion.p>
-
-                {/* Price Display for PUC Certificate */}
-                {category.price && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.55 + index * 0.1 }}
-                    className="text-center mb-4"
-                  >
-                    <span className="text-lg font-bold text-green-600">
-                      {category.price}
-                    </span>
-                  </motion.div>
                 )}
 
-                {/* CTA Button */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + index * 0.1 }}
-                  className="text-center"
-                >
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-6 py-3 rounded-xl font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    Book Now
-                    <motion.div
-                      animate={{ x: hoveredCard === index ? 5 : 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <ArrowRight className="w-4 h-4" />
-                    </motion.div>
-                  </motion.button>
-                </motion.div>
+                {/* Popular Badge */}
+                {category.isPopular && !category.isNew && (
+                  <div className="absolute top-3 right-3 z-20">
+                    <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg">
+                      POPULAR
+                    </div>
+                  </div>
+                )}
 
-                {/* Hover Effect Background */}
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{
-                    scale: hoveredCard === index ? 1 : 0,
-                    opacity: hoveredCard === index ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className={`absolute inset-0 bg-gradient-to-br ${category.gradient} rounded-3xl -z-10`}
-                />
+                {/* Content */}
+                <div className="relative z-10 flex flex-col h-full justify-end p-4">
+                  {/* Title */}
+                  <h3 className="text-base font-bold text-white mb-1.5 group-hover:text-[#FFB400] transition-colors duration-300 line-clamp-2">
+                    {category.name}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-gray-200 mb-3 leading-tight text-xs line-clamp-2">
+                    {category.description}
+                  </p>
+
+                  {/* Price Display */}
+                  {category.price && (
+                    <div className="mb-2">
+                      <span className="text-sm font-bold text-[#FFB400]">
+                        {category.price}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* CTA Button */}
+                  <div>
+                    <button className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-4 py-2 rounded-lg font-semibold hover:from-[#e0a000] hover:to-[#FFB400] transition-all duration-300 shadow-lg hover:shadow-xl text-xs">
+                      Book Now
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
               </div>
-            </motion.div>
-          ))}
-        </motion.div>
+            );
+          })}
+        </div>
 
         {/* Mobile Carousel Layout */}
         <div className="md:hidden relative">
           <div className="overflow-hidden rounded-3xl">
-            <motion.div
+            <div
               className="flex transition-transform duration-500 ease-out"
               style={{
                 transform: `translateX(-${currentSlide * 100}%)`,
               }}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
             >
               {categories.map((category, index) => (
-                <motion.div
-                  key={category.name}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="min-w-full px-4"
-                >
-                  <motion.div
-                    whileTap={{ scale: 0.95 }}
+                <div key={category.name} className="min-w-full px-4">
+                  <div
                     onClick={() => handleCategoryClick(category.category)}
-                    className="bg-white rounded-3xl p-8 mx-2 cursor-pointer shadow-xl border border-gray-200 relative overflow-hidden"
+                    className="rounded-2xl mx-2 cursor-pointer shadow-xl border border-white border-opacity-20 relative overflow-hidden h-96 flex flex-col justify-end p-8 bg-white bg-opacity-5"
                   >
+                    {/* Background Image with Overlay */}
+                    <div
+                      className="absolute inset-0 z-0 opacity-50"
+                      style={{
+                        backgroundImage: `url('${category.image}')`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
                     {/* Mobile Card Content */}
-                    <div className="text-center">
-                      <motion.div
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 200,
-                          damping: 10,
-                          delay: 0.3,
-                        }}
-                        className="relative w-32 h-32 mx-auto mb-6"
-                      >
-                        <div
-                          className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center`}
-                        >
-                          <img
-                            src={category.image}
-                            alt={category.name}
-                            className="w-24 h-24 object-contain"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                              e.target.nextSibling.style.display = "flex";
-                            }}
-                          />
-                          <div className="w-24 h-24 items-center justify-center hidden">
-                            <category.fallbackIcon className="w-16 h-16 text-[#1F3C88]" />
+                    <div className="text-center relative z-10">
+                      {category.isNew && (
+                        <div className="absolute top-4 right-4 z-20">
+                          <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                            NEW
                           </div>
                         </div>
-                      </motion.div>
+                      )}
 
-                      <h3 className="text-2xl font-bold text-[#1F3C88] mb-3">
+                      {category.isPopular && !category.isNew && (
+                        <div className="absolute top-4 right-4 z-20">
+                          <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                            POPULAR
+                          </div>
+                        </div>
+                      )}
+
+                      <h3 className="text-2xl font-bold text-white mb-3">
                         {category.name}
                       </h3>
 
-                      <p className="text-gray-600 mb-6 text-lg">
+                      <p className="text-gray-200 mb-6 text-lg">
                         {category.description}
                       </p>
 
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-8 py-4 rounded-xl font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-lg text-lg"
-                      >
+                      {category.price && (
+                        <div className="mb-4">
+                          <span className="text-lg font-bold text-[#FFB400]">
+                            {category.price}
+                          </span>
+                        </div>
+                      )}
+
+                      <button className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-8 py-4 rounded-xl font-semibold hover:from-[#e0a000] hover:to-[#FFB400] transition-all duration-300 shadow-lg text-lg">
                         Book Now
                         <ArrowRight className="w-5 h-5" />
-                      </motion.button>
+                      </button>
                     </div>
-                  </motion.div>
-                </motion.div>
+                  </div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
-          {/* Mobile Slide Indicators */}
-          <div className="flex justify-center mt-8 space-x-3">
-            {categories.map((_, index) => (
-              <motion.button
-                key={index}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentSlide
-                    ? "bg-[#FFB400] shadow-lg scale-125"
-                    : "bg-white bg-opacity-50 hover:bg-opacity-70"
-                }`}
-              />
-            ))}
+          {/* Mobile Navigation Buttons */}
+          <div className="flex justify-center items-center mt-8 gap-4">
+            <button
+              onClick={handlePrevSlide}
+              className="bg-white bg-opacity-20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-opacity-30 transition-all duration-300"
+            >
+              <ArrowRight className="w-5 h-5 transform rotate-180" />
+            </button>
+
+            {/* Mobile Slide Indicators */}
+            <div className="flex justify-center space-x-3">
+              {categories.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentSlide
+                      ? "bg-[#FFB400] shadow-lg scale-125"
+                      : "bg-white bg-opacity-50 hover:bg-opacity-70"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={handleNextSlide}
+              className="bg-white bg-opacity-20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-opacity-30 transition-all duration-300"
+            >
+              <ArrowRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
