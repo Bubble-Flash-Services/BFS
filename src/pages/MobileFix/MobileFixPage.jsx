@@ -40,6 +40,9 @@ const MobileFixPage = () => {
   const [isFirstTime, setIsFirstTime] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState("");
+  const [loadingBrands, setLoadingBrands] = useState(true);
+  const [loadingModels, setLoadingModels] = useState(false);
+  const [error, setError] = useState(null);
 
   const services = [
     {
@@ -121,37 +124,84 @@ const MobileFixPage = () => {
 
   const fetchBrands = async () => {
     try {
+      setLoadingBrands(true);
+      setError(null);
       const response = await fetch(`${API}/api/mobilefix/brands`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const result = await response.json();
-      if (result.success) {
+      if (result.success && result.data && result.data.brands) {
         setBrands(result.data.brands);
+        if (result.data.brands.length === 0) {
+          toast.error("No phone brands available at the moment. Please contact support.");
+        }
+      } else {
+        throw new Error(result.message || "Failed to fetch brands");
       }
     } catch (error) {
       console.error("Error fetching brands:", error);
+      setError("Unable to load phone brands. Please try again later.");
+      toast.error("Failed to load phone brands. Please refresh the page.");
+    } finally {
+      setLoadingBrands(false);
     }
   };
 
   const fetchModels = async (brandId) => {
     try {
+      setLoadingModels(true);
+      setError(null);
       const response = await fetch(`${API}/api/mobilefix/brands/${brandId}/models`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const result = await response.json();
-      if (result.success) {
+      if (result.success && result.data && result.data.models) {
         setModels(result.data.models);
+        if (result.data.models.length === 0) {
+          toast.error("No models available for this brand. Please try another brand.");
+        }
+      } else {
+        throw new Error(result.message || "Failed to fetch models");
       }
     } catch (error) {
       console.error("Error fetching models:", error);
+      setError("Unable to load phone models. Please try again.");
+      toast.error("Failed to load models for this brand.");
+      setModels([]);
+    } finally {
+      setLoadingModels(false);
     }
   };
 
   const fetchAllPricingForModel = async (modelId) => {
     try {
+      setError(null);
       const response = await fetch(`${API}/api/mobilefix/pricing/model/${modelId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const result = await response.json();
-      if (result.success) {
+      if (result.success && result.data && result.data.pricingList) {
         setAllPricing(result.data.pricingList);
+        if (result.data.pricingList.length === 0) {
+          toast.error("No pricing available for this model. Please try another model.");
+        }
+      } else {
+        throw new Error(result.message || "Failed to fetch pricing");
       }
     } catch (error) {
       console.error("Error fetching pricing:", error);
+      setError("Unable to load pricing information.");
+      toast.error("Failed to load pricing for this model.");
+      setAllPricing([]);
     }
   };
 
@@ -179,6 +229,7 @@ const MobileFixPage = () => {
     setSelectedService(null);
     setPricing(null);
     setAllPricing([]);
+    setError(null);
     setCurrentStep(2);
   };
 
@@ -403,21 +454,54 @@ const MobileFixPage = () => {
                 Choose your phone brand to continue
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
-                {brands.map((brand) => (
-                  <motion.div
-                    key={brand._id}
-                    whileHover={{ scale: 1.05 }}
-                    className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
-                    onClick={() => handleBrandSelect(brand)}
+              {error && (
+                <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
+                  <p className="text-red-600">{error}</p>
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      fetchBrands();
+                    }}
+                    className="mt-2 text-blue-600 hover:underline"
                   >
-                    <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Smartphone className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold">{brand.name}</h3>
-                  </motion.div>
-                ))}
-              </div>
+                    Try Again
+                  </button>
+                </div>
+              )}
+
+              {loadingBrands ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                  <p className="text-gray-600">Loading phone brands...</p>
+                </div>
+              ) : brands.length === 0 ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8 max-w-md mx-auto">
+                  <p className="text-gray-700 mb-4">No phone brands are currently available.</p>
+                  <p className="text-sm text-gray-600">Please contact support or try again later.</p>
+                  <button
+                    onClick={fetchBrands}
+                    className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Refresh
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
+                  {brands.map((brand) => (
+                    <motion.div
+                      key={brand._id}
+                      whileHover={{ scale: 1.05 }}
+                      className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
+                      onClick={() => handleBrandSelect(brand)}
+                    >
+                      <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Smartphone className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-bold">{brand.name}</h3>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -440,8 +524,22 @@ const MobileFixPage = () => {
                 Choose your exact phone model
               </p>
 
-              {models.length === 0 ? (
-                <p className="text-gray-500">Loading models...</p>
+              {loadingModels ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+                  <p className="text-gray-600">Loading {selectedBrand?.name} models...</p>
+                </div>
+              ) : models.length === 0 ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8 max-w-md mx-auto">
+                  <p className="text-gray-700 mb-4">No models available for {selectedBrand?.name}.</p>
+                  <p className="text-sm text-gray-600 mb-4">Please try selecting a different brand or contact support.</p>
+                  <button
+                    onClick={() => setCurrentStep(1)}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Back to Brands
+                  </button>
+                </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
                   {models.map((model) => (
