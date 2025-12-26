@@ -10,12 +10,6 @@ import {
   Shield,
   Clock,
   Award,
-  Smartphone,
-  Leaf,
-  Droplet,
-  CheckCircle,
-  Users,
-  TrendingUp,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -1012,26 +1006,12 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="flex flex-wrap gap-3"
+                className="inline-flex items-center px-4 py-2 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30"
               >
-                <div className="inline-flex items-center px-4 py-2 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30">
-                  <Star className="w-4 h-4 text-[#FFB400] mr-2" />
-                  <span className="text-sm font-medium text-[#FFB400]">
-                    2000+ Happy Customers
-                  </span>
-                </div>
-                <div className="inline-flex items-center px-4 py-2 bg-green-500 bg-opacity-20 backdrop-blur-sm rounded-full border border-green-400 border-opacity-30">
-                  <Leaf className="w-4 h-4 text-green-400 mr-2" />
-                  <span className="text-sm font-medium text-green-400">
-                    Eco-Friendly
-                  </span>
-                </div>
-                <div className="inline-flex items-center px-4 py-2 bg-blue-500 bg-opacity-20 backdrop-blur-sm rounded-full border border-blue-400 border-opacity-30">
-                  <Shield className="w-4 h-4 text-blue-400 mr-2" />
-                  <span className="text-sm font-medium text-blue-400">
-                    Verified Professionals
-                  </span>
-                </div>
+                <Star className="w-4 h-4 text-[#FFB400] mr-2" />
+                <span className="text-sm font-medium text-[#FFB400]">
+                  Trusted by 2000+ customers
+                </span>
               </motion.div>
 
               {/* Main Heading */}
@@ -1041,10 +1021,10 @@ export default function HeroSection() {
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="text-4xl md:text-6xl font-bold leading-tight"
               >
-                Premium Vehicle Care
-                <span className="block text-[#FFB400]">At Your Doorstep</span>
-                <span className="block text-2xl md:text-3xl font-normal text-gray-200 mt-2">
-                  Book instantly via our mobile app
+                Branded & Professional
+                <span className="block text-[#FFB400]">Cleaning Services</span>
+                <span className="block text-3xl md:text-4xl font-normal text-gray-200">
+                  for Cars, Bikes & More
                 </span>
               </motion.h1>
 
@@ -1053,10 +1033,10 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
-                className="text-lg md:text-xl text-gray-200 leading-relaxed max-w-xl"
+                className="text-xl text-gray-200 leading-relaxed max-w-xl"
               >
-                Experience top-tier car wash, bike detailing & laundry with eco-friendly, 
-                water-saving technology. Trusted service across Bengaluru.
+                Experience top-tier car wash, bike detailing, and laundry care –
+                all under one roof in Bengaluru. Quality service, every time.
               </motion.p>
 
               {/* CTA Buttons */}
@@ -1081,75 +1061,32 @@ export default function HeroSection() {
                   }}
                   className="px-8 py-4 bg-[#FFB400] text-[#1F3C88] font-bold rounded-2xl shadow-lg hover:bg-[#e0a000] transition-colors flex items-center justify-center gap-2"
                 >
-                  Book Now
+                  View Services
                   <ArrowRight className="w-5 h-5" />
                 </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => toast.success('Mobile app coming soon! Stay tuned for updates.', { duration: 3000 })}
-                  className="px-8 py-4 border-2 border-white border-opacity-30 text-white font-semibold rounded-2xl backdrop-blur-sm hover:bg-white hover:bg-opacity-10 transition-colors flex items-center justify-center gap-2"
-                >
-                  <Smartphone className="w-5 h-5" />
-                  Download App
-                </motion.button>
+                {/* <motion.button
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+									className="px-8 py-4 border-2 border-white border-opacity-30 text-white font-semibold rounded-2xl backdrop-blur-sm hover:bg-white hover:bg-opacity-10 transition-colors"
+								>
+									View Services
+								</motion.button> */}
               </motion.div>
 
-              {/* Stats with Animated Counters */}
+              {/* Stats */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1, duration: 0.8 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8"
+                className="grid grid-cols-3 gap-8 pt-8"
               >
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Users className="w-5 h-5 text-[#FFB400]" />
-                    <div className="text-2xl font-bold text-[#FFB400]">2000+</div>
-                  </div>
-                  <div className="text-sm text-gray-300">Customers Served</div>
+                  <div className="text-2xl font-bold text-[#FFB400]">2000+</div>
+                  <div className="text-sm text-gray-300">Happy Customers</div>
                 </div>
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Droplet className="w-5 h-5 text-blue-400" />
-                    <div className="text-2xl font-bold text-blue-400">50%</div>
-                  </div>
-                  <div className="text-sm text-gray-300">Water Saved</div>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <div className="text-2xl font-bold text-green-400">100%</div>
-                  </div>
+                  <div className="text-2xl font-bold text-[#FFB400]">100%</div>
                   <div className="text-sm text-gray-300">Satisfaction</div>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <TrendingUp className="w-5 h-5 text-purple-400" />
-                    <div className="text-2xl font-bold text-purple-400">5+</div>
-                  </div>
-                  <div className="text-sm text-gray-300">Cities Soon</div>
-                </div>
-              </motion.div>
-
-              {/* Trust Signals */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2, duration: 0.8 }}
-                className="flex flex-wrap items-center gap-6 pt-4 text-sm text-gray-300"
-              >
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
-                  <span>Verified Professionals</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-blue-400" />
-                  <span>Safe & Secure</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Leaf className="w-4 h-4 text-green-400" />
-                  <span>Eco-Friendly Products</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -1311,7 +1248,75 @@ export default function HeroSection() {
         </div>
       </section>
 
-      {/* Modern Service Categories - Moved to top after Hero */}
+      {/* Features Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-[#1F3C88] mb-4">
+              Why Choose Bubble Flash?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We deliver exceptional service quality with modern convenience
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              {
+                icon: Shield,
+                title: "100% Safe & Secure",
+                description:
+                  "Your safety is our priority with verified professionals",
+              },
+              {
+                icon: Clock,
+                title: "Fast & Reliable",
+                description:
+                  "Quick turnaround time without compromising quality",
+              },
+              {
+                icon: Star,
+                title: "Premium Quality",
+                description: "Top-tier service that exceeds expectations",
+              },
+              {
+                icon: Award,
+                title: "Trusted Service",
+                description: "2,000+ satisfied customers across Bengaluru",
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                whileHover={{
+                  y: -5,
+                  boxShadow: "0 10px 30px rgba(31, 60, 136, 0.1)",
+                }}
+                className="bg-white p-8 rounded-2xl text-center hover:shadow-lg transition-all duration-300"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FFB400] bg-opacity-10 rounded-2xl mb-6">
+                  <feature.icon className="w-8 h-8 text-[#FFB400]" />
+                </div>
+                <h3 className="text-xl font-bold text-[#1F3C88] mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Modern Service Categories */}
       <div className="bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] relative overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
@@ -1346,287 +1351,325 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Rewards & Offers Banner */}
-      <section className="py-12 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <motion.div
-            animate={{
-              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="w-full h-full"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, white 1px, transparent 1px)",
-              backgroundSize: "50px 50px",
-            }}
-          />
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <motion.div
-              animate={{
-                scale: [1, 1.05, 1],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="inline-flex items-center gap-2 bg-white bg-opacity-20 backdrop-blur-sm px-6 py-3 rounded-full mb-6"
-            >
-              <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
-              <span className="text-white font-bold text-lg">
-                Exclusive Rewards
-              </span>
-              <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
-            </motion.div>
-
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Earn While You Clean!
-            </h2>
-            <p className="text-xl text-white text-opacity-90 mb-8 max-w-2xl mx-auto">
-              Get cashback, loyalty points & exclusive offers with every booking
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      {/* About Us Section with Light Theme */}
+      <div className="bg-gray-50">
+        <section id="aboutus" className="py-20">
+          {/* AboutPage content start */}
+          <div className="min-h-screen pb-8 md:pb-4 lg:pb-8 xl:pb-16">
+            <div className="max-w-6xl mx-auto pt-12 px-4">
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1, duration: 0.5 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-20"
+                transition={{ duration: 0.8 }}
+                className="flex flex-col md:flex-row gap-8 items-start"
               >
-                <div className="bg-yellow-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl font-bold text-purple-900">
-                    10%
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Instant Cashback
-                </h3>
-                <p className="text-white text-opacity-80">
-                  On every booking above ₹299
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-20"
-              >
-                <div className="bg-yellow-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Award className="w-8 h-8 text-purple-900" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Loyalty Points
-                </h3>
-                <p className="text-white text-opacity-80">
-                  Redeem points for free services
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-20"
-              >
-                <div className="bg-yellow-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Star className="w-8 h-8 text-purple-900 fill-purple-900" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Referral Bonus
-                </h3>
-                <p className="text-white text-opacity-80">
-                  Earn ₹100 for each friend referred
-                </p>
-              </motion.div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Sustainability & Innovation Section */}
-      <section className="py-20 bg-gradient-to-br from-green-50 via-blue-50 to-teal-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center px-6 py-3 bg-green-500 bg-opacity-10 backdrop-blur-sm rounded-full border border-green-500 border-opacity-30 mb-6"
-            >
-              <Leaf className="w-5 h-5 text-green-600 mr-2" />
-              <span className="text-green-700 font-semibold">
-                Eco-Friendly & Innovative
-              </span>
-            </motion.div>
-
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Caring for Your Vehicles &{" "}
-              <span className="text-green-600">Our Planet</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We use cutting-edge technology and eco-friendly products to
-              deliver exceptional results while protecting the environment
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Droplet,
-                title: "Water-Saving Tech",
-                description:
-                  "Advanced waterless cleaning technology saves up to 50% water compared to traditional methods",
-                color: "blue",
-              },
-              {
-                icon: Leaf,
-                title: "Eco-Friendly Products",
-                description:
-                  "Biodegradable, non-toxic cleaning solutions that are safe for you and the environment",
-                color: "green",
-              },
-              {
-                icon: Smartphone,
-                title: "Smart Booking",
-                description:
-                  "AI-powered scheduling system optimizes routes reducing carbon footprint by 30%",
-                color: "purple",
-              },
-              {
-                icon: CheckCircle,
-                title: "Quality Certified",
-                description:
-                  "ISO certified processes ensuring consistent, premium service quality every time",
-                color: "yellow",
-              },
-            ].map((feature, index) => {
-              const colorClasses = {
-                blue: {
-                  bg: "bg-blue-100",
-                  text: "text-blue-600",
-                  border: "border-blue-200",
-                },
-                green: {
-                  bg: "bg-green-100",
-                  text: "text-green-600",
-                  border: "border-green-200",
-                },
-                purple: {
-                  bg: "bg-purple-100",
-                  text: "text-purple-600",
-                  border: "border-purple-200",
-                },
-                yellow: {
-                  bg: "bg-yellow-100",
-                  text: "text-yellow-600",
-                  border: "border-yellow-200",
-                },
-              };
-              const colors = colorClasses[feature.color];
-
-              return (
+                <motion.video
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                  src="/car/home.mp4"
+                  className="rounded-xl w-full md:w-[350px] h-[260px] object-cover shadow-lg"
+                  controls
+                  autoPlay
+                  loop
+                  muted
+                />
                 <motion.div
-                  key={index}
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="flex-1"
+                >
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.6, duration: 0.6 }}
+                    className="text-2xl font-bold text-[#1F3C88] mb-2"
+                  >
+                    About us
+                  </motion.h2>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                    className="text-lg text-gray-600 mb-4 leading-relaxed"
+                  >
+                    At Bubble Flash, we’re passionate about making your vehicles
+                    and wardrobe shine! Based in the heart of Bengaluru, we
+                    provide top-tier car washing, bike detailing, and laundry
+                    care services, all under one roof – because we believe
+                    convenience should never compromise quality.
+                  </motion.p>
+                  <motion.ul
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 1, duration: 0.6 }}
+                    className="text-base text-gray-600 mb-2 space-y-2"
+                  >
+                    <motion.li
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 1.2, duration: 0.4 }}
+                      className="flex items-center"
+                    >
+                      <img
+                        src="/aboutus/circle-check.png"
+                        alt="check"
+                        className="inline w-4 h-4 mr-3 align-middle"
+                      />
+                      Over 2,000 cleans
+                    </motion.li>
+                    <motion.li
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 1.4, duration: 0.4 }}
+                      className="flex items-center"
+                    >
+                      <img
+                        src="/aboutus/circle-check.png"
+                        alt="check"
+                        className="inline w-4 h-4 mr-3 align-middle"
+                      />
+                      Combo plans & special program plans offered
+                    </motion.li>
+                    <motion.li
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 1.6, duration: 0.4 }}
+                      className="flex items-center"
+                    >
+                      <img
+                        src="/aboutus/circle-check.png"
+                        alt="check"
+                        className="inline w-4 h-4 mr-3 align-middle"
+                      />
+                      100 % Customer satisfaction
+                    </motion.li>
+                    <motion.li
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 1.8, duration: 0.4 }}
+                      className="flex items-center"
+                    >
+                      <img
+                        src="/aboutus/circle-check.png"
+                        alt="check"
+                        className="inline w-4 h-4 mr-3 align-middle"
+                      />
+                      Doorstep services available
+                    </motion.li>
+                  </motion.ul>
+                </motion.div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="flex justify-center mt-8 mb-6"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-[#FFB400] bg-opacity-20 backdrop-blur-sm border border-[#FFB400] border-opacity-30 text-xs text-[#FFB400] px-6 py-2 rounded-full font-semibold tracking-wide hover:bg-opacity-30 transition-all"
+                >
+                  HOW IT WORK
+                </motion.button>
+              </motion.div>
+              <motion.h3
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="text-2xl font-bold text-[#1F3C88] text-center mb-8"
+              >
+                Book with following 3 working steps
+              </motion.h3>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1, duration: 0.8 }}
+                className="flex flex-row w-full mb-12"
+              >
+                {/* Step 1 */}
+                <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.6 }}
-                  whileHover={{
-                    y: -10,
-                    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)",
-                  }}
-                  className={`bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border-2 ${colors.border}`}
+                  transition={{ delay: 1.2, duration: 0.6 }}
+                  className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1"
                 >
                   <motion.div
-                    initial={{ scale: 0, rotate: -180 }}
-                    whileInView={{
-                      scale: 1,
-                      rotate: 0,
-                      transition: {
-                        type: "spring",
-                        stiffness: 200,
-                        damping: 10,
-                        delay: 0.3 + index * 0.1,
-                      },
-                    }}
-                    viewport={{ once: true }}
-                    className={`inline-flex items-center justify-center w-16 h-16 ${colors.bg} rounded-2xl mb-6`}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3 shadow-lg"
                   >
-                    <feature.icon className={`w-8 h-8 ${colors.text}`} />
+                    <img
+                      src="/aboutus/location.png"
+                      alt="Choose location"
+                      className="w-7 h-7 md:w-10 md:h-10"
+                    />
                   </motion.div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Stats Row */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8"
-          >
-            {[
-              { value: "50%", label: "Water Saved", icon: Droplet },
-              { value: "100%", label: "Eco Products", icon: Leaf },
-              { value: "30%", label: "Carbon Reduced", icon: TrendingUp },
-              { value: "2000+", label: "Happy Customers", icon: Users },
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
-                className="text-center"
-              >
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <stat.icon className="w-6 h-6 text-green-600" />
-                  <div className="text-4xl font-bold text-gray-900">
-                    {stat.value}
+                  <div className="font-semibold text-xs md:text-base text-center text-[#1F3C88]">
+                    Choose location
                   </div>
-                </div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
+                  <div className="text-[10px] md:text-xs text-gray-600 text-center">
+                    Choose your and find your best car
+                  </div>
+                </motion.div>
+                {/* Step 2 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.4, duration: 0.6 }}
+                  className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3 shadow-lg"
+                  >
+                    <img
+                      src="/aboutus/pickup-date.png"
+                      alt="Pick-up date"
+                      className="w-7 h-7 md:w-10 md:h-10"
+                    />
+                  </motion.div>
+                  <div className="font-semibold text-xs md:text-base text-center text-[#1F3C88]">
+                    Pick-up date
+                  </div>
+                  <div className="text-[10px] md:text-xs text-gray-600 text-center">
+                    Select your pick up date and time to book your car
+                  </div>
+                </motion.div>
+                {/* Step 3 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.6, duration: 0.6 }}
+                  className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3 shadow-lg"
+                  >
+                    <img
+                      src="/aboutus/bookyourwash.png"
+                      alt="Book your wash"
+                      className="w-7 h-7 md:w-10 md:h-10"
+                    />
+                  </motion.div>
+                  <div className="font-semibold text-xs md:text-base text-center text-[#1F3C88]">
+                    Book your wash
+                  </div>
+                  <div className="text-[10px] md:text-xs text-gray-600 text-center">
+                    Book your car for doorstep service
+                  </div>
+                </motion.div>
+                {/* Step 4 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.8, duration: 0.6 }}
+                  className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3 shadow-lg"
+                  >
+                    <img
+                      src="/aboutus/expierencewash.png"
+                      alt="Experience wash"
+                      className="w-7 h-7 md:w-10 md:h-10"
+                    />
+                  </motion.div>
+                  <div className="font-semibold text-xs md:text-base text-center text-[#1F3C88]">
+                    Experience wash
+                  </div>
+                  <div className="text-[10px] md:text-xs text-gray-600 text-center">
+                    Don't worry, we have many experienced professionals
+                  </div>
+                </motion.div>
               </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1.2, duration: 0.8 }}
+                className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.4, duration: 0.6 }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="flex flex-col items-center"
+                >
+                  <motion.img
+                    whileHover={{ scale: 1.05 }}
+                    src="/laundry/laundry.gif"
+                    alt="Laundry"
+                    className="rounded-xl w-full h-[170px] object-cover mb-4 shadow-lg"
+                  />
+                  <div className="text-xl font-bold text-center text-[#1F3C88]">
+                    Wash & Fold
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.6, duration: 0.6 }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="flex flex-col items-center"
+                >
+                  <motion.img
+                    whileHover={{ scale: 1.05 }}
+                    src="/bike/bikewash.gif"
+                    alt="Bike"
+                    className="rounded-xl w-full h-[170px] object-cover mb-4 shadow-lg"
+                  />
+                  <div className="text-xl font-bold text-center text-[#1F3C88]">
+                    Bring Back the Shine
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.8, duration: 0.6 }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="flex flex-col items-center"
+                >
+                  <motion.img
+                    whileHover={{ scale: 1.05 }}
+                    src="/car/carwash.gif"
+                    alt="Car"
+                    className="rounded-xl w-full h-[170px] object-cover mb-4 shadow-lg"
+                  />
+                  <div className="text-xl font-bold text-center text-[#1F3C88]">
+                    Car Clean
+                  </div>
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
+          {/* AboutPage content end */}
+        </section>
+      </div>
       {/* Car wash Accessories Section - Matching ServiceCategories Style */}
       <section className="py-20 bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] relative overflow-hidden">
         {/* Animated Background Elements */}
