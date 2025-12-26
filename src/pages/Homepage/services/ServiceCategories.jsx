@@ -250,24 +250,29 @@ export default function ServiceCategories() {
           </p>
         </div>
 
-        {/* Desktop Grid Layout - 3 per row */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Desktop Grid Layout - 5 per row on large screens, 4 on medium */}
+        <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {categories.map((category, index) => {
             return (
               <div
                 key={category.name}
                 onClick={() => handleCategoryClick(category.category)}
-                className="relative rounded-3xl cursor-pointer shadow-xl backdrop-blur-sm border border-gray-200 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col h-80"
-                style={{
-                  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${category.image}')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }}
+                className="relative rounded-2xl cursor-pointer shadow-lg backdrop-blur-sm border border-white border-opacity-20 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col h-72 bg-white bg-opacity-5"
               >
+                {/* Background Image with Overlay */}
+                <div 
+                  className="absolute inset-0 z-0 opacity-40 group-hover:opacity-60 transition-opacity duration-300"
+                  style={{
+                    backgroundImage: `url('${category.image}')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
                 {/* New Badge */}
                 {category.isNew && (
-                  <div className="absolute top-4 right-4 z-20">
-                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                  <div className="absolute top-3 right-3 z-20">
+                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg">
                       NEW
                     </div>
                   </div>
@@ -275,29 +280,29 @@ export default function ServiceCategories() {
 
                 {/* Popular Badge */}
                 {category.isPopular && !category.isNew && (
-                  <div className="absolute top-4 right-4 z-20">
-                    <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                  <div className="absolute top-3 right-3 z-20">
+                    <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg">
                       POPULAR
                     </div>
                   </div>
                 )}
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col h-full justify-end p-6">
+                <div className="relative z-10 flex flex-col h-full justify-end p-4">
                   {/* Title */}
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#FFB400] transition-colors duration-300">
+                  <h3 className="text-base font-bold text-white mb-1.5 group-hover:text-[#FFB400] transition-colors duration-300 line-clamp-2">
                     {category.name}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-gray-200 mb-4 leading-relaxed text-sm">
+                  <p className="text-gray-200 mb-3 leading-tight text-xs line-clamp-2">
                     {category.description}
                   </p>
 
                   {/* Price Display */}
                   {category.price && (
-                    <div className="mb-3">
-                      <span className="text-base font-bold text-[#FFB400]">
+                    <div className="mb-2">
+                      <span className="text-sm font-bold text-[#FFB400]">
                         {category.price}
                       </span>
                     </div>
@@ -305,9 +310,9 @@ export default function ServiceCategories() {
 
                   {/* CTA Button */}
                   <div>
-                    <button className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-5 py-2.5 rounded-xl font-semibold hover:from-[#e0a000] hover:to-[#FFB400] transition-all duration-300 shadow-lg hover:shadow-xl text-sm">
+                    <button className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-4 py-2 rounded-lg font-semibold hover:from-[#e0a000] hover:to-[#FFB400] transition-all duration-300 shadow-lg hover:shadow-xl text-xs">
                       Book Now
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
@@ -332,15 +337,20 @@ export default function ServiceCategories() {
                 >
                   <div
                     onClick={() => handleCategoryClick(category.category)}
-                    className="rounded-3xl mx-2 cursor-pointer shadow-xl border border-gray-200 relative overflow-hidden h-96 flex flex-col justify-end p-8"
-                    style={{
-                      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${category.image}')`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    }}
+                    className="rounded-2xl mx-2 cursor-pointer shadow-xl border border-white border-opacity-20 relative overflow-hidden h-96 flex flex-col justify-end p-8 bg-white bg-opacity-5"
                   >
+                    {/* Background Image with Overlay */}
+                    <div 
+                      className="absolute inset-0 z-0 opacity-50"
+                      style={{
+                        backgroundImage: `url('${category.image}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
                     {/* Mobile Card Content */}
-                    <div className="text-center">
+                    <div className="text-center relative z-10">
                       {category.isNew && (
                         <div className="absolute top-4 right-4 z-20">
                           <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
