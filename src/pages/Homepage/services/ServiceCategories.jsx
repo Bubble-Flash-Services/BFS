@@ -385,158 +385,186 @@ export default function ServiceCategories() {
           </motion.p>
         </motion.div>
 
-        {/* Desktop Grid Layout */}
+        {/* Desktop Grid Layout with Variable Widths */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-8"
+          className="hidden md:grid grid-cols-12 gap-6 auto-rows-fr"
         >
-          {categories.map((category, index) => (
-            <motion.div
-              key={category.name}
-              variants={cardVariants}
-              whileHover={{
-                scale: 1.05,
-                y: -10,
-                transition: { type: "spring", stiffness: 300, damping: 20 },
-              }}
-              whileTap={{ scale: 0.95 }}
-              onHoverStart={() => setHoveredCard(index)}
-              onHoverEnd={() => setHoveredCard(null)}
-              onClick={() => handleCategoryClick(category.category)}
-              className="relative bg-white rounded-3xl p-8 cursor-pointer shadow-xl backdrop-blur-sm border border-gray-200 hover:shadow-2xl transition-all duration-300 group overflow-hidden"
-            >
-              {/* Gradient Overlay on Hover */}
+          {categories.map((category, index) => {
+            // Define featured services that should be larger
+            const isFeatured = ['Car Wash', 'Bike Wash', 'Green and Clean Service', 'Doorstep Key Services'].includes(category.name);
+            const isPopular = category.isPopular;
+            
+            // Set column spans for different card sizes
+            let colSpan = 'col-span-3'; // Default: 3 columns (4 per row)
+            if (isFeatured) {
+              colSpan = 'col-span-4'; // Featured: 4 columns (3 per row)
+            } else if (isPopular) {
+              colSpan = 'col-span-3'; // Popular: 3 columns
+            }
+            
+            return (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: hoveredCard === index ? 0.1 : 0 }}
-                transition={{ duration: 0.3 }}
-                className={`absolute inset-0 bg-gradient-to-br ${category.gradient} rounded-3xl`}
-              />
-
-              {/* New Badge */}
-              {category.isNew && (
-                <div className="absolute top-4 right-4 z-20">
-                  <motion.div
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 200, delay: 0.5 }}
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg"
-                  >
-                    NEW
-                  </motion.div>
-                </div>
-              )}
-
-              {/* Content */}
-              <div className="relative z-10">
-                {/* Icon/Image Container */}
+                key={category.name}
+                variants={cardVariants}
+                whileHover={{
+                  scale: 1.03,
+                  y: -8,
+                  transition: { type: "spring", stiffness: 300, damping: 20 },
+                }}
+                whileTap={{ scale: 0.98 }}
+                onHoverStart={() => setHoveredCard(index)}
+                onHoverEnd={() => setHoveredCard(null)}
+                onClick={() => handleCategoryClick(category.category)}
+                className={`${colSpan} relative bg-white rounded-3xl p-6 cursor-pointer shadow-xl backdrop-blur-sm border border-gray-200 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col`}
+              >
+                {/* Gradient Overlay on Hover */}
                 <motion.div
-                  variants={iconVariants}
-                  className="relative w-28 h-28 mx-auto mb-6"
-                >
-                  <div
-                    className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-20 h-20 object-contain"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.nextSibling.style.display = "flex";
-                      }}
-                    />
-                    <div className="w-20 h-20 items-center justify-center hidden">
-                      <category.fallbackIcon className="w-16 h-16 text-[#1F3C88]" />
-                    </div>
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: hoveredCard === index ? 0.1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`absolute inset-0 bg-gradient-to-br ${category.gradient} rounded-3xl`}
+                />
+
+                {/* New Badge */}
+                {category.isNew && (
+                  <div className="absolute top-4 right-4 z-20">
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 200, delay: 0.5 }}
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg"
+                    >
+                      NEW
+                    </motion.div>
                   </div>
+                )}
 
-                  {/* Floating Animation Ring */}
+                {/* Popular Badge */}
+                {category.isPopular && !category.isNew && (
+                  <div className="absolute top-4 right-4 z-20">
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 200, delay: 0.5 }}
+                      className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg"
+                    >
+                      POPULAR
+                    </motion.div>
+                  </div>
+                )}
+
+                {/* Content */}
+                <div className="relative z-10 flex flex-col h-full">
+                  {/* Icon/Image Container */}
                   <motion.div
-                    animate={{
-                      rotate: 360,
-                      scale: hoveredCard === index ? 1.2 : 1,
-                    }}
-                    transition={{
-                      rotate: { duration: 8, repeat: Infinity, ease: "linear" },
-                      scale: { duration: 0.3 },
-                    }}
-                    className="absolute inset-0 border-2 border-dashed border-[#FFB400] border-opacity-30 rounded-2xl"
-                  />
-                </motion.div>
+                    variants={iconVariants}
+                    className={`relative ${isFeatured ? 'w-32 h-32' : 'w-24 h-24'} mx-auto mb-4`}
+                  >
+                    <div
+                      className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                    >
+                      <img
+                        src={category.image}
+                        alt={category.name}
+                        className={`${isFeatured ? 'w-24 h-24' : 'w-16 h-16'} object-contain`}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "flex";
+                        }}
+                      />
+                      <div className={`${isFeatured ? 'w-24 h-24' : 'w-16 h-16'} items-center justify-center hidden`}>
+                        <category.fallbackIcon className={`${isFeatured ? 'w-20 h-20' : 'w-14 h-14'} text-[#1F3C88]`} />
+                      </div>
+                    </div>
 
-                {/* Title */}
-                <motion.h3
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                  className="text-xl font-bold text-[#1F3C88] mb-3 text-center group-hover:text-[#FFB400] transition-colors duration-300"
-                >
-                  {category.name}
-                </motion.h3>
+                    {/* Floating Animation Ring */}
+                    <motion.div
+                      animate={{
+                        rotate: 360,
+                        scale: hoveredCard === index ? 1.2 : 1,
+                      }}
+                      transition={{
+                        rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+                        scale: { duration: 0.3 },
+                      }}
+                      className="absolute inset-0 border-2 border-dashed border-[#FFB400] border-opacity-30 rounded-2xl"
+                    />
+                  </motion.div>
 
-                {/* Description */}
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + index * 0.1 }}
-                  className="text-gray-600 text-center mb-6 leading-relaxed"
-                >
-                  {category.description}
-                </motion.p>
+                  {/* Title */}
+                  <motion.h3
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + index * 0.05 }}
+                    className={`${isFeatured ? 'text-xl' : 'text-lg'} font-bold text-[#1F3C88] mb-2 text-center group-hover:text-[#FFB400] transition-colors duration-300`}
+                  >
+                    {category.name}
+                  </motion.h3>
 
-                {/* Price Display for PUC Certificate */}
-                {category.price && (
+                  {/* Description */}
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 + index * 0.05 }}
+                    className="text-gray-600 text-center mb-4 leading-relaxed text-sm flex-grow"
+                  >
+                    {category.description}
+                  </motion.p>
+
+                  {/* Price Display */}
+                  {category.price && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.55 + index * 0.05 }}
+                      className="text-center mb-3"
+                    >
+                      <span className="text-base font-bold text-green-600">
+                        {category.price}
+                      </span>
+                    </motion.div>
+                  )}
+
+                  {/* CTA Button */}
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.55 + index * 0.1 }}
-                    className="text-center mb-4"
+                    transition={{ delay: 0.6 + index * 0.05 }}
+                    className="text-center mt-auto"
                   >
-                    <span className="text-lg font-bold text-green-600">
-                      {category.price}
-                    </span>
-                  </motion.div>
-                )}
-
-                {/* CTA Button */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + index * 0.1 }}
-                  className="text-center"
-                >
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-6 py-3 rounded-xl font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    Book Now
-                    <motion.div
-                      animate={{ x: hoveredCard === index ? 5 : 0 }}
-                      transition={{ duration: 0.3 }}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-5 py-2.5 rounded-xl font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-lg hover:shadow-xl text-sm"
                     >
-                      <ArrowRight className="w-4 h-4" />
-                    </motion.div>
-                  </motion.button>
-                </motion.div>
+                      Book Now
+                      <motion.div
+                        animate={{ x: hoveredCard === index ? 5 : 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ArrowRight className="w-4 h-4" />
+                      </motion.div>
+                    </motion.button>
+                  </motion.div>
 
-                {/* Hover Effect Background */}
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{
-                    scale: hoveredCard === index ? 1 : 0,
-                    opacity: hoveredCard === index ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className={`absolute inset-0 bg-gradient-to-br ${category.gradient} rounded-3xl -z-10`}
-                />
-              </div>
-            </motion.div>
-          ))}
+                  {/* Hover Effect Background */}
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{
+                      scale: hoveredCard === index ? 1 : 0,
+                      opacity: hoveredCard === index ? 0.1 : 0,
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className={`absolute inset-0 bg-gradient-to-br ${category.gradient} rounded-3xl -z-10`}
+                  />
+                </div>
+              </motion.div>
+            );
+          })}
         </motion.div>
 
         {/* Mobile Carousel Layout */}

@@ -993,13 +993,13 @@ export default function HeroSection() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
-            {/* Left Column - Hero Content */}
+          <div className="flex flex-col items-center justify-center text-center min-h-[80vh]">
+            {/* Hero Content - Centered */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-white space-y-8"
+              className="text-white space-y-8 max-w-4xl"
             >
               {/* Badge */}
               <motion.div
@@ -1019,11 +1019,11 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-4xl md:text-6xl font-bold leading-tight"
+                className="text-5xl md:text-7xl font-bold leading-tight"
               >
                 Branded & Professional
                 <span className="block text-[#FFB400]">Cleaning Services</span>
-                <span className="block text-3xl md:text-4xl font-normal text-gray-200">
+                <span className="block text-3xl md:text-5xl font-normal text-gray-200 mt-2">
                   for Cars, Bikes & More
                 </span>
               </motion.h1>
@@ -1033,7 +1033,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
-                className="text-xl text-gray-200 leading-relaxed max-w-xl"
+                className="text-xl md:text-2xl text-gray-200 leading-relaxed"
               >
                 Experience top-tier car wash, bike detailing, and laundry care –
                 all under one roof in Bengaluru. Quality service, every time.
@@ -1044,7 +1044,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.8 }}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex flex-col sm:flex-row gap-4 justify-center"
               >
                 <motion.button
                   whileHover={{
@@ -1059,18 +1059,11 @@ export default function HeroSection() {
                       element.scrollIntoView({ behavior: "smooth" });
                     }
                   }}
-                  className="px-8 py-4 bg-[#FFB400] text-[#1F3C88] font-bold rounded-2xl shadow-lg hover:bg-[#e0a000] transition-colors flex items-center justify-center gap-2"
+                  className="px-10 py-5 bg-[#FFB400] text-[#1F3C88] font-bold rounded-2xl shadow-lg hover:bg-[#e0a000] transition-colors flex items-center justify-center gap-2 text-lg"
                 >
-                  View Services
-                  <ArrowRight className="w-5 h-5" />
+                  View Our Services
+                  <ArrowRight className="w-6 h-6" />
                 </motion.button>
-                {/* <motion.button
-									whileHover={{ scale: 1.05 }}
-									whileTap={{ scale: 0.95 }}
-									className="px-8 py-4 border-2 border-white border-opacity-30 text-white font-semibold rounded-2xl backdrop-blur-sm hover:bg-white hover:bg-opacity-10 transition-colors"
-								>
-									View Services
-								</motion.button> */}
               </motion.div>
 
               {/* Stats */}
@@ -1078,245 +1071,27 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1, duration: 0.8 }}
-                className="grid grid-cols-3 gap-8 pt-8"
+                className="flex justify-center gap-16 pt-8"
               >
                 <div>
-                  <div className="text-2xl font-bold text-[#FFB400]">2000+</div>
+                  <div className="text-3xl font-bold text-[#FFB400]">2000+</div>
                   <div className="text-sm text-gray-300">Happy Customers</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-[#FFB400]">100%</div>
+                  <div className="text-3xl font-bold text-[#FFB400]">100%</div>
                   <div className="text-sm text-gray-300">Satisfaction</div>
                 </div>
-              </motion.div>
-            </motion.div>
-
-            {/* Right Column - Booking Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="relative"
-            >
-              <div className="bg-white rounded-3xl p-8 shadow-2xl backdrop-blur-sm border border-gray-200">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.6 }}
-                >
-                  <h3 className="text-2xl font-bold text-[#1F3C88] mb-2 text-center">
-                    Quickly Book Your Service in 2 Steps
-                  </h3>
-                  <p className="text-gray-600 text-center mb-8">
-                    Select your service, choose a category, and get your package
-                    instantly.
-                  </p>
-                  <div className="text-center text-sm text-[#1F3C88] bg-[#FFFBF0] border border-[#FFE08A] rounded-lg px-3 py-2 mb-6">
-                    Currently serving Bangalore pincodes only — other cities
-                    coming soon.
-                  </div>
-                </motion.div>
-
-                <div className="space-y-6">
-                  {/* Step 1: Choose Service (buttons) */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.8, duration: 0.6 }}
-                  >
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Step 1 — Choose Service
-                    </label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {["Car", "Bike", "Helmet"].map((s) => (
-                        <button
-                          key={s}
-                          onClick={() => {
-                            setBookingService(s);
-                            setBookingCategory("");
-                          }}
-                          className={`px-4 py-3 rounded-xl border-2 font-semibold transition-colors ${
-                            bookingService === s
-                              ? "border-[#FFB400] text-[#1F3C88] bg-[#FFF6DB]"
-                              : "border-gray-200 text-gray-700 hover:border-[#FFB400]"
-                          }`}
-                        >
-                          {s}
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
-
-                  {/* Step 2: Choose Category based on service */}
-                  {bookingService && (
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.9, duration: 0.6 }}
-                    >
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Step 2 — Choose Category
-                      </label>
-                      <div className="space-y-2">
-                        {getCategoriesForService(bookingService).map((opt) => (
-                          <button
-                            key={opt.value}
-                            onClick={() => setBookingCategory(opt.value)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-colors ${
-                              bookingCategory === opt.value
-                                ? "border-[#FFB400] bg-[#FFF6DB] text-[#1F3C88]"
-                                : "border-gray-200 hover:border-[#FFB400] text-gray-700"
-                            }`}
-                          >
-                            {opt.icon && (
-                              <img
-                                src={opt.icon}
-                                alt=""
-                                className="w-7 h-7 object-contain rounded"
-                              />
-                            )}
-                            <span className="font-medium">{opt.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                      <p className="text-xs text-gray-500 mt-3">
-                        You'll enter your pickup/delivery address on the next
-                        step (cart/checkout).
-                      </p>
-                    </motion.div>
-                  )}
-
-                  {/* Book Now button */}
-                  {bookingService && bookingCategory && (
-                    <motion.button
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 1.0, duration: 0.6 }}
-                      whileHover={{
-                        scale: 1.02,
-                        boxShadow: "0 10px 30px rgba(255, 180, 0, 0.3)",
-                      }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        const target =
-                          bookingService === "Car"
-                            ? `/car-wash-deals/${bookingCategory}`
-                            : bookingService === "Bike"
-                            ? `/bike-wash-deals/${bookingCategory}`
-                            : `/helmet-wash-deals/${bookingCategory}`;
-                        if (!user) {
-                          // Save intended path and a tiny context so we can restore after login
-                          localStorage.setItem(
-                            "postLoginRedirect",
-                            JSON.stringify({
-                              path: target,
-                              ts: Date.now(),
-                              source: "hero-book",
-                            })
-                          );
-                          setOpenSignup(true);
-                          return;
-                        }
-                        navigate(target);
-                      }}
-                      className="w-full py-4 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                    >
-                      Book Now
-                    </motion.button>
-                  )}
-
-                  {/* Service Info */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.3, duration: 0.6 }}
-                    className="flex items-center justify-center gap-6 text-sm text-gray-600 pt-4"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-[#FFB400]" />
-                      <span>Quick Service</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Shield className="w-4 h-4 text-[#FFB400]" />
-                      <span>100% Safe</span>
-                    </div>
-                  </motion.div>
+                <div>
+                  <div className="text-3xl font-bold text-[#FFB400]">15+</div>
+                  <div className="text-sm text-gray-300">Services</div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold text-[#1F3C88] mb-4">
-              Why Choose Bubble Flash?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We deliver exceptional service quality with modern convenience
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Shield,
-                title: "100% Safe & Secure",
-                description:
-                  "Your safety is our priority with verified professionals",
-              },
-              {
-                icon: Clock,
-                title: "Fast & Reliable",
-                description:
-                  "Quick turnaround time without compromising quality",
-              },
-              {
-                icon: Star,
-                title: "Premium Quality",
-                description: "Top-tier service that exceeds expectations",
-              },
-              {
-                icon: Award,
-                title: "Trusted Service",
-                description: "2,000+ satisfied customers across Bengaluru",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                whileHover={{
-                  y: -5,
-                  boxShadow: "0 10px 30px rgba(31, 60, 136, 0.1)",
-                }}
-                className="bg-white p-8 rounded-2xl text-center hover:shadow-lg transition-all duration-300"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FFB400] bg-opacity-10 rounded-2xl mb-6">
-                  <feature.icon className="w-8 h-8 text-[#FFB400]" />
-                </div>
-                <h3 className="text-xl font-bold text-[#1F3C88] mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Modern Service Categories */}
+      {/* Modern Service Categories - Moved to top */}
       <div className="bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] relative overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
