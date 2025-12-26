@@ -908,7 +908,7 @@ export default function HeroSection() {
       {/* Hero Section with Modern Design - Now includes services */}
       <section
         id="home"
-        className="relative min-h-screen bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] overflow-hidden"
+        className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden"
       >
         {/* Launch Offer Top Banner */}
         <motion.div
@@ -993,13 +993,13 @@ export default function HeroSection() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          <div className="flex flex-col items-center justify-center text-center">
-            {/* Hero Content - Centered */}
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+            {/* Hero Content - Left Side */}
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-white space-y-6 max-w-4xl mb-12"
+              className="text-white space-y-6 max-w-2xl lg:text-left text-center flex-1"
             >
               {/* Badge */}
               <motion.div
@@ -1044,7 +1044,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.8 }}
-                className="flex justify-center gap-8 md:gap-16 pt-4"
+                className="flex justify-center lg:justify-start gap-8 md:gap-16 pt-4"
               >
                 <div>
                   <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">2000+</div>
@@ -1061,13 +1061,31 @@ export default function HeroSection() {
               </motion.div>
             </motion.div>
 
+            {/* Hero Image - Right Side */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="flex-1 max-w-lg hidden lg:block"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1632823469820-3c7cfea4b94f?w=600&h=600&fit=crop"
+                alt="Professional Car Cleaning Service"
+                className="rounded-3xl shadow-2xl w-full h-auto object-cover"
+              />
+            </motion.div>
+          </div>
+
+          {/* Service Categories - Full Width Below */}
+          <div className="mt-16">
+            <div id="service-categories" className="w-full">
+
             {/* Service Categories - Integrated in first section */}
             <div id="service-categories" className="w-full">
               <ServiceCategories />
             </div>
           </div>
         </div>
-      </section>
 
       {/* About Us Section with Light Theme */}
       <div className="bg-gray-50">
@@ -2074,7 +2092,7 @@ export default function HeroSection() {
           </motion.div>
         </div>
         {/* Choose your package Section */}
-        <div className="py-16 relative">
+        <div className="py-16 relative bg-gradient-to-br from-gray-50 via-white to-gray-50">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
