@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { Select } from "antd";
 import {
   Smartphone,
   Wrench,
@@ -20,6 +21,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../components/AuthContext";
 import { useCart } from "../../components/CartContext";
+import "antd/dist/reset.css";
+import "./MobileFixPage.css";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -40,6 +43,9 @@ const MobileFixPage = () => {
   const [isFirstTime, setIsFirstTime] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState("");
+  const [loadingBrands, setLoadingBrands] = useState(true);
+  const [loadingModels, setLoadingModels] = useState(false);
+  const [error, setError] = useState(null);
 
   const services = [
     {
@@ -121,37 +127,84 @@ const MobileFixPage = () => {
 
   const fetchBrands = async () => {
     try {
+      setLoadingBrands(true);
+      setError(null);
       const response = await fetch(`${API}/api/mobilefix/brands`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const result = await response.json();
-      if (result.success) {
+      if (result.success && result.data && result.data.brands) {
         setBrands(result.data.brands);
+        if (result.data.brands.length === 0) {
+          toast.error("No phone brands available at the moment. Please contact support.");
+        }
+      } else {
+        throw new Error(result.message || "Failed to fetch brands");
       }
     } catch (error) {
       console.error("Error fetching brands:", error);
+      setError("Unable to load phone brands. Please try again later.");
+      toast.error("Failed to load phone brands. Please try again.");
+    } finally {
+      setLoadingBrands(false);
     }
   };
 
   const fetchModels = async (brandId) => {
     try {
+      setLoadingModels(true);
+      setError(null);
       const response = await fetch(`${API}/api/mobilefix/brands/${brandId}/models`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const result = await response.json();
-      if (result.success) {
+      if (result.success && result.data && result.data.models) {
         setModels(result.data.models);
+        if (result.data.models.length === 0) {
+          toast.error("No models available for this brand. Please try another brand.");
+        }
+      } else {
+        throw new Error(result.message || "Failed to fetch models");
       }
     } catch (error) {
       console.error("Error fetching models:", error);
+      setError("Unable to load phone models. Please try again.");
+      toast.error("Failed to load models for this brand.");
+      setModels([]);
+    } finally {
+      setLoadingModels(false);
     }
   };
 
   const fetchAllPricingForModel = async (modelId) => {
     try {
+      setError(null);
       const response = await fetch(`${API}/api/mobilefix/pricing/model/${modelId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const result = await response.json();
-      if (result.success) {
+      if (result.success && result.data && result.data.pricingList) {
         setAllPricing(result.data.pricingList);
+        if (result.data.pricingList.length === 0) {
+          toast.error("No pricing available for this model. Please try another model.");
+        }
+      } else {
+        throw new Error(result.message || "Failed to fetch pricing");
       }
     } catch (error) {
       console.error("Error fetching pricing:", error);
+      setError("Unable to load pricing information.");
+      toast.error("Failed to load pricing for this model.");
+      setAllPricing([]);
     }
   };
 
@@ -172,17 +225,28 @@ const MobileFixPage = () => {
     }
   };
 
-  const handleBrandSelect = (brand) => {
+  const handleBrandSelect = (brandId) => {
+    const brand = brands.find(b => b._id === brandId);
+    if (!brand) {
+      toast.error("Invalid brand selection");
+      return;
+    }
     setSelectedBrand(brand);
     setSelectedModel(null);
     setModels([]);
     setSelectedService(null);
     setPricing(null);
     setAllPricing([]);
+    setError(null);
     setCurrentStep(2);
   };
 
-  const handleModelSelect = (model) => {
+  const handleModelSelect = (modelId) => {
+    const model = models.find(m => m._id === modelId);
+    if (!model) {
+      toast.error("Invalid model selection");
+      return;
+    }
     setSelectedModel(model);
     setSelectedService(null);
     setPricing(null);
@@ -403,21 +467,71 @@ const MobileFixPage = () => {
                 Choose your phone brand to continue
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
-                {brands.map((brand) => (
-                  <motion.div
-                    key={brand._id}
-                    whileHover={{ scale: 1.05 }}
-                    className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
-                    onClick={() => handleBrandSelect(brand)}
+              {error && (
+                <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
+                  <p className="text-red-600">{error}</p>
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      fetchBrands();
+                    }}
+                    className="mt-2 text-blue-600 hover:underline"
                   >
-                    <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Smartphone className="w-8 h-8 text-white" />
+                    Try Again
+                  </button>
+                </div>
+              )}
+
+              {loadingBrands ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                  <p className="text-gray-600">Loading phone brands...</p>
+                </div>
+              ) : brands.length === 0 ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8 max-w-md mx-auto">
+                  <p className="text-gray-700 mb-4">No phone brands are currently available.</p>
+                  <p className="text-sm text-gray-600">Please contact support or try again later.</p>
+                  <button
+                    onClick={fetchBrands}
+                    className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Refresh
+                  </button>
+                </div>
+              ) : (
+                <div className="max-w-2xl mx-auto mt-12">
+                  <div className="bg-white rounded-2xl shadow-lg p-8">
+                    <div className="flex items-center justify-center mb-6">
+                      <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center">
+                        <Smartphone className="w-8 h-8 text-white" />
+                      </div>
                     </div>
-                    <h3 className="text-xl font-bold">{brand.name}</h3>
-                  </motion.div>
-                ))}
-              </div>
+                    <label className="block text-left text-gray-700 font-semibold mb-3 text-lg">
+                      Select Your Phone Brand
+                    </label>
+                    <Select
+                      showSearch
+                      size="large"
+                      placeholder="Search and select your phone brand"
+                      optionFilterProp="children"
+                      onChange={handleBrandSelect}
+                      value={selectedBrand?._id}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      className="w-full"
+                      style={{ width: '100%' }}
+                      options={brands.map(brand => ({
+                        value: brand._id,
+                        label: brand.name,
+                      }))}
+                    />
+                    <p className="text-sm text-gray-500 mt-3 text-left">
+                      💡 Tip: You can type to search for your brand
+                    </p>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -434,31 +548,81 @@ const MobileFixPage = () => {
                 ← Back to Brands
               </button>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Select {selectedBrand?.name} Model
+                📱 STEP 2 — Select {selectedBrand?.name} Model
               </h2>
               <p className="text-gray-600 text-lg mb-8">
                 Choose your exact phone model
               </p>
 
-              {models.length === 0 ? (
-                <p className="text-gray-500">Loading models...</p>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
-                  {models.map((model) => (
-                    <motion.div
-                      key={model._id}
-                      whileHover={{ scale: 1.05 }}
-                      className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
-                      onClick={() => handleModelSelect(model)}
-                    >
-                      <div className="bg-gradient-to-br from-purple-500 to-pink-500 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Smartphone className="w-6 h-6 text-white" />
-                      </div>
-                      <h3 className="text-lg font-bold">{model.name}</h3>
-                    </motion.div>
-                  ))}
+              {error && (
+                <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
+                  <p className="text-red-600">{error}</p>
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      fetchModels(selectedBrand._id);
+                    }}
+                    className="mt-2 text-blue-600 hover:underline"
+                  >
+                    Try Again
+                  </button>
                 </div>
               )}
+
+              {loadingModels ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+                  <p className="text-gray-600">Loading {selectedBrand?.name} models...</p>
+                </div>
+              ) : models.length === 0 && !error ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8 max-w-md mx-auto">
+                  <p className="text-gray-700 mb-4">No models available for {selectedBrand?.name}.</p>
+                  <p className="text-sm text-gray-600 mb-4">Please try selecting a different brand or contact support.</p>
+                  <button
+                    onClick={() => setCurrentStep(1)}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Back to Brands
+                  </button>
+                </div>
+              ) : !error && models.length > 0 ? (
+                <div className="max-w-2xl mx-auto mt-12">
+                  <div className="bg-white rounded-2xl shadow-lg p-8">
+                    <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4">
+                      <p className="text-sm text-gray-600 mb-1">Selected Brand</p>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-10 h-10 rounded-full flex items-center justify-center">
+                          <Smartphone className="w-5 h-5 text-white" />
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">{selectedBrand?.name}</p>
+                      </div>
+                    </div>
+                    <label className="block text-left text-gray-700 font-semibold mb-3 text-lg">
+                      Select Your Phone Model
+                    </label>
+                    <Select
+                      showSearch
+                      size="large"
+                      placeholder="Search and select your phone model"
+                      optionFilterProp="children"
+                      onChange={handleModelSelect}
+                      value={selectedModel?._id}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      className="w-full"
+                      style={{ width: '100%' }}
+                      options={models.map(model => ({
+                        value: model._id,
+                        label: model.name,
+                      }))}
+                    />
+                    <p className="text-sm text-gray-500 mt-3 text-left">
+                      💡 Tip: You can type to search for your model
+                    </p>
+                  </div>
+                </div>
+              ) : null}
             </motion.div>
           )}
 
@@ -475,7 +639,7 @@ const MobileFixPage = () => {
                 ← Back to Models
               </button>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                🔧 STEP 2 — Select Repair Service
+                🔧 STEP 3 — Select Repair Service
               </h2>
               <p className="text-gray-600 text-lg mb-4">
                 Selected: <span className="font-bold">{selectedBrand?.name} {selectedModel?.name}</span>
