@@ -254,7 +254,7 @@ export default function ServiceCategories() {
         </div>
 
         {/* Desktop Grid Layout - 3 per row */}
-        <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((category, index) => {
             return (
               <div
