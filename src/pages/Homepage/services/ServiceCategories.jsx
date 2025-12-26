@@ -231,24 +231,21 @@ export default function ServiceCategories() {
   ];
 
   return (
-    <section className="py-20 relative overflow-hidden bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/cleaning-bg.jpg')" }}>
-      {/* Background Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1F3C88]/95 via-[#2952A3]/90 to-[#1F3C88]/95" />
-
+    <section className="py-12 relative overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <div className="inline-flex items-center px-6 py-3 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30 mb-6">
             <span className="text-[#FFB400] font-semibold text-sm">
               Our Services
             </span>
           </div>
 
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Choose Your <span className="text-[#FFB400]">Service</span>
           </h2>
 
-          <p className="text-xl text-gray-200 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-200 max-w-2xl mx-auto">
             Premium cleaning services delivered with care and precision
           </p>
         </div>
@@ -260,7 +257,12 @@ export default function ServiceCategories() {
               <div
                 key={category.name}
                 onClick={() => handleCategoryClick(category.category)}
-                className="relative bg-white rounded-3xl p-6 cursor-pointer shadow-xl backdrop-blur-sm border border-gray-200 hover:shadow-2xl transition-shadow duration-300 group overflow-hidden flex flex-col"
+                className="relative rounded-3xl cursor-pointer shadow-xl backdrop-blur-sm border border-gray-200 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col h-80"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${category.image}')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
               >
                 {/* New Badge */}
                 {category.isNew && (
@@ -281,47 +283,29 @@ export default function ServiceCategories() {
                 )}
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col h-full">
-                  {/* Icon/Image Container */}
-                  <div className="relative w-24 h-24 mx-auto mb-4">
-                    <div className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center`}>
-                      <img
-                        src={category.image}
-                        alt={category.name}
-                        className="w-16 h-16 object-contain"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.nextSibling.style.display = "flex";
-                        }}
-                      />
-                      <div className="w-16 h-16 items-center justify-center hidden">
-                        <category.fallbackIcon className="w-14 h-14 text-[#1F3C88]" />
-                      </div>
-                    </div>
-                  </div>
-
+                <div className="relative z-10 flex flex-col h-full justify-end p-6">
                   {/* Title */}
-                  <h3 className="text-lg font-bold text-[#1F3C88] mb-2 text-center group-hover:text-[#FFB400] transition-colors duration-300">
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#FFB400] transition-colors duration-300">
                     {category.name}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-gray-600 text-center mb-4 leading-relaxed text-sm flex-grow">
+                  <p className="text-gray-200 mb-4 leading-relaxed text-sm">
                     {category.description}
                   </p>
 
                   {/* Price Display */}
                   {category.price && (
-                    <div className="text-center mb-3">
-                      <span className="text-base font-bold text-green-600">
+                    <div className="mb-3">
+                      <span className="text-base font-bold text-[#FFB400]">
                         {category.price}
                       </span>
                     </div>
                   )}
 
                   {/* CTA Button */}
-                  <div className="text-center mt-auto">
-                    <button className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-5 py-2.5 rounded-xl font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-lg hover:shadow-xl text-sm">
+                  <div>
+                    <button className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-5 py-2.5 rounded-xl font-semibold hover:from-[#e0a000] hover:to-[#FFB400] transition-all duration-300 shadow-lg hover:shadow-xl text-sm">
                       Book Now
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -348,36 +332,48 @@ export default function ServiceCategories() {
                 >
                   <div
                     onClick={() => handleCategoryClick(category.category)}
-                    className="bg-white rounded-3xl p-8 mx-2 cursor-pointer shadow-xl border border-gray-200 relative overflow-hidden"
+                    className="rounded-3xl mx-2 cursor-pointer shadow-xl border border-gray-200 relative overflow-hidden h-96 flex flex-col justify-end p-8"
+                    style={{
+                      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${category.image}')`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
                   >
                     {/* Mobile Card Content */}
                     <div className="text-center">
-                      <div className="relative w-32 h-32 mx-auto mb-6">
-                        <div className={`w-full h-full ${category.bgColor} rounded-2xl flex items-center justify-center`}>
-                          <img
-                            src={category.image}
-                            alt={category.name}
-                            className="w-24 h-24 object-contain"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                              e.target.nextSibling.style.display = "flex";
-                            }}
-                          />
-                          <div className="w-24 h-24 items-center justify-center hidden">
-                            <category.fallbackIcon className="w-16 h-16 text-[#1F3C88]" />
+                      {category.isNew && (
+                        <div className="absolute top-4 right-4 z-20">
+                          <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                            NEW
                           </div>
                         </div>
-                      </div>
+                      )}
 
-                      <h3 className="text-2xl font-bold text-[#1F3C88] mb-3">
+                      {category.isPopular && !category.isNew && (
+                        <div className="absolute top-4 right-4 z-20">
+                          <div className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                            POPULAR
+                          </div>
+                        </div>
+                      )}
+
+                      <h3 className="text-2xl font-bold text-white mb-3">
                         {category.name}
                       </h3>
 
-                      <p className="text-gray-600 mb-6 text-lg">
+                      <p className="text-gray-200 mb-6 text-lg">
                         {category.description}
                       </p>
 
-                      <button className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-8 py-4 rounded-xl font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-lg text-lg">
+                      {category.price && (
+                        <div className="mb-4">
+                          <span className="text-lg font-bold text-[#FFB400]">
+                            {category.price}
+                          </span>
+                        </div>
+                      )}
+
+                      <button className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-8 py-4 rounded-xl font-semibold hover:from-[#e0a000] hover:to-[#FFB400] transition-all duration-300 shadow-lg text-lg">
                         Book Now
                         <ArrowRight className="w-5 h-5" />
                       </button>
