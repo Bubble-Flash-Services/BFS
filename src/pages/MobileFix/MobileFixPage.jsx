@@ -144,7 +144,7 @@ const MobileFixPage = () => {
     } catch (error) {
       console.error("Error fetching brands:", error);
       setError("Unable to load phone brands. Please try again later.");
-      toast.error("Failed to load phone brands. Please refresh the page.");
+      toast.error("Failed to load phone brands. Please try again.");
     } finally {
       setLoadingBrands(false);
     }
@@ -524,12 +524,27 @@ const MobileFixPage = () => {
                 Choose your exact phone model
               </p>
 
+              {error && (
+                <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
+                  <p className="text-red-600">{error}</p>
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      fetchModels(selectedBrand._id);
+                    }}
+                    className="mt-2 text-blue-600 hover:underline"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
+
               {loadingModels ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
                   <p className="text-gray-600">Loading {selectedBrand?.name} models...</p>
                 </div>
-              ) : models.length === 0 ? (
+              ) : models.length === 0 && !error ? (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8 max-w-md mx-auto">
                   <p className="text-gray-700 mb-4">No models available for {selectedBrand?.name}.</p>
                   <p className="text-sm text-gray-600 mb-4">Please try selecting a different brand or contact support.</p>
@@ -540,7 +555,7 @@ const MobileFixPage = () => {
                     Back to Brands
                   </button>
                 </div>
-              ) : (
+              ) : !error && models.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
                   {models.map((model) => (
                     <motion.div
@@ -556,7 +571,7 @@ const MobileFixPage = () => {
                     </motion.div>
                   ))}
                 </div>
-              )}
+              ) : null}
             </motion.div>
           )}
 
