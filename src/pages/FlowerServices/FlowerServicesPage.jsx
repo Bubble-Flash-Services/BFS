@@ -48,16 +48,16 @@ const FlowerServicesPage = () => {
         "classic-bouquet": {
           name: "🌹 Classic Bouquets",
           items: [
-            { id: "rose-bouquet", name: "Rose Bouquet", price: "₹499 - ₹999" },
+            { id: "rose-bouquet", name: "Rose Bouquet", price: "₹499 - ₹899" },
             {
               id: "mixed-flower-bouquet",
               name: "Mixed Flower Bouquet",
-              price: "₹499 - ₹999",
+              price: "₹599 - ₹999",
             },
             {
               id: "seasonal-flower-bouquet",
               name: "Seasonal Flower Bouquet",
-              price: "₹499 - ₹999",
+              price: "₹549 - ₹949",
             },
           ],
         },
@@ -726,6 +726,16 @@ const FlowerServicesPage = () => {
                 </p>
               </div>
             </div>
+          </div>
+          
+          {/* Delivery Charges Note */}
+          <div className="mt-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
+            <p className="text-sm font-semibold text-blue-900 mb-1">
+              📌 Delivery Charges:
+            </p>
+            <p className="text-sm text-blue-800">
+              Free delivery for distances less than 2 kms. Additional charges will be applied based on distance (kms) for locations beyond 2 kms.
+            </p>
           </div>
         </motion.div>
 

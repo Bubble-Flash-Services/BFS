@@ -1,4 +1,5 @@
-// Commercial add-ons for Green & Clean deep cleaning services
+// Add-ons and accessories for Green & Clean services
+// Available for both instant and deep cleaning services
 export const commercialAddons = [
   { 
     id: 1, 
@@ -35,5 +36,29 @@ export const commercialAddons = [
     name: "Toilet consumables", 
     price: 179, 
     description: "Essential toilet cleaning supplies" 
+  },
+  { 
+    id: 7, 
+    name: "Microfiber cleaning cloths (Set of 5)", 
+    price: 349, 
+    description: "Premium microfiber cloths for streak-free cleaning" 
+  },
+  { 
+    id: 8, 
+    name: "All-purpose cleaner spray", 
+    price: 279, 
+    description: "Multi-surface cleaning spray" 
+  },
+  { 
+    id: 9, 
+    name: "Air freshener refills", 
+    price: 199, 
+    description: "Long-lasting air freshener refills" 
+  },
+  { 
+    id: 10, 
+    name: "Kitchen degreaser", 
+    price: 329, 
+    description: "Heavy-duty kitchen grease remover" 
   }
 ];

@@ -269,46 +269,47 @@ export default function ServicePage() {
                 </ul>
               )}
 
-              {/* Add-ons Section - Only show for deep cleaning services */}
-              {categoryName === "deep" && (
-                <div className="mb-6 mt-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                    Commercial Add-ons
-                  </h3>
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
-                    {commercialAddons.map((addon) => (
-                      <div
-                        key={addon.id}
-                        className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
-                      >
-                        <div className="flex items-center flex-1">
-                          <input
-                            type="checkbox"
-                            id={`addon-${addon.id}`}
-                            checked={Boolean(
-                              selectedAddons.find((item) => item.id === addon.id)
-                            )}
-                            onChange={() => handleAddonToggle(addon)}
-                            className="w-4 h-4 text-[#1F3C88] border-gray-300 rounded focus:ring-[#FFB400]"
-                          />
-                          <label
-                            htmlFor={`addon-${addon.id}`}
-                            className="ml-3 text-gray-800 font-medium cursor-pointer"
-                          >
-                            {addon.name}
-                            <p className="text-xs text-gray-500 mt-0.5">
-                              {addon.description}
-                            </p>
-                          </label>
-                        </div>
-                        <span className="font-semibold text-gray-800 ml-2">
-                          ₹{addon.price}
-                        </span>
+              {/* Add-ons Section - Show for all services */}
+              <div className="mb-6 mt-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                  🛍️ Optional Add-ons & Accessories
+                </h3>
+                <p className="text-sm text-gray-600 mb-3">
+                  Enhance your cleaning service with these professional-grade products
+                </p>
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {commercialAddons.map((addon) => (
+                    <div
+                      key={addon.id}
+                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                    >
+                      <div className="flex items-center flex-1">
+                        <input
+                          type="checkbox"
+                          id={`addon-${addon.id}`}
+                          checked={Boolean(
+                            selectedAddons.find((item) => item.id === addon.id)
+                          )}
+                          onChange={() => handleAddonToggle(addon)}
+                          className="w-4 h-4 text-[#1F3C88] border-gray-300 rounded focus:ring-[#FFB400]"
+                        />
+                        <label
+                          htmlFor={`addon-${addon.id}`}
+                          className="ml-3 text-gray-800 font-medium cursor-pointer"
+                        >
+                          {addon.name}
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {addon.description}
+                          </p>
+                        </label>
                       </div>
-                    ))}
-                  </div>
+                      <span className="font-semibold text-gray-800 ml-2">
+                        ₹{addon.price}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
 
               {/* Price Breakdown - Show if addons are selected */}
               {selectedAddons.length > 0 && (
