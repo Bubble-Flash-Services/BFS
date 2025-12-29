@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * FullBodyCheckup component
@@ -7,6 +8,7 @@ import React from 'react';
  *  - compact: boolean (optional) for slightly tighter spacing
  */
 export default function FullBodyCheckup({ type = 'car', compact = false }) {
+  const navigate = useNavigate();
   const isCar = type === 'car';
   const sections = isCar ? [
     { title: '1. Exterior', points: 'Paint condition, scratches/dents, windshield & windows, side mirrors' },
@@ -23,14 +25,22 @@ export default function FullBodyCheckup({ type = 'car', compact = false }) {
     { title: '5. Safety Accessories', points: 'Helmet (if provided), basic first aid kit, basic tool kit presence' }
   ];
 
+  const handleBookNow = () => {
+    // Navigate to VehicleCheckupPage and set the vehicle type
+    navigate('/vehicle-checkup', { state: { vehicleType: isCar ? 'car' : 'bike' } });
+  };
+
   return (
-    <div className={`group relative bg-white rounded-3xl shadow-lg border border-gray-200/70 hover:shadow-2xl transition-all ${compact ? 'p-6' : 'p-8'} overflow-hidden`}>
+    <div className={`group relative bg-white rounded-3xl shadow-xl border-2 border-gray-200/70 hover:shadow-2xl transition-all ${compact ? 'p-6' : 'p-8'} overflow-hidden`}>
       <div className={`absolute inset-0 ${isCar ? 'bg-gradient-to-br from-blue-50 to-amber-50' : 'bg-gradient-to-br from-amber-50 to-blue-50'} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
       <div className="relative z-10">
-        <h3 className={`text-2xl font-bold ${isCar ? 'text-blue-700' : 'text-amber-600'} mb-6 flex items-center gap-3`}>
-          <span className={`w-10 h-10 rounded-xl ${isCar ? 'bg-blue-600' : 'bg-amber-500'} text-white flex items-center justify-center font-semibold`}>{isCar ? 'Car' : 'Bike'}</span>
-          Full Body {isCar ? 'Car' : 'Bike'} Checkup
-        </h3>
+        <div className="mb-6">
+          <h3 className={`text-3xl md:text-4xl font-extrabold ${isCar ? 'bg-gradient-to-r from-blue-700 via-blue-600 to-amber-500' : 'bg-gradient-to-r from-amber-600 via-amber-500 to-blue-600'} bg-clip-text text-transparent mb-3 flex items-center gap-3 drop-shadow-lg`}>
+            <span className={`w-12 h-12 rounded-xl ${isCar ? 'bg-gradient-to-br from-blue-600 to-blue-700' : 'bg-gradient-to-br from-amber-500 to-amber-600'} text-white flex items-center justify-center font-semibold shadow-lg text-lg`}>{isCar ? '🚗' : '🏍️'}</span>
+            Full Body {isCar ? 'Car' : 'Bike'} Checkup
+          </h3>
+          <p className="text-gray-600 text-base md:text-lg ml-16">Professional inspection service to keep your vehicle in top condition</p>
+        </div>
         <ul className="space-y-5 text-sm md:text-base text-gray-700">
           {sections.map((s,i)=>(
             <li key={i}>
@@ -39,6 +49,13 @@ export default function FullBodyCheckup({ type = 'car', compact = false }) {
             </li>
           ))}
         </ul>
+        <button
+          onClick={handleBookNow}
+          className={`mt-8 w-full md:w-auto px-8 py-4 ${isCar ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800' : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700'} text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2`}
+        >
+          <span>📋</span>
+          Book Now
+        </button>
         <p className="mt-6 text-xs text-gray-500">Visual only – internally recorded as Good / Needs Attention / Issue. Not a certified mechanical inspection.</p>
       </div>
     </div>

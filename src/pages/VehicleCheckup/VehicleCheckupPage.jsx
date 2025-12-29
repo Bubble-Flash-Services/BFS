@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Car,
@@ -19,10 +19,11 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useCart } from '../../components/CartContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const VehicleCheckupPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToCart } = useCart();
   
   const [vehicleType, setVehicleType] = useState('bike'); // 'bike' or 'car'
@@ -31,6 +32,13 @@ const VehicleCheckupPage = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [showAddOnsModal, setShowAddOnsModal] = useState(false);
+
+  // Pre-select vehicle type if passed via navigation state
+  useEffect(() => {
+    if (location.state?.vehicleType) {
+      setVehicleType(location.state.vehicleType);
+    }
+  }, [location.state]);
 
   // Reduced pricing
   const pricing = {

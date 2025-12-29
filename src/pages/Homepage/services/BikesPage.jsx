@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FullBodyCheckup from '../../../components/FullBodyCheckup';
 
@@ -10,7 +10,7 @@ const bikeCategories = [
   },
  
   {
-    name: 'Cruiser Bikes',
+    name: 'Touring Bikes',
     image: '/bike/cruiser/pexels-sahil-dethe-590388386-17266142.png',
     category: 'cruiser'
   },
@@ -22,13 +22,9 @@ const bikeCategories = [
 ];
 
 export default function BikesPage() {
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [bookingData, setBookingData] = useState(null);
   const navigate = useNavigate();
-  const sliderRef = useRef(null);
-  const startX = useRef(0);
-  const isDragging = useRef(false);
 
   // Check for booking data from HeroSection
   useEffect(() => {
@@ -62,54 +58,7 @@ export default function BikesPage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Auto-slide functionality
-  useEffect(() => {
-    if (!isMobile) return;
-    
-    const autoSlide = setInterval(() => {
-      setCurrentSlide((prev) => {
-        const nextSlide = prev + 1;
-        return nextSlide >= bikeCategories.length ? 0 : nextSlide;
-      });
-    }, 2000);
-
-    return () => clearInterval(autoSlide);
-  }, [isMobile]);
-
-  const handleTouchStart = (e) => {
-    if (!isMobile) return;
-    isDragging.current = true;
-    startX.current = e.touches[0].pageX;
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isMobile || !isDragging.current) return;
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = (e) => {
-    if (!isMobile || !isDragging.current) return;
-    isDragging.current = false;
-    
-    const endX = e.changedTouches[0].pageX;
-    const diffX = startX.current - endX;
-    const threshold = 50; // Minimum swipe distance
-    
-    if (Math.abs(diffX) > threshold) {
-      if (diffX > 0 && currentSlide < bikeCategories.length - 1) {
-        // Swipe left - go to next slide
-        setCurrentSlide(currentSlide + 1);
-      } else if (diffX < 0 && currentSlide > 0) {
-        // Swipe right - go to previous slide
-        setCurrentSlide(currentSlide - 1);
-      }
-    }
-  };
-
-  const goToSlide = (index) => {
-    if (!isMobile) return;
-    setCurrentSlide(index);
-  };
+  // Auto-slide functionality removed - display vertically instead
 
   return (
     <section className="py-16 bg-white">
@@ -173,52 +122,24 @@ export default function BikesPage() {
           ))}
         </div>
 
-        {/* Mobile Slider Layout */}
-        <div className="md:hidden relative overflow-hidden">
-          <div
-            ref={sliderRef}
-            className="flex transition-transform duration-300 ease-in-out"
-            style={{
-              transform: `translateX(-${currentSlide * 100}%)`,
-            }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            {bikeCategories.map((cat, index) => (
-              <div
-                key={cat.name}
-                className="flex-shrink-0 w-full px-4"
-              >
-                <div className="group cursor-pointer transition-transform active:scale-95">
-                  <div 
-                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-                    onClick={() => handleCategoryClick(cat.category)}
-                  >
-                    <div className="aspect-w-16 aspect-h-12">
-                      <img src={cat.image} alt={cat.name} className="w-full h-48 object-contain mx-auto" />
-                    </div>
-                    <div className="p-6 text-center">
-                      <h3 className="text-xl font-semibold text-gray-800">{cat.name}</h3>
-                    </div>
-                  </div>
+        {/* Mobile Vertical Grid Layout */}
+        <div className="md:hidden grid grid-cols-1 gap-6">
+          {bikeCategories.map((cat) => (
+            <div 
+              key={cat.name} 
+              className="group cursor-pointer transition-transform active:scale-95"
+              onClick={() => handleCategoryClick(cat.category)}
+            >
+              <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                <div className="aspect-w-16 aspect-h-12">
+                  <img src={cat.image} alt={cat.name} className="w-full h-48 object-contain mx-auto" />
+                </div>
+                <div className="p-6 text-center">
+                  <h3 className="text-xl font-semibold text-gray-800">{cat.name}</h3>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Mobile Slide Indicators */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {bikeCategories.map((_, index) => (
-              <button
-                key={index}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentSlide ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
       {/* Full Body Bike Checkup Section */}
