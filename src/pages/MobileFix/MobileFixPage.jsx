@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { Select } from "antd";
 import {
   Smartphone,
   Wrench,
@@ -20,6 +21,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../components/AuthContext";
 import { useCart } from "../../components/CartContext";
+import "antd/dist/reset.css";
+import "./MobileFixPage.css";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -176,7 +179,12 @@ const MobileFixPage = () => {
     }
   };
 
-  const handleBrandSelect = (brand) => {
+  const handleBrandSelect = (brandId) => {
+    const brand = brands.find((b) => b._id === brandId);
+    if (!brand) {
+      toast.error("Invalid brand selection");
+      return;
+    }
     setSelectedBrand(brand);
     setSelectedModel(null);
     setModels([]);
@@ -186,7 +194,12 @@ const MobileFixPage = () => {
     setCurrentStep(2);
   };
 
-  const handleModelSelect = (model) => {
+  const handleModelSelect = (modelId) => {
+    const model = models.find((m) => m._id === modelId);
+    if (!model) {
+      toast.error("Invalid model selection");
+      return;
+    }
     setSelectedModel(model);
     setSelectedService(null);
     setPricing(null);
@@ -440,9 +453,11 @@ const MobileFixPage = () => {
               >
                 ← Back to Brands
               </button>
+
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Select {selectedBrand?.name} Model
+                📱 STEP 2 — Select {selectedBrand?.name} Model
               </h2>
+
               <p className="text-gray-600 text-lg mb-8">
                 Choose your exact phone model
               </p>
@@ -450,20 +465,31 @@ const MobileFixPage = () => {
               {models.length === 0 ? (
                 <p className="text-gray-500">Loading models...</p>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
-                  {models.map((model) => (
-                    <motion.div
-                      key={model._id}
-                      whileHover={{ scale: 1.05 }}
-                      className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
-                      onClick={() => handleModelSelect(model)}
-                    >
-                      <div className="bg-gradient-to-br from-purple-500 to-pink-500 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Smartphone className="w-6 h-6 text-white" />
-                      </div>
-                      <h3 className="text-lg font-bold">{model.name}</h3>
-                    </motion.div>
-                  ))}
+                <div className="max-w-xl mx-auto text-left">
+                  <label className="block text-gray-700 font-semibold mb-3 text-lg">
+                    Select Your Phone Model
+                  </label>
+
+                  <Select
+                    showSearch
+                    size="large"
+                    placeholder="Search and select your phone model"
+                    optionFilterProp="label"
+                    onChange={handleModelSelect}
+                    value={selectedModel?._id}
+                    filterOption={(input, option) =>
+                      option.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                    className="w-full"
+                    options={models.map((model) => ({
+                      value: model._id,
+                      label: model.name,
+                    }))}
+                  />
+
+                  <p className="text-sm text-gray-500 mt-3">
+                    💡 Tip: You can type to search for your model
+                  </p>
                 </div>
               )}
             </motion.div>
@@ -482,7 +508,7 @@ const MobileFixPage = () => {
                 ← Back to Models
               </button>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                🔧 STEP 2 — Select Repair Service
+                🔧 STEP 3 — Select Repair Service
               </h2>
               <p className="text-gray-600 text-lg mb-4">
                 Selected:{" "}
