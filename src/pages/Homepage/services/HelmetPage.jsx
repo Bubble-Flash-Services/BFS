@@ -4,24 +4,31 @@ import { useNavigate } from 'react-router-dom';
 const helmetCategories = [
   {
     name: 'Commuter Helmets',
-    image: '/helmet/commuter & midsize/aiease_1755850674727.jpg',
+    image: '/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg',
     category: 'commuter',
     description: 'Basic protection for daily rides',
     fallbackIcon: '🏍️'
   },
   {
     name: 'Mid-Size Helmets ',
-    image: '/helmet/midsize/midsize1.jpg',
+    image: '/helmet/midsize/midsize2.jpg',
     category: 'midsize',
     description: 'Standard full face protection',
     fallbackIcon: '🛡️'
   },
   {
     name: 'Sports / Touring Helmets ',
-    image: '/helmet/sports/aiease_1755850623823.jpg',
+    image: '/helmet/sports/DeWatermark.ai_1755851442324.jpeg',
     category: 'sports-touring',
     description: 'Premium helmets for sports and touring',
     fallbackIcon: '🏁'
+  },
+  {
+    name: 'Premium Helmets',
+    image: '/helmet/helmethome.png',
+    category: 'premium',
+    description: 'Luxury and high-end helmets',
+    fallbackIcon: '⭐'
   },
 ];
 
