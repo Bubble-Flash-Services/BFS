@@ -27,7 +27,7 @@ export default function FullBodyCheckup({ type = 'car', compact = false }) {
 
   const handleBookNow = () => {
     // Navigate to VehicleCheckupPage and set the vehicle type
-    navigate('/vehicle-checkup', { state: { vehicleType: isCar ? 'car' : 'bike' } });
+    navigate('/services/vehicle-checkup', { state: { vehicleType: isCar ? 'car' : 'bike' } });
   };
 
   return (
