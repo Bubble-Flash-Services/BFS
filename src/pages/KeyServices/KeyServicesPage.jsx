@@ -741,7 +741,7 @@ const KeyServicesPage = () => {
                             name: accessory.name,
                             price: accessory.price,
                             quantity: 1,
-                            image: "/services/keys/key-duplication.jpg",
+                            image: "/logo.jpg", // Using generic logo for key accessories
                             serviceName: "key",
                             category: "Key Service Accessory",
                           });

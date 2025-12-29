@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import SigninModal from '../pages/Homepage/signin/SigninModal';
-import SignupModal from '../pages/Homepage/signup/SignupModal';
 import toast from 'react-hot-toast';
 
 /**
