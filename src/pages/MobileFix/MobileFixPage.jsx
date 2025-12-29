@@ -40,9 +40,6 @@ const MobileFixPage = () => {
   const [isFirstTime, setIsFirstTime] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState("");
-  const [loadingBrands, setLoadingBrands] = useState(true);
-  const [loadingModels, setLoadingModels] = useState(false);
-  const [error, setError] = useState(null);
 
   const services = [
     {
@@ -124,84 +121,41 @@ const MobileFixPage = () => {
 
   const fetchBrands = async () => {
     try {
-      setLoadingBrands(true);
-      setError(null);
       const response = await fetch(`${API}/api/mobilefix/brands`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
       const result = await response.json();
-      if (result.success && result.data && result.data.brands) {
+      if (result.success) {
         setBrands(result.data.brands);
-        if (result.data.brands.length === 0) {
-          toast.error("No phone brands available at the moment. Please contact support.");
-        }
-      } else {
-        throw new Error(result.message || "Failed to fetch brands");
       }
     } catch (error) {
       console.error("Error fetching brands:", error);
-      setError("Unable to load phone brands. Please try again later.");
-      toast.error("Failed to load phone brands. Please try again.");
-    } finally {
-      setLoadingBrands(false);
     }
   };
 
   const fetchModels = async (brandId) => {
     try {
-      setLoadingModels(true);
-      setError(null);
-      const response = await fetch(`${API}/api/mobilefix/brands/${brandId}/models`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
+      const response = await fetch(
+        `${API}/api/mobilefix/brands/${brandId}/models`
+      );
       const result = await response.json();
-      if (result.success && result.data && result.data.models) {
+      if (result.success) {
         setModels(result.data.models);
-        if (result.data.models.length === 0) {
-          toast.error("No models available for this brand. Please try another brand.");
-        }
-      } else {
-        throw new Error(result.message || "Failed to fetch models");
       }
     } catch (error) {
       console.error("Error fetching models:", error);
-      setError("Unable to load phone models. Please try again.");
-      toast.error("Failed to load models for this brand.");
-      setModels([]);
-    } finally {
-      setLoadingModels(false);
     }
   };
 
   const fetchAllPricingForModel = async (modelId) => {
     try {
-      setError(null);
-      const response = await fetch(`${API}/api/mobilefix/pricing/model/${modelId}`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
+      const response = await fetch(
+        `${API}/api/mobilefix/pricing/model/${modelId}`
+      );
       const result = await response.json();
-      if (result.success && result.data && result.data.pricingList) {
+      if (result.success) {
         setAllPricing(result.data.pricingList);
-        if (result.data.pricingList.length === 0) {
-          toast.error("No pricing available for this model. Please try another model.");
-        }
-      } else {
-        throw new Error(result.message || "Failed to fetch pricing");
       }
     } catch (error) {
       console.error("Error fetching pricing:", error);
-      setError("Unable to load pricing information.");
-      toast.error("Failed to load pricing for this model.");
-      setAllPricing([]);
     }
   };
 
@@ -229,7 +183,6 @@ const MobileFixPage = () => {
     setSelectedService(null);
     setPricing(null);
     setAllPricing([]);
-    setError(null);
     setCurrentStep(2);
   };
 
@@ -246,7 +199,7 @@ const MobileFixPage = () => {
       return;
     }
 
-    const servicePricing = allPricing.find(p => p.serviceType === service.id);
+    const servicePricing = allPricing.find((p) => p.serviceType === service.id);
     if (!servicePricing) {
       toast.error("Pricing not available for this service");
       return;
@@ -256,7 +209,7 @@ const MobileFixPage = () => {
     setPricing({
       price: servicePricing.price,
       estimatedTime: servicePricing.estimatedTime,
-      serviceType: service.id
+      serviceType: service.id,
     });
     setCurrentStep(4);
   };
@@ -293,7 +246,10 @@ const MobileFixPage = () => {
       discount: discountAmount,
       isFirstTimeBooking: isFirstTimeBooking,
       quantity: 1,
-      features: [selectedService.title, `${selectedBrand.name} ${selectedModel.name}`],
+      features: [
+        selectedService.title,
+        `${selectedBrand.name} ${selectedModel.name}`,
+      ],
       metadata: {
         brandId: selectedBrand._id,
         brandName: selectedBrand.name,
@@ -454,54 +410,21 @@ const MobileFixPage = () => {
                 Choose your phone brand to continue
               </p>
 
-              {error && (
-                <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-                  <p className="text-red-600">{error}</p>
-                  <button
-                    onClick={() => {
-                      setError(null);
-                      fetchBrands();
-                    }}
-                    className="mt-2 text-blue-600 hover:underline"
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
+                {brands.map((brand) => (
+                  <motion.div
+                    key={brand._id}
+                    whileHover={{ scale: 1.05 }}
+                    className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
+                    onClick={() => handleBrandSelect(brand)}
                   >
-                    Try Again
-                  </button>
-                </div>
-              )}
-
-              {loadingBrands ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-                  <p className="text-gray-600">Loading phone brands...</p>
-                </div>
-              ) : brands.length === 0 ? (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8 max-w-md mx-auto">
-                  <p className="text-gray-700 mb-4">No phone brands are currently available.</p>
-                  <p className="text-sm text-gray-600">Please contact support or try again later.</p>
-                  <button
-                    onClick={fetchBrands}
-                    className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-                  >
-                    Refresh
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
-                  {brands.map((brand) => (
-                    <motion.div
-                      key={brand._id}
-                      whileHover={{ scale: 1.05 }}
-                      className="bg-white rounded-2xl shadow-lg p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all"
-                      onClick={() => handleBrandSelect(brand)}
-                    >
-                      <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Smartphone className="w-8 h-8 text-white" />
-                      </div>
-                      <h3 className="text-xl font-bold">{brand.name}</h3>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
+                    <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Smartphone className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold">{brand.name}</h3>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           )}
 
@@ -524,38 +447,9 @@ const MobileFixPage = () => {
                 Choose your exact phone model
               </p>
 
-              {error && (
-                <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-                  <p className="text-red-600">{error}</p>
-                  <button
-                    onClick={() => {
-                      setError(null);
-                      fetchModels(selectedBrand._id);
-                    }}
-                    className="mt-2 text-blue-600 hover:underline"
-                  >
-                    Try Again
-                  </button>
-                </div>
-              )}
-
-              {loadingModels ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
-                  <p className="text-gray-600">Loading {selectedBrand?.name} models...</p>
-                </div>
-              ) : models.length === 0 && !error ? (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8 max-w-md mx-auto">
-                  <p className="text-gray-700 mb-4">No models available for {selectedBrand?.name}.</p>
-                  <p className="text-sm text-gray-600 mb-4">Please try selecting a different brand or contact support.</p>
-                  <button
-                    onClick={() => setCurrentStep(1)}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-                  >
-                    Back to Brands
-                  </button>
-                </div>
-              ) : !error && models.length > 0 ? (
+              {models.length === 0 ? (
+                <p className="text-gray-500">Loading models...</p>
+              ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
                   {models.map((model) => (
                     <motion.div
@@ -571,7 +465,7 @@ const MobileFixPage = () => {
                     </motion.div>
                   ))}
                 </div>
-              ) : null}
+              )}
             </motion.div>
           )}
 
@@ -591,7 +485,10 @@ const MobileFixPage = () => {
                 🔧 STEP 2 — Select Repair Service
               </h2>
               <p className="text-gray-600 text-lg mb-4">
-                Selected: <span className="font-bold">{selectedBrand?.name} {selectedModel?.name}</span>
+                Selected:{" "}
+                <span className="font-bold">
+                  {selectedBrand?.name} {selectedModel?.name}
+                </span>
               </p>
               <p className="text-gray-600 text-lg mb-8">
                 All services are doorstep-only
@@ -599,27 +496,35 @@ const MobileFixPage = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
                 {services.map((service) => {
-                  const servicePricing = allPricing.find(p => p.serviceType === service.id);
+                  const servicePricing = allPricing.find(
+                    (p) => p.serviceType === service.id
+                  );
                   const isPriceAvailable = !!servicePricing;
-                  
+
                   return (
                     <motion.div
                       key={service.id}
                       whileHover={{ scale: isPriceAvailable ? 1.05 : 1 }}
                       className={`bg-white rounded-2xl shadow-lg p-6 border-2 border-transparent transition-all ${
-                        isPriceAvailable 
-                          ? 'cursor-pointer hover:border-blue-500' 
-                          : 'opacity-50 cursor-not-allowed'
+                        isPriceAvailable
+                          ? "cursor-pointer hover:border-blue-500"
+                          : "opacity-50 cursor-not-allowed"
                       }`}
-                      onClick={() => isPriceAvailable && handleServiceSelect(service)}
+                      onClick={() =>
+                        isPriceAvailable && handleServiceSelect(service)
+                      }
                     >
                       <div
                         className={`bg-gradient-to-br ${service.gradient} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}
                       >
                         <service.icon className="w-8 h-8 text-white" />
                       </div>
-                      <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                      <p className="text-gray-600 mb-3">{service.description}</p>
+                      <h3 className="text-xl font-bold mb-2">
+                        {service.title}
+                      </h3>
+                      <p className="text-gray-600 mb-3">
+                        {service.description}
+                      </p>
                       <p className="text-sm text-gray-500 mb-3">
                         <Clock className="w-4 h-4 inline mr-1" />
                         Time: {service.timeRange}
@@ -645,14 +550,18 @@ const MobileFixPage = () => {
                 </h3>
                 <ul className="space-y-2 text-left max-w-md mx-auto">
                   {unsupportedServices.map((service, index) => (
-                    <li key={index} className="flex items-center gap-2 text-gray-700">
+                    <li
+                      key={index}
+                      className="flex items-center gap-2 text-gray-700"
+                    >
                       <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
                       <span>{service}</span>
                     </li>
                   ))}
                 </ul>
                 <p className="mt-4 text-gray-600 text-sm">
-                  These services require specialized equipment and cannot be performed at doorstep
+                  These services require specialized equipment and cannot be
+                  performed at doorstep
                 </p>
               </div>
             </motion.div>
@@ -672,11 +581,13 @@ const MobileFixPage = () => {
               </button>
               <div className="bg-white rounded-2xl shadow-lg p-8">
                 <h2 className="text-3xl font-bold mb-6">Booking Summary</h2>
-                
+
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between items-center pb-3 border-b">
                     <span className="text-gray-600">Phone</span>
-                    <span className="font-bold">{selectedBrand?.name} {selectedModel?.name}</span>
+                    <span className="font-bold">
+                      {selectedBrand?.name} {selectedModel?.name}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b">
                     <span className="text-gray-600">Service</span>
@@ -693,7 +604,9 @@ const MobileFixPage = () => {
                   {isFirstTime && (
                     <div className="flex justify-between items-center pb-3 border-b text-green-600">
                       <span>First Order Discount (15%)</span>
-                      <span className="font-bold">-₹{Math.round(pricing?.price * 0.15)}</span>
+                      <span className="font-bold">
+                        -₹{Math.round(pricing?.price * 0.15)}
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between items-center text-2xl font-bold text-blue-600">
@@ -771,7 +684,8 @@ const MobileFixPage = () => {
               {
                 icon: MapPin,
                 title: "100% Doorstep Service",
-                description: "Technician comes to your location with all tools and parts",
+                description:
+                  "Technician comes to your location with all tools and parts",
               },
               {
                 icon: DollarSign,
