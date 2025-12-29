@@ -12,6 +12,7 @@ import {
   PaintBucket,
   CheckCircle2,
   Loader2,
+  Sparkles,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "./AuthContext";
@@ -36,11 +37,13 @@ const PaintingQuote = ({ onClose }) => {
     inspectionDate: "",
     inspectionTime: "",
     address: "",
+    sizeEvaluationAssistance: false,
   });
 
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [accessories, setAccessories] = useState([]);
 
   // Auto-fill user data
   useEffect(() => {
@@ -55,11 +58,43 @@ const PaintingQuote = ({ onClose }) => {
   }, [user]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
+  };
+  
+  // Available painting accessories
+  const availableAccessories = [
+    { id: 'roller-set', name: 'Professional Roller Set', price: 499 },
+    { id: 'paint-tray', name: 'Paint Tray Set', price: 299 },
+    { id: 'masking-tape', name: 'Masking Tape (5 Rolls)', price: 199 },
+    { id: 'drop-cloth', name: 'Drop Cloth/Floor Protection', price: 399 },
+    { id: 'brush-set', name: 'Professional Brush Set', price: 599 },
+    { id: 'primer', name: 'Premium Primer (1 Litre)', price: 899 },
+  ];
+  
+  const addAccessory = (accessory) => {
+    const existing = accessories.find(a => a.id === accessory.id);
+    if (existing) {
+      setAccessories(accessories.map(a => 
+        a.id === accessory.id ? { ...a, quantity: a.quantity + 1 } : a
+      ));
+    } else {
+      setAccessories([...accessories, { ...accessory, quantity: 1 }]);
+    }
+  };
+  
+  const removeAccessory = (accessoryId) => {
+    const existing = accessories.find(a => a.id === accessoryId);
+    if (existing && existing.quantity > 1) {
+      setAccessories(accessories.map(a => 
+        a.id === accessoryId ? { ...a, quantity: a.quantity - 1 } : a
+      ));
+    } else {
+      setAccessories(accessories.filter(a => a.id !== accessoryId));
+    }
   };
 
   const handlePhotoUpload = (e) => {
@@ -123,7 +158,16 @@ const PaintingQuote = ({ onClose }) => {
         colorPreferences: formData.colorPreferences,
         additionalRequirements: formData.additionalRequirements,
         inspectionDate: formData.inspectionDate || null,
-        inspectionTime: formData.inspectionTime || null
+        inspectionTime: formData.inspectionTime || null,
+        sizeEvaluationAssistance: {
+          required: formData.sizeEvaluationAssistance,
+          charge: formData.sizeEvaluationAssistance ? 500 : 0
+        },
+        accessories: accessories.map(acc => ({
+          name: acc.name,
+          quantity: acc.quantity,
+          price: acc.price
+        }))
         // Note: Photo upload feature to be implemented in future version
       };
 
@@ -491,6 +535,84 @@ const PaintingQuote = ({ onClose }) => {
               </select>
             </div>
           </div>
+        </div>
+
+        {/* Size Evaluation Assistance */}
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="sizeEvaluationAssistance"
+              name="sizeEvaluationAssistance"
+              checked={formData.sizeEvaluationAssistance}
+              onChange={handleInputChange}
+              className="mt-1 w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+            />
+            <div className="flex-1">
+              <label htmlFor="sizeEvaluationAssistance" className="font-semibold text-gray-900 cursor-pointer">
+                Painting Assistance Partner for Size Evaluation
+              </label>
+              <p className="text-sm text-gray-600 mt-1">
+                Professional on-site measurement and evaluation service by our expert partners.
+              </p>
+              <p className="text-sm font-semibold text-green-700 mt-2">
+                Service Charge: ₹500 (One-time)
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Accessories */}
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-purple-600" />
+            Add Painting Accessories (Optional)
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {availableAccessories.map((accessory) => {
+              const inCart = accessories.find(a => a.id === accessory.id);
+              const quantity = inCart?.quantity || 0;
+              return (
+                <div key={accessory.id} className="border border-gray-200 rounded-lg p-3 flex items-center justify-between hover:border-purple-300 transition-colors">
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900">{accessory.name}</div>
+                    <div className="text-sm text-green-600 font-semibold">₹{accessory.price}</div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {quantity > 0 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => removeAccessory(accessory.id)}
+                          className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors font-bold text-gray-700"
+                        >
+                          -
+                        </button>
+                        <span className="w-6 text-center font-semibold text-purple-700">{quantity}</span>
+                      </>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => addAccessory(accessory)}
+                      className="w-7 h-7 rounded-full bg-purple-600 hover:bg-purple-700 transition-colors font-bold text-white"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {accessories.length > 0 && (
+            <div className="mt-4 p-4 bg-purple-50 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-gray-900">Accessories Total:</span>
+                <span className="text-lg font-bold text-purple-700">
+                  ₹{accessories.reduce((sum, acc) => sum + (acc.price * acc.quantity), 0)}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Submit Button */}

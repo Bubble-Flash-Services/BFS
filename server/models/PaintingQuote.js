@@ -57,6 +57,19 @@ const paintingQuoteSchema = new mongoose.Schema({
   colorPreferences: String,
   additionalRequirements: String,
   
+  // Painting Assistance Partner - Size Evaluation (Charged Service)
+  sizeEvaluationAssistance: {
+    required: { type: Boolean, default: false },
+    charge: { type: Number, default: 500 } // ₹500 charge for professional size evaluation
+  },
+  
+  // Accessories
+  accessories: [{
+    name: String,
+    quantity: { type: Number, default: 1 },
+    price: Number
+  }],
+  
   // Photos
   photos: [{
     url: String,

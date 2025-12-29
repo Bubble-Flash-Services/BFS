@@ -55,6 +55,8 @@ const MoversPackersPage = () => {
 
   // Extra services state
   const [needPainting, setNeedPainting] = useState(false);
+  const [needCleaning, setNeedCleaning] = useState(false);
+  const [cleaningType, setCleaningType] = useState("basic-cleaning");
   const [paintingType, setPaintingType] = useState("move-in");
   const [packageType, setPackageType] = useState("standard-room");
   const [paintingServices, setPaintingServices] = useState({
@@ -93,6 +95,8 @@ const MoversPackersPage = () => {
     needVehicleShifting,
     vehicles,
     needPainting,
+    needCleaning,
+    cleaningType,
     paintingServices,
     paintingType,
     packageType,
@@ -107,18 +111,25 @@ const MoversPackersPage = () => {
         ? { required: true, vehicles }
         : { required: false };
       
-      const extraServices = needPainting
+      const extraServices = needPainting || needCleaning
         ? { 
-            painting: { 
+            painting: needPainting ? { 
               required: true, 
               services: paintingServices,
               paintingType,
               packageType,
               rooms,
               totalSquareFeet
-            } 
+            } : { required: false },
+            cleaning: needCleaning ? {
+              required: true,
+              cleaningType
+            } : { required: false }
           }
-        : { painting: { required: false } };
+        : { 
+            painting: { required: false },
+            cleaning: { required: false }
+          };
 
       const response = await fetch(`${API}/api/movers-packers/quote`, {
         method: "POST",
@@ -269,18 +280,25 @@ const MoversPackersPage = () => {
           ? { required: true, vehicles }
           : { required: false };
 
-      const extraServices = needPainting
+      const extraServices = needPainting || needCleaning
         ? { 
-            painting: { 
+            painting: needPainting ? { 
               required: true, 
               services: paintingServices,
               paintingType,
               packageType,
               rooms,
               totalSquareFeet
-            } 
+            } : { required: false },
+            cleaning: needCleaning ? {
+              required: true,
+              cleaningType
+            } : { required: false }
           }
-        : { painting: { required: false } };
+        : { 
+            painting: { required: false },
+            cleaning: { required: false }
+          };
 
       const response = await fetch(`${API}/api/movers-packers/booking`, {
         method: "POST",
@@ -639,13 +657,14 @@ const MoversPackersPage = () => {
                       setTotalSquareFeet(0);
                     }
                   }}
-                  className={`px-6 py-2 rounded-full font-semibold transition-all shadow-md ${
+                  className={`w-12 h-12 rounded-full font-bold text-2xl transition-all shadow-md flex items-center justify-center ${
                     needPainting
-                      ? "bg-[#FFB400] text-[#1F3C88]"
-                      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                      ? "bg-green-500 text-white hover:bg-green-600"
+                      : "bg-gray-400 text-white hover:bg-gray-500"
                   }`}
+                  aria-label={needPainting ? "Painting enabled" : "Painting disabled"}
                 >
-                  {needPainting ? "Yes" : "No"}
+                  {needPainting ? "✔" : "❌"}
                 </button>
               </div>
 
@@ -906,6 +925,72 @@ const MoversPackersPage = () => {
               )}
             </div>
 
+            {/* Cleaning Services Section */}
+            <div className="border-t-2 border-gray-100 pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <label className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-[#FFB400]" />
+                  Need Cleaning Services?
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setNeedCleaning(!needCleaning)}
+                  className={`w-12 h-12 rounded-full font-bold text-2xl transition-all shadow-md flex items-center justify-center ${
+                    needCleaning
+                      ? "bg-green-500 text-white hover:bg-green-600"
+                      : "bg-gray-400 text-white hover:bg-gray-500"
+                  }`}
+                  aria-label={needCleaning ? "Cleaning enabled" : "Cleaning disabled"}
+                >
+                  {needCleaning ? "✔" : "❌"}
+                </button>
+              </div>
+
+              {needCleaning && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="space-y-4 mt-6"
+                >
+                  <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-6 rounded-2xl shadow-sm border border-cyan-100">
+                    <label className="block text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-cyan-600" />
+                      Select Cleaning Type
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {[
+                        { value: "basic-cleaning", label: "Basic Cleaning", desc: "Standard cleaning service", icon: "🧹", price: "₹2K-5K" },
+                        { value: "deep-cleaning", label: "Deep Cleaning", desc: "Thorough deep cleaning", icon: "✨", price: "₹5K-12K" },
+                        { value: "move-in-cleaning", label: "Move-In Cleaning", desc: "Clean before moving in", icon: "🏠", price: "₹3K-8K" },
+                        { value: "move-out-cleaning", label: "Move-Out Cleaning", desc: "Clean before vacating", icon: "🔑", price: "₹3K-8K" },
+                      ].map((type) => (
+                        <button
+                          key={type.value}
+                          type="button"
+                          onClick={() => setCleaningType(type.value)}
+                          aria-pressed={cleaningType === type.value}
+                          className={`p-4 rounded-xl border-2 transition-all transform hover:scale-105 text-left ${
+                            cleaningType === type.value
+                              ? "border-cyan-500 bg-white text-[#1F3C88] shadow-lg ring-2 ring-cyan-200"
+                              : "border-gray-200 bg-white/50 hover:border-cyan-300 hover:shadow-md"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <span className="text-2xl">{type.icon}</span>
+                            <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                              {type.price}
+                            </span>
+                          </div>
+                          <div className="font-semibold text-sm mb-1">{type.label}</div>
+                          <div className="text-xs text-gray-600">{type.desc}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
             {/* Contact Information */}
             <div className="border-t-2 border-gray-100 pt-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
@@ -1000,6 +1085,17 @@ const MoversPackersPage = () => {
                       </span>
                       <span className="font-semibold text-lg">
                         ₹{priceQuote.paintingCost?.toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                  {priceQuote.cleaningCost > 0 && (
+                    <div className="flex justify-between items-center py-2 border-t border-white/20">
+                      <span className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" />
+                        Cleaning Services:
+                      </span>
+                      <span className="font-semibold text-lg">
+                        ₹{(priceQuote.cleaningCost || 0).toLocaleString()}
                       </span>
                     </div>
                   )}
