@@ -660,7 +660,7 @@ const MoversPackersPage = () => {
                   className={`w-12 h-12 rounded-full font-bold text-2xl transition-all shadow-md flex items-center justify-center ${
                     needPainting
                       ? "bg-green-500 text-white hover:bg-green-600"
-                      : "bg-red-500 text-white hover:bg-red-600"
+                      : "bg-gray-400 text-white hover:bg-gray-500"
                   }`}
                   aria-label={needPainting ? "Painting enabled" : "Painting disabled"}
                 >
@@ -938,7 +938,7 @@ const MoversPackersPage = () => {
                   className={`w-12 h-12 rounded-full font-bold text-2xl transition-all shadow-md flex items-center justify-center ${
                     needCleaning
                       ? "bg-green-500 text-white hover:bg-green-600"
-                      : "bg-red-500 text-white hover:bg-red-600"
+                      : "bg-gray-400 text-white hover:bg-gray-500"
                   }`}
                   aria-label={needCleaning ? "Cleaning enabled" : "Cleaning disabled"}
                 >
@@ -1095,7 +1095,7 @@ const MoversPackersPage = () => {
                         Cleaning Services:
                       </span>
                       <span className="font-semibold text-lg">
-                        ₹{priceQuote.cleaningCost?.toLocaleString()}
+                        ₹{(priceQuote.cleaningCost || 0).toLocaleString()}
                       </span>
                     </div>
                   )}

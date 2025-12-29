@@ -12,6 +12,7 @@ import {
   PaintBucket,
   CheckCircle2,
   Loader2,
+  Sparkles,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "./AuthContext";
