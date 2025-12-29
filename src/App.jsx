@@ -11,7 +11,7 @@ import FloatingWhatsApp from "./components/FloatingWhatsApp";
 // Placeholder imports for new pages
 import CarsPage from "./pages/Homepage/services/CarsPage";
 import BikesPage from "./pages/Homepage/services/BikesPage";
-import LaundryPage from "./pages/Homepage/services/LaundryPage";
+import LaundryPage from "./pages/Homepage/services/LaundryPageNew";
 import HelmetPage from "./pages/Homepage/services/HelmetPage";
 import CarWashDeals from "./pages/Homepage/services/CarWashDeals";
 import BikeWashDeals from "./pages/Homepage/services/BikeWashDeals";
