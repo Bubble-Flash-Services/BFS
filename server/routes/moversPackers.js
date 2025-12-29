@@ -149,12 +149,50 @@ function calculatePrice(moveType, homeSize, vehicleShifting, extraServices) {
     }
   }
 
-  const totalPrice = basePrice + vehicleShiftingCost + paintingCost;
+  // Calculate cleaning cost
+  let cleaningCost = 0;
+  if (extraServices?.cleaning?.required) {
+    const cleaning = extraServices.cleaning;
+    const cleaningPrices = {
+      "basic-cleaning": {
+        "1BHK": 2000,
+        "2BHK": 3000,
+        "3BHK": 4000,
+        "4BHK": 5000,
+        Villa: 8000,
+      },
+      "deep-cleaning": {
+        "1BHK": 5000,
+        "2BHK": 7000,
+        "3BHK": 9000,
+        "4BHK": 12000,
+        Villa: 18000,
+      },
+      "move-in-cleaning": {
+        "1BHK": 3000,
+        "2BHK": 4500,
+        "3BHK": 6000,
+        "4BHK": 8000,
+        Villa: 12000,
+      },
+      "move-out-cleaning": {
+        "1BHK": 3000,
+        "2BHK": 4500,
+        "3BHK": 6000,
+        "4BHK": 8000,
+        Villa: 12000,
+      },
+    };
+    cleaningCost = cleaningPrices[cleaning.cleaningType]?.[homeSize] || 3000;
+  }
+
+  const totalPrice = basePrice + vehicleShiftingCost + paintingCost + cleaningCost;
 
   return {
     basePrice,
     vehicleShiftingCost,
     paintingCost,
+    cleaningCost,
     totalPrice,
   };
 }
