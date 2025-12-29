@@ -1,42 +1,41 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import FullBodyCheckup from '../../../components/FullBodyCheckup';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import FullBodyCheckup from "../../../components/FullBodyCheckup";
 
 const bikeCategories = [
   {
-    name: 'Commuter Bikes',
-    image: '/bike/commuter/tvs-ntorq-125-race-edition-matte-white-175501476-vc4uk (1).png',
-    category: 'commuter'
+    name: "Commuter Bikes",
+    image: "/bike/commuter/Yamaha-Commuter-Motorcycles.jpg",
+    category: "commuter",
   },
- 
+
   {
-    name: 'Cruiser Bikes',
-    image: '/bike/cruiser/pexels-sahil-dethe-590388386-17266142.png',
-    category: 'cruiser'
+    name: "Touring Bikes",
+    image: "/bike/cruiser/Touring.jpg",
+    category: "cruiser",
   },
-   {
-    name: 'Sports Bikes',
-    image: '/bike/sports/pexels-shrinidhi-holla-30444780.png',
-    category: 'sports'
+  {
+    name: "Sports Bikes",
+    image: "/bike/cruiser/Sports.avif",
+    category: "sports",
   },
 ];
 
 export default function BikesPage() {
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [bookingData, setBookingData] = useState(null);
   const navigate = useNavigate();
-  const sliderRef = useRef(null);
-  const startX = useRef(0);
-  const isDragging = useRef(false);
 
   // Check for booking data from HeroSection
   useEffect(() => {
-    const storedBooking = localStorage.getItem('pendingBooking');
+    const storedBooking = localStorage.getItem("pendingBooking");
     if (storedBooking) {
       const data = JSON.parse(storedBooking);
       // Only show booking data if it's for bike wash and within 10 minutes
-      if (data.category === 'Bike Wash' && (Date.now() - data.timestamp) < 600000) {
+      if (
+        data.category === "Bike Wash" &&
+        Date.now() - data.timestamp < 600000
+      ) {
         setBookingData(data);
       }
     }
@@ -44,7 +43,7 @@ export default function BikesPage() {
 
   const clearBookingData = () => {
     setBookingData(null);
-    localStorage.removeItem('pendingBooking');
+    localStorage.removeItem("pendingBooking");
   };
 
   const handleCategoryClick = (category) => {
@@ -55,66 +54,18 @@ export default function BikesPage() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Auto-slide functionality
-  useEffect(() => {
-    if (!isMobile) return;
-    
-    const autoSlide = setInterval(() => {
-      setCurrentSlide((prev) => {
-        const nextSlide = prev + 1;
-        return nextSlide >= bikeCategories.length ? 0 : nextSlide;
-      });
-    }, 2000);
-
-    return () => clearInterval(autoSlide);
-  }, [isMobile]);
-
-  const handleTouchStart = (e) => {
-    if (!isMobile) return;
-    isDragging.current = true;
-    startX.current = e.touches[0].pageX;
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isMobile || !isDragging.current) return;
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = (e) => {
-    if (!isMobile || !isDragging.current) return;
-    isDragging.current = false;
-    
-    const endX = e.changedTouches[0].pageX;
-    const diffX = startX.current - endX;
-    const threshold = 50; // Minimum swipe distance
-    
-    if (Math.abs(diffX) > threshold) {
-      if (diffX > 0 && currentSlide < bikeCategories.length - 1) {
-        // Swipe left - go to next slide
-        setCurrentSlide(currentSlide + 1);
-      } else if (diffX < 0 && currentSlide > 0) {
-        // Swipe right - go to previous slide
-        setCurrentSlide(currentSlide - 1);
-      }
-    }
-  };
-
-  const goToSlide = (index) => {
-    if (!isMobile) return;
-    setCurrentSlide(index);
-  };
+  // Auto-slide functionality removed - display vertically instead
 
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Booking Data Banner */}
         {bookingData && (
           <div className="mb-8 bg-green-50 border border-green-200 rounded-lg p-6">
@@ -125,20 +76,29 @@ export default function BikesPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium text-green-700">Service:</span> {bookingData.category}
+                    <span className="font-medium text-green-700">Service:</span>{" "}
+                    {bookingData.category}
                   </div>
                   <div>
-                    <span className="font-medium text-green-700">Pickup Date:</span> {new Date(bookingData.pickupDate).toLocaleDateString()}
+                    <span className="font-medium text-green-700">
+                      Pickup Date:
+                    </span>{" "}
+                    {new Date(bookingData.pickupDate).toLocaleDateString()}
                   </div>
                   <div>
-                    <span className="font-medium text-green-700">Phone:</span> {bookingData.phoneNumber}
+                    <span className="font-medium text-green-700">Phone:</span>{" "}
+                    {bookingData.phoneNumber}
                   </div>
                   <div>
-                    <span className="font-medium text-green-700">Location:</span> {bookingData.address.substring(0, 50)}...
+                    <span className="font-medium text-green-700">
+                      Location:
+                    </span>{" "}
+                    {bookingData.address.substring(0, 50)}...
                   </div>
                 </div>
                 <p className="text-green-600 text-sm mt-2">
-                  Please select your bike category below to complete your booking.
+                  Please select your bike category below to complete your
+                  booking.
                 </p>
               </div>
               <button
@@ -150,86 +110,80 @@ export default function BikesPage() {
             </div>
           </div>
         )}
-        
-        <h2 className="text-3xl font-bold text-gray-800 mb-12">Select by bikes</h2>
-        
+
+        <h2 className="text-3xl font-bold text-gray-800 mb-12">
+          Select by bikes
+        </h2>
+
         {/* Desktop Grid Layout */}
         <div className="hidden md:grid md:grid-cols-3 gap-8">
           {bikeCategories.map((cat) => (
-            <div 
-              key={cat.name} 
+            <div
+              key={cat.name}
               className="group cursor-pointer transition-transform hover:scale-105"
               onClick={() => handleCategoryClick(cat.category)}
             >
               <div className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
                 <div className="aspect-w-16 aspect-h-12">
-                  <img src={cat.image} alt={cat.name} className="w-full h-48 object-contain mx-auto" />
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-48 object-contain mx-auto"
+                  />
                 </div>
                 <div className="p-6 text-center">
-                  <h3 className="text-xl font-semibold text-gray-800">{cat.name}</h3>
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {cat.name}
+                  </h3>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Mobile Slider Layout */}
-        <div className="md:hidden relative overflow-hidden">
-          <div
-            ref={sliderRef}
-            className="flex transition-transform duration-300 ease-in-out"
-            style={{
-              transform: `translateX(-${currentSlide * 100}%)`,
-            }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            {bikeCategories.map((cat, index) => (
-              <div
-                key={cat.name}
-                className="flex-shrink-0 w-full px-4"
-              >
-                <div className="group cursor-pointer transition-transform active:scale-95">
-                  <div 
-                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-                    onClick={() => handleCategoryClick(cat.category)}
-                  >
-                    <div className="aspect-w-16 aspect-h-12">
-                      <img src={cat.image} alt={cat.name} className="w-full h-48 object-contain mx-auto" />
-                    </div>
-                    <div className="p-6 text-center">
-                      <h3 className="text-xl font-semibold text-gray-800">{cat.name}</h3>
-                    </div>
-                  </div>
+        {/* Mobile Vertical Grid Layout */}
+        <div className="md:hidden grid grid-cols-1 gap-6">
+          {bikeCategories.map((cat) => (
+            <div
+              key={cat.name}
+              className="group cursor-pointer transition-transform active:scale-95"
+              onClick={() => handleCategoryClick(cat.category)}
+            >
+              <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                <div className="aspect-w-16 aspect-h-12">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-48 object-contain mx-auto"
+                  />
+                </div>
+                <div className="p-6 text-center">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {cat.name}
+                  </h3>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Mobile Slide Indicators */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {bikeCategories.map((_, index) => (
-              <button
-                key={index}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentSlide ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
       {/* Full Body Bike Checkup Section */}
       <section className="bg-gradient-to-br from-white via-gray-50 to-amber-50 py-16 px-4 md:px-10 mt-20 rounded-2xl">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold font-serif bg-gradient-to-r from-amber-600 to-blue-600 bg-clip-text text-transparent mb-4">BFS Full Body Bike Checkup</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto text-lg">Quick visual checkpoint list we cover during premium bike wash packages to highlight safety or wear issues early.</p>
+            <h2 className="text-4xl md:text-5xl font-bold font-serif bg-gradient-to-r from-amber-600 to-blue-600 bg-clip-text text-transparent mb-4">
+              BFS Full Body Bike Checkup
+            </h2>
+            <p className="text-gray-600 max-w-3xl mx-auto text-lg">
+              Quick visual checkpoint list we cover during premium bike wash
+              packages to highlight safety or wear issues early.
+            </p>
           </div>
           <FullBodyCheckup type="bike" />
-          <div className="mt-10 text-center text-xs text-gray-500">Disclaimer: Visual inspection only. For mechanical tuning please visit a certified workshop.</div>
+          <div className="mt-10 text-center text-xs text-gray-500">
+            Disclaimer: Visual inspection only. For mechanical tuning please
+            visit a certified workshop.
+          </div>
         </div>
       </section>
     </section>

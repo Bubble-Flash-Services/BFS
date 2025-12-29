@@ -20,7 +20,9 @@ router.post('/quote', authenticateToken, async (req, res) => {
       additionalRequirements,
       inspectionDate,
       inspectionTime,
-      photos
+      photos,
+      sizeEvaluationAssistance,
+      accessories
     } = req.body;
 
     // Validate required fields
@@ -47,6 +49,8 @@ router.post('/quote', authenticateToken, async (req, res) => {
       inspectionDate,
       inspectionTime,
       photos: photos || [],
+      sizeEvaluationAssistance: sizeEvaluationAssistance || { required: false, charge: 0 },
+      accessories: accessories || [],
       status: 'pending'
     });
 

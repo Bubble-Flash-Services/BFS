@@ -93,6 +93,15 @@ const moversPackersSchema = new mongoose.Schema({
         default: 'standard-room'
       },
       perSqFtRate: Number
+    },
+    cleaning: {
+      required: { type: Boolean, default: false },
+      cleaningType: {
+        type: String,
+        enum: ['deep-cleaning', 'basic-cleaning', 'move-in-cleaning', 'move-out-cleaning'],
+        default: 'basic-cleaning'
+      },
+      estimatedCost: Number
     }
   },
   
@@ -108,6 +117,7 @@ const moversPackersSchema = new mongoose.Schema({
     basePrice: Number,
     vehicleShiftingCost: Number,
     paintingCost: Number,
+    cleaningCost: Number,
     totalPrice: Number
   },
   

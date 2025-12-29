@@ -63,6 +63,13 @@ const mobileFixBookingSchema = new mongoose.Schema({
   
   specialInstructions: String,
   
+  // Accessories
+  accessories: [{
+    name: String,
+    quantity: { type: Number, default: 1 },
+    price: Number
+  }],
+  
   pricing: {
     basePrice: {
       type: Number,
