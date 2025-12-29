@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import SigninModal from '../pages/Homepage/signin/SigninModal';
@@ -7,12 +7,19 @@ import toast from 'react-hot-toast';
 
 /**
  * ProtectedRoute - Ensures only logged-in users can access certain routes
- * If user is not logged in, shows a login modal instead of redirecting
+ * If user is not logged in, redirects to homepage
  */
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  const [openSignin, setOpenSignin] = useState(false);
-  const [openSignup, setOpenSignup] = useState(false);
+  const [hasShownToast, setHasShownToast] = useState(false);
+
+  // Show toast message when user is not authenticated
+  useEffect(() => {
+    if (!loading && !user && !hasShownToast) {
+      toast.error('Please login to access this service');
+      setHasShownToast(true);
+    }
+  }, [user, loading, hasShownToast]);
 
   // Show loading state while checking authentication
   if (loading) {
@@ -26,38 +33,9 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // If user is not logged in, show login prompt
+  // If user is not logged in, redirect to home page
   if (!user) {
-    // Show toast message
-    if (!openSignin && !openSignup) {
-      toast.error('Please login to access this service');
-      setTimeout(() => setOpenSignin(true), 100);
-    }
-
-    return (
-      <>
-        {/* Redirect to home page */}
-        <Navigate to="/" replace />
-        
-        {/* Show login/signup modals */}
-        <SigninModal
-          open={openSignin}
-          onClose={() => setOpenSignin(false)}
-          onSignupNow={() => {
-            setOpenSignin(false);
-            setOpenSignup(true);
-          }}
-        />
-        <SignupModal
-          open={openSignup}
-          onClose={() => setOpenSignup(false)}
-          onLoginNow={() => {
-            setOpenSignup(false);
-            setOpenSignin(true);
-          }}
-        />
-      </>
-    );
+    return <Navigate to="/" replace />;
   }
 
   // User is authenticated, render the protected content

@@ -1,4 +1,5 @@
-// Commercial add-ons for Green & Clean deep cleaning services
+// Add-ons and accessories for Green & Clean services
+// Available for both instant and deep cleaning services
 export const commercialAddons = [
   { 
     id: 1, 
