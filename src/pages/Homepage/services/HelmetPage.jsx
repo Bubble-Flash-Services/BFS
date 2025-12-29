@@ -1,34 +1,34 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const helmetCategories = [
   {
-    name: 'Commuter Helmets',
-    image: '/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg',
-    category: 'commuter',
-    description: 'Basic protection for daily rides',
-    fallbackIcon: '🏍️'
+    name: "Commuter Helmets",
+    image: "/helmet/commuter & midsize/halfhelmet.webp",
+    category: "commuter",
+    description: "Basic protection for daily rides",
+    fallbackIcon: "🏍️",
   },
   {
-    name: 'Mid-Size Helmets ',
-    image: '/helmet/midsize/midsize2.jpg',
-    category: 'midsize',
-    description: 'Standard full face protection',
-    fallbackIcon: '🛡️'
+    name: "Mid-Size Helmets ",
+    image: "/helmet/midsize/midsize.webp",
+    category: "midsize",
+    description: "Standard full face protection",
+    fallbackIcon: "🛡️",
   },
   {
-    name: 'Sports / Touring Helmets ',
-    image: '/helmet/sports/DeWatermark.ai_1755851442324.jpeg',
-    category: 'sports-touring',
-    description: 'Premium helmets for sports and touring',
-    fallbackIcon: '🏁'
+    name: "Sports / Touring Helmets ",
+    image: "/helmet/sports/sports1.png",
+    category: "sports-touring",
+    description: "Premium helmets for sports and touring",
+    fallbackIcon: "🏁",
   },
   {
-    name: 'Premium Helmets',
-    image: '/helmet/helmethome.png',
-    category: 'premium',
-    description: 'Luxury and high-end helmets',
-    fallbackIcon: '⭐'
+    name: "Premium Helmets",
+    image: "/helmet/helmethome.png",
+    category: "premium",
+    description: "Luxury and high-end helmets",
+    fallbackIcon: "⭐",
   },
 ];
 
@@ -43,11 +43,11 @@ export default function HelmetPage() {
 
   // Check for booking data from HeroSection
   useEffect(() => {
-    const storedBooking = localStorage.getItem('pendingBooking');
+    const storedBooking = localStorage.getItem("pendingBooking");
     if (storedBooking) {
       const data = JSON.parse(storedBooking);
       // Only show booking data if it's for helmet deals and within 10 minutes
-      if (data.category === 'Helmet' && (Date.now() - data.timestamp) < 600000) {
+      if (data.category === "Helmet" && Date.now() - data.timestamp < 600000) {
         setBookingData(data);
       }
     }
@@ -55,7 +55,7 @@ export default function HelmetPage() {
 
   const clearBookingData = () => {
     setBookingData(null);
-    localStorage.removeItem('pendingBooking');
+    localStorage.removeItem("pendingBooking");
   };
 
   const handleCategoryClick = (category) => {
@@ -66,17 +66,17 @@ export default function HelmetPage() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Auto-slide functionality
   useEffect(() => {
     if (!isMobile) return;
-    
+
     const autoSlide = setInterval(() => {
       setCurrentSlide((prev) => {
         const nextSlide = prev + 1;
@@ -101,11 +101,11 @@ export default function HelmetPage() {
   const handleTouchEnd = (e) => {
     if (!isMobile || !isDragging.current) return;
     isDragging.current = false;
-    
+
     const endX = e.changedTouches[0].pageX;
     const diffX = startX.current - endX;
     const threshold = 50; // Minimum swipe distance
-    
+
     if (Math.abs(diffX) > threshold) {
       if (diffX > 0 && currentSlide < helmetCategories.length - 1) {
         // Swipe left - go to next slide
@@ -125,7 +125,6 @@ export default function HelmetPage() {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Booking Data Banner */}
         {bookingData && (
           <div className="mb-8 bg-orange-50 border border-orange-200 rounded-lg p-6">
@@ -136,20 +135,31 @@ export default function HelmetPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium text-orange-700">Service:</span> {bookingData.category}
+                    <span className="font-medium text-orange-700">
+                      Service:
+                    </span>{" "}
+                    {bookingData.category}
                   </div>
                   <div>
-                    <span className="font-medium text-orange-700">Pickup Date:</span> {new Date(bookingData.pickupDate).toLocaleDateString()}
+                    <span className="font-medium text-orange-700">
+                      Pickup Date:
+                    </span>{" "}
+                    {new Date(bookingData.pickupDate).toLocaleDateString()}
                   </div>
                   <div>
-                    <span className="font-medium text-orange-700">Phone:</span> {bookingData.phoneNumber}
+                    <span className="font-medium text-orange-700">Phone:</span>{" "}
+                    {bookingData.phoneNumber}
                   </div>
                   <div>
-                    <span className="font-medium text-orange-700">Location:</span> {bookingData.address.substring(0, 50)}...
+                    <span className="font-medium text-orange-700">
+                      Location:
+                    </span>{" "}
+                    {bookingData.address.substring(0, 50)}...
                   </div>
                 </div>
                 <p className="text-orange-600 text-sm mt-2">
-                  Please select your helmet category below to complete your booking.
+                  Please select your helmet category below to complete your
+                  booking.
                 </p>
               </div>
               <button
@@ -161,34 +171,41 @@ export default function HelmetPage() {
             </div>
           </div>
         )}
-        
-        <h2 className="text-3xl font-bold text-gray-800 mb-12">Select by helmets</h2>
-        
+
+        <h2 className="text-3xl font-bold text-gray-800 mb-12">
+          Select by helmets
+        </h2>
+
         {/* Desktop Grid Layout */}
-        <div className="hidden md:grid md:grid-cols-3 gap-8">
+        <div className="hidden md:grid md:grid-cols-4 gap-8">
           {helmetCategories.map((cat) => (
-            <div 
-              key={cat.name} 
+            <div
+              key={cat.name}
               className="group cursor-pointer transition-transform hover:scale-105"
               onClick={() => handleCategoryClick(cat.category)}
             >
               <div className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow border border-gray-100">
                 <div className="aspect-w-16 aspect-h-12 bg-gradient-to-br from-orange-50 to-yellow-50">
-                  <img 
-                    src={cat.image} 
-                    alt={cat.name} 
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
                     className="w-full h-48 object-contain mx-auto p-4"
                     onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
+                      e.target.style.display = "none";
+                      e.target.nextSibling.style.display = "flex";
                     }}
                   />
-                  <div className="w-full h-48 flex items-center justify-center text-6xl" style={{display: 'none'}}>
+                  <div
+                    className="w-full h-48 flex items-center justify-center text-6xl"
+                    style={{ display: "none" }}
+                  >
                     {cat.fallbackIcon}
                   </div>
                 </div>
                 <div className="p-6 text-center">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">{cat.name}</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                    {cat.name}
+                  </h3>
                   <p className="text-sm text-gray-600">{cat.description}</p>
                 </div>
               </div>
@@ -209,31 +226,33 @@ export default function HelmetPage() {
             onTouchEnd={handleTouchEnd}
           >
             {helmetCategories.map((cat, index) => (
-              <div
-                key={cat.name}
-                className="flex-shrink-0 w-full px-4"
-              >
+              <div key={cat.name} className="flex-shrink-0 w-full px-4">
                 <div className="group cursor-pointer transition-transform active:scale-95">
-                  <div 
+                  <div
                     className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
                     onClick={() => handleCategoryClick(cat.category)}
                   >
                     <div className="aspect-w-16 aspect-h-12 bg-gradient-to-br from-orange-50 to-yellow-50">
-                      <img 
-                        src={cat.image} 
-                        alt={cat.name} 
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
                         className="w-full h-48 object-contain mx-auto p-4"
                         onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "flex";
                         }}
                       />
-                      <div className="w-full h-48 flex items-center justify-center text-6xl" style={{display: 'none'}}>
+                      <div
+                        className="w-full h-48 flex items-center justify-center text-6xl"
+                        style={{ display: "none" }}
+                      >
                         {cat.fallbackIcon}
                       </div>
                     </div>
                     <div className="p-6 text-center">
-                      <h3 className="text-xl font-semibold text-gray-800 mb-2">{cat.name}</h3>
+                      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                        {cat.name}
+                      </h3>
                       <p className="text-sm text-gray-600">{cat.description}</p>
                     </div>
                   </div>
@@ -248,7 +267,7 @@ export default function HelmetPage() {
               <button
                 key={index}
                 className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentSlide ? 'bg-orange-500' : 'bg-gray-300'
+                  index === currentSlide ? "bg-orange-500" : "bg-gray-300"
                 }`}
                 onClick={() => goToSlide(index)}
               />
