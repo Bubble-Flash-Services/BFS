@@ -6,14 +6,10 @@ export default function AboutPage() {
       <div className="max-w-6xl mx-auto pt-12 px-4">
         {/* Top section: Image + About */}
         <div className="flex flex-col md:flex-row gap-8 items-start">
-          <video
-            src="/car/home.mp4"
-            
+          <img
+            src="/bfs car image.png"
+            alt="About Bubble Flash Services"
             className="rounded-xl w-full md:w-[350px] h-[260px] object-cover"
-            controls
-            autoPlay
-            loop
-            muted
           />
           <div className="flex-1">
             <h2 className="text-2xl font-bold text-blue-500 mb-2">About us</h2>

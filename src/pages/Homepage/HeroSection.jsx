@@ -181,17 +181,22 @@ function getCategoriesForService(service) {
         {
           value: "commuter",
           label: "Commuter Helmets",
-          icon: "/helmet/commuter & midsize/aiease_1755850674727.jpg",
+          icon: "/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg",
         },
         {
           value: "midsize",
           label: "Mid-Size Helmets",
-          icon: "/helmet/midsize/midsize1.jpg",
+          icon: "/helmet/midsize/midsize2.jpg",
         },
         {
           value: "sports-touring",
           label: "Sports / Touring Helmets",
-          icon: "/helmet/sports/aiease_1755850623823.jpg",
+          icon: "/helmet/sports/DeWatermark.ai_1755851442324.jpeg",
+        },
+        {
+          value: "premium",
+          label: "Premium Helmets",
+          icon: "/helmet/helmethome.png",
         },
       ];
     default:
@@ -1073,17 +1078,21 @@ export default function HeroSection() {
               </motion.div>
             </motion.div>
 
-            {/* Hero Image - Right Side */}
+            {/* Hero Video - Right Side */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="flex-1 max-w-lg hidden lg:block"
+              className="flex-1 max-w-lg w-full"
             >
-              <img
-                src="/bfs car image.png"
-                alt="Professional Car Cleaning Service"
+              <video
+                src="/car/home.mp4"
                 className="rounded-3xl shadow-2xl w-full h-auto object-cover"
+                controls
+                autoPlay
+                loop
+                muted
+                playsInline
               />
             </motion.div>
           </div>
@@ -1110,17 +1119,14 @@ export default function HeroSection() {
                 transition={{ duration: 0.8 }}
                 className="flex flex-col md:flex-row gap-8 items-start"
               >
-                <motion.video
+                <motion.img
                   initial={{ opacity: 0, x: -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2, duration: 0.8 }}
-                  src="/car/home.mp4"
+                  src="/bfs car image.png"
+                  alt="About Bubble Flash Services"
                   className="rounded-xl w-full md:w-[350px] h-[260px] object-cover shadow-lg"
-                  controls
-                  autoPlay
-                  loop
-                  muted
                 />
                 <motion.div
                   initial={{ opacity: 0, x: 30 }}
