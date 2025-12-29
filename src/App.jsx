@@ -65,6 +65,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import EmployeeLogin from "./pages/employee/EmployeeLogin";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import ProtectedEmployeeRoute from "./components/ProtectedEmployeeRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { CartProviderForGreenandClean } from "./context/CartContext";
 import GreenandClean from "./pages/green&clean/Green&Clean";
 import ServicePage from "./pages/green&clean/ServicePage";
@@ -99,8 +100,8 @@ function AppContent() {
               </>
             }
           />
-          <Route path="/cars" element={<CarsPage />} />
-          <Route path="/bikes" element={<BikesPage />} />
+          <Route path="/cars" element={<ProtectedRoute><CarsPage /></ProtectedRoute>} />
+          <Route path="/bikes" element={<ProtectedRoute><BikesPage /></ProtectedRoute>} />
           <Route
             path="/laundry"
             element={
@@ -111,11 +112,11 @@ function AppContent() {
               <LaundryPage />
             }
           />
-          <Route path="/helmets" element={<HelmetPage />} />
-          <Route path="/car-wash-deals/:category" element={<CarWashDeals />} />
+          <Route path="/helmets" element={<ProtectedRoute><HelmetPage /></ProtectedRoute>} />
+          <Route path="/car-wash-deals/:category" element={<ProtectedRoute><CarWashDeals /></ProtectedRoute>} />
           <Route
             path="/bike-wash-deals/:category"
-            element={<BikeWashDeals />}
+            element={<ProtectedRoute><BikeWashDeals /></ProtectedRoute>}
           />
           {/* <Route
             path="/laundry-deals/:category"
@@ -127,28 +128,28 @@ function AppContent() {
             }
           /> */}
 
-          <Route path="/laundry-deals/:category" element={<LaundryDeals />} />
+          <Route path="/laundry-deals/:category" element={<ProtectedRoute><LaundryDeals /></ProtectedRoute>} />
           <Route
             path="/helmet-wash-deals/:category"
-            element={<HelmetWashDeals />}
+            element={<ProtectedRoute><HelmetWashDeals /></ProtectedRoute>}
           />
           <Route
             path="/services/puc-certificate"
-            element={<PUCCertificatePage />}
+            element={<ProtectedRoute><PUCCertificatePage /></ProtectedRoute>}
           />
           <Route
             path="/services/insurance-assistance"
-            element={<InsuranceAssistancePage />}
+            element={<ProtectedRoute><InsuranceAssistancePage /></ProtectedRoute>}
           />
           <Route
             path="/services/vehicle-checkup"
-            element={<VehicleCheckupPage />}
+            element={<ProtectedRoute><VehicleCheckupPage /></ProtectedRoute>}
           />
           <Route
             path="/vehicle-accessories"
-            element={<VehicleAccessoriesPage />}
+            element={<ProtectedRoute><VehicleAccessoriesPage /></ProtectedRoute>}
           />
-          <Route path="/cart" element={<CartPage />} />
+          <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services-browser" element={<ServicesBrowser />} />
           <Route path="/about" element={<AboutPage />} />
@@ -158,14 +159,14 @@ function AppContent() {
           <Route path="/security" element={<Security />} />
           <Route path="/shipping" element={<Shipping />} />
           <Route path="/refund" element={<Refund />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/orders" element={<OrdersPage />} />
-          <Route path="/addresses" element={<AddressesPage />} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
+          <Route path="/addresses" element={<ProtectedRoute><AddressesPage /></ProtectedRoute>} />
           <Route path="/google-success" element={<GoogleSuccess />} />
           <Route path="/impersonate" element={<Impersonate />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/team" element={<TeamPage />} />
-          <Route path="/green&clean" element={<GreenCleanCart />} />
+          <Route path="/green&clean" element={<ProtectedRoute><GreenCleanCart /></ProtectedRoute>} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin"
@@ -179,18 +180,18 @@ function AppContent() {
               </ProtectedAdminRoute>
             }
           />
-          <Route path="green" element={<GreenandClean />} />
-          <Route path="/services/:categoryName" element={<ServicePage />} />
+          <Route path="green" element={<ProtectedRoute><GreenandClean /></ProtectedRoute>} />
+          <Route path="/services/:categoryName" element={<ProtectedRoute><ServicePage /></ProtectedRoute>} />
           <Route
             path="/services/category/:categoryName"
-            element={<ServiceByCategory />}
+            element={<ProtectedRoute><ServiceByCategory /></ProtectedRoute>}
           />
-          <Route path="/movers-packers" element={<MoversPackersPage />} />
-          <Route path="/key-services" element={<KeyServicesPage />} />
-          <Route path="/painting-services" element={<PaintingServicesPage />} />
-          <Route path="/autofix" element={<AutoFixPage />} />
-          <Route path="/flower-services" element={<FlowerServicesPage />} />
-          <Route path="/mobilefix" element={<MobileFixPage />} />
+          <Route path="/movers-packers" element={<ProtectedRoute><MoversPackersPage /></ProtectedRoute>} />
+          <Route path="/key-services" element={<ProtectedRoute><KeyServicesPage /></ProtectedRoute>} />
+          <Route path="/painting-services" element={<ProtectedRoute><PaintingServicesPage /></ProtectedRoute>} />
+          <Route path="/autofix" element={<ProtectedRoute><AutoFixPage /></ProtectedRoute>} />
+          <Route path="/flower-services" element={<ProtectedRoute><FlowerServicesPage /></ProtectedRoute>} />
+          <Route path="/mobilefix" element={<ProtectedRoute><MobileFixPage /></ProtectedRoute>} />
           <Route
             path="/admin/users"
             element={

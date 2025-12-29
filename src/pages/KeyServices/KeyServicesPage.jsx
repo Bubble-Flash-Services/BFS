@@ -185,6 +185,50 @@ const KeyServicesPage = () => {
     },
   };
 
+  // Accessories/Add-ons for key services
+  const accessories = [
+    { 
+      id: "spare-key",
+      name: "Spare Key (Extra Copy)", 
+      price: 150,
+      icon: "🔑",
+      description: "Get an additional key copy for backup",
+      category: "house-apartment"
+    },
+    { 
+      id: "lock-cleaning",
+      name: "Lock Cleaning & Maintenance", 
+      price: 200,
+      icon: "🧹",
+      description: "Clean and lubricate your locks",
+      category: "all"
+    },
+    { 
+      id: "door-stopper",
+      name: "Door Stopper Installation", 
+      price: 100,
+      icon: "🚪",
+      description: "Install quality door stopper",
+      category: "house-apartment"
+    },
+    { 
+      id: "key-holder",
+      name: "Decorative Key Holder", 
+      price: 250,
+      icon: "🎨",
+      description: "Stylish wall-mounted key holder",
+      category: "all"
+    },
+    { 
+      id: "smart-lock",
+      name: "Smart Lock Consultation", 
+      price: 500,
+      icon: "📱",
+      description: "Expert advice on upgrading to smart locks",
+      category: "digital-smart"
+    },
+  ];
+
   useEffect(() => {
     if (serviceType && specificService) {
       calculatePriceQuote();
@@ -651,6 +695,77 @@ const KeyServicesPage = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* Accessories Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-12 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-8"
+        >
+          <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
+            🛠️ Add-On Services & Accessories
+          </h2>
+          <p className="text-center text-gray-600 mb-8">
+            Enhance your key service with these optional add-ons
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {accessories.map((accessory) => (
+              <motion.div
+                key={accessory.id}
+                whileHover={{ scale: 1.03 }}
+                className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all border-2 border-gray-100 hover:border-blue-300"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl">{accessory.icon}</div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">
+                      {accessory.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      {accessory.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-blue-600">
+                        ₹{accessory.price}
+                      </span>
+                      <button
+                        onClick={() => {
+                          if (!user) {
+                            toast.error("Please sign in to add accessories");
+                            return;
+                          }
+                          addToCart({
+                            id: `accessory-${accessory.id}-${Date.now()}`,
+                            type: "key-accessory",
+                            name: accessory.name,
+                            price: accessory.price,
+                            quantity: 1,
+                            image: "/services/keys/key-duplication.jpg",
+                            serviceName: "key",
+                            category: "Key Service Accessory",
+                          });
+                          toast.success(`${accessory.name} added to cart!`, {
+                            icon: accessory.icon,
+                          });
+                        }}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-sm font-medium"
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-6 p-4 bg-white rounded-lg border-2 border-blue-200">
+            <p className="text-sm text-gray-700 text-center">
+              <strong>💡 Tip:</strong> Add accessories to your cart separately or along with your key service booking for convenience.
+            </p>
+          </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
