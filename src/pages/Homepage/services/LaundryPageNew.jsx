@@ -356,31 +356,49 @@ export default function LaundryPage() {
   const getTotalPrice = () => {
     let total = 0;
     Object.entries(selectedItems).forEach(([itemKey, quantity]) => {
-      const [categoryId, subcategoryId, itemIndex, service] = itemKey.split('-');
+      // Parse the itemKey - format: categoryId-subcategoryId-itemIndex-serviceType
+      // Note: subcategoryId and serviceType can contain hyphens, so we need to be careful
+      const parts = itemKey.split('-');
+      
+      // The last part is always the service type
+      const serviceIndex = parts.length - 1;
+      const service = parts[serviceIndex];
+      
+      // The second-to-last part is the item index
+      const itemIndexStr = parts[serviceIndex - 1];
+      const itemIndex = parseInt(itemIndexStr);
+      
+      // The first part is the category ID
+      const categoryId = parts[0];
+      
+      // Everything in between is the subcategory ID (may contain hyphens)
+      const subcategoryId = parts.slice(1, serviceIndex - 1).join('-');
+      
       const category = categoryData[categoryId];
       if (category) {
         const subcategory = category.subcategories.find(s => s.id === subcategoryId);
         if (subcategory && subcategory.items) {
-          const item = subcategory.items[parseInt(itemIndex)];
+          const item = subcategory.items[itemIndex];
           if (item) {
             let itemPrice = 0;
             if (service === 'washFold' && item.washFold) {
-              itemPrice = item.washFold;
+              itemPrice = parseFloat(item.washFold) || 0;
             } else if (service === 'washIron' && item.washIron) {
-              itemPrice = item.washIron;
+              itemPrice = parseFloat(item.washIron) || 0;
             } else if (service === 'washOnly' && item.washOnly) {
-              itemPrice = item.washOnly;
+              itemPrice = parseFloat(item.washOnly) || 0;
             } else if (service === 'price' && item.price) {
               const priceStr = String(item.price).replace('+', '');
               itemPrice = parseFloat(priceStr) || 0;
-            } else if (item.price) {
+            } else if (item.price && !item.washFold && !item.washIron && !item.washOnly) {
+              // For items that only have a price field
               const priceStr = String(item.price).replace('+', '');
               itemPrice = parseFloat(priceStr) || 0;
             }
             total += itemPrice * quantity;
           }
         } else if (subcategory && subcategory.brands) {
-          const brand = subcategory.brands[parseInt(itemIndex)];
+          const brand = subcategory.brands[itemIndex];
           if (brand) {
             const priceStr = String(brand.price).replace('+', '');
             const itemPrice = parseFloat(priceStr) || 0;
