@@ -1357,80 +1357,366 @@ const dryCleanItems = {
   ]
 };
 
+// Reorganized Shoe Clean Items with Tiers
 const shoeCleanItems = {
-  shoes: [
+  dailyWear: [
     {
       id: 901,
-      name: 'Boots',
-      image: '/laundry/shoe clean/boots.jpg',
-      price: 120,
-      description: 'All types of boots'
+      name: 'Sandals',
+      image: '/laundry/shoe clean/Normal Shoes.jpg',
+      price: 70,
+      description: 'Casual and formal sandals',
+      tier: 'Daily Wear / Regulars',
+      icon: '🩴'
     },
     {
       id: 902,
-      name: 'Normal Shoes',
+      name: 'Slippers',
       image: '/laundry/shoe clean/Normal Shoes.jpg',
-      price: 80,
-      description: 'Regular casual shoes'
+      price: 60,
+      description: 'Indoor and outdoor slippers',
+      tier: 'Daily Wear / Regulars',
+      icon: '🩴'
     },
     {
       id: 903,
-      name: 'Leather Shoes',
-      image: '/laundry/shoe clean/leather shoes.jpg',
-      price: 100,
-      description: 'Formal leather shoes'
+      name: 'Normal Shoes',
+      image: '/laundry/shoe clean/Normal Shoes.jpg',
+      price: 80,
+      description: 'Regular casual shoes',
+      tier: 'Daily Wear / Regulars',
+      icon: '👟'
     },
+  ],
+  premium: [
     {
       id: 904,
       name: 'Sports Shoes',
       image: '/laundry/shoe clean/Sports Shoes.jpg',
       price: 90,
-      description: 'Athletic and sports shoes'
+      description: 'Athletic and sports shoes',
+      tier: 'Premium',
+      icon: '⚽'
     },
     {
       id: 905,
-      name: 'Heels',
-      image: '/laundry/shoe clean/Heels.jpg',
-      price: 110,
-      description: 'High heels and formal shoes'
-    },
-    {
-      id: 906,
-      name: 'Sandals',
-      image: '/laundry/shoe clean/Normal Shoes.jpg',
-      price: 70,
-      description: 'Casual and formal sandals'
-    },
-    {
-      id: 907,
-      name: 'Slippers',
-      image: '/laundry/shoe clean/Normal Shoes.jpg',
-      price: 60,
-      description: 'Indoor and outdoor slippers'
-    },
-    {
-      id: 908,
       name: 'Sneakers',
       image: '/laundry/shoe clean/Sports Shoes.jpg',
       price: 95,
-      description: 'Canvas and fabric sneakers'
+      description: 'Canvas and fabric sneakers',
+      tier: 'Premium',
+      icon: '👟'
+    },
+    {
+      id: 906,
+      name: 'Running Shoes',
+      image: '/laundry/shoe clean/Sports Shoes.jpg',
+      price: 100,
+      description: 'Performance running shoes',
+      tier: 'Premium',
+      icon: '🏃'
+    },
+  ],
+  luxury: [
+    {
+      id: 907,
+      name: 'White Shoes',
+      image: '/laundry/shoe clean/leather shoes.jpg',
+      price: 110,
+      description: 'Premium white shoes and sneakers',
+      tier: 'Luxury',
+      icon: '✨'
+    },
+    {
+      id: 908,
+      name: 'Leather Shoes',
+      image: '/laundry/shoe clean/leather shoes.jpg',
+      price: 100,
+      description: 'Formal leather shoes',
+      tier: 'Luxury',
+      icon: '👞'
     },
     {
       id: 909,
-      name: 'Loafers',
-      image: '/laundry/shoe clean/leather shoes.jpg',
-      price: 105,
-      description: 'Casual and formal loafers'
+      name: 'Heels',
+      image: '/laundry/shoe clean/Heels.jpg',
+      price: 110,
+      description: 'High heels and formal shoes',
+      tier: 'Luxury',
+      icon: '👠'
     },
     {
       id: 910,
-      name: 'Formal Shoes',
+      name: 'Designer Shoes',
       image: '/laundry/shoe clean/leather shoes.jpg',
-      price: 115,
-      description: 'Office and occasion wear'
+      price: 150,
+      description: 'Premium designer footwear',
+      tier: 'Luxury',
+      icon: '💎'
+    },
+  ],
+  elite: [
+    {
+      id: 911,
+      name: 'Elite Boots',
+      image: '/laundry/shoe clean/boots.jpg',
+      price: 200,
+      description: 'Premium boots with complete care',
+      tier: 'Elite',
+      icon: '🥾',
+      includes: 'Spray kit + Premium socks'
+    },
+    {
+      id: 912,
+      name: 'Elite Formal',
+      image: '/laundry/shoe clean/leather shoes.jpg',
+      price: 180,
+      description: 'Premium formal shoes with elite service',
+      tier: 'Elite',
+      icon: '👔',
+      includes: 'Spray kit + Premium socks'
+    },
+    {
+      id: 913,
+      name: 'Elite Loafers',
+      image: '/laundry/shoe clean/leather shoes.jpg',
+      price: 170,
+      description: 'Premium loafers with complete care',
+      tier: 'Elite',
+      icon: '🎩',
+      includes: 'Spray kit + Premium socks'
     },
   ]
 };
+
+// Saree Items with Different Service Tiers
+const sareeItems = {
+  regularWash: [
+    {
+      id: 1101,
+      name: 'Cotton Saree',
+      image: '/laundry/dry clean/saree plain.jpg',
+      price: 80,
+      description: 'Regular wash for everyday cotton sarees',
+      tier: 'Regular Wash',
+      icon: '👗'
+    },
+    {
+      id: 1102,
+      name: 'Synthetic Saree',
+      image: '/laundry/dry clean/saree plain.jpg',
+      price: 70,
+      description: 'Regular wash for synthetic sarees',
+      tier: 'Regular Wash',
+      icon: '👗'
+    },
+  ],
+  luxuryWash: [
+    {
+      id: 1103,
+      name: 'Silk Saree',
+      image: '/laundry/dry clean/saree silk.jpg',
+      price: 200,
+      description: 'Luxury care for pure silk sarees',
+      tier: 'Luxury Wash',
+      icon: '✨'
+    },
+    {
+      id: 1104,
+      name: 'Designer Saree',
+      image: '/laundry/dry clean/saree designer.jpg',
+      price: 180,
+      description: 'Luxury care for designer sarees',
+      tier: 'Luxury Wash',
+      icon: '💎'
+    },
+    {
+      id: 1105,
+      name: 'Heavy Work Saree',
+      image: '/laundry/dry clean/saree designer heavy.jpg',
+      price: 300,
+      description: 'Luxury care for heavily embroidered sarees',
+      tier: 'Luxury Wash',
+      icon: '👑'
+    },
+  ],
+  personalizedCare: [
+    {
+      id: 1106,
+      name: 'Bridal Saree',
+      image: '/laundry/dry clean/saree designer heavy.jpg',
+      price: 500,
+      description: 'Personalized care for bridal sarees',
+      tier: 'Personalized Care',
+      icon: '💍',
+      includes: 'Hand wash + Special packaging + Photo documentation'
+    },
+    {
+      id: 1107,
+      name: 'Kanjivaram Saree',
+      image: '/laundry/dry clean/saree silk.jpg',
+      price: 400,
+      description: 'Personalized care for traditional Kanjivaram silk',
+      tier: 'Personalized Care',
+      icon: '🪷',
+      includes: 'Hand wash + Special packaging + Photo documentation'
+    },
+    {
+      id: 1108,
+      name: 'Heirloom Saree',
+      image: '/laundry/dry clean/saree designer.jpg',
+      price: 600,
+      description: 'Personalized care for precious heirloom sarees',
+      tier: 'Personalized Care',
+      icon: '🏛️',
+      includes: 'Hand wash + Special packaging + Photo documentation'
+    },
+  ]
+};
+
+// Blazers, Suits, and Sherwanis with Service Tiers
+const formalWearItems = {
+  regular: [
+    {
+      id: 1201,
+      name: 'Blazer - Regular',
+      image: '/laundry/dry clean/blazer suit 1 piece.png',
+      price: 160,
+      description: 'Standard dry cleaning for blazers',
+      tier: 'Regular',
+      icon: '🧥'
+    },
+    {
+      id: 1202,
+      name: '2-Piece Suit',
+      image: '/laundry/dry clean/blazer suit 2 piece.jpg',
+      price: 280,
+      description: 'Standard dry cleaning for 2-piece suits',
+      tier: 'Regular',
+      icon: '👔'
+    },
+    {
+      id: 1203,
+      name: 'Sherwani - Regular',
+      image: '/laundry/dry clean/sherwani top.jpg',
+      price: 180,
+      description: 'Standard cleaning for sherwanis',
+      tier: 'Regular',
+      icon: '🤵'
+    },
+  ],
+  premium: [
+    {
+      id: 1204,
+      name: 'Premium Blazer',
+      image: '/laundry/dry clean/blazer suit 1 piece.png',
+      price: 220,
+      description: 'Premium care with steam press',
+      tier: 'Premium',
+      icon: '✨'
+    },
+    {
+      id: 1205,
+      name: 'Premium 3-Piece Suit',
+      image: '/laundry/dry clean/blazer suit 3 piece.jpg',
+      price: 380,
+      description: 'Premium care for 3-piece suits',
+      tier: 'Premium',
+      icon: '💼'
+    },
+    {
+      id: 1206,
+      name: 'Premium Sherwani',
+      image: '/laundry/dry clean/sherwani top.jpg',
+      price: 250,
+      description: 'Premium care with special attention',
+      tier: 'Premium',
+      icon: '👑'
+    },
+  ],
+  elite: [
+    {
+      id: 1207,
+      name: 'Elite Blazer',
+      image: '/laundry/dry clean/blazer suit 1 piece.png',
+      price: 300,
+      description: 'Elite service with special perks',
+      tier: 'Elite',
+      icon: '💎',
+      includes: '10% off alterations + Free perfume',
+      discount: '10% off alterations'
+    },
+    {
+      id: 1208,
+      name: 'Elite Designer Suit',
+      image: '/laundry/dry clean/blazer suit 3 piece.jpg',
+      price: 500,
+      description: 'Elite care for designer suits',
+      tier: 'Elite',
+      icon: '🎩',
+      includes: '10% off alterations + Free perfume',
+      discount: '10% off alterations'
+    },
+    {
+      id: 1209,
+      name: 'Elite Sherwani',
+      image: '/laundry/dry clean/sherwani top.jpg',
+      price: 400,
+      description: 'Elite care for premium sherwanis',
+      tier: 'Elite',
+      icon: '🔱',
+      includes: '10% off alterations + Free perfume',
+      discount: '10% off alterations'
+    },
+  ]
+};
+
+// Stain Removal Items (with variable pricing)
+const stainRemovalItems = [
+  {
+    id: 1301,
+    name: 'Light Stain Removal',
+    image: '/laundry/wash & fold/top waer.jpg',
+    basePrice: 50,
+    description: 'For fresh or light stains (coffee, tea, food)',
+    tier: 'Light',
+    icon: '🧼',
+    requiresPhoto: true
+  },
+  {
+    id: 1302,
+    name: 'Medium Stain Removal',
+    image: '/laundry/wash & fold/top waer.jpg',
+    basePrice: 100,
+    description: 'For set-in stains (ink, wine, grease)',
+    tier: 'Medium',
+    icon: '💧',
+    requiresPhoto: true
+  },
+  {
+    id: 1303,
+    name: 'Heavy Stain Removal',
+    image: '/laundry/wash & fold/top waer.jpg',
+    basePrice: 150,
+    description: 'For stubborn or old stains',
+    tier: 'Heavy',
+    icon: '🔬',
+    requiresPhoto: true,
+    requiresVideo: true
+  },
+  {
+    id: 1304,
+    name: 'Specialty Stain Treatment',
+    image: '/laundry/wash & fold/top waer.jpg',
+    basePrice: 200,
+    description: 'For delicate fabrics or complex stains',
+    tier: 'Specialty',
+    icon: '⚗️',
+    requiresPhoto: true,
+    requiresVideo: true,
+    note: 'Price varies based on fabric and stain type'
+  },
+];
 
 // Detergent options for wash services
 const detergentOptions = [
@@ -1465,9 +1751,15 @@ const addOns = {
     },
     {
       id: 'addon-shoe-4',
-      name: 'Fabric Softener',
-      price: 25,
-      description: 'Extra soft finish'
+      name: 'Waterproof Spray',
+      price: 60,
+      description: 'Water and stain protection'
+    },
+    {
+      id: 'addon-shoe-5',
+      name: 'Premium Socks',
+      price: 100,
+      description: 'High-quality premium socks (Elite package included)'
     },
   ],
   washFold: [
@@ -1528,6 +1820,78 @@ const addOns = {
       name: 'Perfume Infusion',
       price: 40,
       description: 'Luxury fragrance'
+    },
+  ],
+  sarees: [
+    {
+      id: 'addon-saree-1',
+      name: 'Special Packaging',
+      price: 50,
+      description: 'Premium gift-ready packaging'
+    },
+    {
+      id: 'addon-saree-2',
+      name: 'Photo Documentation',
+      price: 30,
+      description: 'Before and after photos'
+    },
+    {
+      id: 'addon-saree-3',
+      name: 'Pleat Setting',
+      price: 80,
+      description: 'Traditional pleat arrangement and setting'
+    },
+    {
+      id: 'addon-saree-4',
+      name: 'Border Restoration',
+      price: 100,
+      description: 'Special care for damaged borders'
+    },
+  ],
+  formalWear: [
+    {
+      id: 'addon-formal-1',
+      name: 'Premium Perfume',
+      price: 60,
+      description: 'Luxury fragrance infusion (Included in Elite)'
+    },
+    {
+      id: 'addon-formal-2',
+      name: 'Alterations Service',
+      price: 200,
+      description: '10% discount applied for Elite package'
+    },
+    {
+      id: 'addon-formal-3',
+      name: 'Steam Press',
+      price: 50,
+      description: 'Professional steam pressing'
+    },
+    {
+      id: 'addon-formal-4',
+      name: 'Hanger Packaging',
+      price: 40,
+      description: 'Premium hanger with garment bag'
+    },
+  ],
+  stainRemoval: [
+    {
+      id: 'addon-stain-1',
+      name: 'Express Service',
+      price: 100,
+      description: '24-hour service'
+    },
+    {
+      id: 'addon-stain-2',
+      name: 'Fabric Protection',
+      price: 80,
+      description: 'Post-treatment protection spray'
+    },
+    {
+      id: 'addon-stain-3',
+      name: 'Color Restoration',
+      price: 120,
+      description: 'Restore faded colors'
     },
   ],
 };
@@ -1988,8 +2352,9 @@ export default function LaundryPage() {
               { id: 'dry-clean', label: 'Dry Cleaning', icon: '✨' },
               { id: 'sarees-rolling', label: 'Sarees & Rolling', icon: '🥻' },
               { id: 'shoe-clean', label: 'Shoe Cleaning', icon: '👟' },
+              { id: 'stain-removal', label: 'Stain Removal', icon: '🧼' },
               { id: 'kids-clothes', label: 'Kids Clothes', icon: '👶' },
-              { id: 'blazers-coats', label: 'Blazers & Coats', icon: '🧥' },
+              { id: 'blazers-coats', label: 'Blazers & Suits', icon: '🧥' },
               { id: 'winter-wear', label: 'Winter Wear', icon: '❄️' },
               { id: 'home-linen', label: 'Home Linen', icon: '🛏️' }
             ].map((category) => (
@@ -3427,14 +3792,15 @@ export default function LaundryPage() {
         {/* Shoe Clean Category Content */}
         {activeCategory === 'shoe-clean' && (
           <div>
-            {/* Shoes Section */}
+            {/* Daily Wear / Regulars Section */}
             <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b border-gray-300 pb-2">
-                Shoes
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-gray-300 pb-2">
+                <span className="mr-2">🩴</span>Daily Wear / Regulars
               </h3>
+              <p className="text-center text-gray-600 mb-6">Sandals, slippers, and everyday shoes</p>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {shoeCleanItems.shoes.map((item) => (
-                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                {shoeCleanItems.dailyWear.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
                     <div className="aspect-square bg-gray-100 p-4">
                       <img
                         src={item.image}
@@ -3443,10 +3809,70 @@ export default function LaundryPage() {
                       />
                     </div>
                     <div className="p-4">
-                      <h3 className="font-medium text-gray-800 text-sm mb-1">{item.name}</h3>
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
                       <p className="text-xs text-gray-500 mb-2">{item.description}</p>
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium text-gray-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-blue-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Premium Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-purple-300 pb-2">
+                <span className="mr-2">⚽</span>Premium
+              </h3>
+              <p className="text-center text-gray-600 mb-6">Sports shoes and premium footwear</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {shoeCleanItems.premium.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow border-2 border-purple-100">
+                    <div className="aspect-square bg-gradient-to-br from-purple-50 to-white p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-purple-700">₹{item.price}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         {getItemQuantity(item.id) === 0 ? (
@@ -3468,6 +3894,126 @@ export default function LaundryPage() {
                             <button
                               onClick={() => addToBasket(item)}
                               className="bg-purple-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Luxury Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-yellow-300 pb-2">
+                <span className="mr-2">✨</span>Luxury
+              </h3>
+              <p className="text-center text-gray-600 mb-6">White shoes, designer footwear, and luxury items</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {shoeCleanItems.luxury.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow border-2 border-yellow-200">
+                    <div className="aspect-square bg-gradient-to-br from-yellow-50 to-white p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-yellow-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-yellow-500 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-yellow-600 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-yellow-500 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-yellow-600 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Elite Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-pink-300 pb-2">
+                <span className="mr-2">💎</span>Elite
+              </h3>
+              <p className="text-center text-gray-600 mb-6">Premium service with spray kit and premium socks included</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {shoeCleanItems.elite.map((item) => (
+                  <div key={item.id} className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow border-2 border-pink-300">
+                    <div className="aspect-square bg-gradient-to-br from-pink-100 to-purple-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      {item.includes && (
+                        <div className="bg-pink-100 border border-pink-200 rounded-md p-2 mb-2">
+                          <p className="text-xs text-pink-800 font-semibold">✨ Includes:</p>
+                          <p className="text-xs text-pink-700">{item.includes}</p>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-pink-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:from-pink-700 hover:to-purple-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-gradient-to-r from-pink-600 to-purple-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:from-pink-700 hover:to-purple-700 transition-colors"
                             >
                               +
                             </button>
@@ -3591,18 +4137,232 @@ export default function LaundryPage() {
 
         {/* Sarees & Rolling Category */}
         {activeCategory === 'sarees-rolling' && (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-center mb-8">
-              <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                🥻 Sarees & Rolling Services
-              </span>
-            </h2>
-            <div className="text-center py-10">
-              <div className="text-6xl mb-4">🔜</div>
-              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
-              <p className="text-gray-600">Premium saree care with hand washing, rolling, and preservation services</p>
-              <p className="text-gray-500 mt-4">From daily cotton sarees to bridal Kanjeevarams - specialized care for all types</p>
+          <div>
+            {/* Regular Wash Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-pink-300 pb-2">
+                <span className="mr-2">👗</span>Regular Wash
+              </h3>
+              <p className="text-center text-gray-600 mb-6">Everyday cotton and synthetic sarees</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {sareeItems.regularWash.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div className="aspect-square bg-gray-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-pink-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-pink-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-pink-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-pink-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-pink-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
+
+            {/* Luxury Wash Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-purple-300 pb-2">
+                <span className="mr-2">✨</span>Luxury Wash
+              </h3>
+              <p className="text-center text-gray-600 mb-6">Silk and designer sarees with special care</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {sareeItems.luxuryWash.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow border-2 border-purple-200">
+                    <div className="aspect-square bg-gradient-to-br from-purple-50 to-pink-50 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-purple-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-purple-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Personalized Care Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-yellow-300 pb-2">
+                <span className="mr-2">💎</span>Personalized Care
+              </h3>
+              <p className="text-center text-gray-600 mb-6">Bridal, heirloom, and premium silk sarees with hand wash and special packaging</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {sareeItems.personalizedCare.map((item) => (
+                  <div key={item.id} className="bg-gradient-to-br from-yellow-50 to-pink-50 rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow border-2 border-yellow-300">
+                    <div className="aspect-square bg-gradient-to-br from-yellow-100 to-pink-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      {item.includes && (
+                        <div className="bg-yellow-100 border border-yellow-200 rounded-md p-2 mb-2">
+                          <p className="text-xs text-yellow-800 font-semibold">✨ Includes:</p>
+                          <p className="text-xs text-yellow-700">{item.includes}</p>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-yellow-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-gradient-to-r from-yellow-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:from-yellow-700 hover:to-pink-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-gradient-to-r from-yellow-600 to-pink-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:from-yellow-700 hover:to-pink-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Add-ons Section for Sarees */}
+            {addOns.sarees && addOns.sarees.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-pink-300 pb-2">
+                  <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Sarees
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your saree care service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.sarees.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-pink-500 bg-pink-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-pink-600 border-pink-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-pink-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -3625,18 +4385,383 @@ export default function LaundryPage() {
 
         {/* Blazers & Coats Category */}
         {activeCategory === 'blazers-coats' && (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-center mb-8">
-              <span className="bg-gradient-to-r from-gray-700 to-blue-600 bg-clip-text text-transparent">
-                🧥 Blazers & Coats Care
-              </span>
-            </h2>
-            <div className="text-center py-10">
-              <div className="text-6xl mb-4">🔜</div>
-              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
-              <p className="text-gray-600">Professional cleaning for formal wear with steam press and shape retention</p>
-              <p className="text-gray-500 mt-4">Delivered on hangers with premium care for both regular and designer brands</p>
+          <div>
+            {/* Regular Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-gray-300 pb-2">
+                <span className="mr-2">🧥</span>Regular
+              </h3>
+              <p className="text-center text-gray-600 mb-6">Standard dry cleaning for blazers, suits, and sherwanis</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {formalWearItems.regular.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div className="aspect-square bg-gray-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-gray-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-gray-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-gray-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
+
+            {/* Premium Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-blue-300 pb-2">
+                <span className="mr-2">✨</span>Premium
+              </h3>
+              <p className="text-center text-gray-600 mb-6">Premium care with steam press and special attention</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {formalWearItems.premium.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow border-2 border-blue-200">
+                    <div className="aspect-square bg-gradient-to-br from-blue-50 to-white p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-blue-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-blue-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Elite Section */}
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b border-purple-300 pb-2">
+                <span className="mr-2">💎</span>Elite
+              </h3>
+              <p className="text-center text-gray-600 mb-6">Elite service with 10% off alterations + free perfume</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {formalWearItems.elite.map((item) => (
+                  <div key={item.id} className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow border-2 border-purple-300">
+                    <div className="aspect-square bg-gradient-to-br from-purple-100 to-indigo-100 p-4">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center mb-2">
+                        <span className="text-xl mr-2">{item.icon}</span>
+                        <h3 className="font-medium text-gray-800 text-sm">{item.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{item.description}</p>
+                      {item.includes && (
+                        <div className="bg-purple-100 border border-purple-200 rounded-md p-2 mb-2">
+                          <p className="text-xs text-purple-800 font-semibold">✨ Includes:</p>
+                          <p className="text-xs text-purple-700">{item.includes}</p>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-purple-700">₹{item.price}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors flex-1"
+                          >
+                            Add
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Add-ons Section for Formal Wear */}
+            {addOns.formalWear && addOns.formalWear.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-indigo-300 pb-2">
+                  <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Formal Wear
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your formal wear service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {addOns.formalWear.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-indigo-500 bg-indigo-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-indigo-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Stain Removal Category */}
+        {activeCategory === 'stain-removal' && (
+          <div>
+            <div className="mb-8 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 shadow-lg">
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
+                <span className="mr-2">🧼</span>Professional Stain Removal Services
+              </h3>
+              <p className="text-center text-gray-600 mb-4">
+                Upload photos/videos of your stained garments for accurate pricing and expert treatment
+              </p>
+              <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-md">
+                <p className="text-sm text-yellow-800">
+                  <strong>Note:</strong> Prices vary based on stain type, fabric, and complexity. Please upload clear photos or videos of the stain for our team to provide an accurate quote.
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {stainRemovalItems.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow border-2 border-orange-200">
+                    <div className="bg-gradient-to-br from-orange-50 to-red-50 p-6">
+                      <div className="text-center mb-4">
+                        <span className="text-5xl">{item.icon}</span>
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-800 text-center mb-2">{item.name}</h3>
+                      <p className="text-sm text-gray-600 text-center mb-4">{item.description}</p>
+                      
+                      {item.requiresPhoto && (
+                        <div className="bg-white rounded-md p-3 mb-3">
+                          <p className="text-xs text-gray-700 font-semibold mb-1">📷 Photo Required</p>
+                          <p className="text-xs text-gray-500">Upload clear images of the stain</p>
+                        </div>
+                      )}
+                      
+                      {item.requiresVideo && (
+                        <div className="bg-white rounded-md p-3 mb-3">
+                          <p className="text-xs text-gray-700 font-semibold mb-1">📹 Video Recommended</p>
+                          <p className="text-xs text-gray-500">For complex stains, video helps us assess better</p>
+                        </div>
+                      )}
+                      
+                      <div className="bg-orange-100 rounded-md p-3 mb-4">
+                        <p className="text-sm font-bold text-orange-800 text-center">Starting from ₹{item.basePrice}</p>
+                        {item.note && (
+                          <p className="text-xs text-orange-700 text-center mt-1">{item.note}</p>
+                        )}
+                      </div>
+                      
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-orange-700 hover:to-red-700 transition-colors flex-1"
+                          >
+                            Request Quote
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-gray-200 text-gray-700 w-10 h-10 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-gradient-to-r from-orange-600 to-red-600 text-white w-10 h-10 rounded-full text-sm font-medium hover:from-orange-700 hover:to-red-700 transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Stain Types Information */}
+            <div className="mb-12 bg-white rounded-xl p-6 shadow-lg">
+              <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Common Stain Types We Handle</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { name: 'Food & Beverage', icon: '🍝', examples: 'Coffee, wine, sauce, oil' },
+                  { name: 'Ink & Dye', icon: '🖊️', examples: 'Pen marks, printer ink, fabric dye' },
+                  { name: 'Organic Stains', icon: '🌿', examples: 'Blood, sweat, grass, mud' },
+                  { name: 'Cosmetic', icon: '💄', examples: 'Makeup, lipstick, nail polish' }
+                ].map((stainType, index) => (
+                  <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-4 border border-gray-200">
+                    <div className="text-3xl mb-2 text-center">{stainType.icon}</div>
+                    <h5 className="font-semibold text-gray-800 text-sm mb-1 text-center">{stainType.name}</h5>
+                    <p className="text-xs text-gray-600 text-center">{stainType.examples}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Add-ons Section for Stain Removal */}
+            {addOns.stainRemoval && addOns.stainRemoval.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-6 border-b-2 border-orange-300 pb-2">
+                  <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                    Premium Add-ons for Stain Removal
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 shadow-lg">
+                  <p className="text-center text-gray-600 mb-6">
+                    ✨ Enhance your stain removal service with these premium add-ons
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {addOns.stainRemoval.map((addon) => (
+                      <div 
+                        key={addon.id} 
+                        className={`relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                          selectedAddons[addon.id] ? 'ring-2 ring-orange-500 bg-orange-50' : ''
+                        }`}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 text-sm">{addon.name}</h4>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedAddons[addon.id] ? 'bg-orange-600 border-orange-600' : 'border-gray-300'
+                            }`}>
+                              {selectedAddons[addon.id] && (
+                                <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">{addon.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-orange-600">₹{addon.price}</span>
+                            <span className="text-xs text-gray-500">
+                              {selectedAddons[addon.id] ? '✓ Selected' : 'Tap to add'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -3675,7 +4800,7 @@ export default function LaundryPage() {
         )}
 
         {/* Placeholder for other categories */}
-        {activeCategory !== 'mens-wash' && activeCategory !== 'womens-wash' && activeCategory !== 'wash-fold' && activeCategory !== 'wash-iron' && activeCategory !== 'ironing' && activeCategory !== 'dry-clean' && activeCategory !== 'shoe-clean' && activeCategory !== 'bedsheet-wash' && activeCategory !== 'sarees-rolling' && activeCategory !== 'kids-clothes' && activeCategory !== 'blazers-coats' && activeCategory !== 'winter-wear' && activeCategory !== 'home-linen' && (
+        {activeCategory !== 'mens-wash' && activeCategory !== 'womens-wash' && activeCategory !== 'wash-fold' && activeCategory !== 'wash-iron' && activeCategory !== 'ironing' && activeCategory !== 'dry-clean' && activeCategory !== 'shoe-clean' && activeCategory !== 'bedsheet-wash' && activeCategory !== 'sarees-rolling' && activeCategory !== 'stain-removal' && activeCategory !== 'kids-clothes' && activeCategory !== 'blazers-coats' && activeCategory !== 'winter-wear' && activeCategory !== 'home-linen' && (
           <div className="text-center py-20">
             <h3 className="text-2xl font-bold text-gray-600 mb-4">Coming Soon</h3>
             <p className="text-gray-500">This service category will be available soon.</p>
