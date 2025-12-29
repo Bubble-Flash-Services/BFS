@@ -300,10 +300,11 @@ const categoryData = {
 };
 
 export default function LaundryPage() {
-  const [selectedCategory, setSelectedCategory] = useState('mens');
+  const [selectedCategory, setSelectedCategory] = useState(null); // Start with no category selected
   const [selectedItems, setSelectedItems] = useState({});
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [adSlide, setAdSlide] = useState(0);
+  const [showItemsPage, setShowItemsPage] = useState(false); // New state for showing items page
   
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -355,28 +356,52 @@ export default function LaundryPage() {
   const getTotalPrice = () => {
     let total = 0;
     Object.entries(selectedItems).forEach(([itemKey, quantity]) => {
-      const [categoryId, subcategoryId, itemIndex, service] = itemKey.split('-');
+      // Parse the itemKey - format: categoryId-subcategoryId-itemIndex-serviceType
+      // Note: subcategoryId and serviceType can contain hyphens, so we need to be careful
+      const parts = itemKey.split('-');
+      
+      // The last part is always the service type
+      const serviceIndex = parts.length - 1;
+      const service = parts[serviceIndex];
+      
+      // The second-to-last part is the item index
+      const itemIndexStr = parts[serviceIndex - 1];
+      const itemIndex = parseInt(itemIndexStr);
+      
+      // The first part is the category ID
+      const categoryId = parts[0];
+      
+      // Everything in between is the subcategory ID (may contain hyphens)
+      const subcategoryId = parts.slice(1, serviceIndex - 1).join('-');
+      
       const category = categoryData[categoryId];
       if (category) {
         const subcategory = category.subcategories.find(s => s.id === subcategoryId);
         if (subcategory && subcategory.items) {
-          const item = subcategory.items[parseInt(itemIndex)];
+          const item = subcategory.items[itemIndex];
           if (item) {
             let itemPrice = 0;
-            if (service === 'washFold' && item.washFold) itemPrice = item.washFold;
-            else if (service === 'washIron' && item.washIron) itemPrice = item.washIron;
-            else if (service === 'washOnly' && item.washOnly) itemPrice = item.washOnly;
-            else if (item.price) {
+            if (service === 'washFold' && item.washFold) {
+              itemPrice = parseFloat(item.washFold) || 0;
+            } else if (service === 'washIron' && item.washIron) {
+              itemPrice = parseFloat(item.washIron) || 0;
+            } else if (service === 'washOnly' && item.washOnly) {
+              itemPrice = parseFloat(item.washOnly) || 0;
+            } else if (service === 'price' && item.price) {
               const priceStr = String(item.price).replace('+', '');
-              itemPrice = parseInt(priceStr) || 0;
+              itemPrice = parseFloat(priceStr) || 0;
+            } else if (item.price && !item.washFold && !item.washIron && !item.washOnly) {
+              // For items that only have a price field
+              const priceStr = String(item.price).replace('+', '');
+              itemPrice = parseFloat(priceStr) || 0;
             }
             total += itemPrice * quantity;
           }
         } else if (subcategory && subcategory.brands) {
-          const brand = subcategory.brands[parseInt(itemIndex)];
+          const brand = subcategory.brands[itemIndex];
           if (brand) {
             const priceStr = String(brand.price).replace('+', '');
-            const itemPrice = parseInt(priceStr) || 0;
+            const itemPrice = parseFloat(priceStr) || 0;
             total += itemPrice * quantity;
           }
         }
@@ -395,6 +420,19 @@ export default function LaundryPage() {
       return;
     }
     callback();
+  };
+
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategory(categoryId);
+    setShowItemsPage(true);
+    // Scroll to top when showing items page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToCategories = () => {
+    setShowItemsPage(false);
+    setSelectedCategory(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleAddToCart = () => {
@@ -692,7 +730,7 @@ export default function LaundryPage() {
     <section className="py-16 bg-gradient-to-b from-gray-50 to-white min-h-screen">
       <div className="container mx-auto px-4">
         {/* Advertisement Banner */}
-        <div className="relative mb-12 h-48 rounded-2xl overflow-hidden">
+        <div className="relative mb-12 h-48 rounded-2xl overflow-hidden shadow-xl">
           <div 
             className="flex h-full transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${adSlide * 100}%)` }}
@@ -703,7 +741,7 @@ export default function LaundryPage() {
                 className={`flex-shrink-0 w-full h-full bg-gradient-to-r ${ad.bgColor} flex items-center justify-center text-white relative`}
               >
                 <div className="text-center px-6">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-2">{ad.title}</h2>
+                  <h2 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">{ad.title}</h2>
                   <p className="text-lg md:text-xl opacity-90">{ad.subtitle}</p>
                 </div>
               </div>
@@ -724,98 +762,149 @@ export default function LaundryPage() {
           </div>
         </div>
 
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            BFS SmartLaundry™
-          </h1>
-          <p className="text-xl text-gray-600 mb-2">
-            COMPLETE CATEGORY-BASED PRICING
-          </p>
-          <p className="text-gray-500">
-            Fabric-wise • Brand-wise • Separate handling • Transparent pricing
-          </p>
-        </div>
-
-        {/* Category Selection */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Select Category</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
-            {laundryCategories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`p-6 rounded-xl transition-all duration-300 ${
-                  selectedCategory === category.id
-                    ? `bg-gradient-to-r ${category.color} text-white shadow-xl transform scale-105`
-                    : 'bg-white text-gray-700 hover:shadow-lg hover:scale-102'
-                } border-2 ${
-                  selectedCategory === category.id ? 'border-transparent' : 'border-gray-200'
-                }`}
-              >
-                <div className="text-4xl mb-2">{category.icon}</div>
-                <div className="text-sm font-bold mb-1">{category.name}</div>
-                <div className="text-xs opacity-80">{category.description}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Category Content */}
-        {categoryData[selectedCategory] && (
-          <div className="max-w-6xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-              <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-                {laundryCategories.find(c => c.id === selectedCategory)?.name}
-              </h2>
-              
-              {categoryData[selectedCategory].subcategories.map((subcategory, index) => (
-                <div key={subcategory.id} className={`${index > 0 ? 'mt-8' : ''}`}>
-                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-4">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">
-                      {subcategory.name}
-                    </h3>
-                    {subcategory.note && (
-                      <p className="text-sm text-gray-600 italic">{subcategory.note}</p>
-                    )}
-                  </div>
-                  
-                  {renderPricingTable(subcategory, selectedCategory, subcategory.id)}
-                </div>
-              ))}
-
-              {/* Special Stain Treatment Info */}
-              {selectedCategory === 'stainTreatment' && categoryData.stainTreatment.subcategories[0] && (
-                <div className="mt-8 grid md:grid-cols-2 gap-4">
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <h4 className="font-bold text-green-800 mb-2">✓ We Can Treat:</h4>
-                    <ul className="text-sm text-green-700 space-y-1">
-                      {categoryData.stainTreatment.subcategories[0].canTreat.map((item, i) => (
-                        <li key={i}>• {item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <h4 className="font-bold text-red-800 mb-2">⚠ Not Guaranteed:</h4>
-                    <ul className="text-sm text-red-700 space-y-1">
-                      {categoryData.stainTreatment.subcategories[0].notGuaranteed.map((item, i) => (
-                        <li key={i}>• {item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
+        {/* Conditional rendering: Show category selection or items */}
+        {!showItemsPage ? (
+          <>
+            {/* Header */}
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                BFS SmartLaundry™
+              </h1>
+              <p className="text-xl text-gray-600 mb-2">
+                Choose Your Laundry Category
+              </p>
+              <p className="text-gray-500">
+                Professional • Transparent • Convenient
+              </p>
             </div>
-          </div>
+
+            {/* Category Selection Grid */}
+            <div className="mb-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+                {laundryCategories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => handleCategorySelect(category.id)}
+                    className={`group relative p-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl bg-gradient-to-br ${category.color} text-white overflow-hidden`}
+                  >
+                    {/* Background decoration */}
+                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                    
+                    <div className="relative z-10">
+                      <div className="text-6xl mb-4">{category.icon}</div>
+                      <div className="text-lg font-bold mb-2">{category.name}</div>
+                      <div className="text-sm opacity-90 mb-4">{category.description}</div>
+                      <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium">
+                        View Items →
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Features Section */}
+            <div className="mt-16 max-w-6xl mx-auto">
+              <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl shadow-2xl p-8 text-center text-white">
+                <h2 className="text-3xl font-bold mb-4">Why Choose BFS SmartLaundry?</h2>
+                <div className="grid md:grid-cols-3 gap-6 mt-6">
+                  <div className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+                    <div className="text-4xl mb-3">💰</div>
+                    <p className="font-semibold mb-2 text-lg">Transparent Pricing</p>
+                    <p className="text-white/90 text-sm">Clear per-piece pricing. No hidden charges.</p>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+                    <div className="text-4xl mb-3">🔐</div>
+                    <p className="font-semibold mb-2 text-lg">Premium Care</p>
+                    <p className="text-white/90 text-sm">Fabric-wise & brand-wise separate handling</p>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+                    <div className="text-4xl mb-3">🚚</div>
+                    <p className="font-semibold mb-2 text-lg">Doorstep Service</p>
+                    <p className="text-white/90 text-sm">Free pickup & delivery • 24-48 hrs turnaround</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Back Button */}
+            <div className="mb-6">
+              <button
+                onClick={handleBackToCategories}
+                className="inline-flex items-center text-purple-600 hover:text-purple-800 font-semibold transition-colors"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Categories
+              </button>
+            </div>
+
+            {/* Header for Items Page */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                {laundryCategories.find(c => c.id === selectedCategory)?.name}
+              </h1>
+              <p className="text-gray-600">
+                {laundryCategories.find(c => c.id === selectedCategory)?.description}
+              </p>
+            </div>
+
+            {/* Category Content */}
+            {categoryData[selectedCategory] && (
+              <div className="max-w-6xl mx-auto">
+                <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                  {categoryData[selectedCategory].subcategories.map((subcategory, index) => (
+                    <div key={subcategory.id} className={`${index > 0 ? 'mt-8' : ''}`}>
+                      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-4">
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">
+                          {subcategory.name}
+                        </h3>
+                        {subcategory.note && (
+                          <p className="text-sm text-gray-600 italic">{subcategory.note}</p>
+                        )}
+                      </div>
+                      
+                      {renderPricingTable(subcategory, selectedCategory, subcategory.id)}
+                    </div>
+                  ))}
+
+                  {/* Special Stain Treatment Info */}
+                  {selectedCategory === 'stainTreatment' && categoryData.stainTreatment.subcategories[0] && (
+                    <div className="mt-8 grid md:grid-cols-2 gap-4">
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 className="font-bold text-green-800 mb-2">✓ We Can Treat:</h4>
+                        <ul className="text-sm text-green-700 space-y-1">
+                          {categoryData.stainTreatment.subcategories[0].canTreat.map((item, i) => (
+                            <li key={i}>• {item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h4 className="font-bold text-red-800 mb-2">⚠ Not Guaranteed:</h4>
+                        <ul className="text-sm text-red-700 space-y-1">
+                          {categoryData.stainTreatment.subcategories[0].notGuaranteed.map((item, i) => (
+                            <li key={i}>• {item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
-        {/* Summary and Action Buttons */}
-        {getTotalItems() > 0 && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl p-4 z-50">
+        {/* Summary and Action Buttons - Only show when items are selected AND on items page */}
+        {getTotalItems() > 0 && showItemsPage && (
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 shadow-2xl p-4 z-50">
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="text-center md:text-left">
                 <p className="text-sm text-gray-600">{getTotalItems()} items selected</p>
-                <p className="text-2xl font-bold text-purple-600">₹{getTotalPrice()}</p>
+                <p className="text-2xl font-bold text-purple-600">₹{getTotalPrice().toFixed(2)}</p>
               </div>
               <div className="flex gap-4 w-full md:w-auto">
                 <button
@@ -835,26 +924,31 @@ export default function LaundryPage() {
           </div>
         )}
 
-        {/* Footer Notes */}
-        <div className="mt-16 max-w-6xl mx-auto">
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl shadow-2xl p-8 text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">ℹ️ WEBSITE FOOTER NOTES</h2>
-            <div className="grid md:grid-cols-3 gap-6 mt-6 text-sm">
-              <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-                <p className="font-semibold mb-2">💰 Prices are per piece</p>
-                <p className="text-white/90 text-xs">Transparent pricing for all items</p>
-              </div>
-              <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-                <p className="font-semibold mb-2">🔐 Linen & premium items washed separately</p>
-                <p className="text-white/90 text-xs">Brand selection required for blazers & shoes</p>
-              </div>
-              <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-                <p className="font-semibold mb-2">🚚 Free pickup & delivery</p>
-                <p className="text-white/90 text-xs">Minimum order applies • Turnaround: 24–48 hrs</p>
+        {/* Footer Notes - Only on category selection page */}
+        {!showItemsPage && (
+          <div className="mt-16 max-w-6xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Service Information</h3>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="text-center p-4">
+                  <div className="text-4xl mb-3">📦</div>
+                  <h4 className="font-bold text-gray-800 mb-2">Per Piece Pricing</h4>
+                  <p className="text-sm text-gray-600">Transparent pricing for all items</p>
+                </div>
+                <div className="text-center p-4">
+                  <div className="text-4xl mb-3">⚡</div>
+                  <h4 className="font-bold text-gray-800 mb-2">Quick Turnaround</h4>
+                  <p className="text-sm text-gray-600">24-48 hours standard delivery</p>
+                </div>
+                <div className="text-center p-4">
+                  <div className="text-4xl mb-3">✨</div>
+                  <h4 className="font-bold text-gray-800 mb-2">Premium Care</h4>
+                  <p className="text-sm text-gray-600">Special handling for delicate items</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Login Modal */}
