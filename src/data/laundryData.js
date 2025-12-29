@@ -286,7 +286,7 @@ export const categoryData = {
         price: 40,
         perItem: true,
         canTreat: ['Food', 'Sweat', 'Mud', 'Light oil', 'Tea / coffee'],
-        notGuaranteed: ['Old stains', 'Ink / pain', 'Bleach damage', 'Dye bleed', 'Burn marks']
+        notGuaranteed: ['Old stains', 'Ink / paint', 'Bleach damage', 'Dye bleed', 'Burn marks']
       }
     ]
   }
