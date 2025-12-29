@@ -1083,11 +1083,11 @@ export default function HeroSection() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="flex-1 max-w-lg w-full"
+              className="flex-1 lg:flex-[1.5] w-full" // give more flex space
             >
               <video
                 src="/car/home.mp4"
-                className="rounded-3xl shadow-2xl w-full h-auto object-cover"
+                className="rounded-2xl shadow-2xl w-full h-[400px] object-cover" // larger height
                 controls
                 autoPlay
                 loop
