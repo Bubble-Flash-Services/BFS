@@ -290,7 +290,8 @@ export default function CartPage() {
                         Laundry Items ({item.laundryDetails.totalItems})
                       </h4>
                       <div className="max-h-24 overflow-y-auto space-y-1">
-                        {item.laundryDetails.selectedItems && 
+                        {item.laundryDetails.selectedItems ? (
+                          // Handle selectedItems format (from LaundryPageNew)
                           convertSelectedItemsToArray(item.laundryDetails.selectedItems).map((laundryItem, idx) => (
                           <div key={idx} className="flex justify-between text-xs">
                             <span className="text-gray-600">
@@ -298,7 +299,16 @@ export default function CartPage() {
                             </span>
                             <span className="font-medium">₹{laundryItem.totalPrice}</span>
                           </div>
-                        ))}
+                        ))) : item.laundryDetails.items ? (
+                          // Handle items array format (from LaundryDeals)
+                          item.laundryDetails.items.map((laundryItem, idx) => (
+                          <div key={idx} className="flex justify-between text-xs">
+                            <span className="text-gray-600">
+                              {laundryItem.name} × {laundryItem.quantity}
+                            </span>
+                            <span className="font-medium">₹{laundryItem.totalPrice}</span>
+                          </div>
+                        ))) : null}
                       </div>
                     </div>
                   )}
