@@ -571,20 +571,31 @@ const MoversPackersPage = () => {
                   <Car className="w-5 h-5 text-[#FFB400]" />
                   Need Vehicle Shifting?
                 </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNeedVehicleShifting(!needVehicleShifting);
-                    if (needVehicleShifting) setVehicles([]);
-                  }}
-                  className={`px-6 py-2 rounded-full font-semibold transition-all shadow-md ${
-                    needVehicleShifting
-                      ? "bg-[#FFB400] text-[#1F3C88]"
-                      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                  }`}
-                >
-                  {needVehicleShifting ? "Yes" : "No"}
-                </button>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="vehicleShifting"
+                      checked={needVehicleShifting}
+                      onChange={() => setNeedVehicleShifting(true)}
+                      className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
+                    />
+                    <span className="text-base font-medium text-gray-700">Yes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="vehicleShifting"
+                      checked={!needVehicleShifting}
+                      onChange={() => {
+                        setNeedVehicleShifting(false);
+                        setVehicles([]);
+                      }}
+                      className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
+                    />
+                    <span className="text-base font-medium text-gray-700">No</span>
+                  </label>
+                </div>
               </div>
 
               {needVehicleShifting && (
@@ -643,29 +654,37 @@ const MoversPackersPage = () => {
                   <PaintBucket className="w-5 h-5 text-[#FFB400]" />
                   Need Painting Services?
                 </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNeedPainting(!needPainting);
-                    if (needPainting) {
-                      setPaintingServices({
-                        interiorPainting: false,
-                        exteriorPainting: false,
-                        woodPolishing: false,
-                      });
-                      setRooms([]);
-                      setTotalSquareFeet(0);
-                    }
-                  }}
-                  className={`w-12 h-12 rounded-full font-bold text-2xl transition-all shadow-md flex items-center justify-center ${
-                    needPainting
-                      ? "bg-green-500 text-white hover:bg-green-600"
-                      : "bg-gray-400 text-white hover:bg-gray-500"
-                  }`}
-                  aria-label={needPainting ? "Painting enabled" : "Painting disabled"}
-                >
-                  {needPainting ? "✔" : "❌"}
-                </button>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paintingService"
+                      checked={needPainting}
+                      onChange={() => setNeedPainting(true)}
+                      className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
+                    />
+                    <span className="text-base font-medium text-gray-700">Yes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paintingService"
+                      checked={!needPainting}
+                      onChange={() => {
+                        setNeedPainting(false);
+                        setPaintingServices({
+                          interiorPainting: false,
+                          exteriorPainting: false,
+                          woodPolishing: false,
+                        });
+                        setRooms([]);
+                        setTotalSquareFeet(0);
+                      }}
+                      className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
+                    />
+                    <span className="text-base font-medium text-gray-700">No</span>
+                  </label>
+                </div>
               </div>
 
               {needPainting && (
@@ -932,18 +951,28 @@ const MoversPackersPage = () => {
                   <Sparkles className="w-5 h-5 text-[#FFB400]" />
                   Need Cleaning Services?
                 </label>
-                <button
-                  type="button"
-                  onClick={() => setNeedCleaning(!needCleaning)}
-                  className={`w-12 h-12 rounded-full font-bold text-2xl transition-all shadow-md flex items-center justify-center ${
-                    needCleaning
-                      ? "bg-green-500 text-white hover:bg-green-600"
-                      : "bg-gray-400 text-white hover:bg-gray-500"
-                  }`}
-                  aria-label={needCleaning ? "Cleaning enabled" : "Cleaning disabled"}
-                >
-                  {needCleaning ? "✔" : "❌"}
-                </button>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="cleaningService"
+                      checked={needCleaning}
+                      onChange={() => setNeedCleaning(true)}
+                      className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
+                    />
+                    <span className="text-base font-medium text-gray-700">Yes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="cleaningService"
+                      checked={!needCleaning}
+                      onChange={() => setNeedCleaning(false)}
+                      className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
+                    />
+                    <span className="text-base font-medium text-gray-700">No</span>
+                  </label>
+                </div>
               </div>
 
               {needCleaning && (
