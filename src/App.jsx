@@ -79,6 +79,7 @@ import PaintingServicesPage from "./pages/PaintingServices/PaintingServicesPage"
 import KeyServicesPage from "./pages/KeyServices/KeyServicesPage";
 import AutoFixPage from "./pages/AutoFix/AutoFixPage";
 import FlowerServicesPage from "./pages/FlowerServices/FlowerServicesPage";
+import FlowerCategoriesPage from "./pages/FlowerServices/FlowerCategoriesPage";
 import MobileFixPage from "./pages/MobileFix/MobileFixPage";
 function AppContent() {
   const location = useLocation();
@@ -190,7 +191,8 @@ function AppContent() {
           <Route path="/key-services" element={<ProtectedRoute><KeyServicesPage /></ProtectedRoute>} />
           <Route path="/painting-services" element={<ProtectedRoute><PaintingServicesPage /></ProtectedRoute>} />
           <Route path="/autofix" element={<ProtectedRoute><AutoFixPage /></ProtectedRoute>} />
-          <Route path="/flower-services" element={<ProtectedRoute><FlowerServicesPage /></ProtectedRoute>} />
+          <Route path="/flower-categories" element={<ProtectedRoute><FlowerCategoriesPage /></ProtectedRoute>} />
+          <Route path="/flower-services/:category" element={<ProtectedRoute><FlowerServicesPage /></ProtectedRoute>} />
           <Route path="/mobilefix" element={<ProtectedRoute><MobileFixPage /></ProtectedRoute>} />
           <Route
             path="/admin/users"
