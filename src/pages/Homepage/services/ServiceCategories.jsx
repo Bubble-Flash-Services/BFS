@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../components/AuthContext";
 import {
   ArrowRight,
   Car,
@@ -15,10 +16,25 @@ import {
   Flower,
 } from "lucide-react";
 
-export default function ServiceCategories() {
+export default function ServiceCategories({ onLoginRequired }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleCategoryClick = (category) => {
+    // Check if user is logged in
+    if (!user) {
+      // Store the intended destination for post-login redirect
+      const destination = category === "laundry" ? "/laundry" : `/${category}`;
+      localStorage.setItem("postLoginRedirect", JSON.stringify({ path: destination, ts: Date.now() }));
+      
+      // Trigger login modal
+      if (onLoginRequired) {
+        onLoginRequired();
+      }
+      return;
+    }
+
+    // User is logged in, proceed with navigation
     if (category === "laundry") {
       navigate("/laundry");
       return;
