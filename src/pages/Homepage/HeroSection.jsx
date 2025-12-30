@@ -1079,7 +1079,7 @@ export default function HeroSection() {
             </motion.div>
 
             {/* Hero Video - Right Side */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
@@ -1094,7 +1094,16 @@ export default function HeroSection() {
                 muted
                 playsInline
               />
-            </motion.div>
+            </motion.div> */}
+            <motion.img
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              src="/bfsHero.jpeg"
+              alt="About Bubble Flash Services"
+              className="w-full h-auto max-h-[540px] lg:flex-1 object-cover shadow-2xl rounded-3xl"
+            />
           </div>
 
           {/* Service Categories - Full Width Below */}
@@ -1119,15 +1128,22 @@ export default function HeroSection() {
                 transition={{ duration: 0.8 }}
                 className="flex flex-col md:flex-row gap-8 items-start"
               >
-                <motion.img
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  src="/bfs car image.png"
-                  alt="About Bubble Flash Services"
-                  className="rounded-xl w-full md:w-[350px] h-[260px] object-cover shadow-lg"
-                />
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="flex-1 lg:flex-[1.5]" // give more flex space
+                >
+                  <video
+                    src="/car/home.mp4"
+                    className="rounded-2xl shadow-2xl w-full h-[400px] object-cover" // larger height
+                    controls
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                </motion.div>
                 <motion.div
                   initial={{ opacity: 0, x: 30 }}
                   whileInView={{ opacity: 1, x: 0 }}

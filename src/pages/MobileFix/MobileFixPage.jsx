@@ -103,36 +103,44 @@ const MobileFixPage = () => {
     "iCloud / Google lock bypass",
     "Data recovery",
   ];
-  
+
   // Available mobile accessories
   const availableAccessories = [
-    { id: 'tempered-glass', name: 'Tempered Glass Screen Protector', price: 299 },
-    { id: 'phone-case', name: 'Premium Phone Case', price: 499 },
-    { id: 'charging-cable', name: 'Fast Charging Cable', price: 399 },
-    { id: 'earphones', name: 'Wired Earphones', price: 599 },
-    { id: 'power-bank', name: 'Portable Power Bank (10000mAh)', price: 1299 },
-    { id: 'car-charger', name: 'Car Charger (Dual USB)', price: 499 },
+    {
+      id: "tempered-glass",
+      name: "Tempered Glass Screen Protector",
+      price: 299,
+    },
+    { id: "phone-case", name: "Premium Phone Case", price: 499 },
+    { id: "charging-cable", name: "Fast Charging Cable", price: 399 },
+    { id: "earphones", name: "Wired Earphones", price: 599 },
+    { id: "power-bank", name: "Portable Power Bank (10000mAh)", price: 1299 },
+    { id: "car-charger", name: "Car Charger (Dual USB)", price: 499 },
   ];
-  
+
   const addAccessory = (accessory) => {
-    const existing = accessories.find(a => a.id === accessory.id);
+    const existing = accessories.find((a) => a.id === accessory.id);
     if (existing) {
-      setAccessories(accessories.map(a => 
-        a.id === accessory.id ? { ...a, quantity: a.quantity + 1 } : a
-      ));
+      setAccessories(
+        accessories.map((a) =>
+          a.id === accessory.id ? { ...a, quantity: a.quantity + 1 } : a
+        )
+      );
     } else {
       setAccessories([...accessories, { ...accessory, quantity: 1 }]);
     }
   };
-  
+
   const removeAccessory = (accessoryId) => {
-    const existing = accessories.find(a => a.id === accessoryId);
+    const existing = accessories.find((a) => a.id === accessoryId);
     if (existing && existing.quantity > 1) {
-      setAccessories(accessories.map(a => 
-        a.id === accessoryId ? { ...a, quantity: a.quantity - 1 } : a
-      ));
+      setAccessories(
+        accessories.map((a) =>
+          a.id === accessoryId ? { ...a, quantity: a.quantity - 1 } : a
+        )
+      );
     } else {
-      setAccessories(accessories.filter(a => a.id !== accessoryId));
+      setAccessories(accessories.filter((a) => a.id !== accessoryId));
     }
   };
 
@@ -213,7 +221,8 @@ const MobileFixPage = () => {
   };
 
   const handleBrandSelect = (brandId) => {
-    const brand = brands.find((b) => b._id === brandId);
+    const brand = brands.find((b) => b._id === brandId._id);
+    console.log(brand);
     if (!brand) {
       toast.error("Invalid brand selection");
       return;
@@ -304,11 +313,11 @@ const MobileFixPage = () => {
         serviceType: selectedService.id,
         estimatedTime: pricing.estimatedTime,
         specialInstructions: specialInstructions,
-        accessories: accessories.map(acc => ({
+        accessories: accessories.map((acc) => ({
           name: acc.name,
           quantity: acc.quantity,
-          price: acc.price
-        }))
+          price: acc.price,
+        })),
       },
     };
 
@@ -700,13 +709,22 @@ const MobileFixPage = () => {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {availableAccessories.map((accessory) => {
-                      const inCart = accessories.find(a => a.id === accessory.id);
+                      const inCart = accessories.find(
+                        (a) => a.id === accessory.id
+                      );
                       const quantity = inCart?.quantity || 0;
                       return (
-                        <div key={accessory.id} className="border border-gray-200 rounded-lg p-3 flex items-center justify-between hover:border-purple-300 transition-colors">
+                        <div
+                          key={accessory.id}
+                          className="border border-gray-200 rounded-lg p-3 flex items-center justify-between hover:border-purple-300 transition-colors"
+                        >
                           <div className="flex-1">
-                            <div className="font-medium text-gray-900 text-sm">{accessory.name}</div>
-                            <div className="text-sm text-green-600 font-semibold">₹{accessory.price}</div>
+                            <div className="font-medium text-gray-900 text-sm">
+                              {accessory.name}
+                            </div>
+                            <div className="text-sm text-green-600 font-semibold">
+                              ₹{accessory.price}
+                            </div>
                           </div>
                           <div className="flex items-center gap-2">
                             {quantity > 0 && (
@@ -718,7 +736,9 @@ const MobileFixPage = () => {
                                 >
                                   -
                                 </button>
-                                <span className="w-6 text-center font-semibold text-purple-700">{quantity}</span>
+                                <span className="w-6 text-center font-semibold text-purple-700">
+                                  {quantity}
+                                </span>
                               </>
                             )}
                             <button
@@ -736,9 +756,15 @@ const MobileFixPage = () => {
                   {accessories.length > 0 && (
                     <div className="mt-3 p-3 bg-purple-50 rounded-lg">
                       <div className="flex justify-between items-center">
-                        <span className="font-semibold text-gray-900">Accessories Total:</span>
+                        <span className="font-semibold text-gray-900">
+                          Accessories Total:
+                        </span>
                         <span className="text-lg font-bold text-purple-700">
-                          ₹{accessories.reduce((sum, acc) => sum + (acc.price * acc.quantity), 0)}
+                          ₹
+                          {accessories.reduce(
+                            (sum, acc) => sum + acc.price * acc.quantity,
+                            0
+                          )}
                         </span>
                       </div>
                     </div>
