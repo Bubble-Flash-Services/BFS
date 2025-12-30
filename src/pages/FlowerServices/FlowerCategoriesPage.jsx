@@ -4,21 +4,21 @@ import { useNavigate } from "react-router-dom";
 const flowerCategories = [
   {
     name: "Flower Bouquets",
-    image: "/services/flowers/bouquet.jpg",
+    image: "/services/flowers/bouquet.webp",
     category: "bouquets",
-    description: "Beautiful flower arrangements for every occasion"
+    description: "Beautiful flower arrangements for every occasion",
   },
   {
     name: "Gift Boxes & Surprise Combos",
-    image: "/services/flowers/gift-box.jpg",
+    image: "/services/flowers/gift-box.png",
     category: "gifts",
-    description: "Thoughtful gift combinations with flowers"
+    description: "Thoughtful gift combinations with flowers",
   },
   {
     name: "Decoration Services",
-    image: "/services/flowers/decoration.jpg",
+    image: "/services/flowers/decoration.avif",
     category: "decorations",
-    description: "Professional decoration for special moments"
+    description: "Professional decoration for special moments",
   },
 ];
 
@@ -53,7 +53,8 @@ export default function FlowerCategoriesPage() {
             Beautiful Bouquets. Thoughtful Gifts. Perfect Moments.
           </p>
           <p className="text-gray-700 max-w-2xl mx-auto">
-            Doorstep delivery across Bangalore. Choose your category below to explore our services.
+            Doorstep delivery across Bangalore. Choose your category below to
+            explore our services.
           </p>
         </div>
 
@@ -76,7 +77,9 @@ export default function FlowerCategoriesPage() {
                     alt={cat.name}
                     className="w-full h-64 object-cover"
                     onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/400x300?text=" + encodeURIComponent(cat.name);
+                      e.target.src =
+                        "https://via.placeholder.com/400x300?text=" +
+                        encodeURIComponent(cat.name);
                     }}
                   />
                 </div>
@@ -84,9 +87,7 @@ export default function FlowerCategoriesPage() {
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">
                     {cat.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">
-                    {cat.description}
-                  </p>
+                  <p className="text-gray-600 text-sm">{cat.description}</p>
                 </div>
               </div>
             </div>
@@ -108,7 +109,9 @@ export default function FlowerCategoriesPage() {
                     alt={cat.name}
                     className="w-full h-48 object-cover"
                     onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/400x300?text=" + encodeURIComponent(cat.name);
+                      e.target.src =
+                        "https://via.placeholder.com/400x300?text=" +
+                        encodeURIComponent(cat.name);
                     }}
                   />
                 </div>
@@ -116,9 +119,7 @@ export default function FlowerCategoriesPage() {
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">
                     {cat.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">
-                    {cat.description}
-                  </p>
+                  <p className="text-gray-600 text-sm">{cat.description}</p>
                 </div>
               </div>
             </div>
