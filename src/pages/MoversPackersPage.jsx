@@ -576,7 +576,7 @@ const MoversPackersPage = () => {
                     <input
                       type="radio"
                       name="vehicleShifting"
-                      checked={needVehicleShifting === true}
+                      checked={needVehicleShifting}
                       onChange={() => setNeedVehicleShifting(true)}
                       className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
                     />
@@ -586,7 +586,7 @@ const MoversPackersPage = () => {
                     <input
                       type="radio"
                       name="vehicleShifting"
-                      checked={needVehicleShifting === false}
+                      checked={!needVehicleShifting}
                       onChange={() => {
                         setNeedVehicleShifting(false);
                         setVehicles([]);
@@ -659,7 +659,7 @@ const MoversPackersPage = () => {
                     <input
                       type="radio"
                       name="paintingService"
-                      checked={needPainting === true}
+                      checked={needPainting}
                       onChange={() => setNeedPainting(true)}
                       className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
                     />
@@ -669,7 +669,7 @@ const MoversPackersPage = () => {
                     <input
                       type="radio"
                       name="paintingService"
-                      checked={needPainting === false}
+                      checked={!needPainting}
                       onChange={() => {
                         setNeedPainting(false);
                         setPaintingServices({
@@ -956,7 +956,7 @@ const MoversPackersPage = () => {
                     <input
                       type="radio"
                       name="cleaningService"
-                      checked={needCleaning === true}
+                      checked={needCleaning}
                       onChange={() => setNeedCleaning(true)}
                       className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
                     />
@@ -966,7 +966,7 @@ const MoversPackersPage = () => {
                     <input
                       type="radio"
                       name="cleaningService"
-                      checked={needCleaning === false}
+                      checked={!needCleaning}
                       onChange={() => setNeedCleaning(false)}
                       className="w-5 h-5 text-[#FFB400] focus:ring-[#FFB400]"
                     />
