@@ -1100,7 +1100,7 @@ export default function HeroSection() {
           {/* Service Categories - Full Width Below */}
           <div className="mt-16">
             <div id="service-categories" className="w-full">
-              <ServiceCategories />
+              <ServiceCategories onLoginRequired={() => setOpenSignin(true)} />
             </div>
           </div>
         </div>
