@@ -1,0 +1,554 @@
+{
+  "categories": [
+    {
+      "id": "roses",
+      "name": "Roses",
+      "description": "Symbol of love and passion",
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400",
+      "count": "50+ Options"
+    },
+    {
+      "id": "carnations",
+      "name": "Carnations",
+      "description": "Elegant and long-lasting flowers",
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=400",
+      "count": "30+ Options"
+    },
+    {
+      "id": "orchids",
+      "name": "Orchids",
+      "description": "Exotic and sophisticated blooms",
+      "image": "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=400",
+      "count": "25+ Options"
+    },
+    {
+      "id": "lilies",
+      "name": "Lilies",
+      "description": "Pure and elegant flowers",
+      "image": "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=400",
+      "count": "35+ Options"
+    },
+    {
+      "id": "gerberas",
+      "name": "Gerberas",
+      "description": "Bright and cheerful flowers",
+      "image": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400",
+      "count": "40+ Options"
+    },
+    {
+      "id": "mixed",
+      "name": "Mixed Flowers",
+      "description": "Beautiful combinations",
+      "image": "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=400",
+      "count": "60+ Options"
+    }
+  ],
+  "occasions": [
+    {
+      "id": "birthday",
+      "name": "Birthday",
+      "description": "Celebrate special birthdays",
+      "icon": "Cake",
+      "color": "bg-pink-500"
+    },
+    {
+      "id": "anniversary",
+      "name": "Anniversary",
+      "description": "Mark special milestones",
+      "icon": "Heart",
+      "color": "bg-red-500"
+    },
+    {
+      "id": "love",
+      "name": "Love & Romance",
+      "description": "Express your love",
+      "icon": "Heart",
+      "color": "bg-rose-500"
+    },
+    {
+      "id": "congratulations",
+      "name": "Congratulations",
+      "description": "Celebrate achievements",
+      "icon": "Award",
+      "color": "bg-green-500"
+    },
+    {
+      "id": "get-well-soon",
+      "name": "Get Well Soon",
+      "description": "Send healing wishes",
+      "icon": "Sparkles",
+      "color": "bg-blue-500"
+    },
+    {
+      "id": "thank-you",
+      "name": "Thank You",
+      "description": "Express gratitude",
+      "icon": "Gift",
+      "color": "bg-purple-500"
+    },
+    {
+      "id": "sympathy",
+      "name": "Sympathy & Funeral",
+      "description": "Express condolences",
+      "icon": "Flower",
+      "color": "bg-gray-500"
+    },
+    {
+      "id": "new-born",
+      "name": "New Born",
+      "description": "Welcome the little one",
+      "icon": "Gift",
+      "color": "bg-yellow-500"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Red Roses Bouquet - Classic Love",
+      "shortName": "Red Roses Classic",
+      "description": "A timeless expression of love with 12 fresh red roses beautifully arranged with seasonal fillers and green leaves",
+      "price": 799,
+      "originalPrice": 999,
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
+      "rating": 4.8,
+      "reviews": 234,
+      "occasions": ["love", "anniversary", "valentine"],
+      "flowerTypes": ["roses"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": true,
+      "details": {
+        "flowers": "12 Red Roses",
+        "vase": "No vase included",
+        "height": "12-14 inches",
+        "care": "Change water daily, trim stems every 2 days"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Premium Red Roses - Love Special",
+      "shortName": "Premium Red Roses",
+      "description": "Stunning arrangement of 24 premium red roses with exotic fillers, perfect for expressing deep love",
+      "price": 1499,
+      "originalPrice": 1999,
+      "image": "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=800",
+      "rating": 4.9,
+      "reviews": 456,
+      "occasions": ["love", "anniversary", "proposal"],
+      "flowerTypes": ["roses"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": true,
+      "details": {
+        "flowers": "24 Premium Red Roses",
+        "vase": "Premium box packaging",
+        "height": "16-18 inches",
+        "care": "Keep in cool place, change water daily"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Pink & White Roses Bouquet",
+      "shortName": "Pink White Roses",
+      "description": "Delicate combination of 6 pink and 6 white roses with baby's breath",
+      "price": 899,
+      "originalPrice": 1199,
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=800",
+      "rating": 4.7,
+      "reviews": 189,
+      "occasions": ["birthday", "thank-you", "appreciation"],
+      "flowerTypes": ["roses"],
+      "deliveryTime": "2-hours",
+      "inStock": true,
+      "isBestseller": false,
+      "details": {
+        "flowers": "6 Pink & 6 White Roses",
+        "vase": "Cellophane wrapping",
+        "height": "12-14 inches",
+        "care": "Trim stems at angle, change water daily"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Yellow Roses - Sunshine Bright",
+      "shortName": "Yellow Roses",
+      "description": "Cheerful yellow roses bouquet bringing warmth and happiness",
+      "price": 749,
+      "originalPrice": 949,
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=800",
+      "rating": 4.6,
+      "reviews": 167,
+      "occasions": ["friendship", "congratulations", "get-well-soon"],
+      "flowerTypes": ["roses"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": false,
+      "details": {
+        "flowers": "12 Yellow Roses",
+        "vase": "Paper wrapping",
+        "height": "12-14 inches",
+        "care": "Keep away from direct sunlight"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Mixed Roses Bouquet - Rainbow",
+      "shortName": "Mixed Roses",
+      "description": "Vibrant mix of colorful roses creating a rainbow effect",
+      "price": 1099,
+      "originalPrice": 1399,
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
+      "rating": 4.8,
+      "reviews": 298,
+      "occasions": ["birthday", "congratulations", "celebration"],
+      "flowerTypes": ["roses"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": true,
+      "details": {
+        "flowers": "15 Mixed Color Roses",
+        "vase": "Premium wrapping",
+        "height": "14-16 inches",
+        "care": "Change water every alternate day"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Red Carnations Bouquet",
+      "shortName": "Red Carnations",
+      "description": "Beautiful arrangement of fresh red carnations symbolizing deep love",
+      "price": 649,
+      "originalPrice": 849,
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=800",
+      "rating": 4.5,
+      "reviews": 145,
+      "occasions": ["love", "mother-day", "appreciation"],
+      "flowerTypes": ["carnations"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": false,
+      "details": {
+        "flowers": "15 Red Carnations",
+        "vase": "Cellophane wrapping",
+        "height": "12-14 inches",
+        "care": "Long-lasting, change water every 2 days"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Pink Carnations Delight",
+      "shortName": "Pink Carnations",
+      "description": "Soft pink carnations perfect for expressing admiration",
+      "price": 699,
+      "originalPrice": 899,
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=800",
+      "rating": 4.6,
+      "reviews": 178,
+      "occasions": ["birthday", "mother-day", "gratitude"],
+      "flowerTypes": ["carnations"],
+      "deliveryTime": "4-hours",
+      "inStock": true,
+      "isBestseller": false,
+      "details": {
+        "flowers": "18 Pink Carnations",
+        "vase": "Paper wrapping",
+        "height": "12-14 inches",
+        "care": "Remove wilted flowers, trim stems regularly"
+      }
+    },
+    {
+      "id": 8,
+      "name": "White Orchids in Vase",
+      "shortName": "White Orchids",
+      "description": "Elegant white orchid plant in decorative ceramic vase",
+      "price": 1299,
+      "originalPrice": 1699,
+      "image": "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=800",
+      "rating": 4.9,
+      "reviews": 312,
+      "occasions": ["anniversary", "congratulations", "corporate"],
+      "flowerTypes": ["orchids"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": true,
+      "details": {
+        "flowers": "2 Stem White Orchids",
+        "vase": "Ceramic vase included",
+        "height": "18-20 inches",
+        "care": "Water once a week, indirect sunlight"
+      }
+    },
+    {
+      "id": 9,
+      "name": "Purple Orchids Elegance",
+      "shortName": "Purple Orchids",
+      "description": "Exotic purple orchids in elegant pot arrangement",
+      "price": 1399,
+      "originalPrice": 1799,
+      "image": "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=800",
+      "rating": 4.8,
+      "reviews": 267,
+      "occasions": ["birthday", "anniversary", "luxury"],
+      "flowerTypes": ["orchids"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": false,
+      "details": {
+        "flowers": "2 Stem Purple Orchids",
+        "vase": "Designer pot included",
+        "height": "18-22 inches",
+        "care": "Minimal watering, bright indirect light"
+      }
+    },
+    {
+      "id": 10,
+      "name": "Elegant White Lilies",
+      "shortName": "White Lilies",
+      "description": "Pure white lilies symbolizing peace and purity",
+      "price": 899,
+      "originalPrice": 1199,
+      "image": "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=800",
+      "rating": 4.7,
+      "reviews": 201,
+      "occasions": ["sympathy", "get-well-soon", "peace"],
+      "flowerTypes": ["lilies"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": false,
+      "details": {
+        "flowers": "5 White Lilies",
+        "vase": "Glass vase included",
+        "height": "16-18 inches",
+        "care": "Change water every 2 days, remove pollen"
+      }
+    },
+    {
+      "id": 11,
+      "name": "Pink Lilies Bouquet",
+      "shortName": "Pink Lilies",
+      "description": "Beautiful pink lilies with complementing green fillers",
+      "price": 999,
+      "originalPrice": 1299,
+      "image": "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=800",
+      "rating": 4.8,
+      "reviews": 234,
+      "occasions": ["birthday", "appreciation", "celebration"],
+      "flowerTypes": ["lilies"],
+      "deliveryTime": "2-hours",
+      "inStock": true,
+      "isBestseller": true,
+      "details": {
+        "flowers": "6 Pink Lilies",
+        "vase": "Premium wrapping",
+        "height": "16-18 inches",
+        "care": "Keep in cool place, change water regularly"
+      }
+    },
+    {
+      "id": 12,
+      "name": "Gerbera Happiness Bouquet",
+      "shortName": "Gerbera Mix",
+      "description": "Cheerful mix of colorful gerberas bringing joy",
+      "price": 749,
+      "originalPrice": 949,
+      "image": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800",
+      "rating": 4.6,
+      "reviews": 189,
+      "occasions": ["birthday", "get-well-soon", "cheerful"],
+      "flowerTypes": ["gerberas"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": false,
+      "details": {
+        "flowers": "12 Mixed Gerberas",
+        "vase": "Cellophane wrapping",
+        "height": "12-14 inches",
+        "care": "Trim stems, change water daily"
+      }
+    },
+    {
+      "id": 13,
+      "name": "Mixed Flowers Celebration",
+      "shortName": "Mixed Celebration",
+      "description": "Vibrant mix of roses, carnations, and gerberas",
+      "price": 1099,
+      "originalPrice": 1399,
+      "image": "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=800",
+      "rating": 4.8,
+      "reviews": 276,
+      "occasions": ["birthday", "congratulations", "celebration"],
+      "flowerTypes": ["mixed"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": true,
+      "details": {
+        "flowers": "Roses, Carnations, Gerberas",
+        "vase": "Premium box arrangement",
+        "height": "14-16 inches",
+        "care": "Mixed care instructions provided"
+      }
+    },
+    {
+      "id": 14,
+      "name": "Premium Mixed Flower Basket",
+      "shortName": "Premium Basket",
+      "description": "Luxurious basket arrangement with exotic flowers",
+      "price": 1799,
+      "originalPrice": 2299,
+      "image": "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=800",
+      "rating": 4.9,
+      "reviews": 401,
+      "occasions": ["corporate", "grand-opening", "luxury"],
+      "flowerTypes": ["mixed"],
+      "deliveryTime": "4-hours",
+      "inStock": true,
+      "isBestseller": true,
+      "details": {
+        "flowers": "Premium Mixed Selection",
+        "vase": "Designer basket included",
+        "height": "18-20 inches",
+        "care": "Professional arrangement, water regularly"
+      }
+    },
+    {
+      "id": 15,
+      "name": "Love Combo - Flowers & Cake",
+      "shortName": "Love Combo",
+      "description": "12 red roses with 500gm chocolate cake",
+      "price": 1299,
+      "originalPrice": 1699,
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
+      "rating": 4.9,
+      "reviews": 567,
+      "occasions": ["birthday", "anniversary", "love"],
+      "flowerTypes": ["roses"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": true,
+      "combo": true,
+      "details": {
+        "flowers": "12 Red Roses",
+        "extra": "500gm Chocolate Cake",
+        "vase": "Premium wrapping",
+        "height": "12-14 inches",
+        "care": "Keep flowers and cake separately"
+      }
+    },
+    {
+      "id": 16,
+      "name": "Birthday Special Combo",
+      "shortName": "Birthday Combo",
+      "description": "Mixed flowers with 500gm cake and greeting card",
+      "price": 1399,
+      "originalPrice": 1799,
+      "image": "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=800",
+      "rating": 4.8,
+      "reviews": 432,
+      "occasions": ["birthday"],
+      "flowerTypes": ["mixed"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": true,
+      "combo": true,
+      "details": {
+        "flowers": "Mixed Flower Bouquet",
+        "extra": "500gm Cake + Card",
+        "vase": "Special birthday wrapping",
+        "height": "14-16 inches",
+        "care": "Flowers last 3-5 days with care"
+      }
+    },
+    {
+      "id": 17,
+      "name": "Teddy Bear & Roses Combo",
+      "shortName": "Teddy Roses",
+      "description": "12 red roses with cute teddy bear and chocolates",
+      "price": 1499,
+      "originalPrice": 1899,
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
+      "rating": 4.8,
+      "reviews": 389,
+      "occasions": ["love", "anniversary", "valentine"],
+      "flowerTypes": ["roses"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": true,
+      "combo": true,
+      "details": {
+        "flowers": "12 Red Roses",
+        "extra": "Teddy + Chocolates",
+        "vase": "Gift box packaging",
+        "height": "12-14 inches",
+        "care": "Handle teddy and flowers with care"
+      }
+    },
+    {
+      "id": 18,
+      "name": "Grand 50 Red Roses Bouquet",
+      "shortName": "Grand 50 Roses",
+      "description": "Spectacular arrangement of 50 premium red roses",
+      "price": 2999,
+      "originalPrice": 3999,
+      "image": "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=800",
+      "rating": 5.0,
+      "reviews": 234,
+      "occasions": ["proposal", "grand-gesture", "luxury"],
+      "flowerTypes": ["roses"],
+      "deliveryTime": "4-hours",
+      "inStock": true,
+      "isBestseller": true,
+      "premium": true,
+      "details": {
+        "flowers": "50 Premium Red Roses",
+        "vase": "Luxury gift box",
+        "height": "20-24 inches",
+        "care": "Premium quality, lasts 5-7 days"
+      }
+    },
+    {
+      "id": 19,
+      "name": "100 Red Roses - Ultimate Love",
+      "shortName": "100 Roses Ultimate",
+      "description": "The ultimate expression of love with 100 premium red roses",
+      "price": 4999,
+      "originalPrice": 6999,
+      "image": "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=800",
+      "rating": 5.0,
+      "reviews": 156,
+      "occasions": ["proposal", "grand-gesture", "luxury"],
+      "flowerTypes": ["roses"],
+      "deliveryTime": "6-hours",
+      "inStock": true,
+      "isBestseller": false,
+      "premium": true,
+      "details": {
+        "flowers": "100 Premium Red Roses",
+        "vase": "Ultra-luxury presentation",
+        "height": "24-28 inches",
+        "care": "VIP quality, lasts 7-10 days"
+      }
+    },
+    {
+      "id": 20,
+      "name": "Sunflower Happiness Bouquet",
+      "shortName": "Sunflowers",
+      "description": "Bright sunflowers bringing warmth and positivity",
+      "price": 799,
+      "originalPrice": 999,
+      "image": "https://images.unsplash.com/photo-1597848212624-e530854ad7f6?w=800",
+      "rating": 4.7,
+      "reviews": 198,
+      "occasions": ["birthday", "get-well-soon", "cheerful"],
+      "flowerTypes": ["mixed"],
+      "deliveryTime": "same-day",
+      "inStock": true,
+      "isBestseller": false,
+      "details": {
+        "flowers": "6 Sunflowers",
+        "vase": "Natural wrapping",
+        "height": "16-18 inches",
+        "care": "Water daily, needs sunlight"
+      }
+    }
+  ]
+}

@@ -220,7 +220,7 @@ export default function ServiceCategories({ onLoginRequired }) {
       name: "BFS Flowers",
       image:
         "https://monsoonflowers.com/cdn/shop/articles/feature_image_1417065f-302c-49d7-8922-b7f884e3d8f5.webp?v=1735856265",
-      category: "flower-categories",
+      category: "flowers",
       description: "Fresh flowers & bouquets for every occasion",
       fallbackIcon: Flower,
       gradient: "from-pink-500 to-rose-500",
