@@ -61,6 +61,38 @@ const productData = {
   // Add more products as needed
 };
 
+// Default product for when product ID is not found
+const DEFAULT_PRODUCT = {
+  id: 0,
+  name: "Beautiful Flower Bouquet",
+  description: "Fresh flowers beautifully arranged",
+  longDescription:
+    "This stunning bouquet features the finest selection of fresh flowers, expertly arranged to create a memorable gift for any occasion.",
+  image: "/services/flowers/bouquet.webp",
+  images: ["/services/flowers/bouquet.webp"],
+  price: 799,
+  originalPrice: 999,
+  rating: 4.7,
+  reviews: 150,
+  occasion: ["Birthday", "Anniversary"],
+  flowerType: "Mixed Flowers",
+  deliveryTime: "Same Day",
+  inStock: true,
+  features: [
+    "Fresh flowers",
+    "Premium quality",
+    "Beautiful arrangement",
+    "Free greeting card",
+    "Same-day delivery",
+  ],
+  care: [
+    "Cut stems at an angle",
+    "Change water daily",
+    "Keep in cool place",
+    "Remove wilted flowers",
+  ],
+};
+
 const FlowerProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -72,35 +104,9 @@ const FlowerProductDetailPage = () => {
   const [addingToCart, setAddingToCart] = useState(false);
 
   // Get product or use default
-  const product = productData[id] || {
-    id: parseInt(id),
-    name: "Beautiful Flower Bouquet",
-    description: "Fresh flowers beautifully arranged",
-    longDescription:
-      "This stunning bouquet features the finest selection of fresh flowers, expertly arranged to create a memorable gift for any occasion.",
-    image: "/services/flowers/bouquet.webp",
-    images: ["/services/flowers/bouquet.webp"],
-    price: 799,
-    originalPrice: 999,
-    rating: 4.7,
-    reviews: 150,
-    occasion: ["Birthday", "Anniversary"],
-    flowerType: "Mixed Flowers",
-    deliveryTime: "Same Day",
-    inStock: true,
-    features: [
-      "Fresh flowers",
-      "Premium quality",
-      "Beautiful arrangement",
-      "Free greeting card",
-      "Same-day delivery",
-    ],
-    care: [
-      "Cut stems at an angle",
-      "Change water daily",
-      "Keep in cool place",
-      "Remove wilted flowers",
-    ],
+  const product = productData[id] || { 
+    ...DEFAULT_PRODUCT, 
+    id: parseInt(id) || 0 
   };
 
   const discount = Math.round(
@@ -117,7 +123,7 @@ const FlowerProductDetailPage = () => {
     setAddingToCart(true);
 
     const cartItem = {
-      id: `flower-${product.id}-${Date.now()}`,
+      id: `flower-${product.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type: "flower-product",
       name: product.name,
       serviceName: "flowers",
@@ -140,10 +146,8 @@ const FlowerProductDetailPage = () => {
       duration: 3000,
     });
 
-    setTimeout(() => {
-      setAddingToCart(false);
-      navigate("/cart");
-    }, 500);
+    setAddingToCart(false);
+    navigate("/cart");
   };
 
   const handleShare = () => {

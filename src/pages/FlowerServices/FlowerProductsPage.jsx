@@ -544,6 +544,7 @@ const FlowerProductsPage = () => {
                   <div className="mb-6">
                     <h4 className="font-semibold mb-3">Price Range</h4>
                     <div className="space-y-3">
+                      {/* Single slider for max price - common UX pattern for filtering products up to a price */}
                       <input
                         type="range"
                         min="0"
