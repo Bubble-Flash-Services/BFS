@@ -27,113 +27,119 @@ const occasions = [
   { id: "thank-you", name: "Thank You", icon: Gift, color: "bg-purple-500" },
 ];
 
-// Featured products
+// Featured products - Best sellers
 const featuredProducts = [
   {
     id: 1,
-    name: "Red Roses Bouquet",
-    image: "/services/flowers/bouquet.webp",
+    name: "Red Roses Bouquet - Classic Love",
+    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
     price: 799,
     originalPrice: 999,
     rating: 4.8,
     reviews: 234,
     occasion: "Love & Romance",
     deliveryTime: "Same Day",
+    tag: "Bestseller",
   },
   {
     id: 2,
-    name: "Mixed Flower Arrangement",
-    image: "/services/flowers/bouquet.webp",
-    price: 899,
-    originalPrice: 1199,
-    rating: 4.7,
-    reviews: 189,
-    occasion: "Birthday",
-    deliveryTime: "2 Hours",
-  },
-  {
-    id: 3,
-    name: "Premium Gift Combo",
-    image: "/services/flowers/gift-box.png",
+    name: "Premium Red Roses - Love Special",
+    image: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=800",
     price: 1499,
     originalPrice: 1999,
     rating: 4.9,
-    reviews: 312,
+    reviews: 456,
     occasion: "Anniversary",
     deliveryTime: "Same Day",
+    tag: "Premium",
   },
   {
-    id: 4,
-    name: "Elegant White Lilies",
-    image: "/services/flowers/bouquet.webp",
-    price: 699,
-    originalPrice: 899,
-    rating: 4.6,
-    reviews: 156,
-    occasion: "Get Well Soon",
-    deliveryTime: "4 Hours",
-  },
-  {
-    id: 5,
-    name: "Celebration Bouquet",
-    image: "/services/flowers/bouquet.webp",
+    id: 8,
+    name: "White Orchids in Vase",
+    image: "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=800",
     price: 1299,
-    originalPrice: 1599,
-    rating: 4.8,
-    reviews: 278,
+    originalPrice: 1699,
+    rating: 4.9,
+    reviews: 312,
     occasion: "Congratulations",
     deliveryTime: "Same Day",
+    tag: "Bestseller",
   },
   {
-    id: 6,
-    name: "Thank You Flowers",
-    image: "/services/flowers/bouquet.webp",
-    price: 599,
-    originalPrice: 799,
-    rating: 4.5,
-    reviews: 145,
-    occasion: "Thank You",
+    id: 11,
+    name: "Pink Lilies Bouquet",
+    image: "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=800",
+    price: 999,
+    originalPrice: 1299,
+    rating: 4.8,
+    reviews: 234,
+    occasion: "Birthday",
+    deliveryTime: "2 Hours",
+    tag: "Bestseller",
+  },
+  {
+    id: 15,
+    name: "Love Combo - Flowers & Cake",
+    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
+    price: 1299,
+    originalPrice: 1699,
+    rating: 4.9,
+    reviews: 567,
+    occasion: "Anniversary",
     deliveryTime: "Same Day",
+    tag: "Combo",
+  },
+  {
+    id: 13,
+    name: "Mixed Flowers Celebration",
+    image: "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=800",
+    price: 1099,
+    originalPrice: 1399,
+    rating: 4.8,
+    reviews: 276,
+    occasion: "Celebration",
+    deliveryTime: "Same Day",
+    tag: "Bestseller",
   },
 ];
 
-// Flower categories
+// Flower categories with better images
 const flowerCategories = [
   {
     id: "roses",
     name: "Roses",
-    image: "/services/flowers/bouquet.webp",
+    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400",
     count: "50+ Options",
   },
   {
     id: "orchids",
     name: "Orchids",
-    image: "/services/flowers/bouquet.webp",
-    count: "30+ Options",
+    image: "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=400",
+    count: "25+ Options",
   },
   {
     id: "carnations",
     name: "Carnations",
-    image: "/services/flowers/bouquet.webp",
-    count: "25+ Options",
+    image: "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=400",
+    count: "30+ Options",
   },
   {
     id: "lilies",
     name: "Lilies",
-    image: "/services/flowers/bouquet.webp",
+    image: "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=400",
     count: "35+ Options",
+  },
+  {
+    id: "gerberas",
+    name: "Gerberas",
+    image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400",
+    count: "40+ Options",
   },
   {
     id: "mixed",
     name: "Mixed Flowers",
-    image: "/services/flowers/bouquet.webp",
+    image: "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=400",
     count: "60+ Options",
-  },
-  {
-    id: "exotic",
-    name: "Exotic Flowers",
-    image: "/services/flowers/bouquet.webp",
-    count: "20+ Options",
   },
 ];
 
@@ -319,6 +325,11 @@ const FlowerLandingPage = () => {
                     <Clock className="w-3 h-3" />
                     {product.deliveryTime}
                   </div>
+                  {product.tag && (
+                    <div className="absolute bottom-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                      {product.tag}
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-6">
