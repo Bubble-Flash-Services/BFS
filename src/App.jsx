@@ -80,6 +80,9 @@ import KeyServicesPage from "./pages/KeyServices/KeyServicesPage";
 import AutoFixPage from "./pages/AutoFix/AutoFixPage";
 import FlowerServicesPage from "./pages/FlowerServices/FlowerServicesPage";
 import FlowerCategoriesPage from "./pages/FlowerServices/FlowerCategoriesPage";
+import FlowerLandingPage from "./pages/FlowerServices/FlowerLandingPage";
+import FlowerProductsPage from "./pages/FlowerServices/FlowerProductsPage";
+import FlowerProductDetailPage from "./pages/FlowerServices/FlowerProductDetailPage";
 import MobileFixPage from "./pages/MobileFix/MobileFixPage";
 function AppContent() {
   const location = useLocation();
@@ -193,6 +196,9 @@ function AppContent() {
           <Route path="/autofix" element={<ProtectedRoute><AutoFixPage /></ProtectedRoute>} />
           <Route path="/flower-categories" element={<ProtectedRoute><FlowerCategoriesPage /></ProtectedRoute>} />
           <Route path="/flower-services/:category" element={<ProtectedRoute><FlowerServicesPage /></ProtectedRoute>} />
+          <Route path="/flowers" element={<FlowerLandingPage />} />
+          <Route path="/flower-products" element={<FlowerProductsPage />} />
+          <Route path="/flower-product/:id" element={<FlowerProductDetailPage />} />
           <Route path="/mobilefix" element={<ProtectedRoute><MobileFixPage /></ProtectedRoute>} />
           <Route
             path="/admin/users"
