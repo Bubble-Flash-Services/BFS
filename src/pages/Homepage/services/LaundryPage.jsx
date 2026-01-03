@@ -4804,17 +4804,183 @@ export default function LaundryPage() {
 
         {/* Kids Clothes Category */}
         {activeCategory === 'kids-clothes' && (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-center mb-8">
-              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                👶 Kids Clothes Laundry
-              </span>
-            </h2>
-            <div className="text-center py-10">
-              <div className="text-6xl mb-4">🔜</div>
-              <h3 className="text-2xl font-bold text-gray-700 mb-2">Coming Soon</h3>
-              <p className="text-gray-600">Gentle care for kids clothing with separate washing</p>
-              <p className="text-gray-500 mt-4">Special attention to soft fabrics and hygienic cleaning</p>
+          <div>
+            {/* Kids Header */}
+            <div className="mb-10 bg-gradient-to-r from-green-100 via-blue-50 to-teal-100 rounded-2xl p-8 shadow-xl border-2 border-green-200">
+              <h2 className="text-4xl font-bold text-center mb-3">
+                <span className="bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+                  👶 Kids Clothes Laundry
+                </span>
+              </h2>
+              <p className="text-center text-gray-700 text-lg max-w-3xl mx-auto mb-4">
+                Gentle care for kids clothing with separate washing and hygienic handling
+              </p>
+              <div className="bg-gradient-to-r from-green-50 to-teal-50 rounded-lg p-4 max-w-2xl mx-auto border border-green-200">
+                <p className="text-sm text-center text-gray-700">
+                  <strong>✨ Special Features:</strong> Washed separately | Gentle detergents | Hypoallergenic care | Extra soft finish
+                </p>
+              </div>
+            </div>
+
+            {/* Kids Wash & Fold Section */}
+            <div className="mb-12">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-gradient-to-r from-green-100 to-teal-100 rounded-full px-6 py-3 shadow-md">
+                  <h3 className="text-2xl font-bold text-center bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+                    Kids Wash & Fold
+                  </h3>
+                </div>
+              </div>
+              <p className="text-center text-gray-600 mb-6 text-sm">Special attention to soft fabrics with gentle care</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {clothingItems.kids.map((item) => (
+                  <div key={item.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-green-300">
+                    <div className="relative h-44 overflow-hidden bg-gradient-to-br from-green-50 to-teal-50">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute top-2 right-2 bg-gradient-to-r from-green-500 to-teal-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                        Kids
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-bold text-gray-800 text-sm mb-2 line-clamp-1">{item.name}</h4>
+                      {item.description && (
+                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                      )}
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-lg font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">₹{item.price}</span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Per Piece</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="w-full bg-gradient-to-r from-green-600 to-teal-600 text-white px-3 py-2 rounded-xl text-xs font-semibold hover:from-green-700 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                          >
+                            Add to Cart
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full bg-gradient-to-r from-green-100 to-teal-100 rounded-xl p-1.5">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-white text-gray-700 w-7 h-7 rounded-lg text-sm font-bold hover:bg-gray-100 transition-colors shadow-sm"
+                            >
+                              -
+                            </button>
+                            <span className="mx-2 font-bold text-sm text-green-800">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-gradient-to-r from-green-600 to-teal-600 text-white w-7 h-7 rounded-lg text-sm font-bold hover:from-green-700 hover:to-teal-700 transition-colors shadow-sm"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 text-center">
+                <div className="inline-block bg-gradient-to-r from-green-50 to-teal-50 rounded-lg p-4 border border-green-200">
+                  <p className="text-sm text-gray-700">📌 <strong>Service Includes:</strong> Separate washing with gentle detergents, hygienic drying, and neat folding</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Kids Ironing Section */}
+            <div className="mb-12">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full px-6 py-3 shadow-md">
+                  <h3 className="text-2xl font-bold text-center bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                    Kids Wash & Iron
+                  </h3>
+                </div>
+              </div>
+              <p className="text-center text-gray-600 mb-6 text-sm">Gentle washing with soft ironing for kids' comfort</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {ironingItems.kids.map((item) => (
+                  <div key={item.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-blue-300">
+                    <div className="relative h-44 overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute top-2 right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                        Kids Iron
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-bold text-gray-800 text-sm mb-2 line-clamp-1">{item.name}</h4>
+                      {item.description && (
+                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                      )}
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">₹{item.price}</span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Per Piece</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        {getItemQuantity(item.id) === 0 ? (
+                          <button
+                            onClick={() => addToBasket(item)}
+                            className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-3 py-2 rounded-xl text-xs font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                          >
+                            Add to Cart
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-between w-full bg-gradient-to-r from-blue-100 to-cyan-100 rounded-xl p-1.5">
+                            <button
+                              onClick={() => removeFromBasket(item)}
+                              className="bg-white text-gray-700 w-7 h-7 rounded-lg text-sm font-bold hover:bg-gray-100 transition-colors shadow-sm"
+                            >
+                              -
+                            </button>
+                            <span className="mx-2 font-bold text-sm text-blue-800">{getItemQuantity(item.id)}</span>
+                            <button
+                              onClick={() => addToBasket(item)}
+                              className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white w-7 h-7 rounded-lg text-sm font-bold hover:from-blue-700 hover:to-cyan-700 transition-colors shadow-sm"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 text-center">
+                <div className="inline-block bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200">
+                  <p className="text-sm text-gray-700">📌 <strong>Service Includes:</strong> Gentle washing, soft ironing at kid-safe temperatures, and premium packaging</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Why Choose Kids Laundry */}
+            <div className="mb-12 bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl p-8 shadow-xl border-2 border-green-200">
+              <h4 className="text-2xl font-bold text-center mb-6 text-gray-800">
+                ✨ Why Choose BFS Kids Laundry?
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { icon: '🧼', title: 'Gentle Detergents', desc: 'Hypoallergenic & skin-safe' },
+                  { icon: '🔄', title: 'Separate Washing', desc: 'Kids clothes washed separately' },
+                  { icon: '🌡️', title: 'Safe Temperatures', desc: 'Gentle heat for soft fabrics' },
+                  { icon: '✅', title: 'Hygienic Process', desc: 'Extra care for hygiene' }
+                ].map((feature, index) => (
+                  <div key={index} className="bg-white p-5 rounded-xl border border-green-200 hover:shadow-lg transition-shadow">
+                    <div className="text-4xl mb-3 text-center">{feature.icon}</div>
+                    <h5 className="font-bold text-gray-800 text-center mb-2">{feature.title}</h5>
+                    <p className="text-sm text-gray-600 text-center">{feature.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
