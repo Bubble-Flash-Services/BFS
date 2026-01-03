@@ -23,19 +23,22 @@ export default function LaundryPage() {
       id: 1,
       title: "BFS SmartLaundry™",
       subtitle: "Fabric-wise • Brand-wise • Transparent pricing",
-      bgColor: "from-purple-500 to-blue-600"
+      bgColor: "from-purple-500 to-blue-600",
+      image: "/laundry/laundry1.png"
     },
     {
       id: 2,
       title: "Free Pickup & Delivery",
       subtitle: "Minimum order applies",
-      bgColor: "from-green-500 to-teal-600"
+      bgColor: "from-green-500 to-teal-600",
+      image: "/laundry/laundry2.png"
     },
     {
       id: 3,
       title: "24-48 hrs Turnaround",
       subtitle: "Express service available",
-      bgColor: "from-orange-500 to-red-600"
+      bgColor: "from-orange-500 to-red-600",
+      image: "/laundry/laundry3.png"
     }
   ];
 
@@ -437,7 +440,7 @@ export default function LaundryPage() {
     <section className="py-16 bg-gradient-to-b from-gray-50 to-white min-h-screen">
       <div className="container mx-auto px-4">
         {/* Advertisement Banner */}
-        <div className="relative mb-12 h-48 rounded-2xl overflow-hidden shadow-xl">
+        <div className="relative mb-12 h-64 rounded-2xl overflow-hidden shadow-xl">
           <div 
             className="flex h-full transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${adSlide * 100}%)` }}
@@ -447,16 +450,24 @@ export default function LaundryPage() {
                 key={ad.id}
                 className={`flex-shrink-0 w-full h-full bg-gradient-to-r ${ad.bgColor} flex items-center justify-center text-white relative`}
               >
-                <div className="text-center px-6">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">{ad.title}</h2>
-                  <p className="text-lg md:text-xl opacity-90">{ad.subtitle}</p>
+                {/* Background Image */}
+                <div className="absolute inset-0 overflow-hidden">
+                  <img 
+                    src={ad.image} 
+                    alt={ad.title}
+                    className="w-full h-full object-cover opacity-30"
+                  />
+                </div>
+                <div className="text-center px-6 relative z-10">
+                  <h2 className="text-4xl md:text-5xl font-bold mb-3 drop-shadow-lg">{ad.title}</h2>
+                  <p className="text-lg md:text-2xl opacity-90">{ad.subtitle}</p>
                 </div>
               </div>
             ))}
           </div>
           
           {/* Ad Dots Indicator */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
             {adBanners.map((_, index) => (
               <button
                 key={index}
@@ -492,16 +503,25 @@ export default function LaundryPage() {
                   <button
                     key={category.id}
                     onClick={() => handleCategorySelect(category.id)}
-                    className={`group relative p-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl bg-gradient-to-br ${category.color} text-white overflow-hidden`}
+                    className={`group relative p-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl bg-white overflow-hidden border-2 border-gray-100 hover:border-purple-300`}
                   >
-                    {/* Background decoration */}
-                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                    {/* Image Background */}
+                    <div className="relative h-48 mb-4 rounded-xl overflow-hidden">
+                      <img 
+                        src={category.image} 
+                        alt={category.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-60 group-hover:opacity-50 transition-opacity duration-300`}></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-7xl drop-shadow-lg">{category.icon}</div>
+                      </div>
+                    </div>
                     
-                    <div className="relative z-10">
-                      <div className="text-6xl mb-4">{category.icon}</div>
-                      <div className="text-lg font-bold mb-2">{category.name}</div>
-                      <div className="text-sm opacity-90 mb-4">{category.description}</div>
-                      <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium">
+                    <div className="relative z-10 text-center">
+                      <div className="text-lg font-bold mb-2 text-gray-800">{category.name}</div>
+                      <div className="text-sm text-gray-600 mb-4">{category.description}</div>
+                      <div className={`inline-block bg-gradient-to-r ${category.color} text-white px-4 py-2 rounded-full text-sm font-medium shadow-md group-hover:shadow-lg transition-shadow`}>
                         View Items →
                       </div>
                     </div>

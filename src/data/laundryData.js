@@ -5,56 +5,64 @@ export const laundryCategories = [
     name: "MEN'S WASH",
     icon: '👨',
     color: 'from-blue-500 to-indigo-600',
-    description: 'Fabric-wise • Brand-wise • Separate handling • Transparent pricing'
+    description: 'Fabric-wise • Brand-wise • Separate handling • Transparent pricing',
+    image: '/laundry/dry clean/shirt normal.jpg'
   },
   {
     id: 'womens',
     name: "WOMEN'S WASH",
     icon: '👩',
     color: 'from-pink-500 to-purple-600',
-    description: 'Gentle care • Special fabrics • Individual attention'
+    description: 'Gentle care • Special fabrics • Individual attention',
+    image: '/laundry/dry clean/shirt normal women.webp'
   },
   {
     id: 'sarees',
     name: 'SAREES & ROLLING',
     icon: '🥻',
     color: 'from-purple-500 to-pink-600',
-    description: 'Hand wash only • Individual care • Premium packaging'
+    description: 'Hand wash only • Individual care • Premium packaging',
+    image: '/laundry/dry clean/saree silk.jpg'
   },
   {
     id: 'kids',
     name: 'KIDS CLOTHING',
     icon: '🧒',
     color: 'from-green-500 to-teal-600',
-    description: 'Washed Separately • Gentle detergents • Extra care'
+    description: 'Washed Separately • Gentle detergents • Extra care',
+    image: '/laundry/dry clean/Kids Topwear.jpg'
   },
   {
     id: 'winterWear',
     name: 'BLAZERS, COATS & WINTER WEAR',
     icon: '🧥',
     color: 'from-cyan-500 to-blue-600',
-    description: 'Professional care • Premium handling'
+    description: 'Professional care • Premium handling',
+    image: '/laundry/dry clean/blazer suit 1 piece.png'
   },
   {
     id: 'shoes',
     name: 'SHOES CLEANING',
     icon: '👟',
     color: 'from-orange-500 to-red-600',
-    description: 'Brand-Wise • VIP Care available'
+    description: 'Brand-Wise • VIP Care available',
+    image: '/laundry/shoe clean/Sports Shoes.jpg'
   },
   {
     id: 'homeLinen',
     name: 'HOME LINEN',
     icon: '🛏️',
     color: 'from-teal-500 to-green-600',
-    description: 'Fresh and hygienic • Professional care'
+    description: 'Fresh and hygienic • Professional care',
+    image: '/laundry/bedsheet/Wash&Iron-Double.webp'
   },
   {
     id: 'stainTreatment',
     name: 'STAIN TREATMENT',
     icon: '✨',
     color: 'from-yellow-500 to-orange-600',
-    description: 'Add-on service • ₹40 per item'
+    description: 'Add-on service • ₹40 per item',
+    image: '/laundry/laundry3.png'
   }
 ];
 
@@ -67,8 +75,7 @@ export const categoryData = {
         name: 'Formal Wear (Regular Fabrics – Cotton / Poly)',
         items: [
           { name: 'Formal Shirt', washFold: 20, washIron: 30 },
-          { name: 'Formal Pant / Trouser', washFold: 25, washIron: 35 },
-          { name: 'Shirt + Pant Set', washFold: 45, washIron: 60 }
+          { name: 'Formal Pant / Trouser', washFold: 25, washIron: 35 }
         ]
       },
       {
@@ -77,8 +84,7 @@ export const categoryData = {
         note: 'Linen Shirts & Pants',
         items: [
           { name: 'Linen Shirt', washIron: 40 },
-          { name: 'Linen Pant', washIron: 45 },
-          { name: 'Linen Set (Shirt + Pant)', washIron: 80 }
+          { name: 'Linen Pant', washIron: 45 }
         ]
       },
       {
