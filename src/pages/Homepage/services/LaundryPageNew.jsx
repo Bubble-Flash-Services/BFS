@@ -571,27 +571,91 @@ export default function LaundryPage() {
             {/* Category Content */}
             {categoryData[selectedCategory] && (
               <div className="max-w-7xl mx-auto px-4">
-                {/* Render subcategories as grouped section cards */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {categoryData[selectedCategory].subcategories.map((subcategory) => (
-                    <div key={subcategory.id} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-                      {/* Subcategory Header */}
-                      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-6">
-                        <h3 className="text-xl font-bold text-gray-800 mb-1">
-                          {subcategory.name}
-                        </h3>
-                        {subcategory.note && (
-                          <p className="text-sm text-gray-600 italic">{subcategory.note}</p>
-                        )}
-                      </div>
-                      
-                      {/* Render items/brands in a grid within this section card */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {renderItemCards(subcategory, selectedCategory, subcategory.id)}
-                      </div>
+                {(() => {
+                  const subcategories = categoryData[selectedCategory].subcategories;
+                  
+                  // Helper function to count items in a subcategory
+                  const getItemCount = (subcategory) => {
+                    if (subcategory.brands) return subcategory.brands.length;
+                    return subcategory.items?.length || 0;
+                  };
+                  
+                  // Group jacket subcategories together
+                  const processedSubcategories = [];
+                  const jacketSubcategories = [];
+                  
+                  subcategories.forEach((subcategory) => {
+                    if (subcategory.name.toLowerCase().includes('jacket')) {
+                      jacketSubcategories.push(subcategory);
+                    } else {
+                      processedSubcategories.push({ type: 'regular', data: subcategory });
+                    }
+                  });
+                  
+                  // Add combined jackets group if any
+                  if (jacketSubcategories.length > 0) {
+                    processedSubcategories.push({ type: 'jackets', data: jacketSubcategories });
+                  }
+                  
+                  return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {processedSubcategories.map((group, groupIndex) => {
+                        if (group.type === 'jackets') {
+                          // Combined jackets section
+                          return (
+                            <div key={`jackets-${groupIndex}`} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                              <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-6">
+                                <h3 className="text-xl font-bold text-gray-800">Jackets</h3>
+                              </div>
+                              <div className="space-y-6">
+                                {group.data.map((subcategory) => (
+                                  <div key={subcategory.id}>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-3">{subcategory.name}</h4>
+                                    <div className="grid grid-cols-1 gap-4">
+                                      {renderItemCards(subcategory, selectedCategory, subcategory.id)}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
+                        
+                        const subcategory = group.data;
+                        const itemCount = getItemCount(subcategory);
+                        
+                        // For single-item subcategories, render as simple cards
+                        if (itemCount === 1) {
+                          return (
+                            <React.Fragment key={subcategory.id}>
+                              {renderItemCards(subcategory, selectedCategory, subcategory.id)}
+                            </React.Fragment>
+                          );
+                        }
+                        
+                        // For multi-item subcategories, render as section cards
+                        // Determine column span based on item count
+                        const colSpan = itemCount === 3 ? 'lg:col-span-3' : itemCount >= 4 ? 'lg:col-span-2' : '';
+                        
+                        return (
+                          <div key={subcategory.id} className={`bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 ${colSpan}`}>
+                            <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-6">
+                              <h3 className="text-xl font-bold text-gray-800 mb-1">
+                                {subcategory.name}
+                              </h3>
+                              {subcategory.note && (
+                                <p className="text-sm text-gray-600 italic">{subcategory.note}</p>
+                              )}
+                            </div>
+                            <div className={`grid gap-4 ${itemCount === 3 ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'}`}>
+                              {renderItemCards(subcategory, selectedCategory, subcategory.id)}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                  ))}
-                </div>
+                  );
+                })()}
 
                 {/* Special Stain Treatment Info */}
                 {selectedCategory === 'stainTreatment' && categoryData.stainTreatment.subcategories[0] && (
