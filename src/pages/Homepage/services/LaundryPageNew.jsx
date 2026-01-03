@@ -220,8 +220,11 @@ export default function LaundryPage() {
                       className="w-full h-full object-cover"
                       onError={(e) => { 
                         e.target.style.display = 'none';
+                        const fallback = document.createElement('div');
+                        fallback.className = 'text-6xl';
+                        fallback.textContent = '🧥';
                         e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
-                        e.target.parentElement.innerHTML = '<div class="text-6xl">🧥</div>';
+                        e.target.parentElement.appendChild(fallback);
                       }}
                     />
                   ) : (
@@ -285,8 +288,11 @@ export default function LaundryPage() {
                     className="w-full h-full object-cover"
                     onError={(e) => { 
                       e.target.style.display = 'none';
+                      const fallback = document.createElement('div');
+                      fallback.className = 'text-6xl';
+                      fallback.textContent = '👕';
                       e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
-                      e.target.parentElement.innerHTML = '<div class="text-6xl">👕</div>';
+                      e.target.parentElement.appendChild(fallback);
                     }}
                   />
                 ) : (
