@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../../components/CartContext';
 import { useAuth } from '../../../components/AuthContext';
 import SigninModal from '../signin/SigninModal';
-import { X, Plus, Minus } from 'lucide-react';
+import { X, Plus, Minus, Search } from 'lucide-react';
 import { laundryCategories, categoryData } from '../../../data/laundryData';
 
 export default function LaundryPage() {
@@ -12,6 +12,7 @@ export default function LaundryPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [adSlide, setAdSlide] = useState(0);
   const [showItemsPage, setShowItemsPage] = useState(false); // New state for showing items page
+  const [searchQuery, setSearchQuery] = useState(''); // Search query state
   
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -336,6 +337,35 @@ export default function LaundryPage() {
               </p>
             </div>
 
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto mb-8 px-4">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search items by name, category, or service type..."
+                  className="w-full pl-11 pr-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 text-gray-700 placeholder-gray-400"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+              {searchQuery && (
+                <p className="text-sm text-gray-500 mt-2 text-center">
+                  Searching for "{searchQuery}"
+                </p>
+              )}
+            </div>
+
             {/* Category Content */}
             {categoryData[selectedCategory] && (
               <div className="max-w-7xl mx-auto px-4">
@@ -345,10 +375,34 @@ export default function LaundryPage() {
                     // Get all items/brands from this subcategory
                     const items = subcategory.brands || subcategory.items || [];
                     
-                    return items.map((item, index) => {
+                    // Filter items based on search query
+                    const filteredItems = items.filter((item) => {
+                      if (!searchQuery) return true;
+                      
+                      const query = searchQuery.toLowerCase();
+                      const itemName = (item.name || item.tier || '').toLowerCase();
+                      const subcategoryName = subcategory.name.toLowerCase();
+                      const itemNote = (item.note || '').toLowerCase();
+                      const itemService = (item.service || '').toLowerCase();
+                      
+                      // Check if any service type matches
+                      const hasWashFold = item.washFold && 'wash fold'.includes(query);
+                      const hasWashIron = item.washIron && 'wash iron'.includes(query);
+                      const hasWashOnly = item.washOnly && 'wash only'.includes(query);
+                      
+                      return itemName.includes(query) || 
+                             subcategoryName.includes(query) || 
+                             itemNote.includes(query) ||
+                             itemService.includes(query) ||
+                             hasWashFold || hasWashIron || hasWashOnly;
+                    });
+                    
+                    return filteredItems.map((item, index) => {
+                      // Find the original index for the item key
+                      const originalIndex = items.indexOf(item);
                       const itemKey = subcategory.brands 
-                        ? `${selectedCategory}-${subcategory.id}-${index}-brand`
-                        : `${selectedCategory}-${subcategory.id}-${index}`;
+                        ? `${selectedCategory}-${subcategory.id}-${originalIndex}-brand`
+                        : `${selectedCategory}-${subcategory.id}-${originalIndex}`;
                       
                       // For brand-wise items (blazers)
                       if (subcategory.brands) {
@@ -587,6 +641,39 @@ export default function LaundryPage() {
                     });
                   })}
                 </div>
+
+                {/* No Results Message */}
+                {searchQuery && categoryData[selectedCategory].subcategories.every(subcategory => {
+                  const items = subcategory.brands || subcategory.items || [];
+                  const filteredItems = items.filter((item) => {
+                    const query = searchQuery.toLowerCase();
+                    const itemName = (item.name || item.tier || '').toLowerCase();
+                    const subcategoryName = subcategory.name.toLowerCase();
+                    const itemNote = (item.note || '').toLowerCase();
+                    const itemService = (item.service || '').toLowerCase();
+                    const hasWashFold = item.washFold && 'wash fold'.includes(query);
+                    const hasWashIron = item.washIron && 'wash iron'.includes(query);
+                    const hasWashOnly = item.washOnly && 'wash only'.includes(query);
+                    return itemName.includes(query) || subcategoryName.includes(query) || 
+                           itemNote.includes(query) || itemService.includes(query) ||
+                           hasWashFold || hasWashIron || hasWashOnly;
+                  });
+                  return filteredItems.length === 0;
+                }) && (
+                  <div className="text-center py-16">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h3 className="text-2xl font-bold text-gray-700 mb-2">No items found</h3>
+                    <p className="text-gray-500 mb-6">
+                      We couldn't find any items matching "{searchQuery}"
+                    </p>
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                      Clear Search
+                    </button>
+                  </div>
+                )}
 
                 {/* Special Stain Treatment Info */}
                 {selectedCategory === 'stainTreatment' && categoryData.stainTreatment.subcategories[0] && (

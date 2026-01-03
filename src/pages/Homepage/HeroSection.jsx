@@ -957,7 +957,7 @@ export default function HeroSection() {
                 <button
                   onClick={() =>
                     document
-                      .getElementById("service-categories")
+                      .getElementById("services")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
                   className="bg-white text-orange-600 px-4 py-1 rounded-full font-bold hover:bg-gray-100 transition-colors"
@@ -1108,7 +1108,7 @@ export default function HeroSection() {
 
           {/* Service Categories - Full Width Below */}
           <div className="mt-16">
-            <div id="service-categories" className="w-full">
+            <div id="services" className="w-full">
               <ServiceCategories onLoginRequired={() => setOpenSignin(true)} />
             </div>
           </div>
@@ -1759,7 +1759,7 @@ export default function HeroSection() {
         </div>
       </section>
       <section
-        id="services"
+        id="callback-services"
         className="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 relative overflow-hidden"
       >
         {/* Animated Background Elements */}
