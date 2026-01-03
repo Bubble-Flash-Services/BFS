@@ -2755,46 +2755,70 @@ export default function LaundryPage() {
         {/* Content based on active category */}
         {(activeCategory === 'mens-wash') && (
           <div>
+            {/* Men's Wash Header */}
+            <div className="mb-10 bg-gradient-to-r from-blue-100 via-indigo-50 to-purple-100 rounded-2xl p-8 shadow-xl border-2 border-blue-200">
+              <h2 className="text-4xl font-bold text-center mb-3">
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  👔 Men's Wash Services
+                </span>
+              </h2>
+              <p className="text-center text-gray-700 text-lg max-w-3xl mx-auto">
+                Professional care for all types of men's clothing with separate handling and premium quality
+              </p>
+            </div>
+
             {/* Men's Wash & Fold Section */}
             <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-purple-600 mb-4">
-                Men's Wash - Wash & Fold
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-full px-6 py-3 shadow-md">
+                  <h3 className="text-2xl font-bold text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    Wash & Fold
+                  </h3>
+                </div>
+              </div>
+              <p className="text-center text-gray-600 mb-6 text-sm">Hygienically washed, dried, and neatly folded</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {mensWashFold.map((item) => (
-                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                    <div className="aspect-square bg-gray-100 p-4">
+                  <div key={item.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-purple-300">
+                    {/* Image with gradient overlay */}
+                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-50 to-blue-50">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
+                    {/* Content */}
                     <div className="p-4">
-                      <h4 className="font-semibold text-gray-800 text-sm mb-1">{item.name}</h4>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-lg font-bold text-purple-600">₹{item.price}</span>
+                      <h4 className="font-bold text-gray-800 text-base mb-2 line-clamp-1">{item.name}</h4>
+                      {item.description && (
+                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                      )}
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">₹{item.price}</span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Per Piece</span>
                       </div>
                       <div className="flex justify-between items-center">
                         {getItemQuantity(item.id) === 0 ? (
                           <button
                             onClick={() => addToBasket(item)}
-                            className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors flex-1"
+                            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg"
                           >
-                            Add
+                            Add to Cart
                           </button>
                         ) : (
-                          <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center justify-between w-full bg-gradient-to-r from-purple-100 to-blue-100 rounded-xl p-2">
                             <button
                               onClick={() => removeFromBasket(item)}
-                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                              className="bg-white text-gray-700 w-8 h-8 rounded-lg text-base font-bold hover:bg-gray-100 transition-colors shadow-sm"
                             >
                               -
                             </button>
-                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <span className="mx-3 font-bold text-base text-purple-800">{getItemQuantity(item.id)}</span>
                             <button
                               onClick={() => addToBasket(item)}
-                              className="bg-purple-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors"
+                              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white w-8 h-8 rounded-lg text-base font-bold hover:from-purple-700 hover:to-blue-700 transition-colors shadow-sm"
                             >
                               +
                             </button>
@@ -2805,49 +2829,63 @@ export default function LaundryPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-center text-gray-600 mt-4">📌 Clothes are hygienically washed, dried, and neatly packed.</p>
+              <div className="mt-6 text-center">
+                <div className="inline-block bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-200">
+                  <p className="text-sm text-gray-700">📌 <strong>Service Includes:</strong> Hygienic washing, drying, and neat folding with quality fabric care</p>
+                </div>
+              </div>
             </div>
 
             {/* Men's Wash & Iron Section */}
             <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-blue-600 mb-4">
-                Men's Wash - Wash & Iron
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full px-6 py-3 shadow-md">
+                  <h3 className="text-2xl font-bold text-center bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                    Wash & Iron
+                  </h3>
+                </div>
+              </div>
+              <p className="text-center text-gray-600 mb-6 text-sm">Washed, dried, perfectly ironed, and neatly packed</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {mensWashIron.map((item) => (
-                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                    <div className="aspect-square bg-gray-100 p-4">
+                  <div key={item.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-blue-300">
+                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-semibold text-gray-800 text-sm mb-1">{item.name}</h4>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-lg font-bold text-blue-600">₹{item.price}</span>
+                      <h4 className="font-bold text-gray-800 text-base mb-2 line-clamp-1">{item.name}</h4>
+                      {item.description && (
+                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                      )}
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">₹{item.price}</span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Per Piece</span>
                       </div>
                       <div className="flex justify-between items-center">
                         {getItemQuantity(item.id) === 0 ? (
                           <button
                             onClick={() => addToBasket(item)}
-                            className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors flex-1"
+                            className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
                           >
-                            Add
+                            Add to Cart
                           </button>
                         ) : (
-                          <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center justify-between w-full bg-gradient-to-r from-blue-100 to-cyan-100 rounded-xl p-2">
                             <button
                               onClick={() => removeFromBasket(item)}
-                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                              className="bg-white text-gray-700 w-8 h-8 rounded-lg text-base font-bold hover:bg-gray-100 transition-colors shadow-sm"
                             >
                               -
                             </button>
-                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <span className="mx-3 font-bold text-base text-blue-800">{getItemQuantity(item.id)}</span>
                             <button
                               onClick={() => addToBasket(item)}
-                              className="bg-blue-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
+                              className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white w-8 h-8 rounded-lg text-base font-bold hover:from-blue-700 hover:to-cyan-700 transition-colors shadow-sm"
                             >
                               +
                             </button>
@@ -2858,7 +2896,11 @@ export default function LaundryPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-center text-gray-600 mt-4">📌 Clothes are hygienically washed, dried, and neatly packed.</p>
+              <div className="mt-6 text-center">
+                <div className="inline-block bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200">
+                  <p className="text-sm text-gray-700">📌 <strong>Service Includes:</strong> Hygienic washing, professional ironing, and premium packaging</p>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -2866,46 +2908,68 @@ export default function LaundryPage() {
         {/* Women's Wash Category */}
         {(activeCategory === 'womens-wash') && (
           <div>
+            {/* Women's Wash Header */}
+            <div className="mb-10 bg-gradient-to-r from-pink-100 via-purple-50 to-fuchsia-100 rounded-2xl p-8 shadow-xl border-2 border-pink-200">
+              <h2 className="text-4xl font-bold text-center mb-3">
+                <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                  👗 Women's Wash Services
+                </span>
+              </h2>
+              <p className="text-center text-gray-700 text-lg max-w-3xl mx-auto">
+                Gentle care for all women's clothing with special attention to delicate fabrics and premium finishing
+              </p>
+            </div>
+
             {/* Women's Wash & Fold Section */}
             <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-pink-600 mb-4">
-                Women's Wash - Wash & Fold
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-gradient-to-r from-pink-100 to-purple-100 rounded-full px-6 py-3 shadow-md">
+                  <h3 className="text-2xl font-bold text-center bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                    Wash & Fold
+                  </h3>
+                </div>
+              </div>
+              <p className="text-center text-gray-600 mb-6 text-sm">Gentle washing with fabric care, dried and neatly folded</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {womensWashFold.map((item) => (
-                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                    <div className="aspect-square bg-gray-100 p-4">
+                  <div key={item.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-pink-300">
+                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-pink-50 to-purple-50">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-semibold text-gray-800 text-sm mb-1">{item.name}</h4>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-lg font-bold text-pink-600">₹{item.price}</span>
+                      <h4 className="font-bold text-gray-800 text-base mb-2 line-clamp-1">{item.name}</h4>
+                      {item.description && (
+                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                      )}
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">₹{item.price}</span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Per Piece</span>
                       </div>
                       <div className="flex justify-between items-center">
                         {getItemQuantity(item.id) === 0 ? (
                           <button
                             onClick={() => addToBasket(item)}
-                            className="bg-pink-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-pink-700 transition-colors flex-1"
+                            className="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:from-pink-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg"
                           >
-                            Add
+                            Add to Cart
                           </button>
                         ) : (
-                          <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center justify-between w-full bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl p-2">
                             <button
                               onClick={() => removeFromBasket(item)}
-                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                              className="bg-white text-gray-700 w-8 h-8 rounded-lg text-base font-bold hover:bg-gray-100 transition-colors shadow-sm"
                             >
                               -
                             </button>
-                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <span className="mx-3 font-bold text-base text-pink-800">{getItemQuantity(item.id)}</span>
                             <button
                               onClick={() => addToBasket(item)}
-                              className="bg-pink-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-pink-700 transition-colors"
+                              className="bg-gradient-to-r from-pink-600 to-purple-600 text-white w-8 h-8 rounded-lg text-base font-bold hover:from-pink-700 hover:to-purple-700 transition-colors shadow-sm"
                             >
                               +
                             </button>
@@ -2916,49 +2980,63 @@ export default function LaundryPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-center text-gray-600 mt-4">📌 Suitable for both casual and office wear.</p>
+              <div className="mt-6 text-center">
+                <div className="inline-block bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg p-4 border border-pink-200">
+                  <p className="text-sm text-gray-700">📌 <strong>Service Includes:</strong> Gentle washing, fabric care, and neat folding for casual and office wear</p>
+                </div>
+              </div>
             </div>
 
             {/* Women's Wash & Iron Section */}
             <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center text-indigo-600 mb-4">
-                Women's Wash - Wash & Iron
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full px-6 py-3 shadow-md">
+                  <h3 className="text-2xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    Wash & Iron
+                  </h3>
+                </div>
+              </div>
+              <p className="text-center text-gray-600 mb-6 text-sm">Gentle washing with professional ironing and premium packaging</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {womensWashIron.map((item) => (
-                  <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                    <div className="aspect-square bg-gray-100 p-4">
+                  <div key={item.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-indigo-300">
+                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-indigo-50 to-purple-50">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-semibold text-gray-800 text-sm mb-1">{item.name}</h4>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-lg font-bold text-indigo-600">₹{item.price}</span>
+                      <h4 className="font-bold text-gray-800 text-base mb-2 line-clamp-1">{item.name}</h4>
+                      {item.description && (
+                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                      )}
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">₹{item.price}</span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Per Piece</span>
                       </div>
                       <div className="flex justify-between items-center">
                         {getItemQuantity(item.id) === 0 ? (
                           <button
                             onClick={() => addToBasket(item)}
-                            className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700 transition-colors flex-1"
+                            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg"
                           >
-                            Add
+                            Add to Cart
                           </button>
                         ) : (
-                          <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center justify-between w-full bg-gradient-to-r from-indigo-100 to-purple-100 rounded-xl p-2">
                             <button
                               onClick={() => removeFromBasket(item)}
-                              className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                              className="bg-white text-gray-700 w-8 h-8 rounded-lg text-base font-bold hover:bg-gray-100 transition-colors shadow-sm"
                             >
                               -
                             </button>
-                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <span className="mx-3 font-bold text-base text-indigo-800">{getItemQuantity(item.id)}</span>
                             <button
                               onClick={() => addToBasket(item)}
-                              className="bg-indigo-600 text-white w-8 h-8 rounded-full text-sm font-medium hover:bg-indigo-700 transition-colors"
+                              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white w-8 h-8 rounded-lg text-base font-bold hover:from-indigo-700 hover:to-purple-700 transition-colors shadow-sm"
                             >
                               +
                             </button>
@@ -2969,7 +3047,11 @@ export default function LaundryPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-center text-gray-600 mt-4">📌 Suitable for both casual and office wear.</p>
+              <div className="mt-6 text-center">
+                <div className="inline-block bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
+                  <p className="text-sm text-gray-700">📌 <strong>Service Includes:</strong> Gentle washing, professional ironing, and premium packaging for all occasions</p>
+                </div>
+              </div>
             </div>
           </div>
         )}
