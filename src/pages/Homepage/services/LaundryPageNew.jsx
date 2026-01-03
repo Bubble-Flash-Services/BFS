@@ -209,6 +209,7 @@ export default function LaundryPage() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-100">
+                <th className="border border-gray-300 px-4 py-2 text-left">Image</th>
                 <th className="border border-gray-300 px-4 py-2 text-left">Tier</th>
                 <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
                 <th className="border border-gray-300 px-4 py-2 text-center">Price</th>
@@ -221,6 +222,16 @@ export default function LaundryPage() {
                 const quantity = selectedItems[itemKey] || 0;
                 return (
                   <tr key={index} className="hover:bg-gray-50">
+                    <td className="border border-gray-300 px-4 py-2">
+                      {brand.image && (
+                        <img 
+                          src={brand.image} 
+                          alt={brand.tier}
+                          className="w-20 h-20 object-cover rounded-lg"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                      )}
+                    </td>
                     <td className="border border-gray-300 px-4 py-2 font-medium">{brand.tier}</td>
                     <td className="border border-gray-300 px-4 py-2 text-sm text-gray-600">{brand.note}</td>
                     <td className="border border-gray-300 px-4 py-2 text-center font-semibold text-purple-600">₹{brand.price}</td>
@@ -262,6 +273,7 @@ export default function LaundryPage() {
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-gray-100">
+              <th className="border border-gray-300 px-4 py-2 text-left">Image</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Item</th>
               {hasWashFold && <th className="border border-gray-300 px-4 py-2 text-center">Wash & Fold</th>}
               {hasWashIron && <th className="border border-gray-300 px-4 py-2 text-center">Wash & Iron</th>}
@@ -276,6 +288,16 @@ export default function LaundryPage() {
             {subcategory.items?.map((item, index) => {
               return (
                 <tr key={index} className="hover:bg-gray-50">
+                  <td className="border border-gray-300 px-4 py-2">
+                    {item.image && (
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        className="w-20 h-20 object-cover rounded-lg"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                    )}
+                  </td>
                   <td className="border border-gray-300 px-4 py-2 font-medium">{item.name}</td>
                   
                   {hasWashFold && (
@@ -504,26 +526,16 @@ export default function LaundryPage() {
                   <button
                     key={category.id}
                     onClick={() => handleCategorySelect(category.id)}
-                    className={`group relative p-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl bg-white overflow-hidden border-2 border-gray-100 hover:border-purple-300`}
+                    className={`group relative p-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl bg-gradient-to-br ${category.color} text-white overflow-hidden`}
                   >
-                    {/* Image Background */}
-                    <div className="relative h-48 mb-4 rounded-xl overflow-hidden">
-                      <img 
-                        src={category.image} 
-                        alt={category.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                      />
-                      <div className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-60 group-hover:opacity-50 transition-opacity duration-300`}></div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-7xl drop-shadow-lg">{category.icon}</div>
-                      </div>
-                    </div>
+                    {/* Background decoration */}
+                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                     
-                    <div className="relative z-10 text-center">
-                      <div className="text-lg font-bold mb-2 text-gray-800">{category.name}</div>
-                      <div className="text-sm text-gray-600 mb-4">{category.description}</div>
-                      <div className={`inline-block bg-gradient-to-r ${category.color} text-white px-4 py-2 rounded-full text-sm font-medium shadow-md group-hover:shadow-lg transition-shadow`}>
+                    <div className="relative z-10">
+                      <div className="text-6xl mb-4">{category.icon}</div>
+                      <div className="text-lg font-bold mb-2">{category.name}</div>
+                      <div className="text-sm opacity-90 mb-4">{category.description}</div>
+                      <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium">
                         View Items →
                       </div>
                     </div>
