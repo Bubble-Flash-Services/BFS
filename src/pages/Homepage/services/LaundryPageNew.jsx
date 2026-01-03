@@ -40,6 +40,16 @@ export default function LaundryPage() {
            hasWashFold || hasWashIron || hasWashOnly;
   };
 
+  // Helper function to check if any items match the search query
+  const hasAnyFilteredItems = (query) => {
+    if (!query || !categoryData[selectedCategory]) return true;
+    
+    return categoryData[selectedCategory].subcategories.some(subcategory => {
+      const items = subcategory.brands || subcategory.items || [];
+      return items.some(item => itemMatchesSearch(item, subcategory.name, query));
+    });
+  };
+
   // Advertisement banners
   const adBanners = [
     {
@@ -648,13 +658,7 @@ export default function LaundryPage() {
                 </div>
 
                 {/* No Results Message */}
-                {searchQuery && categoryData[selectedCategory].subcategories.every(subcategory => {
-                  const items = subcategory.brands || subcategory.items || [];
-                  const filteredItems = items.filter((item) => 
-                    itemMatchesSearch(item, subcategory.name, searchQuery)
-                  );
-                  return filteredItems.length === 0;
-                }) && (
+                {searchQuery && !hasAnyFilteredItems(searchQuery) && (
                   <div className="text-center py-16">
                     <div className="text-6xl mb-4">🔍</div>
                     <h3 className="text-2xl font-bold text-gray-700 mb-2">No items found</h3>
