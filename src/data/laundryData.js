@@ -66,9 +66,8 @@ export const categoryData = {
         id: 'formal-wear',
         name: 'Formal Wear (Regular Fabrics – Cotton / Poly)',
         items: [
-          { name: 'Formal Shirt', washFold: 20, washIron: 30 },
-          { name: 'Formal Pant / Trouser', washFold: 25, washIron: 35 },
-          { name: 'Shirt + Pant Set', washFold: 45, washIron: 60 }
+          { name: 'Formal Shirt', washFold: 20, washIron: 30, image: '/laundry/dry clean/shirt normal.jpg' },
+          { name: 'Formal Pant / Trouser', washFold: 25, washIron: 35, image: '/laundry/dry clean/trousers pants normal.webp' }
         ]
       },
       {
@@ -76,60 +75,59 @@ export const categoryData = {
         name: 'Linen Clothing (Separate Handling)',
         note: 'Linen Shirts & Pants',
         items: [
-          { name: 'Linen Shirt', washIron: 40 },
-          { name: 'Linen Pant', washIron: 45 },
-          { name: 'Linen Set (Shirt + Pant)', washIron: 80 }
+          { name: 'Linen Shirt', washIron: 40, image: '/laundry/dry clean/shirt silk designer.jpg' },
+          { name: 'Linen Pant', washIron: 45, image: '/laundry/dry clean/trousers pants silk.jpg' }
         ]
       },
       {
         id: 'linen-jackets',
         name: 'Linen Jackets (Separate Section)',
         items: [
-          { name: 'Linen Jacket', service: 'Wash & Iron', price: 80 }
+          { name: 'Linen Jacket', service: 'Wash & Iron', price: 80, image: '/laundry/dry clean/casual jacket half.jpg' }
         ]
       },
       {
         id: 'formal-jacket',
         name: 'Formal Jacket (Non-Linen)',
         items: [
-          { name: 'Formal Jacket', service: 'Wash & Iron', price: 60 }
+          { name: 'Formal Jacket', service: 'Wash & Iron', price: 60, image: '/laundry/ironing/blazer jacket.png' }
         ]
       },
       {
         id: 'formal-blazer',
         name: 'Formal Blazer – Brand-Wise (Dry Clean Only)',
         brands: [
-          { tier: 'Standard Brands', note: 'Local / mid-range', price: 300 },
-          { tier: 'Premium Brands', note: 'Arrow, Van Heusen, LP, Allen Solly, Raymond', price: 350 },
-          { tier: 'Luxury / Designer Brands', note: 'Hugo Boss, Armani, Canali, Imported', price: '450+' }
+          { tier: 'Standard Brands', note: 'Local / mid-range', price: 300, image: '/laundry/dry clean/blazer suit 1 piece.png' },
+          { tier: 'Premium Brands', note: 'Arrow, Van Heusen, LP, Allen Solly, Raymond', price: 350, image: '/laundry/dry clean/blazer suit 2 piece.jpg' },
+          { tier: 'Luxury / Designer Brands', note: 'Hugo Boss, Armani, Canali, Imported', price: '450+', image: '/laundry/dry clean/blazer suit 3 piece.jpg' }
         ]
       },
       {
         id: 't-shirts',
         name: 'T-Shirts',
         items: [
-          { name: 'Half Sleeve', washFold: 20, washIron: 30 },
-          { name: 'Full Sleeve', washFold: 22, washIron: 32 },
-          { name: 'Polo', washFold: 22, washIron: 32 }
+          { name: 'Half Sleeve', washFold: 20, washIron: 30, image: '/laundry/dry clean/tshirt.webp' },
+          { name: 'Full Sleeve', washFold: 22, washIron: 32, image: '/laundry/ironing/top wear.webp' },
+          { name: 'Polo', washFold: 22, washIron: 32, image: '/laundry/dry clean/tshirt.webp' }
         ]
       },
       {
         id: 'casual-bottom',
         name: 'Casual Bottom Wear',
         items: [
-          { name: 'Jeans', washFold: 25, washIron: 35 },
-          { name: 'Casual Pants / Chinos', washFold: 25, washIron: 35 },
-          { name: 'Shorts / Half Pants', washFold: 15, washIron: 25 }
+          { name: 'Jeans', washFold: 25, washIron: 35, image: '/laundry/dry clean/jeans.webp' },
+          { name: 'Casual Pants / Chinos', washFold: 25, washIron: 35, image: '/laundry/dry clean/pants.jpg' },
+          { name: 'Shorts / Half Pants', washFold: 15, washIron: 25, image: '/laundry/dry clean/shorts.jpg' }
         ]
       },
       {
         id: 'innerwear',
         name: 'Innerwear / Undergarments (Separate Wash)',
         items: [
-          { name: 'Vest / Banyan', washOnly: 15 },
-          { name: 'Briefs / Boxers', washOnly: 15 },
-          { name: 'Inner Shorts', washOnly: 15 },
-          { name: 'Socks (Pair)', washOnly: 10 }
+          { name: 'Vest / Banyan', washOnly: 15, image: '/laundry/ironing/undergarment.webp' },
+          { name: 'Briefs / Boxers', washOnly: 15, image: '/laundry/ironing/undergarment.webp' },
+          { name: 'Inner Shorts', washOnly: 15, image: '/laundry/dry clean/shorts.jpg' },
+          { name: 'Socks (Pair)', washOnly: 10, image: '/laundry/ironing/socks.jpg' }
         ]
       }
     ]
@@ -140,35 +138,35 @@ export const categoryData = {
         id: 'regular-wear',
         name: 'Regular Wear',
         items: [
-          { name: 'Tops / Blouses', washFold: 20, washIron: 30 },
-          { name: 'Kurtas', washFold: 25, washIron: 35 },
-          { name: 'Pants / Jeans', washFold: 25, washIron: 35 },
-          { name: 'Skirts', washFold: 25, washIron: 35 },
-          { name: 'Daily Wear Dress', washFold: 30, washIron: 45 }
+          { name: 'Tops / Blouses', washFold: 20, washIron: 30, image: '/laundry/dry clean/blouse normal cotton.jpg' },
+          { name: 'Kurtas', washFold: 25, washIron: 35, image: '/laundry/dry clean/kurta normal cotton.jpg' },
+          { name: 'Pants / Jeans', washFold: 25, washIron: 35, image: '/laundry/dry clean/jeans women.jpg' },
+          { name: 'Skirts', washFold: 25, washIron: 35, image: '/laundry/dry clean/skirt normal.jpg' },
+          { name: 'Daily Wear Dress', washFold: 30, washIron: 45, image: '/laundry/dry clean/Dress- One Piece.jpg' }
         ]
       },
       {
         id: 'linen-womens',
         name: "Linen Women's Wear",
         items: [
-          { name: 'Linen Kurta / Top', washIron: 45 },
-          { name: 'Linen Pants', washIron: 45 },
-          { name: 'Linen Dress', washIron: 60 }
+          { name: 'Linen Kurta / Top', washIron: 45, image: '/laundry/dry clean/shirt silk designer women.webp' },
+          { name: 'Linen Pants', washIron: 45, image: '/laundry/dry clean/Trousers Pants Silk women.jpg' },
+          { name: 'Linen Dress', washIron: 60, image: '/laundry/dry clean/gown medium work.jpg' }
         ]
       },
       {
         id: 'dupatta-stole',
         name: 'Dupatta / Stole',
         items: [
-          { name: 'Cotton Dupatta', price: 25 },
-          { name: 'Silk / Designer Dupatta', price: 40 }
+          { name: 'Cotton Dupatta', price: 25, image: '/laundry/dry clean/dupatta normal.jpg' },
+          { name: 'Silk / Designer Dupatta', price: 40, image: '/laundry/dry clean/dupatta silk.jpg' }
         ]
       },
       {
         id: 'womens-jackets',
         name: "Women's Jackets / Shrugs",
         items: [
-          { name: 'Light Jacket / Shrug', price: 60 }
+          { name: 'Light Jacket / Shrug', price: 60, image: '/laundry/dry clean/Cardigan Shrug.jpg' }
         ]
       }
     ]
@@ -179,18 +177,18 @@ export const categoryData = {
         id: 'normal-sarees',
         name: 'Normal Sarees',
         items: [
-          { name: 'Cotton Saree', price: 120 },
-          { name: 'Synthetic Saree', price: 150 },
-          { name: 'Rolling / Ironing', price: 80 }
+          { name: 'Cotton Saree', price: 120, image: '/laundry/dry clean/saree plain.jpg' },
+          { name: 'Synthetic Saree', price: 150, image: '/laundry/dry clean/saree designer.jpg' },
+          { name: 'Rolling / Ironing', price: 80, image: '/laundry/ironing/saree lehanga women.webp' }
         ]
       },
       {
         id: 'premium-sarees',
         name: 'Premium Sarees',
         items: [
-          { name: 'Silk Saree', price: 180 },
-          { name: 'Designer Saree', price: 250 },
-          { name: 'Premium Rolling', price: 120 }
+          { name: 'Silk Saree', price: 180, image: '/laundry/dry clean/saree silk.jpg' },
+          { name: 'Designer Saree', price: 250, image: '/laundry/dry clean/saree designer heavy.jpg' },
+          { name: 'Premium Rolling', price: 120, image: '/laundry/ironing/saree lehanga women.webp' }
         ]
       },
       {
@@ -198,7 +196,7 @@ export const categoryData = {
         name: 'Bridal / Heavy Sarees (VIP)',
         note: '✔ Hand wash only ✔ Individual care',
         items: [
-          { name: 'Bridal / Heavy Work', price: '350+' }
+          { name: 'Bridal / Heavy Work', price: '350+', image: '/laundry/dry clean/lehanga high work.webp' }
         ]
       }
     ]
@@ -209,10 +207,10 @@ export const categoryData = {
         id: 'kids-clothing',
         name: 'Kids Clothing (Washed Separately)',
         items: [
-          { name: 'Shirts / Tops', washFold: 18 },
-          { name: 'Pants / Shorts', washFold: 20 },
-          { name: 'Woollen Wear', washFold: 30 },
-          { name: 'Jackets', washFold: 35 }
+          { name: 'Shirts / Tops', washFold: 18, image: '/laundry/dry clean/Kids Topwear.jpg' },
+          { name: 'Pants / Shorts', washFold: 20, image: '/laundry/dry clean/Kids Bottomwear.jpg' },
+          { name: 'Woollen Wear', washFold: 30, image: '/laundry/dry clean/Kids Woollenwear Top.webp' },
+          { name: 'Jackets', washFold: 35, image: '/laundry/dry clean/kids jacket.webp' }
         ]
       }
     ]
@@ -223,12 +221,12 @@ export const categoryData = {
         id: 'winter-items',
         name: 'Blazers, Coats & Winter Wear',
         items: [
-          { name: 'Blazer (Regular)', service: 'Dry Clean', price: 300 },
-          { name: 'Coat', service: 'Dry Clean', price: 350 },
-          { name: 'Sweater', service: 'Wash & Iron', price: 45 },
-          { name: 'Hoodie / Sweatshirt', service: 'Wash & Iron', price: 50 },
-          { name: 'Shawl / Stole', service: 'Wash', price: 40 },
-          { name: 'Scarf / Muffler', service: 'Wash', price: 25 }
+          { name: 'Blazer (Regular)', service: 'Dry Clean', price: 300, image: '/laundry/dry clean/blazer suit 1 piece.png' },
+          { name: 'Coat', service: 'Dry Clean', price: 350, image: '/laundry/dry clean/Woollen Coat Full.jpg' },
+          { name: 'Sweater', service: 'Wash & Iron', price: 45, image: '/laundry/dry clean/sweater.jpg' },
+          { name: 'Hoodie / Sweatshirt', service: 'Wash & Iron', price: 50, image: '/laundry/dry clean/sweatshirt.jpg' },
+          { name: 'Shawl / Stole', service: 'Wash', price: 40, image: '/laundry/dry clean/Shawl.jpg' },
+          { name: 'Scarf / Muffler', service: 'Wash', price: 25, image: '/laundry/dry clean/Scarf Muffler.jpg' }
         ]
       }
     ]
@@ -239,24 +237,24 @@ export const categoryData = {
         id: 'regular-shoes',
         name: 'Regular Shoes',
         items: [
-          { name: 'Sandals / Slippers', price: 199 },
-          { name: 'Casual Shoes', price: 199 }
+          { name: 'Sandals / Slippers', price: 199, image: '/laundry/shoe clean/Normal Shoes.jpg' },
+          { name: 'Casual Shoes', price: 199, image: '/laundry/shoe clean/Normal Shoes.jpg' }
         ]
       },
       {
         id: 'premium-shoes',
         name: 'Premium Shoes',
         items: [
-          { name: 'Sports Shoes / Sneakers', price: 249 },
-          { name: 'Leather Shoes', price: 299 }
+          { name: 'Sports Shoes / Sneakers', price: 249, image: '/laundry/shoe clean/Sports Shoes.jpg' },
+          { name: 'Leather Shoes', price: 299, image: '/laundry/shoe clean/leather shoes.jpg' }
         ]
       },
       {
         id: 'luxury-shoes',
         name: 'Luxury / White Shoes (VIP Care)',
         items: [
-          { name: 'Luxury Brand Shoes', price: 399 },
-          { name: 'White Shoe Deep Clean', price: 349 }
+          { name: 'Luxury Brand Shoes', price: 399, image: '/laundry/shoe clean/Heels.jpg' },
+          { name: 'White Shoe Deep Clean', price: 349, image: '/laundry/shoe clean/Sports Shoes.jpg' }
         ]
       }
     ]
@@ -267,13 +265,13 @@ export const categoryData = {
         id: 'home-items',
         name: 'Home Linen',
         items: [
-          { name: 'Bedsheet (Single)', price: 40 },
-          { name: 'Bedsheet (Double)', price: 60 },
-          { name: 'Pillow Cover', price: 15 },
-          { name: 'Blanket / Comforter', price: 199 },
-          { name: 'Curtain (Thin)', price: 35 },
-          { name: 'Curtain (Thick)', price: 60 },
-          { name: 'Towel', price: 20 }
+          { name: 'Bedsheet (Single)', price: 40, image: '/laundry/bedsheet/Wash&Iron-Single.webp' },
+          { name: 'Bedsheet (Double)', price: 60, image: '/laundry/bedsheet/Wash&Iron-Double.webp' },
+          { name: 'Pillow Cover', price: 15, image: '/laundry/dry clean/Pillow Cover.jpg' },
+          { name: 'Blanket / Comforter', price: 199, image: '/laundry/dry clean/Comforter Double.jpg' },
+          { name: 'Curtain (Thin)', price: 35, image: '/laundry/dry clean/Door Curtain.jpg' },
+          { name: 'Curtain (Thick)', price: 60, image: '/laundry/dry clean/Window Curtain.jpg' },
+          { name: 'Towel', price: 20, image: '/laundry/dry clean/Bath Towel.jpg' }
         ]
       }
     ]

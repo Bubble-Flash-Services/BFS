@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../../components/CartContext';
 import { useAuth } from '../../../components/AuthContext';
 import SigninModal from '../signin/SigninModal';
-import { X, Plus, Minus } from 'lucide-react';
+import { X, Plus, Minus, Search } from 'lucide-react';
 import { laundryCategories, categoryData } from '../../../data/laundryData';
 
 export default function LaundryPage() {
@@ -12,10 +12,43 @@ export default function LaundryPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [adSlide, setAdSlide] = useState(0);
   const [showItemsPage, setShowItemsPage] = useState(false); // New state for showing items page
+  const [searchQuery, setSearchQuery] = useState(''); // Search query state
   
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { user } = useAuth();
+
+  // Filter function to check if item matches search query
+  const itemMatchesSearch = (item, subcategoryName, query) => {
+    if (!query) return true;
+    
+    const lowerQuery = query.toLowerCase();
+    const itemName = (item.name || item.tier || '').toLowerCase();
+    const subName = subcategoryName.toLowerCase();
+    const itemNote = (item.note || '').toLowerCase();
+    const itemService = (item.service || '').toLowerCase();
+    
+    // Check if any service type matches - query should contain these keywords
+    const hasWashFold = item.washFold && (lowerQuery.includes('wash') || lowerQuery.includes('fold'));
+    const hasWashIron = item.washIron && (lowerQuery.includes('wash') || lowerQuery.includes('iron'));
+    const hasWashOnly = item.washOnly && lowerQuery.includes('wash');
+    
+    return itemName.includes(lowerQuery) || 
+           subName.includes(lowerQuery) || 
+           itemNote.includes(lowerQuery) ||
+           itemService.includes(lowerQuery) ||
+           hasWashFold || hasWashIron || hasWashOnly;
+  };
+
+  // Helper function to check if any items match the search query
+  const hasAnyFilteredItems = (query) => {
+    if (!query || !categoryData[selectedCategory]) return true;
+    
+    return categoryData[selectedCategory].subcategories.some(subcategory => {
+      const items = subcategory.brands || subcategory.items || [];
+      return items.some(item => itemMatchesSearch(item, subcategory.name, query));
+    });
+  };
 
   // Advertisement banners
   const adBanners = [
@@ -23,19 +56,22 @@ export default function LaundryPage() {
       id: 1,
       title: "BFS SmartLaundry™",
       subtitle: "Fabric-wise • Brand-wise • Transparent pricing",
-      bgColor: "from-purple-500 to-blue-600"
+      bgColor: "from-purple-500 to-blue-600",
+      image: "/laundry/laundry1.png"
     },
     {
       id: 2,
       title: "Free Pickup & Delivery",
       subtitle: "Minimum order applies",
-      bgColor: "from-green-500 to-teal-600"
+      bgColor: "from-green-500 to-teal-600",
+      image: "/laundry/laundry2.png"
     },
     {
       id: 3,
       title: "24-48 hrs Turnaround",
       subtitle: "Express service available",
-      bgColor: "from-orange-500 to-red-600"
+      bgColor: "from-orange-500 to-red-600",
+      image: "/laundry/laundry3.png"
     }
   ];
 
@@ -198,246 +234,11 @@ export default function LaundryPage() {
     });
   };
 
-  const renderPricingTable = (subcategory, categoryId, subcategoryId) => {
-    if (subcategory.brands) {
-      // For brand-wise pricing (like blazers)
-      return (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-300 px-4 py-2 text-left">Tier</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                <th className="border border-gray-300 px-4 py-2 text-center">Price</th>
-                <th className="border border-gray-300 px-4 py-2 text-center">Quantity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {subcategory.brands.map((brand, index) => {
-                const itemKey = `${categoryId}-${subcategoryId}-${index}-brand`;
-                const quantity = selectedItems[itemKey] || 0;
-                return (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-2 font-medium">{brand.tier}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-600">{brand.note}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-center font-semibold text-purple-600">₹{brand.price}</td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      <div className="flex items-center justify-center space-x-2">
-                        <button
-                          onClick={() => handleItemQuantityChange(itemKey, -1)}
-                          disabled={quantity === 0}
-                          className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <span className="w-8 text-center font-semibold">{quantity}</span>
-                        <button
-                          onClick={() => handleItemQuantityChange(itemKey, 1)}
-                          className="w-8 h-8 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      );
-    }
-
-    // Regular items with service options
-    const hasWashFold = subcategory.items?.some(item => item.washFold);
-    const hasWashIron = subcategory.items?.some(item => item.washIron);
-    const hasWashOnly = subcategory.items?.some(item => item.washOnly);
-    const hasPrice = subcategory.items?.some(item => item.price);
-
-    return (
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 px-4 py-2 text-left">Item</th>
-              {hasWashFold && <th className="border border-gray-300 px-4 py-2 text-center">Wash & Fold</th>}
-              {hasWashIron && <th className="border border-gray-300 px-4 py-2 text-center">Wash & Iron</th>}
-              {hasWashOnly && <th className="border border-gray-300 px-4 py-2 text-center">Wash Only</th>}
-              {hasPrice && subcategory.items?.some(item => item.service) && (
-                <th className="border border-gray-300 px-4 py-2 text-center">Service</th>
-              )}
-              {hasPrice && <th className="border border-gray-300 px-4 py-2 text-center">Price</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {subcategory.items?.map((item, index) => {
-              return (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2 font-medium">{item.name}</td>
-                  
-                  {hasWashFold && (
-                    <td className="border border-gray-300 px-4 py-2">
-                      {item.washFold ? (
-                        <div className="flex flex-col items-center space-y-2">
-                          <span className="font-semibold text-purple-600">₹{item.washFold}</span>
-                          <div className="flex items-center space-x-2">
-                            {(() => {
-                              const itemKey = `${categoryId}-${subcategoryId}-${index}-washFold`;
-                              const quantity = selectedItems[itemKey] || 0;
-                              return (
-                                <>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, -1)}
-                                    disabled={quantity === 0}
-                                    className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                                  >
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, 1)}
-                                    className="w-7 h-7 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                  )}
-                  
-                  {hasWashIron && (
-                    <td className="border border-gray-300 px-4 py-2">
-                      {item.washIron ? (
-                        <div className="flex flex-col items-center space-y-2">
-                          <span className="font-semibold text-purple-600">₹{item.washIron}</span>
-                          <div className="flex items-center space-x-2">
-                            {(() => {
-                              const itemKey = `${categoryId}-${subcategoryId}-${index}-washIron`;
-                              const quantity = selectedItems[itemKey] || 0;
-                              return (
-                                <>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, -1)}
-                                    disabled={quantity === 0}
-                                    className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                                  >
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, 1)}
-                                    className="w-7 h-7 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                  )}
-
-                  {hasWashOnly && (
-                    <td className="border border-gray-300 px-4 py-2">
-                      {item.washOnly ? (
-                        <div className="flex flex-col items-center space-y-2">
-                          <span className="font-semibold text-purple-600">₹{item.washOnly}</span>
-                          <div className="flex items-center space-x-2">
-                            {(() => {
-                              const itemKey = `${categoryId}-${subcategoryId}-${index}-washOnly`;
-                              const quantity = selectedItems[itemKey] || 0;
-                              return (
-                                <>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, -1)}
-                                    disabled={quantity === 0}
-                                    className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                                  >
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, 1)}
-                                    className="w-7 h-7 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                  )}
-
-                  {hasPrice && item.service && (
-                    <td className="border border-gray-300 px-4 py-2 text-center text-sm text-gray-600">
-                      {item.service}
-                    </td>
-                  )}
-
-                  {hasPrice && (
-                    <td className="border border-gray-300 px-4 py-2">
-                      {item.price ? (
-                        <div className="flex flex-col items-center space-y-2">
-                          <span className="font-semibold text-purple-600">₹{item.price}</span>
-                          <div className="flex items-center space-x-2">
-                            {(() => {
-                              const itemKey = `${categoryId}-${subcategoryId}-${index}-price`;
-                              const quantity = selectedItems[itemKey] || 0;
-                              return (
-                                <>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, -1)}
-                                    disabled={quantity === 0}
-                                    className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                                  >
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, 1)}
-                                    className="w-7 h-7 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                  )}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
-
   return (
     <section className="py-16 bg-gradient-to-b from-gray-50 to-white min-h-screen">
       <div className="container mx-auto px-4">
         {/* Advertisement Banner */}
-        <div className="relative mb-12 h-48 rounded-2xl overflow-hidden shadow-xl">
+        <div className="relative mb-12 h-64 rounded-2xl overflow-hidden shadow-xl">
           <div 
             className="flex h-full transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${adSlide * 100}%)` }}
@@ -447,16 +248,25 @@ export default function LaundryPage() {
                 key={ad.id}
                 className={`flex-shrink-0 w-full h-full bg-gradient-to-r ${ad.bgColor} flex items-center justify-center text-white relative`}
               >
-                <div className="text-center px-6">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">{ad.title}</h2>
-                  <p className="text-lg md:text-xl opacity-90">{ad.subtitle}</p>
+                {/* Background Image */}
+                <div className="absolute inset-0 overflow-hidden">
+                  <img 
+                    src={ad.image} 
+                    alt={ad.title}
+                    className="w-full h-full object-cover opacity-30"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
+                <div className="text-center px-6 relative z-10">
+                  <h2 className="text-4xl md:text-5xl font-bold mb-3 drop-shadow-lg">{ad.title}</h2>
+                  <p className="text-lg md:text-2xl opacity-90">{ad.subtitle}</p>
                 </div>
               </div>
             ))}
           </div>
           
           {/* Ad Dots Indicator */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
             {adBanners.map((_, index) => (
               <button
                 key={index}
@@ -559,47 +369,329 @@ export default function LaundryPage() {
               </p>
             </div>
 
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto mb-8 px-4">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search items by name, category, or service type..."
+                  className="w-full pl-11 pr-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 text-gray-700 placeholder-gray-400"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+              {searchQuery && (
+                <p className="text-sm text-gray-500 mt-2 text-center">
+                  Searching for "{searchQuery}"
+                </p>
+              )}
+            </div>
+
             {/* Category Content */}
             {categoryData[selectedCategory] && (
-              <div className="max-w-6xl mx-auto">
-                <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                  {categoryData[selectedCategory].subcategories.map((subcategory, index) => (
-                    <div key={subcategory.id} className={`${index > 0 ? 'mt-8' : ''}`}>
-                      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-4">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">
-                          {subcategory.name}
-                        </h3>
-                        {subcategory.note && (
-                          <p className="text-sm text-gray-600 italic">{subcategory.note}</p>
-                        )}
-                      </div>
+              <div className="max-w-7xl mx-auto px-4">
+                {/* Uniform Grid Layout - All items in consistent grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {categoryData[selectedCategory].subcategories.map((subcategory) => {
+                    // Get all items/brands from this subcategory
+                    const items = subcategory.brands || subcategory.items || [];
+                    
+                    // Map items with their original indices, then filter
+                    return items
+                      .map((item, originalIndex) => ({ item, originalIndex }))
+                      .filter(({ item }) => itemMatchesSearch(item, subcategory.name, searchQuery))
+                      .map(({ item, originalIndex }) => {
+                        const itemKey = subcategory.brands 
+                          ? `${selectedCategory}-${subcategory.id}-${originalIndex}-brand`
+                          : `${selectedCategory}-${subcategory.id}-${originalIndex}`;
                       
-                      {renderPricingTable(subcategory, selectedCategory, subcategory.id)}
-                    </div>
-                  ))}
-
-                  {/* Special Stain Treatment Info */}
-                  {selectedCategory === 'stainTreatment' && categoryData.stainTreatment.subcategories[0] && (
-                    <div className="mt-8 grid md:grid-cols-2 gap-4">
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <h4 className="font-bold text-green-800 mb-2">✓ We Can Treat:</h4>
-                        <ul className="text-sm text-green-700 space-y-1">
-                          {categoryData.stainTreatment.subcategories[0].canTreat.map((item, i) => (
-                            <li key={i}>• {item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <h4 className="font-bold text-red-800 mb-2">⚠ Not Guaranteed:</h4>
-                        <ul className="text-sm text-red-700 space-y-1">
-                          {categoryData.stainTreatment.subcategories[0].notGuaranteed.map((item, i) => (
-                            <li key={i}>• {item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  )}
+                      // For brand-wise items (blazers)
+                      if (subcategory.brands) {
+                        const quantity = selectedItems[itemKey] || 0;
+                        return (
+                          <div key={itemKey} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                            {/* Subcategory Badge */}
+                            <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-1 text-xs text-white font-semibold">
+                              {subcategory.name}
+                            </div>
+                            
+                            {/* Image Section */}
+                            <div className="relative h-48 bg-gradient-to-br from-purple-100 to-blue-100">
+                              {item.image ? (
+                                <img 
+                                  src={item.image} 
+                                  alt={item.tier}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => { 
+                                    e.target.style.display = 'none';
+                                    const fallback = document.createElement('div');
+                                    fallback.className = 'text-6xl';
+                                    fallback.textContent = '🧥';
+                                    e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
+                                    e.target.parentElement.appendChild(fallback);
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-6xl">🧥</div>
+                              )}
+                              <div className="absolute top-2 right-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                ₹{item.price}
+                              </div>
+                            </div>
+                            
+                            {/* Details Section */}
+                            <div className="p-4 flex-grow flex flex-col">
+                              <h4 className="text-lg font-bold text-gray-800 mb-1">{item.tier}</h4>
+                              {item.note && <p className="text-sm text-gray-600 mb-3 flex-grow">{item.note}</p>}
+                              
+                              {/* Quantity Controls */}
+                              <div className="flex items-center justify-between mt-auto">
+                                <span className="text-sm text-gray-500">Quantity</span>
+                                <div className="flex items-center space-x-3">
+                                  <button
+                                    onClick={() => handleItemQuantityChange(itemKey, -1)}
+                                    disabled={quantity === 0}
+                                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+                                  >
+                                    <Minus className="w-4 h-4" />
+                                  </button>
+                                  <span className="w-8 text-center font-bold text-lg">{quantity}</span>
+                                  <button
+                                    onClick={() => handleItemQuantityChange(itemKey, 1)}
+                                    className="w-8 h-8 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center transition-colors"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      // For regular items
+                      return (
+                        <div key={itemKey} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                          {/* Subcategory Badge */}
+                          <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-1 text-xs text-white font-semibold truncate">
+                            {subcategory.name}
+                          </div>
+                          
+                          {/* Image Section */}
+                          <div className="relative h-48 bg-gradient-to-br from-purple-100 to-blue-100">
+                            {item.image ? (
+                              <img 
+                                src={item.image} 
+                                alt={item.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => { 
+                                  e.target.style.display = 'none';
+                                  const fallback = document.createElement('div');
+                                  fallback.className = 'text-6xl';
+                                  fallback.textContent = '👕';
+                                  e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
+                                  e.target.parentElement.appendChild(fallback);
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-6xl">👕</div>
+                            )}
+                          </div>
+                          
+                          {/* Details Section */}
+                          <div className="p-4 flex-grow flex flex-col">
+                            <h4 className="text-lg font-bold text-gray-800 mb-3">{item.name}</h4>
+                            
+                            {/* Service Options - Compact */}
+                            <div className="space-y-2 flex-grow">
+                              {item.washFold && (
+                                <div className="flex items-center justify-between p-2 bg-purple-50 rounded-lg">
+                                  <div className="flex-grow">
+                                    <p className="text-xs text-gray-600">Wash & Fold</p>
+                                    <p className="text-sm font-bold text-purple-600">₹{item.washFold}</p>
+                                  </div>
+                                  <div className="flex items-center space-x-1">
+                                    {(() => {
+                                      const serviceKey = `${itemKey}-washFold`;
+                                      const quantity = selectedItems[serviceKey] || 0;
+                                      return (
+                                        <>
+                                          <button
+                                            onClick={() => handleItemQuantityChange(serviceKey, -1)}
+                                            disabled={quantity === 0}
+                                            className="w-6 h-6 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-sm transition-colors"
+                                          >
+                                            <Minus className="w-3 h-3" />
+                                          </button>
+                                          <span className="w-5 text-center text-xs font-bold">{quantity}</span>
+                                          <button
+                                            onClick={() => handleItemQuantityChange(serviceKey, 1)}
+                                            className="w-6 h-6 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center shadow-sm transition-colors"
+                                          >
+                                            <Plus className="w-3 h-3" />
+                                          </button>
+                                        </>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {item.washIron && (
+                                <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
+                                  <div className="flex-grow">
+                                    <p className="text-xs text-gray-600">Wash & Iron</p>
+                                    <p className="text-sm font-bold text-blue-600">₹{item.washIron}</p>
+                                  </div>
+                                  <div className="flex items-center space-x-1">
+                                    {(() => {
+                                      const serviceKey = `${itemKey}-washIron`;
+                                      const quantity = selectedItems[serviceKey] || 0;
+                                      return (
+                                        <>
+                                          <button
+                                            onClick={() => handleItemQuantityChange(serviceKey, -1)}
+                                            disabled={quantity === 0}
+                                            className="w-6 h-6 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-sm transition-colors"
+                                          >
+                                            <Minus className="w-3 h-3" />
+                                          </button>
+                                          <span className="w-5 text-center text-xs font-bold">{quantity}</span>
+                                          <button
+                                            onClick={() => handleItemQuantityChange(serviceKey, 1)}
+                                            className="w-6 h-6 rounded-full bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center shadow-sm transition-colors"
+                                          >
+                                            <Plus className="w-3 h-3" />
+                                          </button>
+                                        </>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {item.washOnly && (
+                                <div className="flex items-center justify-between p-2 bg-green-50 rounded-lg">
+                                  <div className="flex-grow">
+                                    <p className="text-xs text-gray-600">Wash Only</p>
+                                    <p className="text-sm font-bold text-green-600">₹{item.washOnly}</p>
+                                  </div>
+                                  <div className="flex items-center space-x-1">
+                                    {(() => {
+                                      const serviceKey = `${itemKey}-washOnly`;
+                                      const quantity = selectedItems[serviceKey] || 0;
+                                      return (
+                                        <>
+                                          <button
+                                            onClick={() => handleItemQuantityChange(serviceKey, -1)}
+                                            disabled={quantity === 0}
+                                            className="w-6 h-6 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-sm transition-colors"
+                                          >
+                                            <Minus className="w-3 h-3" />
+                                          </button>
+                                          <span className="w-5 text-center text-xs font-bold">{quantity}</span>
+                                          <button
+                                            onClick={() => handleItemQuantityChange(serviceKey, 1)}
+                                            className="w-6 h-6 rounded-full bg-green-600 text-white hover:bg-green-700 flex items-center justify-center shadow-sm transition-colors"
+                                          >
+                                            <Plus className="w-3 h-3" />
+                                          </button>
+                                        </>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {item.price && (
+                                <div className="flex items-center justify-between p-2 bg-orange-50 rounded-lg">
+                                  <div className="flex-grow">
+                                    {item.service && <p className="text-xs text-gray-600">{item.service}</p>}
+                                    <p className="text-sm font-bold text-orange-600">₹{item.price}</p>
+                                  </div>
+                                  <div className="flex items-center space-x-1">
+                                    {(() => {
+                                      const serviceKey = `${itemKey}-price`;
+                                      const quantity = selectedItems[serviceKey] || 0;
+                                      return (
+                                        <>
+                                          <button
+                                            onClick={() => handleItemQuantityChange(serviceKey, -1)}
+                                            disabled={quantity === 0}
+                                            className="w-6 h-6 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-sm transition-colors"
+                                          >
+                                            <Minus className="w-3 h-3" />
+                                          </button>
+                                          <span className="w-5 text-center text-xs font-bold">{quantity}</span>
+                                          <button
+                                            onClick={() => handleItemQuantityChange(serviceKey, 1)}
+                                            className="w-6 h-6 rounded-full bg-orange-600 text-white hover:bg-orange-700 flex items-center justify-center shadow-sm transition-colors"
+                                          >
+                                            <Plus className="w-3 h-3" />
+                                          </button>
+                                        </>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    });
+                  })}
                 </div>
+
+                {/* No Results Message */}
+                {searchQuery && !hasAnyFilteredItems(searchQuery) && (
+                  <div className="text-center py-16">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h3 className="text-2xl font-bold text-gray-700 mb-2">No items found</h3>
+                    <p className="text-gray-500 mb-6">
+                      We couldn't find any items matching "{searchQuery}"
+                    </p>
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                      Clear Search
+                    </button>
+                  </div>
+                )}
+
+                {/* Special Stain Treatment Info */}
+                {selectedCategory === 'stainTreatment' && categoryData.stainTreatment.subcategories[0] && (
+                  <div className="mt-8 grid md:grid-cols-2 gap-4">
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                      <h4 className="font-bold text-green-800 mb-2">✓ We Can Treat:</h4>
+                      <ul className="text-sm text-green-700 space-y-1">
+                        {categoryData.stainTreatment.subcategories[0].canTreat.map((item, i) => (
+                          <li key={i}>• {item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <h4 className="font-bold text-red-800 mb-2">⚠ Not Guaranteed:</h4>
+                      <ul className="text-sm text-red-700 space-y-1">
+                        {categoryData.stainTreatment.subcategories[0].notGuaranteed.map((item, i) => (
+                          <li key={i}>• {item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </>
