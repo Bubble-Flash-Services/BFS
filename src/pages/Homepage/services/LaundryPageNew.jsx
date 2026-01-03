@@ -571,25 +571,25 @@ export default function LaundryPage() {
             {/* Category Content */}
             {categoryData[selectedCategory] && (
               <div className="max-w-7xl mx-auto px-4">
-                {/* Render all items in a single continuous grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {/* Render subcategories as grouped section cards */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {categoryData[selectedCategory].subcategories.map((subcategory) => (
-                    <React.Fragment key={subcategory.id}>
-                      {/* Subcategory Header - Spans full width */}
-                      <div className="col-span-full mt-6 first:mt-0">
-                        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4">
-                          <h3 className="text-xl font-bold text-gray-800 mb-1">
-                            {subcategory.name}
-                          </h3>
-                          {subcategory.note && (
-                            <p className="text-sm text-gray-600 italic">{subcategory.note}</p>
-                          )}
-                        </div>
+                    <div key={subcategory.id} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                      {/* Subcategory Header */}
+                      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-6">
+                        <h3 className="text-xl font-bold text-gray-800 mb-1">
+                          {subcategory.name}
+                        </h3>
+                        {subcategory.note && (
+                          <p className="text-sm text-gray-600 italic">{subcategory.note}</p>
+                        )}
                       </div>
                       
-                      {/* Render items/brands for this subcategory */}
-                      {renderItemCards(subcategory, selectedCategory, subcategory.id)}
-                    </React.Fragment>
+                      {/* Render items/brands in a grid within this section card */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {renderItemCards(subcategory, selectedCategory, subcategory.id)}
+                      </div>
+                    </div>
                   ))}
                 </div>
 
