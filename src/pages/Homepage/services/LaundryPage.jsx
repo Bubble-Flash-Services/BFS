@@ -1947,46 +1947,128 @@ const formalWearItems = {
 const stainRemovalItems = [
   {
     id: 1301,
-    name: 'Light Stain Removal',
+    name: 'Basic Stain Treatment',
     image: '/laundry/wash & fold/top waer.jpg',
-    basePrice: 50,
-    description: 'For fresh or light stains (coffee, tea, food)',
-    tier: 'Light',
+    basePrice: 40,
+    description: 'Fresh food stains, tea, coffee, light sweat marks',
+    tier: 'Basic',
     icon: '🧼',
-    requiresPhoto: true
+    requiresPhoto: false,
+    examples: 'Coffee, Tea, Light Food Stains, Sweat',
+    category: 'Everyday Stains'
   },
   {
     id: 1302,
-    name: 'Medium Stain Removal',
-    image: '/laundry/wash & fold/top waer.jpg',
-    basePrice: 100,
-    description: 'For set-in stains (ink, wine, grease)',
+    name: 'Oil & Grease Removal',
+    image: '/laundry/wash & fold/bottom wear.jpg',
+    basePrice: 80,
+    description: 'Oil, butter, cooking grease, automotive oils',
     tier: 'Medium',
-    icon: '💧',
-    requiresPhoto: true
+    icon: '🛢️',
+    requiresPhoto: true,
+    examples: 'Cooking Oil, Butter, Vehicle Grease',
+    category: 'Oil-Based Stains'
   },
   {
     id: 1303,
-    name: 'Heavy Stain Removal',
-    image: '/laundry/wash & fold/top waer.jpg',
-    basePrice: 150,
-    description: 'For stubborn or old stains',
-    tier: 'Heavy',
-    icon: '🔬',
+    name: 'Ink & Dye Removal',
+    image: '/laundry/ironing/top wear.webp',
+    basePrice: 120,
+    description: 'Pen ink, marker stains, fabric dye bleeding',
+    tier: 'Advanced',
+    icon: '🖊️',
     requiresPhoto: true,
-    requiresVideo: true
+    requiresVideo: false,
+    examples: 'Pen Ink, Markers, Dye Transfer',
+    category: 'Chemical Stains'
   },
   {
     id: 1304,
-    name: 'Specialty Stain Treatment',
-    image: '/laundry/wash & fold/top waer.jpg',
+    name: 'Wine & Beverage Stains',
+    image: '/laundry/wash & fold/casual jacket.jpg',
+    basePrice: 100,
+    description: 'Red wine, soft drinks, juice, beer stains',
+    tier: 'Advanced',
+    icon: '🍷',
+    requiresPhoto: true,
+    examples: 'Wine, Juice, Cola, Beer',
+    category: 'Beverage Stains'
+  },
+  {
+    id: 1305,
+    name: 'Blood & Protein Stains',
+    image: '/laundry/wash & fold/bottom wear half.jpg',
+    basePrice: 90,
+    description: 'Blood, sweat, egg, dairy product stains',
+    tier: 'Medium',
+    icon: '💉',
+    requiresPhoto: true,
+    examples: 'Blood, Heavy Sweat, Egg, Milk',
+    category: 'Protein-Based Stains'
+  },
+  {
+    id: 1306,
+    name: 'Mud & Outdoor Stains',
+    image: '/laundry/wash & fold/kids bottomwear.jpg',
+    basePrice: 70,
+    description: 'Mud, grass, dirt, clay stains',
+    tier: 'Medium',
+    icon: '🌿',
+    requiresPhoto: false,
+    examples: 'Mud, Grass, Dirt, Clay',
+    category: 'Outdoor Stains'
+  },
+  {
+    id: 1307,
+    name: 'Makeup & Cosmetic Removal',
+    image: '/laundry/wash & fold/top wear women.jpg',
+    basePrice: 85,
+    description: 'Lipstick, foundation, mascara, nail polish',
+    tier: 'Advanced',
+    icon: '💄',
+    requiresPhoto: true,
+    examples: 'Lipstick, Foundation, Nail Polish',
+    category: 'Cosmetic Stains'
+  },
+  {
+    id: 1308,
+    name: 'Rust & Metal Stains',
+    image: '/laundry/wash & fold/bottom wear women.jpg',
+    basePrice: 110,
+    description: 'Rust marks, metal transfer, oxidation stains',
+    tier: 'Advanced',
+    icon: '🔩',
+    requiresPhoto: true,
+    requiresVideo: false,
+    examples: 'Rust, Metal Transfer, Iron Stains',
+    category: 'Metal-Based Stains'
+  },
+  {
+    id: 1309,
+    name: 'Premium Delicate Fabric Treatment',
+    image: '/laundry/ironing/saree lehanga women.webp',
     basePrice: 200,
-    description: 'For delicate fabrics or complex stains',
-    tier: 'Specialty',
-    icon: '⚗️',
+    description: 'Specialized treatment for silk, wool, designer fabrics',
+    tier: 'Premium',
+    icon: '💎',
     requiresPhoto: true,
     requiresVideo: true,
-    note: 'Price varies based on fabric and stain type'
+    examples: 'Silk, Wool, Designer Fabrics',
+    note: 'Price varies based on fabric type',
+    category: 'Specialty Treatment'
+  },
+  {
+    id: 1310,
+    name: 'Emergency Same-Day Stain Removal',
+    image: '/laundry/wash & fold/apron.jpg',
+    basePrice: 150,
+    description: 'Urgent stain treatment within 24 hours',
+    tier: 'Express',
+    icon: '⚡',
+    requiresPhoto: true,
+    examples: 'Any Fresh Stain - Express Service',
+    note: 'Base price + 50% of treatment cost',
+    category: 'Express Service'
   },
 ];
 
@@ -4889,72 +4971,121 @@ export default function LaundryPage() {
         {/* Stain Removal Category */}
         {activeCategory === 'stain-removal' && (
           <div>
-            <div className="mb-8 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 shadow-lg">
-              <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">
-                <span className="mr-2">🧼</span>Professional Stain Removal Services
-              </h3>
-              <p className="text-center text-gray-600 mb-4">
-                Upload photos/videos of your stained garments for accurate pricing and expert treatment
+            {/* Header Section */}
+            <div className="mb-10 bg-gradient-to-r from-orange-100 via-red-50 to-yellow-100 rounded-2xl p-8 shadow-xl border-2 border-orange-200">
+              <h2 className="text-4xl font-bold text-center mb-4">
+                <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                  🧼 Professional Stain Removal Services
+                </span>
+              </h2>
+              <p className="text-center text-gray-700 text-lg mb-4 max-w-3xl mx-auto">
+                Expert stain treatment for all fabric types with specialized techniques and eco-friendly solutions
               </p>
-              <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-md">
-                <p className="text-sm text-yellow-800">
-                  <strong>Note:</strong> Prices vary based on stain type, fabric, and complexity. Please upload clear photos or videos of the stain for our team to provide an accurate quote.
-                </p>
+              <div className="bg-gradient-to-r from-yellow-100 to-orange-100 border-l-4 border-orange-500 p-5 rounded-lg shadow-md">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">💡</span>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-800 mb-2">
+                      How it works:
+                    </p>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>✓ Select your stain type below</li>
+                      <li>✓ Upload photos for accurate assessment (where required)</li>
+                      <li>✓ Get instant pricing or custom quote</li>
+                      <li>✓ We pickup, treat, and deliver fresh clothes</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
 
+            {/* Stain Removal Services Grid */}
             <div className="mb-12">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <h3 className="text-3xl font-bold text-center mb-8">
+                <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                  Choose Your Stain Treatment
+                </span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {stainRemovalItems.map((item) => (
-                  <div key={item.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow border-2 border-orange-200">
-                    <div className="bg-gradient-to-br from-orange-50 to-red-50 p-6">
-                      <div className="text-center mb-4">
-                        <span className="text-5xl">{item.icon}</span>
+                  <div key={item.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-orange-300">
+                    {/* Image Section */}
+                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-orange-50 to-red-50">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute top-3 right-3 bg-white rounded-full p-3 shadow-lg">
+                        <span className="text-4xl">{item.icon}</span>
                       </div>
-                      <h3 className="text-xl font-bold text-gray-800 text-center mb-2">{item.name}</h3>
-                      <p className="text-sm text-gray-600 text-center mb-4">{item.description}</p>
+                      {item.tier && (
+                        <div className="absolute bottom-3 left-3 bg-gradient-to-r from-orange-600 to-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                          {item.tier}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Content Section */}
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">{item.name}</h3>
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.description}</p>
                       
-                      {item.requiresPhoto && (
-                        <div className="bg-white rounded-md p-3 mb-3">
-                          <p className="text-xs text-gray-700 font-semibold mb-1">📷 Photo Required</p>
-                          <p className="text-xs text-gray-500">Upload clear images of the stain</p>
+                      {/* Examples Badge */}
+                      {item.examples && (
+                        <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-2 mb-3 border border-orange-200">
+                          <p className="text-xs font-semibold text-orange-800 mb-1">Treats:</p>
+                          <p className="text-xs text-gray-700">{item.examples}</p>
                         </div>
                       )}
                       
-                      {item.requiresVideo && (
-                        <div className="bg-white rounded-md p-3 mb-3">
-                          <p className="text-xs text-gray-700 font-semibold mb-1">📹 Video Recommended</p>
-                          <p className="text-xs text-gray-500">For complex stains, video helps us assess better</p>
-                        </div>
-                      )}
+                      {/* Requirements */}
+                      <div className="flex gap-2 mb-3">
+                        {item.requiresPhoto && (
+                          <div className="flex-1 bg-blue-50 rounded-md p-2 border border-blue-200">
+                            <p className="text-xs font-semibold text-blue-800 flex items-center gap-1">
+                              <span>📷</span> Photo
+                            </p>
+                          </div>
+                        )}
+                        {item.requiresVideo && (
+                          <div className="flex-1 bg-purple-50 rounded-md p-2 border border-purple-200">
+                            <p className="text-xs font-semibold text-purple-800 flex items-center gap-1">
+                              <span>📹</span> Video
+                            </p>
+                          </div>
+                        )}
+                      </div>
                       
-                      <div className="bg-orange-100 rounded-md p-3 mb-4">
-                        <p className="text-sm font-bold text-orange-800 text-center">Starting from ₹{item.basePrice}</p>
+                      {/* Price */}
+                      <div className="bg-gradient-to-r from-orange-100 to-red-100 rounded-lg p-3 mb-4 border-2 border-orange-300">
+                        <p className="text-lg font-bold text-orange-800 text-center">₹{item.basePrice}</p>
                         {item.note && (
                           <p className="text-xs text-orange-700 text-center mt-1">{item.note}</p>
                         )}
                       </div>
                       
+                      {/* Add Button */}
                       <div className="flex justify-between items-center">
                         {getItemQuantity(item.id) === 0 ? (
                           <button
                             onClick={() => addToBasket(item)}
-                            className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-orange-700 hover:to-red-700 transition-colors flex-1"
+                            className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:from-orange-700 hover:to-red-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
                           >
-                            Request Quote
+                            Add to Cart
                           </button>
                         ) : (
-                          <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center justify-between w-full bg-gradient-to-r from-orange-100 to-red-100 rounded-xl p-2">
                             <button
                               onClick={() => removeFromBasket(item)}
-                              className="bg-gray-200 text-gray-700 w-10 h-10 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors"
+                              className="bg-white text-gray-700 w-10 h-10 rounded-lg text-lg font-bold hover:bg-gray-100 transition-colors shadow-sm"
                             >
                               -
                             </button>
-                            <span className="mx-3 font-medium">{getItemQuantity(item.id)}</span>
+                            <span className="mx-3 font-bold text-lg text-orange-800">{getItemQuantity(item.id)}</span>
                             <button
                               onClick={() => addToBasket(item)}
-                              className="bg-gradient-to-r from-orange-600 to-red-600 text-white w-10 h-10 rounded-full text-sm font-medium hover:from-orange-700 hover:to-red-700 transition-colors"
+                              className="bg-gradient-to-r from-orange-600 to-red-600 text-white w-10 h-10 rounded-lg text-lg font-bold hover:from-orange-700 hover:to-red-700 transition-colors shadow-sm"
                             >
                               +
                             </button>
@@ -4967,20 +5098,46 @@ export default function LaundryPage() {
               </div>
             </div>
 
-            {/* Stain Types Information */}
-            <div className="mb-12 bg-white rounded-xl p-6 shadow-lg">
-              <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Common Stain Types We Handle</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Stain Categories Information */}
+            <div className="mb-12 bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8 shadow-xl border-2 border-orange-200">
+              <h4 className="text-2xl font-bold text-center mb-6">
+                <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                  Stain Categories We Specialize In
+                </span>
+              </h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {[
                   { name: 'Food & Beverage', icon: '🍝', examples: 'Coffee, wine, sauce, oil' },
-                  { name: 'Ink & Dye', icon: '🖊️', examples: 'Pen marks, printer ink, fabric dye' },
-                  { name: 'Organic Stains', icon: '🌿', examples: 'Blood, sweat, grass, mud' },
-                  { name: 'Cosmetic', icon: '💄', examples: 'Makeup, lipstick, nail polish' }
+                  { name: 'Ink & Dye', icon: '🖊️', examples: 'Pen, markers, dye transfer' },
+                  { name: 'Organic', icon: '🌿', examples: 'Blood, sweat, grass, mud' },
+                  { name: 'Cosmetic', icon: '💄', examples: 'Makeup, lipstick, polish' },
+                  { name: 'Chemical', icon: '⚗️', examples: 'Bleach, rust, paint' }
                 ].map((stainType, index) => (
-                  <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-4 border border-gray-200">
-                    <div className="text-3xl mb-2 text-center">{stainType.icon}</div>
-                    <h5 className="font-semibold text-gray-800 text-sm mb-1 text-center">{stainType.name}</h5>
-                    <p className="text-xs text-gray-600 text-center">{stainType.examples}</p>
+                  <div key={index} className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow border border-orange-200 hover:border-orange-400">
+                    <div className="text-4xl mb-3 text-center">{stainType.icon}</div>
+                    <h5 className="font-bold text-gray-800 text-sm mb-2 text-center">{stainType.name}</h5>
+                    <p className="text-xs text-gray-600 text-center leading-relaxed">{stainType.examples}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Why Choose Our Stain Removal */}
+            <div className="mb-12 bg-white rounded-2xl p-8 shadow-xl border-2 border-gray-200">
+              <h4 className="text-2xl font-bold text-center mb-6 text-gray-800">
+                ✨ Why Choose BFS Stain Removal?
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { icon: '🔬', title: 'Advanced Technology', desc: 'Latest stain removal techniques' },
+                  { icon: '🌱', title: 'Eco-Friendly', desc: 'Safe for fabrics and environment' },
+                  { icon: '👨‍🔬', title: 'Expert Team', desc: 'Trained stain specialists' },
+                  { icon: '💯', title: 'Quality Guarantee', desc: 'Satisfaction assured' }
+                ].map((feature, index) => (
+                  <div key={index} className="bg-gradient-to-br from-orange-50 to-white p-5 rounded-xl border border-orange-200 hover:shadow-lg transition-shadow">
+                    <div className="text-4xl mb-3 text-center">{feature.icon}</div>
+                    <h5 className="font-bold text-gray-800 text-center mb-2">{feature.title}</h5>
+                    <p className="text-sm text-gray-600 text-center">{feature.desc}</p>
                   </div>
                 ))}
               </div>
