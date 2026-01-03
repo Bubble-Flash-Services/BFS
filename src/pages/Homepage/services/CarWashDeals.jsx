@@ -2074,15 +2074,10 @@ export default function CarWashDeals() {
           onLogin={handleLoginSuccess}
         />
       )}
-      {/* Full Body Checkup (Car) */}
-      <section className="bg-gradient-to-br from-white via-gray-50 to-blue-50 py-16 px-4 md:px-10 mt-16 rounded-2xl">
+      {/* Full Body Checkup (Car) - Teaser Mode */}
+      <section className="py-16 px-4 md:px-10 mt-16">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold font-serif bg-gradient-to-r from-blue-700 to-amber-500 bg-clip-text text-transparent mb-4">BFS Full Body Car Checkup</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto text-lg">Complimentary visual health assessment done alongside selected wash packages. Helps you stay ahead on safety &amp; maintenance.</p>
-          </div>
-          <FullBodyCheckup type="car" />
-          <div className="mt-10 text-center text-xs text-gray-500">Disclaimer: Visual inspection only. For mechanical faults please consult an authorized service center.</div>
+          <FullBodyCheckup type="car" teaser={true} />
         </div>
       </section>
     </section>
