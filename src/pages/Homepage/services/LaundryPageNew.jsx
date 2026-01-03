@@ -203,257 +203,239 @@ export default function LaundryPage() {
 
   const renderPricingTable = (subcategory, categoryId, subcategoryId) => {
     if (subcategory.brands) {
-      // For brand-wise pricing (like blazers)
+      // For brand-wise pricing (like blazers) - Card layout
       return (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-300 px-4 py-2 text-left">Image</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Tier</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                <th className="border border-gray-300 px-4 py-2 text-center">Price</th>
-                <th className="border border-gray-300 px-4 py-2 text-center">Quantity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {subcategory.brands.map((brand, index) => {
-                const itemKey = `${categoryId}-${subcategoryId}-${index}-brand`;
-                const quantity = selectedItems[itemKey] || 0;
-                return (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-2">
-                      {brand.image && (
-                        <img 
-                          src={brand.image} 
-                          alt={brand.tier}
-                          className="w-20 h-20 object-cover rounded-lg"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                      )}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2 font-medium">{brand.tier}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-sm text-gray-600">{brand.note}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-center font-semibold text-purple-600">₹{brand.price}</td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      <div className="flex items-center justify-center space-x-2">
-                        <button
-                          onClick={() => handleItemQuantityChange(itemKey, -1)}
-                          disabled={quantity === 0}
-                          className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <span className="w-8 text-center font-semibold">{quantity}</span>
-                        <button
-                          onClick={() => handleItemQuantityChange(itemKey, 1)}
-                          className="w-8 h-8 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {subcategory.brands.map((brand, index) => {
+            const itemKey = `${categoryId}-${subcategoryId}-${index}-brand`;
+            const quantity = selectedItems[itemKey] || 0;
+            return (
+              <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                {/* Image Section */}
+                <div className="relative h-48 bg-gradient-to-br from-purple-100 to-blue-100">
+                  {brand.image ? (
+                    <img 
+                      src={brand.image} 
+                      alt={brand.tier}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { 
+                        e.target.style.display = 'none';
+                        e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
+                        e.target.parentElement.innerHTML = '<div class="text-6xl">🧥</div>';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-6xl">🧥</div>
+                  )}
+                  <div className="absolute top-2 right-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    ₹{brand.price}
+                  </div>
+                </div>
+                
+                {/* Details Section */}
+                <div className="p-4">
+                  <h4 className="text-lg font-bold text-gray-800 mb-1">{brand.tier}</h4>
+                  <p className="text-sm text-gray-600 mb-3">{brand.note}</p>
+                  
+                  {/* Quantity Controls */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Quantity</span>
+                    <div className="flex items-center space-x-3">
+                      <button
+                        onClick={() => handleItemQuantityChange(itemKey, -1)}
+                        disabled={quantity === 0}
+                        className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="w-8 text-center font-bold text-lg">{quantity}</span>
+                      <button
+                        onClick={() => handleItemQuantityChange(itemKey, 1)}
+                        className="w-8 h-8 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       );
     }
 
-    // Regular items with service options
+    // Regular items with service options - Card layout
     const hasWashFold = subcategory.items?.some(item => item.washFold);
     const hasWashIron = subcategory.items?.some(item => item.washIron);
     const hasWashOnly = subcategory.items?.some(item => item.washOnly);
     const hasPrice = subcategory.items?.some(item => item.price);
 
     return (
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 px-4 py-2 text-left">Image</th>
-              <th className="border border-gray-300 px-4 py-2 text-left">Item</th>
-              {hasWashFold && <th className="border border-gray-300 px-4 py-2 text-center">Wash & Fold</th>}
-              {hasWashIron && <th className="border border-gray-300 px-4 py-2 text-center">Wash & Iron</th>}
-              {hasWashOnly && <th className="border border-gray-300 px-4 py-2 text-center">Wash Only</th>}
-              {hasPrice && subcategory.items?.some(item => item.service) && (
-                <th className="border border-gray-300 px-4 py-2 text-center">Service</th>
-              )}
-              {hasPrice && <th className="border border-gray-300 px-4 py-2 text-center">Price</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {subcategory.items?.map((item, index) => {
-              return (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2">
-                    {item.image && (
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        className="w-20 h-20 object-cover rounded-lg"
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                      />
-                    )}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 font-medium">{item.name}</td>
-                  
-                  {hasWashFold && (
-                    <td className="border border-gray-300 px-4 py-2">
-                      {item.washFold ? (
-                        <div className="flex flex-col items-center space-y-2">
-                          <span className="font-semibold text-purple-600">₹{item.washFold}</span>
-                          <div className="flex items-center space-x-2">
-                            {(() => {
-                              const itemKey = `${categoryId}-${subcategoryId}-${index}-washFold`;
-                              const quantity = selectedItems[itemKey] || 0;
-                              return (
-                                <>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, -1)}
-                                    disabled={quantity === 0}
-                                    className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                                  >
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, 1)}
-                                    className="w-7 h-7 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {subcategory.items?.map((item, index) => {
+          return (
+            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+              {/* Image Section */}
+              <div className="relative h-48 bg-gradient-to-br from-purple-100 to-blue-100">
+                {item.image ? (
+                  <img 
+                    src={item.image} 
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => { 
+                      e.target.style.display = 'none';
+                      e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
+                      e.target.parentElement.innerHTML = '<div class="text-6xl">👕</div>';
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-6xl">👕</div>
+                )}
+              </div>
+              
+              {/* Details Section */}
+              <div className="p-4">
+                <h4 className="text-lg font-bold text-gray-800 mb-3">{item.name}</h4>
+                
+                {/* Service Options */}
+                <div className="space-y-3">
+                  {hasWashFold && item.washFold && (
+                    <div className="flex items-center justify-between p-2 bg-purple-50 rounded-lg">
+                      <div>
+                        <p className="text-xs text-gray-600">Wash & Fold</p>
+                        <p className="text-lg font-bold text-purple-600">₹{item.washFold}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {(() => {
+                          const itemKey = `${categoryId}-${subcategoryId}-${index}-washFold`;
+                          const quantity = selectedItems[itemKey] || 0;
+                          return (
+                            <>
+                              <button
+                                onClick={() => handleItemQuantityChange(itemKey, -1)}
+                                disabled={quantity === 0}
+                                className="w-7 h-7 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-sm transition-colors"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="w-6 text-center text-sm font-bold">{quantity}</span>
+                              <button
+                                onClick={() => handleItemQuantityChange(itemKey, 1)}
+                                className="w-7 h-7 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center shadow-sm transition-colors"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
                   )}
                   
-                  {hasWashIron && (
-                    <td className="border border-gray-300 px-4 py-2">
-                      {item.washIron ? (
-                        <div className="flex flex-col items-center space-y-2">
-                          <span className="font-semibold text-purple-600">₹{item.washIron}</span>
-                          <div className="flex items-center space-x-2">
-                            {(() => {
-                              const itemKey = `${categoryId}-${subcategoryId}-${index}-washIron`;
-                              const quantity = selectedItems[itemKey] || 0;
-                              return (
-                                <>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, -1)}
-                                    disabled={quantity === 0}
-                                    className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                                  >
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, 1)}
-                                    className="w-7 h-7 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
+                  {hasWashIron && item.washIron && (
+                    <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
+                      <div>
+                        <p className="text-xs text-gray-600">Wash & Iron</p>
+                        <p className="text-lg font-bold text-blue-600">₹{item.washIron}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {(() => {
+                          const itemKey = `${categoryId}-${subcategoryId}-${index}-washIron`;
+                          const quantity = selectedItems[itemKey] || 0;
+                          return (
+                            <>
+                              <button
+                                onClick={() => handleItemQuantityChange(itemKey, -1)}
+                                disabled={quantity === 0}
+                                className="w-7 h-7 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-sm transition-colors"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="w-6 text-center text-sm font-bold">{quantity}</span>
+                              <button
+                                onClick={() => handleItemQuantityChange(itemKey, 1)}
+                                className="w-7 h-7 rounded-full bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center shadow-sm transition-colors"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
                   )}
-
-                  {hasWashOnly && (
-                    <td className="border border-gray-300 px-4 py-2">
-                      {item.washOnly ? (
-                        <div className="flex flex-col items-center space-y-2">
-                          <span className="font-semibold text-purple-600">₹{item.washOnly}</span>
-                          <div className="flex items-center space-x-2">
-                            {(() => {
-                              const itemKey = `${categoryId}-${subcategoryId}-${index}-washOnly`;
-                              const quantity = selectedItems[itemKey] || 0;
-                              return (
-                                <>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, -1)}
-                                    disabled={quantity === 0}
-                                    className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                                  >
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, 1)}
-                                    className="w-7 h-7 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
+                  
+                  {hasWashOnly && item.washOnly && (
+                    <div className="flex items-center justify-between p-2 bg-green-50 rounded-lg">
+                      <div>
+                        <p className="text-xs text-gray-600">Wash Only</p>
+                        <p className="text-lg font-bold text-green-600">₹{item.washOnly}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {(() => {
+                          const itemKey = `${categoryId}-${subcategoryId}-${index}-washOnly`;
+                          const quantity = selectedItems[itemKey] || 0;
+                          return (
+                            <>
+                              <button
+                                onClick={() => handleItemQuantityChange(itemKey, -1)}
+                                disabled={quantity === 0}
+                                className="w-7 h-7 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-sm transition-colors"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="w-6 text-center text-sm font-bold">{quantity}</span>
+                              <button
+                                onClick={() => handleItemQuantityChange(itemKey, 1)}
+                                className="w-7 h-7 rounded-full bg-green-600 text-white hover:bg-green-700 flex items-center justify-center shadow-sm transition-colors"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
                   )}
-
-                  {hasPrice && item.service && (
-                    <td className="border border-gray-300 px-4 py-2 text-center text-sm text-gray-600">
-                      {item.service}
-                    </td>
+                  
+                  {hasPrice && item.price && (
+                    <div className="flex items-center justify-between p-2 bg-orange-50 rounded-lg">
+                      <div>
+                        {item.service && <p className="text-xs text-gray-600">{item.service}</p>}
+                        <p className="text-lg font-bold text-orange-600">₹{item.price}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {(() => {
+                          const itemKey = `${categoryId}-${subcategoryId}-${index}-price`;
+                          const quantity = selectedItems[itemKey] || 0;
+                          return (
+                            <>
+                              <button
+                                onClick={() => handleItemQuantityChange(itemKey, -1)}
+                                disabled={quantity === 0}
+                                className="w-7 h-7 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-sm transition-colors"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="w-6 text-center text-sm font-bold">{quantity}</span>
+                              <button
+                                onClick={() => handleItemQuantityChange(itemKey, 1)}
+                                className="w-7 h-7 rounded-full bg-orange-600 text-white hover:bg-orange-700 flex items-center justify-center shadow-sm transition-colors"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
                   )}
-
-                  {hasPrice && (
-                    <td className="border border-gray-300 px-4 py-2">
-                      {item.price ? (
-                        <div className="flex flex-col items-center space-y-2">
-                          <span className="font-semibold text-purple-600">₹{item.price}</span>
-                          <div className="flex items-center space-x-2">
-                            {(() => {
-                              const itemKey = `${categoryId}-${subcategoryId}-${index}-price`;
-                              const quantity = selectedItems[itemKey] || 0;
-                              return (
-                                <>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, -1)}
-                                    disabled={quantity === 0}
-                                    className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                                  >
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
-                                  <button
-                                    onClick={() => handleItemQuantityChange(itemKey, 1)}
-                                    className="w-7 h-7 rounded-full bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                  )}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   };
