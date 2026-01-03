@@ -18,6 +18,28 @@ export default function LaundryPage() {
   const { addToCart } = useCart();
   const { user } = useAuth();
 
+  // Filter function to check if item matches search query
+  const itemMatchesSearch = (item, subcategoryName, query) => {
+    if (!query) return true;
+    
+    const lowerQuery = query.toLowerCase();
+    const itemName = (item.name || item.tier || '').toLowerCase();
+    const subName = subcategoryName.toLowerCase();
+    const itemNote = (item.note || '').toLowerCase();
+    const itemService = (item.service || '').toLowerCase();
+    
+    // Check if any service type matches
+    const hasWashFold = item.washFold && 'wash fold'.includes(lowerQuery);
+    const hasWashIron = item.washIron && 'wash iron'.includes(lowerQuery);
+    const hasWashOnly = item.washOnly && 'wash only'.includes(lowerQuery);
+    
+    return itemName.includes(lowerQuery) || 
+           subName.includes(lowerQuery) || 
+           itemNote.includes(lowerQuery) ||
+           itemService.includes(lowerQuery) ||
+           hasWashFold || hasWashIron || hasWashOnly;
+  };
+
   // Advertisement banners
   const adBanners = [
     {
@@ -376,26 +398,9 @@ export default function LaundryPage() {
                     const items = subcategory.brands || subcategory.items || [];
                     
                     // Filter items based on search query
-                    const filteredItems = items.filter((item) => {
-                      if (!searchQuery) return true;
-                      
-                      const query = searchQuery.toLowerCase();
-                      const itemName = (item.name || item.tier || '').toLowerCase();
-                      const subcategoryName = subcategory.name.toLowerCase();
-                      const itemNote = (item.note || '').toLowerCase();
-                      const itemService = (item.service || '').toLowerCase();
-                      
-                      // Check if any service type matches
-                      const hasWashFold = item.washFold && 'wash fold'.includes(query);
-                      const hasWashIron = item.washIron && 'wash iron'.includes(query);
-                      const hasWashOnly = item.washOnly && 'wash only'.includes(query);
-                      
-                      return itemName.includes(query) || 
-                             subcategoryName.includes(query) || 
-                             itemNote.includes(query) ||
-                             itemService.includes(query) ||
-                             hasWashFold || hasWashIron || hasWashOnly;
-                    });
+                    const filteredItems = items.filter((item) => 
+                      itemMatchesSearch(item, subcategory.name, searchQuery)
+                    );
                     
                     return filteredItems.map((item, index) => {
                       // Find the original index for the item key
@@ -645,19 +650,9 @@ export default function LaundryPage() {
                 {/* No Results Message */}
                 {searchQuery && categoryData[selectedCategory].subcategories.every(subcategory => {
                   const items = subcategory.brands || subcategory.items || [];
-                  const filteredItems = items.filter((item) => {
-                    const query = searchQuery.toLowerCase();
-                    const itemName = (item.name || item.tier || '').toLowerCase();
-                    const subcategoryName = subcategory.name.toLowerCase();
-                    const itemNote = (item.note || '').toLowerCase();
-                    const itemService = (item.service || '').toLowerCase();
-                    const hasWashFold = item.washFold && 'wash fold'.includes(query);
-                    const hasWashIron = item.washIron && 'wash iron'.includes(query);
-                    const hasWashOnly = item.washOnly && 'wash only'.includes(query);
-                    return itemName.includes(query) || subcategoryName.includes(query) || 
-                           itemNote.includes(query) || itemService.includes(query) ||
-                           hasWashFold || hasWashIron || hasWashOnly;
-                  });
+                  const filteredItems = items.filter((item) => 
+                    itemMatchesSearch(item, subcategory.name, searchQuery)
+                  );
                   return filteredItems.length === 0;
                 }) && (
                   <div className="text-center py-16">
