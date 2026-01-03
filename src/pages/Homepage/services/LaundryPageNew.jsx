@@ -28,10 +28,10 @@ export default function LaundryPage() {
     const itemNote = (item.note || '').toLowerCase();
     const itemService = (item.service || '').toLowerCase();
     
-    // Check if any service type matches
-    const hasWashFold = item.washFold && 'wash fold'.includes(lowerQuery);
-    const hasWashIron = item.washIron && 'wash iron'.includes(lowerQuery);
-    const hasWashOnly = item.washOnly && 'wash only'.includes(lowerQuery);
+    // Check if any service type matches - query should contain these keywords
+    const hasWashFold = item.washFold && (lowerQuery.includes('wash') || lowerQuery.includes('fold'));
+    const hasWashIron = item.washIron && (lowerQuery.includes('wash') || lowerQuery.includes('iron'));
+    const hasWashOnly = item.washOnly && lowerQuery.includes('wash');
     
     return itemName.includes(lowerQuery) || 
            subName.includes(lowerQuery) || 
@@ -407,17 +407,14 @@ export default function LaundryPage() {
                     // Get all items/brands from this subcategory
                     const items = subcategory.brands || subcategory.items || [];
                     
-                    // Filter items based on search query
-                    const filteredItems = items.filter((item) => 
-                      itemMatchesSearch(item, subcategory.name, searchQuery)
-                    );
-                    
-                    return filteredItems.map((item, index) => {
-                      // Find the original index for the item key
-                      const originalIndex = items.indexOf(item);
-                      const itemKey = subcategory.brands 
-                        ? `${selectedCategory}-${subcategory.id}-${originalIndex}-brand`
-                        : `${selectedCategory}-${subcategory.id}-${originalIndex}`;
+                    // Map items with their original indices, then filter
+                    return items
+                      .map((item, originalIndex) => ({ item, originalIndex }))
+                      .filter(({ item }) => itemMatchesSearch(item, subcategory.name, searchQuery))
+                      .map(({ item, originalIndex }) => {
+                        const itemKey = subcategory.brands 
+                          ? `${selectedCategory}-${subcategory.id}-${originalIndex}-brand`
+                          : `${selectedCategory}-${subcategory.id}-${originalIndex}`;
                       
                       // For brand-wise items (blazers)
                       if (subcategory.brands) {
