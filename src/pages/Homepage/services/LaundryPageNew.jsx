@@ -456,6 +456,7 @@ export default function LaundryPage() {
                     src={ad.image} 
                     alt={ad.title}
                     className="w-full h-full object-cover opacity-30"
+                    onError={(e) => { e.target.style.display = 'none'; }}
                   />
                 </div>
                 <div className="text-center px-6 relative z-10">
@@ -511,6 +512,7 @@ export default function LaundryPage() {
                         src={category.image} 
                         alt={category.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        onError={(e) => { e.target.style.display = 'none'; }}
                       />
                       <div className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-60 group-hover:opacity-50 transition-opacity duration-300`}></div>
                       <div className="absolute inset-0 flex items-center justify-center">
