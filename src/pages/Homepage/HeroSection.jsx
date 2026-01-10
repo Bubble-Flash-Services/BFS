@@ -1023,7 +1023,7 @@ export default function HeroSection() {
         </div>
 
         {/* Full-width carousel container - no padding or max-width constraints */}
-        <div className="w-full pt-20 pb-8">
+        <div className="w-full">
           {/* Hero Content - Image Carousel */}
           <div className="text-white w-full relative">
             <AnimatePresence mode="wait">
@@ -1042,7 +1042,7 @@ export default function HeroSection() {
                   transition={{ delay: 0.2, duration: 0.8 }}
                   src={heroSlides[heroSlide].image}
                   alt={heroSlides[heroSlide].alt}
-                  className="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] object-contain bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900"
+                  className="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] "
                 />
               </motion.div>
             </AnimatePresence>
@@ -1064,7 +1064,7 @@ export default function HeroSection() {
             </div>
           </div>
 
-            {/* Hero Image and Video - COMMENTED OUT AS PER REQUIREMENT
+          {/* Hero Image and Video - COMMENTED OUT AS PER REQUIREMENT
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -2623,7 +2623,7 @@ export default function HeroSection() {
                       className="w-full flex justify-between items-center px-6 py-4 text-left focus:outline-none hover:bg-gray-50 transition-colors duration-200"
                       onClick={() => setOpenIdx(openIdx === i ? -1 : i)}
                     >
-                      <span className="text-gray-200 font-medium text-base pr-4">
+                      <span className="text-gray-500 font-medium text-base pr-4">
                         {faq.question}
                       </span>
                       <div className="flex-shrink-0">
@@ -2652,9 +2652,9 @@ export default function HeroSection() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="px-6 pb-4 text-gray-200 text-sm leading-relaxed"
+                        className="px-6 pb-4 text-gray-500 text-sm leading-relaxed"
                       >
-                        <div className="pt-2 border-t border-gray-100">
+                        <div className="pt-2 border-t border-gray-500">
                           {faq.answer}
                         </div>
                       </motion.div>
