@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../components/AuthContext";
-import {
-  ArrowRight,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import {
   CarOutlined,
   SafetyOutlined,
@@ -31,8 +29,8 @@ export default function ServiceCategories({ onLoginRequired }) {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const handleCategoryClick = (category) => {
@@ -40,8 +38,11 @@ export default function ServiceCategories({ onLoginRequired }) {
     if (!user) {
       // Store the intended destination for post-login redirect
       const destination = category === "laundry" ? "/laundry" : `/${category}`;
-      localStorage.setItem("postLoginRedirect", JSON.stringify({ path: destination, ts: Date.now() }));
-      
+      localStorage.setItem(
+        "postLoginRedirect",
+        JSON.stringify({ path: destination, ts: Date.now() })
+      );
+
       // Trigger login modal
       if (onLoginRequired) {
         onLoginRequired();
@@ -276,12 +277,14 @@ export default function ServiceCategories({ onLoginRequired }) {
                 key={category.name}
                 onClick={() => handleCategoryClick(category.category)}
                 className={`relative rounded-lg md:rounded-2xl cursor-pointer shadow-lg backdrop-blur-sm border border-gray-200 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col bg-white ${
-                  isMobile ? 'h-32' : 'h-52 sm:h-60 md:h-72'
+                  isMobile ? "h-32" : "h-52 sm:h-60 md:h-72"
                 }`}
               >
                 {/* Background Image with Overlay - show on all screens */}
                 <div
-                  className={`absolute inset-0 z-0 ${isMobile ? 'opacity-30' : 'opacity-40'} group-hover:opacity-90 transition-opacity duration-300`}
+                  className={`absolute inset-0 z-0 ${
+                    isMobile ? "opacity-30" : "opacity-40"
+                  } group-hover:opacity-90 transition-opacity duration-300`}
                   style={{
                     backgroundImage: `url('${category.image}')`,
                     backgroundSize: "cover",
@@ -289,7 +292,7 @@ export default function ServiceCategories({ onLoginRequired }) {
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
-                
+
                 {/* New Badge */}
                 {category.isNew && !isMobile && (
                   <div className="absolute top-2 right-2 md:top-3 md:right-3 z-20">
@@ -309,15 +312,26 @@ export default function ServiceCategories({ onLoginRequired }) {
                 )}
 
                 {/* Content */}
-                <div className={`relative z-10 flex flex-col h-full ${isMobile ? 'justify-end items-center p-2' : 'justify-end p-2.5 sm:p-3 md:p-4'}`}>
+                <div
+                  className={`relative z-10 flex flex-col h-full ${
+                    isMobile
+                      ? "justify-end items-center p-2"
+                      : "justify-end p-2.5 sm:p-3 md:p-4"
+                  }`}
+                >
                   {/* Mobile: Image-based compact layout */}
                   {isMobile ? (
                     <>
                       <h3 className="text-[10px] font-bold text-white text-center line-clamp-2 leading-tight px-1 mb-1">
                         {category.name}
                       </h3>
-                      <div className={`w-6 h-6 rounded-full ${category.bgColor} flex items-center justify-center`}>
-                        <IconComponent className="text-sm" style={{ color: '#FFB400' }} />
+                      <div
+                        className={`w-6 h-6 rounded-full ${category.bgColor} flex items-center justify-center`}
+                      >
+                        <IconComponent
+                          className="text-sm"
+                          style={{ color: "#FFB400" }}
+                        />
                       </div>
                     </>
                   ) : (

@@ -436,7 +436,8 @@ export default function HeroSection() {
       title: "Branded & Professional",
       highlight: "Cleaning Services",
       subtitle: "for Cars, Bikes & More",
-      description: "Experience top-tier car wash, bike detailing, and laundry care – all under one roof in Bengaluru. Quality service, every time.",
+      description:
+        "Experience top-tier car wash, bike detailing, and laundry care – all under one roof in Bengaluru. Quality service, every time.",
       stats: [
         { value: "2000+", label: "Happy Customers" },
         { value: "100%", label: "Satisfaction" },
@@ -448,7 +449,8 @@ export default function HeroSection() {
       title: "Doorstep Service",
       highlight: "At Your Convenience",
       subtitle: "Anywhere in Bangalore",
-      description: "We bring professional cleaning services right to your doorstep. Save time and enjoy hassle-free, premium quality service.",
+      description:
+        "We bring professional cleaning services right to your doorstep. Save time and enjoy hassle-free, premium quality service.",
       stats: [
         { value: "24/7", label: "Available" },
         { value: "30Min", label: "Response Time" },
@@ -460,7 +462,8 @@ export default function HeroSection() {
       title: "Safe & Effective",
       highlight: "Cleaning Solutions",
       subtitle: "for Your Vehicles",
-      description: "Using only premium, eco-friendly products that are gentle on your vehicles and safe for the environment.",
+      description:
+        "Using only premium, eco-friendly products that are gentle on your vehicles and safe for the environment.",
       stats: [
         { value: "100%", label: "Eco-Safe" },
         { value: "50+", label: "Products" },
@@ -1080,7 +1083,9 @@ export default function HeroSection() {
                     className="text-4xl md:text-6xl font-bold leading-tight"
                   >
                     {heroSlides[heroSlide].title}
-                    <span className="block text-[#FFB400]">{heroSlides[heroSlide].highlight}</span>
+                    <span className="block text-[#FFB400]">
+                      {heroSlides[heroSlide].highlight}
+                    </span>
                     <span className="block text-2xl md:text-4xl font-normal text-gray-200 mt-2">
                       {heroSlides[heroSlide].subtitle}
                     </span>
@@ -1129,8 +1134,8 @@ export default function HeroSection() {
                     onClick={() => setHeroSlide(idx)}
                     className={`transition-all duration-300 rounded-full ${
                       heroSlide === idx
-                        ? 'w-8 h-2 bg-[#FFB400]'
-                        : 'w-2 h-2 bg-white bg-opacity-40 hover:bg-opacity-60'
+                        ? "w-8 h-2 bg-[#FFB400]"
+                        : "w-2 h-2 bg-white bg-opacity-40 hover:bg-opacity-60"
                     }`}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
@@ -1168,17 +1173,17 @@ export default function HeroSection() {
           </div>
 
           {/* Service Categories - Moved after Hero Content */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            className="mt-20"
-          >
-            <div id="services" className="w-full">
-              <ServiceCategories onLoginRequired={() => setOpenSignin(true)} />
-            </div>
-          </motion.div>
         </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          className="mt-20"
+        >
+          <div id="services" className="w-full">
+            <ServiceCategories onLoginRequired={() => setOpenSignin(true)} />
+          </div>
+        </motion.div>
       </section>
 
       {/* About Us Section with Blue Theme */}
@@ -1507,8 +1512,14 @@ export default function HeroSection() {
         {/* Background Images for Carousel Feel */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+          <div
+            className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          />
+          <div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 blur-3xl animate-pulse"
+            style={{ animationDelay: "2s" }}
+          />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1870,7 +1881,8 @@ export default function HeroSection() {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="text-lg text-gray-200 max-w-2xl mx-auto"
           >
-            Have questions or need assistance? We're here to help you with all your service needs.
+            Have questions or need assistance? We're here to help you with all
+            your service needs.
           </motion.p>
         </motion.div>
 
