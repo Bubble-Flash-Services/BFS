@@ -1022,47 +1022,47 @@ export default function HeroSection() {
           />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-            {/* Hero Content - Image Carousel */}
-            <div className="text-white space-y-6 w-full flex-1 relative overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={heroSlide}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.5 }}
-                  className="w-full"
-                >
-                  {/* Hero Image */}
-                  <motion.img
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.2, duration: 0.8 }}
-                    src={heroSlides[heroSlide].image}
-                    alt={heroSlides[heroSlide].alt}
-                    className="w-full h-[400px] md:h-[500px] lg:h-[600px] object-cover rounded-3xl shadow-2xl"
-                  />
-                </motion.div>
-              </AnimatePresence>
+        {/* Full-width carousel container - no padding or max-width constraints */}
+        <div className="w-full pt-20 pb-8">
+          {/* Hero Content - Image Carousel */}
+          <div className="text-white w-full relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={heroSlide}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+                className="w-full"
+              >
+                {/* Hero Image - Full width with complete image display */}
+                <motion.img
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                  src={heroSlides[heroSlide].image}
+                  alt={heroSlides[heroSlide].alt}
+                  className="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] object-contain bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900"
+                />
+              </motion.div>
+            </AnimatePresence>
 
-              {/* Carousel Navigation Dots */}
-              <div className="flex justify-center gap-2 mt-8">
-                {heroSlides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setHeroSlide(idx)}
-                    className={`transition-all duration-300 rounded-full ${
-                      heroSlide === idx
-                        ? "w-8 h-2 bg-[#FFB400]"
-                        : "w-2 h-2 bg-white bg-opacity-40 hover:bg-opacity-60"
-                    }`}
-                    aria-label={`Go to slide ${idx + 1}`}
-                  />
-                ))}
-              </div>
+            {/* Carousel Navigation Dots */}
+            <div className="flex justify-center gap-2 mt-6">
+              {heroSlides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setHeroSlide(idx)}
+                  className={`transition-all duration-300 rounded-full ${
+                    heroSlide === idx
+                      ? "w-8 h-2 bg-[#FFB400]"
+                      : "w-2 h-2 bg-white bg-opacity-40 hover:bg-opacity-60"
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
             </div>
+          </div>
 
             {/* Hero Image and Video - COMMENTED OUT AS PER REQUIREMENT
             <motion.div
@@ -1091,7 +1091,6 @@ export default function HeroSection() {
               className="w-full h-auto max-h-[540px] lg:flex-1 object-cover shadow-2xl rounded-3xl"
             />
             END OF COMMENTED OUT SECTION */}
-          </div>
 
           {/* Service Categories - Moved after Hero Content */}
         </div>
