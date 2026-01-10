@@ -998,13 +998,6 @@ export default function HeroSection() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          {/* Service Categories - Moved to Top as per requirement */}
-          <div className="mb-16">
-            <div id="services" className="w-full">
-              <ServiceCategories onLoginRequired={() => setOpenSignin(true)} />
-            </div>
-          </div>
-
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
             {/* Hero Content - Left Side */}
             <motion.div
@@ -1051,37 +1044,46 @@ export default function HeroSection() {
                 all under one roof in Bengaluru. Quality service, every time.
               </motion.p>
 
-              {/* Stats */}
+              {/* Stats - Moved to top and made more prominent */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.8 }}
-                className="flex justify-center lg:justify-start gap-8 md:gap-16 pt-4"
+                className="flex justify-center lg:justify-start gap-8 md:gap-16 pt-6"
               >
-                <div>
-                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="text-center"
+                >
+                  <div className="text-3xl md:text-5xl font-bold text-[#FFB400]">
                     2000+
                   </div>
-                  <div className="text-xs md:text-sm text-gray-300">
+                  <div className="text-sm md:text-base text-gray-200 font-medium mt-1">
                     Happy Customers
                   </div>
-                </div>
-                <div>
-                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="text-center"
+                >
+                  <div className="text-3xl md:text-5xl font-bold text-[#FFB400]">
                     100%
                   </div>
-                  <div className="text-xs md:text-sm text-gray-300">
+                  <div className="text-sm md:text-base text-gray-200 font-medium mt-1">
                     Satisfaction
                   </div>
-                </div>
-                <div>
-                  <div className="text-2xl md:text-3xl font-bold text-[#FFB400]">
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="text-center"
+                >
+                  <div className="text-3xl md:text-5xl font-bold text-[#FFB400]">
                     15+
                   </div>
-                  <div className="text-xs md:text-sm text-gray-300">
+                  <div className="text-sm md:text-base text-gray-200 font-medium mt-1">
                     Services
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             </motion.div>
 
@@ -1113,15 +1115,27 @@ export default function HeroSection() {
             />
             END OF COMMENTED OUT SECTION */}
           </div>
+
+          {/* Service Categories - Moved after Hero Content */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.8 }}
+            className="mt-20"
+          >
+            <div id="services" className="w-full">
+              <ServiceCategories onLoginRequired={() => setOpenSignin(true)} />
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* About Us Section with Light Theme */}
       <div className="bg-gray-50">
-        <section id="aboutus" className="py-10">
+        <section id="aboutus" className="py-16">
           {/* AboutPage content start */}
-          <div className="min-h-screen">
-            <div className="max-w-6xl mx-auto pt-12 px-4">
+          <div>
+            <div className="max-w-6xl mx-auto px-4">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1759,7 +1773,7 @@ export default function HeroSection() {
       </section>
       <section
         id="callback-services"
-        className="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 relative overflow-hidden"
+        className="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 relative overflow-hidden py-16"
       >
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
@@ -1789,8 +1803,49 @@ export default function HeroSection() {
           />
         </div>
 
+        {/* Contact Us Section Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="inline-flex items-center px-6 py-3 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30 mb-4"
+          >
+            <span className="text-[#FFB400] font-semibold text-sm">
+              Get In Touch
+            </span>
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="text-4xl md:text-5xl font-bold mb-4"
+          >
+            Contact <span className="text-[#FFB400]">Us</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="text-lg text-gray-600 max-w-2xl mx-auto"
+          >
+            Have questions or need assistance? We're here to help you with all your service needs.
+          </motion.p>
+        </motion.div>
+
         {/* ServicesPage content start */}
-        <div className="relative mx-auto pt-12 px-4 flex flex-col md:flex-row gap-8">
+        <div className="relative mx-auto px-4 flex flex-col md:flex-row gap-8 max-w-6xl">
           {/* Left: Callback Form */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -2529,9 +2584,9 @@ export default function HeroSection() {
           </div>
         </div> */}
         {/* What client says - true carousel */}
-        <div className="mt-20 mb-8 py-12">
-          <h2 className="text-2xl md:text-3xl font-serif font-semibold text-center mb-8">
-            What client says
+        <div className="mt-12 mb-8 py-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
+            What Our Clients Say
           </h2>
           <div className="overflow-hidden w-full flex justify-center">
             <div
@@ -2543,34 +2598,34 @@ export default function HeroSection() {
                 return (
                   <div
                     key={idx}
-                    className="bg-white rounded-xl border shadow-sm p-4 sm:p-5 md:p-6 min-w-[220px] sm:min-w-[280px] md:min-w-[340px] max-w-[380px] flex flex-col"
+                    className="bg-white rounded-xl border shadow-sm p-4 sm:p-5 min-w-[220px] sm:min-w-[260px] md:min-w-[300px] max-w-[340px] flex flex-col"
                   >
                     <div className="flex items-center gap-3 mb-2">
                       <div
-                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white font-semibold ${color}`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${color}`}
                       >
                         {getInitial(t.name)}
                       </div>
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <div
-                          className="font-serif font-bold leading-snug max-w-[180px] truncate"
+                          className="font-bold text-sm leading-snug truncate"
                           title={t.name}
                         >
                           {t.name}
                         </div>
-                        <div className="text-xs font-serif text-gray-500">
+                        <div className="text-xs text-gray-500">
                           Verified Customer
                         </div>
                       </div>
-                      <div className="flex ml-auto gap-1">
+                      <div className="flex gap-0.5">
                         {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-yellow-400 text-lg">
+                          <span key={i} className="text-yellow-400 text-base">
                             ★
                           </span>
                         ))}
                       </div>
                     </div>
-                    <div className="text-gray-700 text-sm sm:text-base mt-2 leading-relaxed line-clamp-5">
+                    <div className="text-gray-700 text-sm mt-2 leading-relaxed line-clamp-4">
                       “{t.text}”
                     </div>
                   </div>
@@ -2579,20 +2634,20 @@ export default function HeroSection() {
             </div>
           </div>
         </div>
-        {/* FAQ Section */}
-        <div className="mt-16 py-16 bg-gray-50">
-          <div className="max-w-5xl mx-auto px-4">
+        {/* FAQ Section - Optimized and Compact */}
+        <div className="mt-12 py-12 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
               id="faq-section"
-              className="text-4xl md:text-5xl font-bold text-center mb-12 text-[#6B2C91]"
+              className="text-3xl md:text-4xl font-bold text-center mb-8 text-[#6B2C91]"
             >
-              FAQs
+              Frequently Asked Questions
             </motion.h2>
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="bg-white rounded-xl shadow-md overflow-hidden">
               <div className="divide-y divide-gray-100">
                 {FAQS.map((faq, i) => (
                   <motion.div
@@ -2600,19 +2655,19 @@ export default function HeroSection() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: i * 0.1, duration: 0.6 }}
+                    transition={{ delay: i * 0.05, duration: 0.4 }}
                   >
                     <button
-                      className="w-full flex justify-between items-center px-8 py-6 text-left focus:outline-none hover:bg-gray-50 transition-colors duration-200"
+                      className="w-full flex justify-between items-center px-6 py-4 text-left focus:outline-none hover:bg-gray-50 transition-colors duration-200"
                       onClick={() => setOpenIdx(openIdx === i ? -1 : i)}
                     >
-                      <span className="text-gray-800 font-medium text-lg pr-6">
+                      <span className="text-gray-800 font-medium text-base pr-4">
                         {faq.question}
                       </span>
                       <div className="flex-shrink-0">
-                        <div className="w-10 h-10 rounded-full bg-pink-100 border border-pink-200 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-pink-100 border border-pink-200 flex items-center justify-center">
                           <svg
-                            className={`w-5 h-5 text-pink-500 transition-transform duration-300 ${
+                            className={`w-4 h-4 text-pink-500 transition-transform duration-300 ${
                               openIdx === i ? "rotate-180" : "rotate-0"
                             }`}
                             fill="none"
@@ -2635,9 +2690,9 @@ export default function HeroSection() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="px-8 pb-6 text-gray-600 text-base leading-relaxed"
+                        className="px-6 pb-4 text-gray-600 text-sm leading-relaxed"
                       >
-                        <div className="pt-4 border-t border-gray-100">
+                        <div className="pt-2 border-t border-gray-100">
                           {faq.answer}
                         </div>
                       </motion.div>
