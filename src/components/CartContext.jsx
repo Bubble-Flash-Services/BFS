@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 import * as cartApi from "../api/cart";
+import toast from "react-hot-toast";
 
 // Helper function to get default service images
 const getDefaultServiceImage = (serviceName) => {
@@ -582,6 +583,35 @@ export function CartProvider({ children }) {
   }, [cartItems, user]);
 
   const addToCart = async (product) => {
+    // Validate product before adding
+    if (!product) {
+      console.error("Cannot add null/undefined product to cart");
+      toast.error("Invalid product");
+      return { success: false, message: "Invalid product" };
+    }
+
+    // Check cart item limit (max 50 items)
+    const MAX_CART_ITEMS = 50;
+    if (cartItems.length >= MAX_CART_ITEMS) {
+      console.error(`Cart limit reached: ${MAX_CART_ITEMS} items`);
+      toast.error(`Cart is full! Maximum ${MAX_CART_ITEMS} items allowed`, {
+        duration: 4000,
+        icon: '🛒',
+      });
+      return { success: false, message: `Cart limit reached (${MAX_CART_ITEMS} items max)` };
+    }
+
+    // Validate price
+    const productPrice = product.price || product.basePrice;
+    if (!productPrice || productPrice < 0) {
+      console.error("Invalid product price:", productPrice);
+      toast.error("Invalid product price");
+      return { success: false, message: "Invalid product price" };
+    }
+
+    // Show loading toast
+    const loadingToast = toast.loading("Adding to cart...");
+
     // Try server cart first for logged-in users
     if (user && token) {
       setLoading(true);
@@ -613,7 +643,7 @@ export function CartProvider({ children }) {
             ? product.packageId
             : undefined,
           quantity: product.quantity || 1,
-          price: product.price || product.basePrice,
+          price: productPrice,
           addOns: sanitizeAddOns(
             product.addOns || product.packageDetails?.addons
           ),
@@ -639,19 +669,36 @@ export function CartProvider({ children }) {
         if (response.success) {
           // Reload cart from server to get updated data
           await loadCartFromServer();
+          toast.success("Added to cart!", {
+            id: loadingToast,
+            icon: '✅',
+            duration: 3000,
+          });
+          return { success: true, message: "Added to cart successfully" };
         } else {
           throw new Error(response.message || "Failed to add to cart");
         }
       } catch (error) {
         console.error("Error adding to cart:", error);
+        toast.error(error.message || "Failed to add to cart", {
+          id: loadingToast,
+          duration: 4000,
+        });
         // Fallback to local cart
         addToLocalCart(product);
+        return { success: false, message: error.message || "Failed to add to cart" };
       } finally {
         setLoading(false);
       }
     } else {
       // Add to local cart for guest users
       addToLocalCart(product);
+      toast.success("Added to cart!", {
+        id: loadingToast,
+        icon: '✅',
+        duration: 3000,
+      });
+      return { success: true, message: "Added to cart successfully" };
     }
   };
 
@@ -696,11 +743,16 @@ export function CartProvider({ children }) {
         const response = await cartApi.removeFromCart(token, productId);
         if (response.success) {
           await loadCartFromServer();
+          toast.success("Item removed from cart", {
+            icon: '🗑️',
+            duration: 2000,
+          });
         } else {
           throw new Error(response.message || "Failed to remove from cart");
         }
       } catch (error) {
         console.error("Error removing from cart:", error);
+        toast.error("Failed to remove item from cart");
         // Fallback to local removal
         setCartItems((prevItems) =>
           prevItems.filter((item) => item.id !== productId)
@@ -713,6 +765,10 @@ export function CartProvider({ children }) {
       setCartItems((prevItems) =>
         prevItems.filter((item) => item.id !== productId)
       );
+      toast.success("Item removed from cart", {
+        icon: '🗑️',
+        duration: 2000,
+      });
     }
   };
 
@@ -756,6 +812,13 @@ export function CartProvider({ children }) {
   };
 
   const clearCart = async () => {
+    // Show confirmation
+    const itemCount = cartItems.length;
+    if (itemCount === 0) {
+      toast("Cart is already empty", { icon: 'ℹ️' });
+      return;
+    }
+
     // Clear local cart
     setCartItems([]);
 
@@ -783,6 +846,11 @@ export function CartProvider({ children }) {
         setLoading(false);
       }
     }
+
+    toast.success(`Cleared ${itemCount} item${itemCount > 1 ? 's' : ''} from cart`, {
+      icon: '🗑️',
+      duration: 3000,
+    });
   };
 
   const getCartTotal = () => {
