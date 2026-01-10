@@ -672,38 +672,39 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header Section with Glassmorphism */}
+      {/* Header Section with Glassmorphism - Mobile Responsive */}
       <div className="sticky top-0 z-40 backdrop-blur-lg bg-white/80 border-b border-white/20 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <ShoppingBag className="h-6 w-6 text-white" />
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">
+              <div className="relative flex-shrink-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-red-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-xs font-bold">
                     {cartItems.length}
                   </span>
                 </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent truncate">
                   Your Cart
                 </h1>
-                <div className="flex items-center gap-2">
-                  <p className="text-gray-500 text-sm">
+                <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                  <p className="text-gray-500 text-xs sm:text-sm whitespace-nowrap">
                     {cartItems.length} items • ₹{getCartTotal()}
                   </p>
                   {appliedCoupon && (
-                    <div className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                      <Sparkles className="h-3 w-3" />
-                      <span>Coupon: {appliedCoupon.code}</span>
+                    <div className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                      <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                      <span className="hidden xs:inline">{appliedCoupon.code}</span>
+                      <span className="xs:hidden">Coupon</span>
                     </div>
                   )}
                   {availableCoupons.length > 0 && !appliedCoupon && (
-                    <div className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                      {availableCoupons.length} coupons available
+                    <div className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-100 text-blue-800 rounded-full text-xs whitespace-nowrap">
+                      {availableCoupons.length} coupons
                     </div>
                   )}
                 </div>
@@ -711,9 +712,10 @@ export default function CartPage() {
             </div>
             <button
               onClick={clearCart}
-              className="text-red-500 hover:text-red-700 font-medium px-4 py-2 rounded-lg hover:bg-red-50 transition-all duration-200"
+              className="text-red-500 hover:text-red-700 font-medium px-2 sm:px-4 py-2 rounded-lg hover:bg-red-50 transition-all duration-200 text-xs sm:text-sm flex-shrink-0"
             >
-              Clear All
+              <span className="hidden sm:inline">Clear All</span>
+              <span className="sm:hidden"><Trash2 className="h-4 w-4" /></span>
             </button>
           </div>
         </div>
@@ -756,24 +758,24 @@ export default function CartPage() {
                       key={itemKey}
                       className="group bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
                     >
-                      {/* Item Header with Gradient */}
-                      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                              <Sparkles className="h-5 w-5 text-white" />
+                      {/* Item Header with Gradient - Mobile Responsive */}
+                      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 sm:p-4">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                             </div>
-                            <div>
-                              <h3 className="font-semibold text-white text-lg">
+                            <div className="min-w-0 flex-1">
+                              <h3 className="font-semibold text-white text-sm sm:text-lg truncate">
                                 {item.title || item.name || item.serviceName}
                               </h3>
                               {(item.packageName || item.category) && (
-                                <span className="text-blue-100 text-sm">
+                                <span className="text-blue-100 text-xs sm:text-sm block truncate">
                                   {item.packageName || item.category}
                                 </span>
                               )}
                               {item.vehicleType && (
-                                <span className="text-blue-200 text-xs block mt-1">
+                                <span className="text-blue-200 text-xs block mt-1 truncate">
                                   Vehicle: {item.vehicleType}
                                 </span>
                               )}
@@ -786,16 +788,16 @@ export default function CartPage() {
                                 item.packageId
                               )
                             }
-                            className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center text-white hover:text-red-200 transition-all duration-200"
+                            className="w-7 h-7 sm:w-8 sm:h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center text-white hover:text-red-200 transition-all duration-200 flex-shrink-0"
                           >
-                            <X className="h-4 w-4" />
+                            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                           </button>
                         </div>
                       </div>
 
-                      {/* Item Content */}
-                      <div className="p-6">
-                        <div className="flex items-center justify-between mb-4">
+                      {/* Item Content - Mobile Responsive */}
+                      <div className="p-4 sm:p-6">
+                        <div className="flex items-start justify-between mb-4 gap-3">
                           <div className="flex items-center space-x-4">
                             {/* Image or Icon Fallback */}
                             {hasImage && !imageLoadFailed ? (
@@ -1087,25 +1089,25 @@ export default function CartPage() {
                           </div>
                         )}
 
-                        {/* Quantity Controls */}
+                        {/* Quantity Controls - Mobile Responsive, Touch-Friendly */}
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-2 sm:space-x-3">
                             <button
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity - 1)
                               }
-                              className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
+                              className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 touch-manipulation"
                             >
                               <Minus className="h-4 w-4 text-gray-600" />
                             </button>
-                            <span className="w-12 text-center font-semibold text-lg">
+                            <span className="w-10 sm:w-12 text-center font-semibold text-base sm:text-lg">
                               {item.quantity}
                             </span>
                             <button
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity + 1)
                               }
-                              className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
+                              className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 active:from-blue-700 active:to-purple-800 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 touch-manipulation"
                             >
                               <Plus className="h-4 w-4 text-white" />
                             </button>
@@ -1115,7 +1117,7 @@ export default function CartPage() {
                         {/* Offer Badge */}
                         {item.offer && (
                           <div className="mt-3 inline-block">
-                            <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-semibold">
                               🔥 {item.offer}
                             </span>
                           </div>
@@ -1379,42 +1381,42 @@ export default function CartPage() {
         </div>
       </div>
 
-      {/* Checkout Modal */}
+      {/* Checkout Modal - Mobile Responsive */}
       {showCheckoutModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-fadeIn">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-gray-100 relative transform transition-all">
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 p-8 flex justify-between items-center rounded-t-3xl z-[110] shadow-lg">
-              <div>
-                <h2 className="text-3xl font-bold text-white mb-1">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[100] p-2 sm:p-4 animate-fadeIn">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-3xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto border border-gray-100 relative transform transition-all">
+            {/* Modal Header - Mobile Responsive */}
+            <div className="sticky top-0 bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 p-4 sm:p-8 flex justify-between items-center rounded-t-2xl sm:rounded-t-3xl z-[110] shadow-lg gap-3">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-xl sm:text-3xl font-bold text-white mb-1 truncate">
                   Complete Your Order
                 </h2>
-                <p className="text-emerald-100 text-sm">
+                <p className="text-emerald-100 text-xs sm:text-sm">
                   Just a few more details to get started!
                 </p>
               </div>
               <button
                 onClick={() => setShowCheckoutModal(false)}
-                className="p-3 hover:bg-white/20 rounded-full transition-all duration-200 hover:rotate-90"
+                className="p-2 sm:p-3 hover:bg-white/20 rounded-full transition-all duration-200 hover:rotate-90 flex-shrink-0"
               >
-                <X className="w-6 h-6 text-white" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </button>
             </div>
 
-            {/* Modal Content */}
-            <div className="p-8 space-y-6 bg-gradient-to-b from-gray-50 to-white">
-              {/* Order Items Summary */}
-              <div className="bg-white rounded-2xl p-6 shadow-md border-2 border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-xl text-gray-800 flex items-center">
-                    <ShoppingBag className="w-5 h-5 mr-2 text-emerald-600" />
+            {/* Modal Content - Mobile Responsive */}
+            <div className="p-4 sm:p-8 space-y-4 sm:space-y-6 bg-gradient-to-b from-gray-50 to-white">
+              {/* Order Items Summary - Mobile Responsive */}
+              <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md border-2 border-gray-100">
+                <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+                  <h3 className="font-bold text-base sm:text-xl text-gray-800 flex items-center">
+                    <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-emerald-600" />
                     Your Order
                   </h3>
-                  <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold">
+                  <span className="px-2 py-1 sm:px-3 sm:py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap">
                     {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
                   </span>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {groupedCart.map((group) => (
                     <div key={group.key}>
                       <div className="text-sm font-semibold text-gray-800 mb-1">

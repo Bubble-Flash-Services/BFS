@@ -2,17 +2,107 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile-first responsive utilities */
+@layer utilities {
+  /* Touch-friendly minimum sizes for mobile buttons */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Minimum touch target size (44x44px recommended by Apple, 48x48px by Google) */
+  .min-touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Safe area insets for notched devices */
+  .safe-area-padding {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Smooth scrolling for mobile */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Better text readability on mobile */
+  .text-optimize-legibility {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
 /* Global overrides for interactive elements */
-button, .btn, a {
-	transition: all 0.2s ease !important;
+button, .btn {
+	transition: all 0.2s ease;
 }
 
-button:hover, .btn:hover, a:hover {
-	background-color: #2563eb !important;
-	color: #ffffff !important;
-	transform: scale(1.03) !important;
+/* Remove aggressive hover effects that don't work well on mobile */
+@media (hover: hover) and (pointer: fine) {
+  button:hover:not(:disabled), .btn:hover:not(:disabled) {
+    background-color: #2563eb;
+    color: #ffffff;
+    transform: scale(1.03);
+  }
 }
 
-button:active, .btn:active, a:active {
-	transform: scale(0.95) !important;
+button:active:not(:disabled), .btn:active:not(:disabled) {
+	transform: scale(0.95);
+}
+
+/* Better focus states for accessibility */
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Prevent layout shift from scrollbar */
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+/* Custom scrollbar for webkit browsers */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+/* Improved mobile text selection */
+::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Prevent text size adjustment on iOS */
+body {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Better image rendering on mobile */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }

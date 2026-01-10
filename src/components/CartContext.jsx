@@ -582,6 +582,26 @@ export function CartProvider({ children }) {
   }, [cartItems, user]);
 
   const addToCart = async (product) => {
+    // Validate product before adding
+    if (!product) {
+      console.error("Cannot add null/undefined product to cart");
+      return { success: false, message: "Invalid product" };
+    }
+
+    // Check cart item limit (max 50 items)
+    const MAX_CART_ITEMS = 50;
+    if (cartItems.length >= MAX_CART_ITEMS) {
+      console.error(`Cart limit reached: ${MAX_CART_ITEMS} items`);
+      return { success: false, message: `Cart limit reached (${MAX_CART_ITEMS} items max)` };
+    }
+
+    // Validate price
+    const productPrice = product.price || product.basePrice;
+    if (!productPrice || productPrice < 0) {
+      console.error("Invalid product price:", productPrice);
+      return { success: false, message: "Invalid product price" };
+    }
+
     // Try server cart first for logged-in users
     if (user && token) {
       setLoading(true);
@@ -613,7 +633,7 @@ export function CartProvider({ children }) {
             ? product.packageId
             : undefined,
           quantity: product.quantity || 1,
-          price: product.price || product.basePrice,
+          price: productPrice,
           addOns: sanitizeAddOns(
             product.addOns || product.packageDetails?.addons
           ),
@@ -639,6 +659,7 @@ export function CartProvider({ children }) {
         if (response.success) {
           // Reload cart from server to get updated data
           await loadCartFromServer();
+          return { success: true, message: "Added to cart successfully" };
         } else {
           throw new Error(response.message || "Failed to add to cart");
         }
@@ -646,12 +667,14 @@ export function CartProvider({ children }) {
         console.error("Error adding to cart:", error);
         // Fallback to local cart
         addToLocalCart(product);
+        return { success: false, message: error.message || "Failed to add to cart" };
       } finally {
         setLoading(false);
       }
     } else {
       // Add to local cart for guest users
       addToLocalCart(product);
+      return { success: true, message: "Added to cart successfully" };
     }
   };
 
