@@ -2703,7 +2703,7 @@ export default function HeroSection() {
                       className="w-full flex justify-between items-center px-6 py-4 text-left focus:outline-none hover:bg-gray-50 transition-colors duration-200"
                       onClick={() => setOpenIdx(openIdx === i ? -1 : i)}
                     >
-                      <span className="text-gray-200 font-medium text-base pr-4">
+                      <span className="text-gray-600 font-medium text-base pr-4">
                         {faq.question}
                       </span>
                       <div className="flex-shrink-0">
@@ -2732,9 +2732,9 @@ export default function HeroSection() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="px-6 pb-4 text-gray-200 text-sm leading-relaxed"
+                        className="px-6 pb-4 text-gray-500 text-sm leading-relaxed"
                       >
-                        <div className="pt-2 border-t border-gray-100">
+                        <div className="pt-2 border-t border-gray-500">
                           {faq.answer}
                         </div>
                       </motion.div>

@@ -252,18 +252,18 @@ export default function ServiceCategories({ onLoginRequired }) {
     <section className="py-12 relative overflow-hidden bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 opacity-30">
-        <div 
+        <div
           className="absolute top-0 left-0 w-full h-full"
           style={{
-            backgroundImage: 'url(/home-bg.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
+            backgroundImage: "url(/home-bg.jpg)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-orange-50/90 via-amber-50/90 to-yellow-50/90" />
       </div>
-      
+
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -305,7 +305,8 @@ export default function ServiceCategories({ onLoginRequired }) {
                     backgroundPosition: "center",
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-amber-50/30 via-orange-900/60 to-black/85 z-0" />
+                {/* <div className="absolute inset-0 bg-gradient-to-b from-amber-50/30 via-orange-900/60 to-black/85 z-0" /> */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
 
                 {/* New Badge */}
                 {category.isNew && !isMobile && (
