@@ -123,16 +123,29 @@ export default function ServicesPage() {
 	}, []);
 
 	return (
-		<div className="bg-white min-h-screen pb-16">
-			<div className="max-w-6xl mx-auto pt-12 px-4 flex flex-col md:flex-row gap-8">
+		<div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 min-h-screen pb-16 relative">
+			{/* Background Image */}
+			<div className="absolute inset-0 opacity-20">
+				<div 
+					className="absolute top-0 left-0 w-full h-full"
+					style={{
+						backgroundImage: 'url(/cleaning-bg.jpg)',
+						backgroundSize: 'cover',
+						backgroundPosition: 'center',
+						backgroundRepeat: 'no-repeat'
+					}}
+				/>
+			</div>
+			
+			<div className="relative max-w-6xl mx-auto pt-12 px-4 flex flex-col md:flex-row gap-8">
 				{/* Left: Callback Form */}
-				<div className="bg-white rounded-xl border border-black p-8 w-full md:w-[350px] flex flex-col items-center shadow-sm">
+				<div className="bg-gradient-to-br from-white via-orange-50 to-amber-50 rounded-xl border-2 border-amber-300 p-8 w-full md:w-[350px] flex flex-col items-center shadow-xl">
 					<div className="flex items-center gap-2 mb-4">
 						<img src="/services/callback.svg" alt="Callback" className="w-4 h-4" />
 						<span className="text-lg font-semibold">Request a callback</span>
 					</div>
 					<form className="w-full flex flex-col gap-4" onSubmit={handleCallbackSubmit}>
-						<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
+						<div className="flex items-center gap-2 border-2 border-amber-400 rounded-xl px-3 py-2 bg-white/80 hover:bg-white transition-colors">
 							<span className="text-lg"><img src="/services/name.svg" alt="Callback" className="w-4 h-4" /></span>
 							<input
 								className="bg-transparent outline-none flex-1"
@@ -142,7 +155,7 @@ export default function ServicesPage() {
 								required
 							/>
 						</div>
-						<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
+						<div className="flex items-center gap-2 border-2 border-amber-400 rounded-xl px-3 py-2 bg-white/80 hover:bg-white transition-colors">
 							<span className="text-lg"><img src="/services/phoneno.svg" alt="Callback" className="w-4 h-4" /></span>
 							<input
 								className="bg-transparent outline-none flex-1"
@@ -153,7 +166,7 @@ export default function ServicesPage() {
 								required
 							/>
 						</div>
-						<div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
+						<div className="flex items-center gap-2 border-2 border-amber-400 rounded-xl px-3 py-2 bg-white/80 hover:bg-white transition-colors">
 							<span className="text-lg"><img src="/services/envelope.svg" alt="Callback" className="w-4 h-4" /></span>
 							<input
 								className="bg-transparent outline-none flex-1"
@@ -164,7 +177,7 @@ export default function ServicesPage() {
 							/>
 						</div>
 						<textarea
-							className="border rounded-xl px-3 py-2 bg-white min-h-[60px] outline-none"
+							className="border-2 border-amber-400 rounded-xl px-3 py-2 bg-white/80 min-h-[60px] outline-none hover:bg-white transition-colors"
 							placeholder="Enter your message......"
 							value={cbMessage}
 							onChange={(e)=>setCbMessage(e.target.value)}
@@ -185,7 +198,7 @@ export default function ServicesPage() {
 				<div className="flex-1 flex flex-col gap-6">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div
-							className="bg-white rounded-xl p-6 flex flex-col gap-2 shadow-sm cursor-pointer border border-gray-200 transition-all duration-200 hover:shadow-2xl hover:border-gray-400 hover:-translate-y-1"
+							className="bg-gradient-to-br from-white via-green-50 to-emerald-50 rounded-xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-green-300 transition-all duration-200 hover:shadow-2xl hover:border-green-400 hover:-translate-y-1"
 							onClick={() => {
 								window.open('https://wa.me/919591572775', '_blank');
 							}}
@@ -201,7 +214,7 @@ export default function ServicesPage() {
 							</div>
 						</div>
 						<div
-							className="bg-white rounded-xl p-6 flex flex-col gap-2 shadow-sm cursor-pointer border border-gray-200 transition-all duration-200 hover:shadow-2xl hover:border-gray-400 hover:-translate-y-1"
+							className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-blue-300 transition-all duration-200 hover:shadow-2xl hover:border-blue-400 hover:-translate-y-1"
 							onClick={() => {
 								const faqSection = document.getElementById('faq-section');
 								if (faqSection) faqSection.scrollIntoView({ behavior: 'smooth' });
@@ -218,7 +231,7 @@ export default function ServicesPage() {
 							</div>
 						</div>
 						<div
-							className="bg-white rounded-xl p-6 flex flex-col gap-2 shadow-sm col-span-1 md:col-span-2 cursor-pointer border border-gray-200 transition-all duration-200 hover:shadow-2xl hover:border-gray-400 hover:-translate-y-1"
+							className="bg-gradient-to-br from-white via-purple-50 to-violet-50 rounded-xl p-6 flex flex-col gap-2 shadow-lg col-span-1 md:col-span-2 cursor-pointer border-2 border-purple-300 transition-all duration-200 hover:shadow-2xl hover:border-purple-400 hover:-translate-y-1"
 							onClick={() => {
 								window.open('https://maps.app.goo.gl/mqVWff6HjLuDCcrD9', '_blank');
 							}}
@@ -259,11 +272,23 @@ export default function ServicesPage() {
 				</div>
 			</div>
 			{/* Choose your package Section */}
-			<div className="py-16 bg-white">
-				<h2 className="text-2xl md:text-3xl font-serif font-semibold text-center mb-12">Choose your package</h2>
-				<div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+			<div className="py-16 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative">
+				{/* Background overlay */}
+				<div className="absolute inset-0 opacity-10">
+					<div 
+						className="absolute top-0 left-0 w-full h-full"
+						style={{
+							backgroundImage: 'url(/home-bg.jpg)',
+							backgroundSize: 'cover',
+							backgroundPosition: 'center',
+							backgroundRepeat: 'no-repeat'
+						}}
+					/>
+				</div>
+				<h2 className="relative text-2xl md:text-3xl font-serif font-semibold text-center mb-12">Choose your package</h2>
+				<div className="relative max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
 					{/* Quick shine car */}
-					<div className="bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+					<div className="bg-gradient-to-br from-white via-blue-50 to-blue-100 rounded-xl border-2 border-blue-300 shadow-lg p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:scale-105 hover:border-blue-400 relative">
 						<div className="w-full flex-1 flex flex-col items-center gap-6">
 							<div className="text-4xl font-serif font-bold mb-2 text-center">Quick shine car</div>
 							<div className="text-3xl font-serif font-bold mb-6 text-center">₹199</div>
@@ -277,7 +302,7 @@ export default function ServicesPage() {
 						<button className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6">Get Services</button>
 					</div>
 					{/* Bike wash */}
-					<div className="bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+					<div className="bg-gradient-to-br from-white via-green-50 to-green-100 rounded-xl border-2 border-green-300 shadow-lg p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:scale-105 hover:border-green-400 relative">
 						<div className="w-full flex-1 flex flex-col items-center gap-6">
 							<div className="text-4xl font-serif font-bold mb-2 text-center">Shine Bike wash</div>
 							<div className="text-3xl font-serif font-bold mb-6 text-center">₹99</div>
@@ -290,7 +315,7 @@ export default function ServicesPage() {
 						<button className="bg-[#FFD600] text-black rounded-xl border border-black px-8 py-3 font-semibold text-lg font-mono shadow transition-colors duration-200 hover:bg-yellow-300 mx-auto mt-6">Get Services</button>
 					</div>
 					{/* Laundry wash */}
-					<div className="bg-white rounded-xl border shadow-sm p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:z-10 relative">
+					<div className="bg-gradient-to-br from-white via-purple-50 to-purple-100 rounded-xl border-2 border-purple-300 shadow-lg p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:scale-105 hover:border-purple-400 relative">
 						<div className="w-full flex-1 flex flex-col items-center gap-6">
 							<div className="text-4xl font-serif font-bold mb-2 text-center">Laundry wash</div>
 							<div className="text-3xl font-serif font-bold mb-6 text-center">₹99</div>
@@ -305,11 +330,23 @@ export default function ServicesPage() {
 				</div>
 			</div>
 			{/* What client says - true carousel */}
-			<div className="mt-20 mb-8">
-				<h2 className="text-2xl md:text-3xl font-serif font-semibold text-center mb-8">
+			<div className="mt-20 mb-8 py-8 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative">
+				{/* Background overlay */}
+				<div className="absolute inset-0 opacity-15">
+					<div 
+						className="absolute top-0 left-0 w-full h-full"
+						style={{
+							backgroundImage: 'url(/cleaning-bg.jpg)',
+							backgroundSize: 'cover',
+							backgroundPosition: 'center',
+							backgroundRepeat: 'no-repeat'
+						}}
+					/>
+				</div>
+				<h2 className="relative text-2xl md:text-3xl font-serif font-semibold text-center mb-8">
 					What client says
 				</h2>
-				<div className="overflow-hidden w-full flex justify-center">
+				<div className="relative overflow-hidden w-full flex justify-center">
 					<div
 						className="flex gap-4 sm:gap-6 md:gap-8 transition-all duration-700"
 						style={{ width: "max-content" }}
@@ -317,7 +354,7 @@ export default function ServicesPage() {
 						{carousel.slice(0, visibleCount).map((t, idx) => (
 							<div
 								key={idx}
-								className="bg-white rounded-xl border shadow-sm p-4 sm:p-5 md:p-6 min-w-[220px] sm:min-w-[280px] md:min-w-[340px] max-w-[380px] flex flex-col"
+								className="bg-gradient-to-br from-white via-orange-50 to-amber-50 rounded-xl border-2 border-amber-300 shadow-lg p-4 sm:p-5 md:p-6 min-w-[220px] sm:min-w-[280px] md:min-w-[340px] max-w-[380px] flex flex-col transition-all hover:shadow-xl hover:scale-105"
 							>
 								<div className="flex items-center gap-3 mb-2">
 									<img
@@ -351,16 +388,28 @@ export default function ServicesPage() {
 				</div>
 			</div>
 			{/* FAQ Section */}
-			<div className="mt-16 bg-white py-12">
+			<div className="mt-16 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 py-12 relative">
+				{/* Background overlay */}
+				<div className="absolute inset-0 opacity-10">
+					<div 
+						className="absolute top-0 left-0 w-full h-full"
+						style={{
+							backgroundImage: 'url(/home-bg.jpg)',
+							backgroundSize: 'cover',
+							backgroundPosition: 'center',
+							backgroundRepeat: 'no-repeat'
+						}}
+					/>
+				</div>
 				<h2
 					id="faq-section"
-					className="text-2xl md:text-3xl font-serif font-semibold text-center mb-8"
+					className="relative text-2xl md:text-3xl font-serif font-semibold text-center mb-8"
 				>
 					Frequently Asked Questions
 				</h2>
-				<div className="max-w-4xl mx-auto flex flex-col gap-6 px-4">
+				<div className="relative max-w-4xl mx-auto flex flex-col gap-6 px-4">
 					{FAQS.map((faq, i) => (
-						<div key={i} className="bg-white border rounded-xl shadow-sm">
+						<div key={i} className="bg-gradient-to-br from-white via-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl shadow-lg hover:shadow-xl transition-all">
 							<button
 								className="w-full flex justify-between items-center px-6 py-6 text-lg font-medium focus:outline-none"
 								onClick={() => setOpenIdx(openIdx === i ? -1 : i)}
