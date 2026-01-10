@@ -711,7 +711,11 @@ export default function CartPage() {
               </div>
             </div>
             <button
-              onClick={clearCart}
+              onClick={() => {
+                if (cartItems.length > 0 && window.confirm(`Remove all ${cartItems.length} items from cart?`)) {
+                  clearCart();
+                }
+              }}
               className="text-red-500 hover:text-red-700 font-medium px-2 sm:px-4 py-2 rounded-lg hover:bg-red-50 transition-all duration-200 text-xs sm:text-sm flex-shrink-0"
             >
               <span className="hidden sm:inline">Clear All</span>
@@ -1131,44 +1135,44 @@ export default function CartPage() {
             ))}
           </div>
 
-          {/* Order Summary - Right Section */}
+          {/* Order Summary - Right Section - Mobile Responsive */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg overflow-hidden">
-                {/* Summary Header */}
-                <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-6 text-white">
-                  <h2 className="text-xl font-bold mb-2">Order Summary</h2>
+            <div className="sticky top-20 sm:top-24">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/20 shadow-lg overflow-hidden">
+                {/* Summary Header - Mobile Responsive */}
+                <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4 sm:p-6 text-white">
+                  <h2 className="text-lg sm:text-xl font-bold mb-2">Order Summary</h2>
                   <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-5 w-5" />
-                    <span className="text-green-100">Ready to checkout</span>
+                    <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="text-green-100 text-sm sm:text-base">Ready to checkout</span>
                   </div>
                 </div>
 
-                {/* Summary Content */}
-                <div className="p-6 space-y-4">
-                  <div className="flex justify-between text-gray-600">
+                {/* Summary Content - Mobile Responsive */}
+                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                  <div className="flex justify-between text-gray-600 text-sm sm:text-base">
                     <span>Subtotal ({cartItems.length} items)</span>
-                    <span>₹{getCartTotal()}</span>
+                    <span className="font-medium">₹{getCartTotal()}</span>
                   </div>
                   {appliedCoupon && (
-                    <div className="flex justify-between text-gray-600">
+                    <div className="flex justify-between text-gray-600 text-sm sm:text-base">
                       <span>Coupon Discount</span>
-                      <span className="text-green-600">
+                      <span className="text-green-600 font-medium">
                         -₹{appliedCoupon.discountAmount}
                       </span>
                     </div>
                   )}
-                  <div className="flex justify-between text-gray-600">
+                  <div className="flex justify-between text-gray-600 text-sm sm:text-base">
                     <span>Taxable Amount</span>
-                    <span>₹{getTaxableSubtotal()}</span>
+                    <span className="font-medium">₹{getTaxableSubtotal()}</span>
                   </div>
                   {isIntraState() ? (
                     <>
-                      <div className="flex justify-between text-gray-600">
+                      <div className="flex justify-between text-gray-600 text-xs sm:text-sm">
                         <span>CGST (9%)</span>
                         <span>₹{getCGSTAmount()}</span>
                       </div>
-                      <div className="flex justify-between text-gray-600">
+                      <div className="flex justify-between text-gray-600 text-xs sm:text-sm">
                         <span>SGST (9%)</span>
                         <span>₹{getSGSTAmount()}</span>
                       </div>
@@ -1345,31 +1349,31 @@ export default function CartPage() {
 
                   <hr className="border-gray-200" />
 
-                  <div className="flex justify-between text-xl font-bold text-gray-900">
+                  <div className="flex justify-between text-lg sm:text-xl font-bold text-gray-900">
                     <span>Total</span>
-                    <span>₹{getFinalTotal()}</span>
+                    <span className="text-green-600">₹{getFinalTotal()}</span>
                   </div>
 
-                  {/* Checkout Button */}
+                  {/* Checkout Button - Mobile Responsive, Touch-Friendly */}
                   <button
                     onClick={handleProceedToCheckout}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:from-blue-800 active:to-purple-800 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center space-x-2 touch-manipulation min-h-[44px]"
                   >
-                    <span>Proceed to Checkout</span>
-                    <ArrowRight className="h-5 w-5" />
+                    <span className="text-sm sm:text-base">Proceed to Checkout</span>
+                    <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
                   </button>
 
-                  {/* Trust Signals */}
-                  <div className="grid grid-cols-2 gap-4 mt-6">
+                  {/* Trust Signals - Mobile Responsive */}
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4 sm:mt-6">
                     <div className="text-center">
-                      <div className="w-8 h-8 bg-green-100 rounded-full mx-auto mb-2 flex items-center justify-center">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-green-100 rounded-full mx-auto mb-1 sm:mb-2 flex items-center justify-center">
+                        <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-600" />
                       </div>
                       <p className="text-xs text-gray-600">Secure Payment</p>
                     </div>
                     <div className="text-center">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full mx-auto mb-2 flex items-center justify-center">
-                        <Sparkles className="h-4 w-4 text-blue-600" />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-full mx-auto mb-1 sm:mb-2 flex items-center justify-center">
+                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-600" />
                       </div>
                       <p className="text-xs text-gray-600">Quality Service</p>
                     </div>
