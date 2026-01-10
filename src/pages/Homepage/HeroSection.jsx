@@ -1181,8 +1181,8 @@ export default function HeroSection() {
         </div>
       </section>
 
-      {/* About Us Section with Light Theme */}
-      <div className="bg-gray-50">
+      {/* About Us Section with Blue Theme */}
+      <div className="bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88]">
         <section id="aboutus" className="py-16">
           {/* AboutPage content start */}
           <div>
@@ -1222,7 +1222,7 @@ export default function HeroSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.6, duration: 0.6 }}
-                    className="text-2xl font-bold text-[#1F3C88] mb-2"
+                    className="text-2xl font-bold text-white mb-2"
                   >
                     About us
                   </motion.h2>
@@ -1231,7 +1231,7 @@ export default function HeroSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.8, duration: 0.6 }}
-                    className="text-lg text-gray-600 mb-4 leading-relaxed"
+                    className="text-lg text-gray-200 mb-4 leading-relaxed"
                   >
                     At Bubble Flash, we’re passionate about making your vehicles
                     and wardrobe shine! Based in the heart of Bengaluru, we
@@ -1244,7 +1244,7 @@ export default function HeroSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 1, duration: 0.6 }}
-                    className="text-base text-gray-600 mb-2 space-y-2"
+                    className="text-base text-gray-200 mb-2 space-y-2"
                   >
                     <motion.li
                       initial={{ opacity: 0, x: -20 }}
@@ -1502,34 +1502,13 @@ export default function HeroSection() {
           {/* AboutPage content end */}
         </section>
       </div>
-      {/* Car wash Accessories Section - Matching ServiceCategories Style */}
-      <section className="py-20 bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0">
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 10, 0],
-            }}
-            transition={{
-              duration: 25,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute top-20 right-20 w-96 h-96 bg-[#FFB400] rounded-full opacity-5 blur-3xl"
-          />
-          <motion.div
-            animate={{
-              scale: [1.2, 1, 1.2],
-              rotate: [0, -10, 0],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute bottom-20 left-20 w-80 h-80 bg-[#FFB400] rounded-full opacity-3 blur-3xl"
-          />
+      {/* Car wash Accessories Section - White Background with Images */}
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Background Images for Carousel Feel */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1558,7 +1537,7 @@ export default function HeroSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl md:text-5xl font-bold text-white mb-4"
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
             >
               Car wash <span className="text-[#FFB400]">Accessories</span>
             </motion.h2>
@@ -1568,7 +1547,7 @@ export default function HeroSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-xl text-gray-200 max-w-2xl mx-auto"
+              className="text-xl text-gray-700 max-w-2xl mx-auto"
             >
               Premium car care accessories for the perfect wash
             </motion.p>
@@ -1729,7 +1708,7 @@ export default function HeroSection() {
                                     transition={{
                                       delay: 0.4 + globalIdx * 0.05,
                                     }}
-                                    className="text-base md:text-lg font-bold text-[#1F3C88] mb-2 text-center group-hover:text-[#FFB400] transition-colors duration-300"
+                                    className="text-base md:text-lg font-bold text-gray-900 mb-2 text-center group-hover:text-[#FFB400] transition-colors duration-300"
                                   >
                                     {item.title}
                                   </motion.h3>
@@ -1824,7 +1803,7 @@ export default function HeroSection() {
       </section>
       <section
         id="callback-services"
-        className="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 relative overflow-hidden py-16"
+        className="bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] relative overflow-hidden py-16"
       >
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
@@ -1879,7 +1858,7 @@ export default function HeroSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-4xl md:text-5xl font-bold mb-4"
+            className="text-4xl md:text-5xl font-bold mb-4 text-white"
           >
             Contact <span className="text-[#FFB400]">Us</span>
           </motion.h2>
@@ -1889,7 +1868,7 @@ export default function HeroSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
+            className="text-lg text-gray-200 max-w-2xl mx-auto"
           >
             Have questions or need assistance? We're here to help you with all your service needs.
           </motion.p>
@@ -2635,8 +2614,8 @@ export default function HeroSection() {
           </div>
         </div> */}
         {/* What client says - true carousel */}
-        <div className="mt-12 mb-8 py-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
+        <div className="mt-12 mb-8 py-8 bg-white">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-900">
             What Our Clients Say
           </h2>
           <div className="overflow-hidden w-full flex justify-center">
@@ -2686,7 +2665,7 @@ export default function HeroSection() {
           </div>
         </div>
         {/* FAQ Section - Optimized and Compact */}
-        <div className="mt-12 py-12 bg-gray-50">
+        <div className="mt-12 py-12 bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88]">
           <div className="max-w-4xl mx-auto px-4">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
@@ -2694,7 +2673,7 @@ export default function HeroSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
               id="faq-section"
-              className="text-3xl md:text-4xl font-bold text-center mb-8 text-[#6B2C91]"
+              className="text-3xl md:text-4xl font-bold text-center mb-8 text-white"
             >
               Frequently Asked Questions
             </motion.h2>
@@ -2712,7 +2691,7 @@ export default function HeroSection() {
                       className="w-full flex justify-between items-center px-6 py-4 text-left focus:outline-none hover:bg-gray-50 transition-colors duration-200"
                       onClick={() => setOpenIdx(openIdx === i ? -1 : i)}
                     >
-                      <span className="text-gray-800 font-medium text-base pr-4">
+                      <span className="text-gray-200 font-medium text-base pr-4">
                         {faq.question}
                       </span>
                       <div className="flex-shrink-0">
@@ -2741,7 +2720,7 @@ export default function HeroSection() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="px-6 pb-4 text-gray-600 text-sm leading-relaxed"
+                        className="px-6 pb-4 text-gray-200 text-sm leading-relaxed"
                       >
                         <div className="pt-2 border-t border-gray-100">
                           {faq.answer}
