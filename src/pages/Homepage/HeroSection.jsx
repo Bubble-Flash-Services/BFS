@@ -289,6 +289,7 @@ export default function HeroSection() {
   const [accessorySlide, setAccessorySlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const accessorySliderRef = useRef(null);
+  const [heroSlide, setHeroSlide] = useState(0);
 
   // Launch Advertisement Modal State
   const [showLaunchAd, setShowLaunchAd] = useState(false);
@@ -417,8 +418,56 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, []);
 
+  // Hero carousel auto-slide
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % 3); // 3 hero slides
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   const categories = ["Car Wash", "Bike Wash", "Laundry Service", "Helmet"];
   const locations = [fullAddress || "", ""];
+
+  // Hero carousel slides data
+  const heroSlides = [
+    {
+      badge: "Trusted by 2000+ customers",
+      title: "Branded & Professional",
+      highlight: "Cleaning Services",
+      subtitle: "for Cars, Bikes & More",
+      description: "Experience top-tier car wash, bike detailing, and laundry care – all under one roof in Bengaluru. Quality service, every time.",
+      stats: [
+        { value: "2000+", label: "Happy Customers" },
+        { value: "100%", label: "Satisfaction" },
+        { value: "15+", label: "Services" },
+      ],
+    },
+    {
+      badge: "Premium Quality Services",
+      title: "Doorstep Service",
+      highlight: "At Your Convenience",
+      subtitle: "Anywhere in Bangalore",
+      description: "We bring professional cleaning services right to your doorstep. Save time and enjoy hassle-free, premium quality service.",
+      stats: [
+        { value: "24/7", label: "Available" },
+        { value: "30Min", label: "Response Time" },
+        { value: "5★", label: "Rated" },
+      ],
+    },
+    {
+      badge: "Eco-Friendly Products",
+      title: "Safe & Effective",
+      highlight: "Cleaning Solutions",
+      subtitle: "for Your Vehicles",
+      description: "Using only premium, eco-friendly products that are gentle on your vehicles and safe for the environment.",
+      stats: [
+        { value: "100%", label: "Eco-Safe" },
+        { value: "50+", label: "Products" },
+        { value: "10+", label: "Years Experience" },
+      ],
+    },
+  ];
 
   // Car wash accessories data
   const accessories = [
@@ -999,93 +1048,95 @@ export default function HeroSection() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-            {/* Hero Content - Left Side */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-white space-y-6 max-w-2xl lg:text-left text-center flex-1"
-            >
-              {/* Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-                className="inline-flex items-center px-4 py-2 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30"
-              >
-                <Star className="w-4 h-4 text-[#FFB400] mr-2" />
-                <span className="text-sm font-medium text-[#FFB400]">
-                  Trusted by 2000+ customers
-                </span>
-              </motion.div>
-
-              {/* Main Heading */}
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-4xl md:text-6xl font-bold leading-tight"
-              >
-                Branded & Professional
-                <span className="block text-[#FFB400]">Cleaning Services</span>
-                <span className="block text-2xl md:text-4xl font-normal text-gray-200 mt-2">
-                  for Cars, Bikes & More
-                </span>
-              </motion.h1>
-
-              {/* Subtitle */}
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-                className="text-lg md:text-xl text-gray-200 leading-relaxed"
-              >
-                Experience top-tier car wash, bike detailing, and laundry care –
-                all under one roof in Bengaluru. Quality service, every time.
-              </motion.p>
-
-              {/* Stats - Moved to top and made more prominent */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-                className="flex justify-center lg:justify-start gap-8 md:gap-16 pt-6"
-              >
+            {/* Hero Content - Left Side with Carousel */}
+            <div className="text-white space-y-6 max-w-2xl lg:text-left text-center flex-1 relative overflow-hidden">
+              <AnimatePresence mode="wait">
                 <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="text-center"
+                  key={heroSlide}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.5 }}
+                  className="space-y-6"
                 >
-                  <div className="text-3xl md:text-5xl font-bold text-[#FFB400]">
-                    2000+
-                  </div>
-                  <div className="text-sm md:text-base text-gray-200 font-medium mt-1">
-                    Happy Customers
-                  </div>
+                  {/* Badge */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.6 }}
+                    className="inline-flex items-center px-4 py-2 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30"
+                  >
+                    <Star className="w-4 h-4 text-[#FFB400] mr-2" />
+                    <span className="text-sm font-medium text-[#FFB400]">
+                      {heroSlides[heroSlide].badge}
+                    </span>
+                  </motion.div>
+
+                  {/* Main Heading */}
+                  <motion.h1
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.8 }}
+                    className="text-4xl md:text-6xl font-bold leading-tight"
+                  >
+                    {heroSlides[heroSlide].title}
+                    <span className="block text-[#FFB400]">{heroSlides[heroSlide].highlight}</span>
+                    <span className="block text-2xl md:text-4xl font-normal text-gray-200 mt-2">
+                      {heroSlides[heroSlide].subtitle}
+                    </span>
+                  </motion.h1>
+
+                  {/* Subtitle */}
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.8 }}
+                    className="text-lg md:text-xl text-gray-200 leading-relaxed"
+                  >
+                    {heroSlides[heroSlide].description}
+                  </motion.p>
+
+                  {/* Stats */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8, duration: 0.8 }}
+                    className="flex justify-center lg:justify-start gap-8 md:gap-16 pt-6"
+                  >
+                    {heroSlides[heroSlide].stats.map((stat, idx) => (
+                      <motion.div
+                        key={idx}
+                        whileHover={{ scale: 1.1 }}
+                        className="text-center"
+                      >
+                        <div className="text-3xl md:text-5xl font-bold text-[#FFB400]">
+                          {stat.value}
+                        </div>
+                        <div className="text-sm md:text-base text-gray-200 font-medium mt-1">
+                          {stat.label}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
                 </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="text-center"
-                >
-                  <div className="text-3xl md:text-5xl font-bold text-[#FFB400]">
-                    100%
-                  </div>
-                  <div className="text-sm md:text-base text-gray-200 font-medium mt-1">
-                    Satisfaction
-                  </div>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="text-center"
-                >
-                  <div className="text-3xl md:text-5xl font-bold text-[#FFB400]">
-                    15+
-                  </div>
-                  <div className="text-sm md:text-base text-gray-200 font-medium mt-1">
-                    Services
-                  </div>
-                </motion.div>
-              </motion.div>
-            </motion.div>
+              </AnimatePresence>
+
+              {/* Carousel Navigation Dots */}
+              <div className="flex justify-center lg:justify-start gap-2 mt-8">
+                {heroSlides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setHeroSlide(idx)}
+                    className={`transition-all duration-300 rounded-full ${
+                      heroSlide === idx
+                        ? 'w-8 h-2 bg-[#FFB400]'
+                        : 'w-2 h-2 bg-white bg-opacity-40 hover:bg-opacity-60'
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
 
             {/* Hero Image and Video - COMMENTED OUT AS PER REQUIREMENT
             <motion.div
