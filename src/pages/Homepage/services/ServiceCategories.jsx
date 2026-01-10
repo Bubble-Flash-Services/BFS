@@ -249,7 +249,21 @@ export default function ServiceCategories({ onLoginRequired }) {
   ];
 
   return (
-    <section className="py-12 relative overflow-hidden bg-white">
+    <section className="py-12 relative overflow-hidden bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 opacity-30">
+        <div 
+          className="absolute top-0 left-0 w-full h-full"
+          style={{
+            backgroundImage: 'url(/home-bg.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-50/90 via-amber-50/90 to-yellow-50/90" />
+      </div>
+      
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -276,22 +290,22 @@ export default function ServiceCategories({ onLoginRequired }) {
               <div
                 key={category.name}
                 onClick={() => handleCategoryClick(category.category)}
-                className={`relative rounded-lg md:rounded-2xl cursor-pointer shadow-lg backdrop-blur-sm border border-gray-200 hover:shadow-2xl transition-all duration-300 group overflow-hidden flex flex-col bg-white ${
+                className={`relative rounded-lg md:rounded-2xl cursor-pointer shadow-md backdrop-blur-sm border border-amber-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 group overflow-hidden flex flex-col bg-gradient-to-br from-white/95 to-amber-50/95 ${
                   isMobile ? "h-32" : "h-52 sm:h-60 md:h-72"
                 }`}
               >
                 {/* Background Image with Overlay - show on all screens */}
                 <div
                   className={`absolute inset-0 z-0 ${
-                    isMobile ? "opacity-30" : "opacity-40"
-                  } group-hover:opacity-90 transition-opacity duration-300`}
+                    isMobile ? "opacity-40" : "opacity-50"
+                  } group-hover:opacity-100 transition-opacity duration-300`}
                   style={{
                     backgroundImage: `url('${category.image}')`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/80 z-0" />
+                <div className="absolute inset-0 bg-gradient-to-b from-amber-50/30 via-orange-900/60 to-black/85 z-0" />
 
                 {/* New Badge */}
                 {category.isNew && !isMobile && (
