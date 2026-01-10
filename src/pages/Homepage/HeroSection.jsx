@@ -1118,9 +1118,9 @@ export default function HeroSection() {
 
       {/* About Us Section with Light Theme */}
       <div className="bg-gray-50">
-        <section id="aboutus" className="py-20">
+        <section id="aboutus" className="py-10">
           {/* AboutPage content start */}
-          <div className="min-h-screen pb-8 md:pb-4 lg:pb-8 xl:pb-16">
+          <div className="min-h-screen">
             <div className="max-w-6xl mx-auto pt-12 px-4">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -1370,7 +1370,7 @@ export default function HeroSection() {
                 </motion.div>
               </motion.div>
               END OF HOW IT WORKS SECTION */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -1431,7 +1431,7 @@ export default function HeroSection() {
                     Car Clean
                   </div>
                 </motion.div>
-              </motion.div>
+              </motion.div> */}
             </div>
           </div>
           {/* AboutPage content end */}
