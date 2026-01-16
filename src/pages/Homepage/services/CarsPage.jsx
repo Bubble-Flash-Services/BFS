@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import FullBodyCheckup from '../../../components/FullBodyCheckup';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import FullBodyCheckup from "../../../components/FullBodyCheckup";
 
 const carCategories = [
   {
-    name: 'Hatchbacks',
-    image: '/car/car1.png',
-    route: '/car-wash-deals/hatchbacks'
+    name: "Hatchbacks",
+    image: "/car/car1.png",
+    route: "/car-wash-deals/hatchbacks",
   },
-  
+
   {
-    name: 'Sedans',
-    image: '/car/sedan/sedansimage.jpg',
-    route: '/car-wash-deals/sedans'
-  },
-  {
-   name: 'MID-SUV',
-    image: '/car/hatchback/aiease_1755725602539.png',
-    route: '/car-wash-deals/midsuv'
+    name: "Sedans",
+    image: "/car/sedan/sedansimage.jpg",
+    route: "/car-wash-deals/sedans",
   },
   {
-    name: 'SUV',
-    image: '/car/suv/suvimages.png',
-    route: '/car-wash-deals/suv'
+    name: "MID-SUV",
+    image: "/car/hatchback/aiease_1755725602539.png",
+    route: "/car-wash-deals/midsuv",
   },
   {
-    name: 'Luxuries',
-    image: '/car/suv/luxury_suv.png',
-    route: '/car-wash-deals/luxuries'
+    name: "SUV",
+    image: "/car/suv/suvimages.png",
+    route: "/car-wash-deals/suv",
+  },
+  {
+    name: "Luxuries",
+    image: "/car/suv/luxury_suv.png",
+    route: "/car-wash-deals/luxuries",
   },
 ];
 
@@ -40,20 +40,23 @@ export default function CarsPage() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Check for booking data from HeroSection
   useEffect(() => {
-    const storedBooking = localStorage.getItem('pendingBooking');
+    const storedBooking = localStorage.getItem("pendingBooking");
     if (storedBooking) {
       const data = JSON.parse(storedBooking);
       // Only show booking data if it's for car wash and within 10 minutes
-      if (data.category === 'Car Wash' && (Date.now() - data.timestamp) < 600000) {
+      if (
+        data.category === "Car Wash" &&
+        Date.now() - data.timestamp < 600000
+      ) {
         setBookingData(data);
       }
     }
@@ -61,7 +64,7 @@ export default function CarsPage() {
 
   const clearBookingData = () => {
     setBookingData(null);
-    localStorage.removeItem('pendingBooking');
+    localStorage.removeItem("pendingBooking");
   };
 
   // Auto-slide functionality removed - display vertically instead
@@ -69,7 +72,6 @@ export default function CarsPage() {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Booking Data Banner */}
         {bookingData && (
           <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
@@ -80,20 +82,27 @@ export default function CarsPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium text-blue-700">Service:</span> {bookingData.category}
+                    <span className="font-medium text-blue-700">Service:</span>{" "}
+                    {bookingData.category}
                   </div>
                   <div>
-                    <span className="font-medium text-blue-700">Pickup Date:</span> {new Date(bookingData.pickupDate).toLocaleDateString()}
+                    <span className="font-medium text-blue-700">
+                      Pickup Date:
+                    </span>{" "}
+                    {new Date(bookingData.pickupDate).toLocaleDateString()}
                   </div>
                   <div>
-                    <span className="font-medium text-blue-700">Phone:</span> {bookingData.phoneNumber}
+                    <span className="font-medium text-blue-700">Phone:</span>{" "}
+                    {bookingData.phoneNumber}
                   </div>
                   <div>
-                    <span className="font-medium text-blue-700">Location:</span> {bookingData.address.substring(0, 50)}...
+                    <span className="font-medium text-blue-700">Location:</span>{" "}
+                    {bookingData.address.substring(0, 50)}...
                   </div>
                 </div>
                 <p className="text-blue-600 text-sm mt-2">
-                  Please select your car category below to complete your booking.
+                  Please select your car category below to complete your
+                  booking.
                 </p>
               </div>
               <button
@@ -105,23 +114,31 @@ export default function CarsPage() {
             </div>
           </div>
         )}
-        
-        <h2 className="text-3xl font-bold text-gray-800 mb-12">Select by cars</h2>
-        
+
+        <h2 className="text-3xl font-bold text-gray-800 mb-12">
+          Select by cars
+        </h2>
+
         {/* Desktop Grid Layout */}
         <div className="hidden md:grid md:grid-cols-4 gap-8">
           {carCategories.map((cat) => (
-            <div 
-              key={cat.name} 
+            <div
+              key={cat.name}
               className="group cursor-pointer transition-transform hover:scale-105"
               onClick={() => navigate(cat.route)}
             >
-              <div className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                 <div className="aspect-w-16 aspect-h-12">
-                  <img src={cat.image} alt={cat.name} className="w-full h-48 object-contain mx-auto" />
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-48 object-contain mx-auto"
+                  />
                 </div>
                 <div className="p-6 text-center">
-                  <h3 className="text-xl font-semibold text-gray-800">{cat.name}</h3>
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {cat.name}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -131,17 +148,23 @@ export default function CarsPage() {
         {/* Mobile Vertical Grid Layout */}
         <div className="md:hidden grid grid-cols-1 gap-6">
           {carCategories.map((cat) => (
-            <div 
-              key={cat.name} 
+            <div
+              key={cat.name}
               className="group cursor-pointer transition-transform active:scale-95"
               onClick={() => navigate(cat.route)}
             >
               <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                 <div className="aspect-w-16 aspect-h-12">
-                  <img src={cat.image} alt={cat.name} className="w-full h-48 object-contain mx-auto" />
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-48 object-contain mx-auto"
+                  />
                 </div>
                 <div className="p-6 text-center">
-                  <h3 className="text-xl font-semibold text-gray-800">{cat.name}</h3>
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {cat.name}
+                  </h3>
                 </div>
               </div>
             </div>
