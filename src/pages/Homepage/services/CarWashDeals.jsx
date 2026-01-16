@@ -643,6 +643,7 @@ export default function CarWashDeals() {
   const [modalIsDragging, setModalIsDragging] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [monthlyPlansSlide, setMonthlyPlansSlide] = useState(0);
+  const [expandedMobilePlan, setExpandedMobilePlan] = useState(null);
   const sliderRef = useRef(null);
   const monthlyPlansRef = useRef(null);
   const startX = useRef(0);
@@ -1400,102 +1401,74 @@ export default function CarWashDeals() {
           ))}
         </div>
 
-        {/* Mobile Slider Layout */}
-        <div className="md:hidden relative">
-          {/* Left Arrow */}
-          <button
-            onClick={goToPrevious}
-            disabled={currentSlide === 0}
-            className={`absolute left-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
-              currentSlide === 0 
-                ? 'opacity-50 cursor-not-allowed' 
-                : 'hover:bg-gray-50 hover:shadow-xl'
-            }`}
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          {/* Right Arrow */}
-          <button
-            onClick={goToNext}
-            disabled={currentSlide === dealData.packages.length - 1}
-            className={`absolute right-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
-              currentSlide === dealData.packages.length - 1 
-                ? 'opacity-50 cursor-not-allowed' 
-                : 'hover:bg-gray-50 hover:shadow-xl'
-            }`}
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          <div className="overflow-hidden px-12">
+        {/* Mobile Vertical Layout */}
+        <div className="md:hidden space-y-6">
+          {dealData.packages.map((pkg, index) => (
             <div
-              ref={sliderRef}
-              className="flex transition-transform duration-300 ease-in-out"
-              style={{
-                transform: `translateX(-${currentSlide * 100}%)`,
-              }}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
+              key={pkg.id}
+              className={`${isLuxury ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]' : 'bg-white shadow-lg'} rounded-2xl overflow-hidden`}
             >
-              {dealData.packages.map((pkg, index) => (
-                <div
-                  key={pkg.id}
-                  className="flex-shrink-0 w-full px-4"
-                >
-                  <div className={`${isLuxury ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]' : 'bg-white shadow-lg'} rounded-2xl overflow-hidden max-w-sm mx-auto h-full`}>
-                    <div className="p-6 h-full flex flex-col">
-                      <div className={`w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden ${isLuxury ? 'ring-1 ring-[#d4af37]/30 bg-black/30' : 'bg-gray-50'}`}>
-                        <img 
-                          src={pkg.image} 
-                          alt={pkg.name} 
-                          className="max-w-full max-h-full object-contain"
-                        />
-                      </div>
-                      <h3 className={`text-xl font-bold mb-4 min-h-[3rem] ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
-                        {pkg.name}
-                      </h3>
-                      <ul className="space-y-2 mb-6 flex-grow">
-                        {pkg.features.map((feature, index) => (
-                          <li key={index} className="flex items-center">
-                            <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-lg leading-none`}>•</span>
-                            <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="text-center mt-auto">
-                        <div className={`text-2xl font-bold mb-4 ${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'}`}>
-                          {getPrice(pkg.price)}
+              <div className="p-6">
+                <div className={`w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden ${isLuxury ? 'ring-1 ring-[#d4af37]/30 bg-black/30' : 'bg-gray-50'}`}>
+                  <img 
+                    src={pkg.image} 
+                    alt={pkg.name} 
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+                <h3 className={`text-xl font-bold mb-4 ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
+                  {pkg.name}
+                </h3>
+                {pkg.description && (
+                  <p className={`${isLuxury ? 'text-white/80 italic' : 'text-gray-600'} text-sm mb-4`}>
+                    {pkg.description}
+                  </p>
+                )}
+                <ul className="space-y-2 mb-6">
+                  {pkg.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-lg leading-none mt-1`}>•</span>
+                      <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                {pkg.foamUpgrades && (
+                  <div className={`mb-4 p-3 rounded-lg ${isLuxury ? 'bg-black/50 border border-[#d4af37]/20' : 'bg-gray-50'}`}>
+                    <h4 className={`font-semibold mb-2 text-sm ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Foam Upgrade Options:</h4>
+                    <div className="space-y-1">
+                      {pkg.foamUpgrades.map((foam, idx) => (
+                        <div key={idx} className={`text-xs ${isLuxury ? 'text-white/80' : 'text-gray-600'}`}>
+                          <span className={`font-medium ${isLuxury ? 'text-[#d4af37]' : ''}`}>{foam.name}</span> - ₹{foam.price}
                         </div>
-                        <button
-                          onClick={() => handleBookNow(pkg)}
-                          className={
-                            isLuxury
-                              ? "w-full bg-black border border-[#d4af37] text-[#d4af37] font-semibold py-3 px-6 rounded-lg hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition"
-                              : "w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-                          }
-                        >
-                          Book Now
-                        </button>
-                        {isLuxury && (
-                          <div className="mt-3 text-center">
-                            <span className="inline-block text-sm italic font-semibold text-[#d4af37] underline">
-                              🎁 FREE: Premium Air Freshener
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                      ))}
                     </div>
                   </div>
+                )}
+                <div className="text-center">
+                  <div className={`text-2xl font-bold mb-4 ${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'}`}>
+                    {getPrice(pkg.price)}
+                  </div>
+                  <button
+                    onClick={() => handleBookNow(pkg)}
+                    className={
+                      isLuxury
+                        ? "w-full bg-black border border-[#d4af37] text-[#d4af37] font-semibold py-3 px-6 rounded-lg hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition"
+                        : "w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                    }
+                  >
+                    Book Now
+                  </button>
+                  {isLuxury && (
+                    <div className="mt-3 text-center">
+                      <span className="inline-block text-sm italic font-semibold text-[#d4af37] underline">
+                        🎁 FREE: Premium Air Freshener
+                      </span>
+                    </div>
+                  )}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          ))}
         </div>
 
         {/* Service Availability Section */}
@@ -1692,178 +1665,188 @@ export default function CarWashDeals() {
               ))}
             </div>
 
-            {/* Mobile Slider Layout */}
-            <div className="md:hidden relative">
-              {/* Left Arrow */}
-              <button
-                onClick={goToPreviousMonthlyPlan}
-                disabled={monthlyPlansSlide === 0}
-                className={`absolute left-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
-                  monthlyPlansSlide === 0 
-                    ? 'opacity-50 cursor-not-allowed' 
-                    : 'hover:bg-gray-50 hover:shadow-xl'
-                }`}
-              >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-
-              {/* Right Arrow */}
-              <button
-                onClick={goToNextMonthlyPlan}
-                disabled={monthlyPlansSlide === dealData.monthlyPlans.length - 1}
-                className={`absolute right-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
-                  monthlyPlansSlide === dealData.monthlyPlans.length - 1 
-                    ? 'opacity-50 cursor-not-allowed' 
-                    : 'hover:bg-gray-50 hover:shadow-xl'
-                }`}
-              >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-
-              <div className="overflow-hidden px-12">
+            {/* Mobile Vertical Layout with Collapsible Sections */}
+            <div className="md:hidden space-y-4">
+              {dealData.monthlyPlans.map((plan, index) => (
                 <div
-                  ref={monthlyPlansRef}
-                  className="flex transition-transform duration-300 ease-in-out"
-                  style={{
-                    transform: `translateX(-${monthlyPlansSlide * 100}%)`,
-                  }}
-                  onTouchStart={handleMonthlyPlansTouch.start}
-                  onTouchMove={handleMonthlyPlansTouch.move}
-                  onTouchEnd={handleMonthlyPlansTouch.end}
+                  key={plan.id}
+                  className={`rounded-2xl overflow-hidden relative ${
+                    isLuxury
+                      ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]'
+                      : 'bg-white shadow-lg'
+                  } ${plan.id === 'gold' && !isLuxury ? 'ring-2 ring-yellow-400' : ''}`}
                 >
-                  {dealData.monthlyPlans.map((plan, index) => (
-                    <div
-                      key={plan.id}
-                      className="flex-shrink-0 w-full px-4"
-                    >
-                      <div className={`rounded-2xl overflow-hidden max-w-sm mx-auto h-full relative ${
+                  {plan.id === 'gold' && (
+                    <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold ${isLuxury ? 'bg-[#d4af37] text-black' : 'bg-yellow-400 text-yellow-900'}`}>
+                      POPULAR
+                    </div>
+                  )}
+                  
+                  <div className="p-6">
+                    {/* Header - Always visible */}
+                    <div className="text-center mb-4">
+                      <h4 className={`text-xl font-bold mb-2 ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>{plan.name}</h4>
+                      <div className={`text-3xl font-bold mb-2 ${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'}`}>{plan.price}</div>
+                      <p className={`${isLuxury ? 'text-white/80' : 'text-gray-600'} text-sm`}>{plan.description}</p>
+                    </div>
+
+                    {/* Key Features - Always visible (first 2 features) */}
+                    <div className="mb-4">
+                      <h5 className={`font-semibold mb-2 text-sm ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Key Features:</h5>
+                      <ul className="space-y-1">
+                        {plan.features.slice(0, 2).map((feature, idx) => (
+                          <li key={idx} className="flex items-start">
+                            <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-sm`}>•</span>
+                            <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Collapsible Details Button */}
+                    <button
+                      onClick={() => setExpandedMobilePlan(expandedMobilePlan === plan.id ? null : plan.id)}
+                      className={`w-full py-2 px-4 rounded-lg text-sm font-semibold mb-4 flex items-center justify-between ${
                         isLuxury
-                          ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]'
-                          : 'bg-white shadow-lg'
-                      } ${plan.id === 'gold' && !isLuxury ? 'ring-2 ring-yellow-400' : ''}`}>
-                        {plan.id === 'gold' && (
-                          <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold ${isLuxury ? 'bg-[#d4af37] text-black' : 'bg-yellow-400 text-yellow-900'}`}>
-                            POPULAR
+                          ? 'bg-black/50 border border-[#d4af37]/30 text-[#d4af37]'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      } transition-colors`}
+                    >
+                      <span>{expandedMobilePlan === plan.id ? 'Hide Details' : 'View Full Details'}</span>
+                      <svg
+                        className={`w-4 h-4 transform transition-transform ${expandedMobilePlan === plan.id ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+
+                    {/* Collapsible Content */}
+                    {expandedMobilePlan === plan.id && (
+                      <div className="space-y-4 mb-4 animate-fadeIn">
+                        {/* Remaining Plan Features */}
+                        {plan.features.length > 2 && (
+                          <div>
+                            <h5 className={`font-semibold mb-2 text-sm ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>All Plan Features:</h5>
+                            <ul className="space-y-1">
+                              {plan.features.map((feature, idx) => (
+                                <li key={idx} className="flex items-start">
+                                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-sm`}>•</span>
+                                  <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
                         )}
-                        
-                        <div className="p-6 h-full flex flex-col">
-                          <div className="text-center mb-6">
-                            <h4 className={`text-xl font-bold mb-2 ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>{plan.name}</h4>
-                            <div className={`text-3xl font-bold mb-2 ${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'}`}>{plan.price}</div>
-                            <p className={`${isLuxury ? 'text-white/80' : 'text-gray-600'} text-sm`}>{plan.description}</p>
+
+                        {/* Each Wash Includes */}
+                        {((Array.isArray(plan.washIncludes) && plan.washIncludes.length > 0) ||
+                          (Array.isArray(plan.weeklyIncludes) && plan.weeklyIncludes.length > 0)) && (
+                          <div>
+                            <h5 className={`font-semibold mb-2 text-sm ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Each Wash Includes:</h5>
+                            <ul className="space-y-1">
+                              {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).map((item, idx) => (
+                                <li key={idx} className="flex items-start">
+                                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'} mr-2 text-sm`}>•</span>
+                                  <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(item) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
+                        )}
 
-                          <div className="space-y-4 flex-1">
-                            {/* Plan Features */}
-                            <div>
-                              <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Plan Features:</h5>
-                              <ul className="space-y-1">
-                                {plan.features.map((feature, index) => (
-                                  <li key={index} className="flex items-start">
-                                    <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-sm`}>•</span>
-                                    <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(feature) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{feature}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-
-                            {/* Each Wash Includes */}
-                            {((Array.isArray(plan.washIncludes) && plan.washIncludes.length > 0) ||
-                              (Array.isArray(plan.weeklyIncludes) && plan.weeklyIncludes.length > 0)) && (
-                              <div>
-                                <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Each Wash Includes:</h5>
-                                <ul className="space-y-1">
-                                  {(Array.isArray(plan.washIncludes) ? plan.washIncludes : plan.weeklyIncludes).map((item, index) => (
-                                    <li key={index} className="flex items-start">
-                                      <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-blue-500'} mr-2 text-sm`}>•</span>
-                                      <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(item) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{item}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-
-                            {/* Show bonuses if available */}
-                            {Array.isArray(plan.monthlyBonuses) && plan.monthlyBonuses.length > 0 && (
-                              <div>
-                                <h5 className={`font-semibold mb-2 ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Monthly Bonuses:</h5>
-                                <ul className="space-y-1">
-                                  {plan.monthlyBonuses.map((bonus, index) => (
-                                    <li key={index} className="flex items-start">
-                                      <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-yellow-500'} mr-2 text-sm`}>•</span>
-                                      <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(bonus) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{bonus}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
+                        {/* Additional Services */}
+                        {Array.isArray(plan.biWeeklyIncludes) && plan.biWeeklyIncludes.length > 0 && (
+                          <div>
+                            <h5 className={`font-semibold mb-2 text-sm ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Additional Services:</h5>
+                            <ul className="space-y-1">
+                              {plan.biWeeklyIncludes.map((item, idx) => (
+                                <li key={idx} className="flex items-start">
+                                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-purple-500'} mr-2 text-sm`}>•</span>
+                                  <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(item) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
+                        )}
 
-                          {/* Button and Terms - Fixed at bottom */}
-                          <div className="mt-6">
-                            <button 
-                              onClick={() => {
-                                // Handle monthly plan booking
-                                const planPackage = {
-                                  id: plan.id,
-                                  name: plan.name,
-                                  price: plan.price,
-                                  features: plan.features,
-                                  // Include all monthly plan detail sections so they reach cart/order
-                                  washIncludes: plan.washIncludes || [],
-                                  weeklyIncludes: plan.weeklyIncludes || [],
-                                  biWeeklyIncludes: plan.biWeeklyIncludes || [],
-                                  monthlyBonuses: plan.monthlyBonuses || [],
-                                  platinumExtras: plan.platinumExtras || [],
-                                  type: 'monthly_plan',
-                                  // Use category specific representative image
-                                  image: getCategoryBaseImage()
-                                };
-                                handleBookNow(planPackage);
-                              }}
-                              className={
-                                isLuxury
-                                  ? 'w-full font-semibold py-3 px-6 rounded-lg border border-[#d4af37] text-[#d4af37] bg-black hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition'
-                                  : `w-full font-bold py-3 px-6 rounded-lg transition-colors ${
-                                      plan.id === 'gold' 
-                                        ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
-                                        : plan.id === 'platinum'
-                                        ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                                        : 'bg-gray-500 hover:bg-gray-600 text-white'
-                                    }`
-                              }
-                            >
-                              Subscribe to {plan.name}
-                            </button>
+                        {/* Monthly Bonuses */}
+                        {Array.isArray(plan.monthlyBonuses) && plan.monthlyBonuses.length > 0 && (
+                          <div>
+                            <h5 className={`font-semibold mb-2 text-sm ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Monthly Bonuses:</h5>
+                            <ul className="space-y-1">
+                              {plan.monthlyBonuses.map((bonus, idx) => (
+                                <li key={idx} className="flex items-start">
+                                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-yellow-500'} mr-2 text-sm`}>•</span>
+                                  <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(bonus) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{bonus}</span>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
+                        )}
 
-                          <div className="mt-3 text-center">
-                            <p className={`text-xs ${isLuxury ? 'text-white/60' : 'text-gray-500'}`}>
-                              Valid for 30 days from date of first wash
-                            </p>
+                        {/* Premium Extras */}
+                        {Array.isArray(plan.platinumExtras) && plan.platinumExtras.length > 0 && (
+                          <div>
+                            <h5 className={`font-semibold mb-2 text-sm ${isLuxury ? "text-[#d4af37] font-['Cinzel',serif]" : 'text-gray-700'}`}>Premium Extras:</h5>
+                            <ul className="space-y-1">
+                              {plan.platinumExtras.map((extra, idx) => (
+                                <li key={idx} className="flex items-start">
+                                  <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-purple-500'} mr-2 text-sm`}>•</span>
+                                  <span className={`${isLuxury ? 'text-white/90' : (/free/i.test(extra) ? 'text-[#d4af37] italic font-semibold' : 'text-gray-600')} text-sm`}>{extra}</span>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
-                        </div>
+                        )}
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                    )}
 
-              {/* Dots Indicator for Mobile */}
-              <div className="flex justify-center mt-6 space-x-2">
-                {dealData.monthlyPlans.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setMonthlyPlansSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-200 ${index === monthlyPlansSlide ? (isLuxury ? 'bg-[#d4af37] scale-125' : 'bg-blue-600 scale-125') : (isLuxury ? 'bg-white/30 hover:bg-white/50' : 'bg-gray-400 hover:bg-gray-500')}`}
-                  />
-                ))}
-              </div>
+                    {/* Button and Terms */}
+                    <div>
+                      <button 
+                        onClick={() => {
+                          const planPackage = {
+                            id: plan.id,
+                            name: plan.name,
+                            price: plan.price,
+                            features: plan.features,
+                            washIncludes: plan.washIncludes || [],
+                            weeklyIncludes: plan.weeklyIncludes || [],
+                            biWeeklyIncludes: plan.biWeeklyIncludes || [],
+                            monthlyBonuses: plan.monthlyBonuses || [],
+                            platinumExtras: plan.platinumExtras || [],
+                            type: 'monthly_plan',
+                            image: getCategoryBaseImage()
+                          };
+                          handleBookNow(planPackage);
+                        }}
+                        className={
+                          isLuxury
+                            ? 'w-full font-semibold py-3 px-6 rounded-lg border border-[#d4af37] text-[#d4af37] bg-black hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition'
+                            : `w-full font-bold py-3 px-6 rounded-lg transition-colors ${
+                                plan.id === 'gold' 
+                                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
+                                  : plan.id === 'platinum'
+                                  ? 'bg-purple-500 hover:bg-purple-600 text-white'
+                                  : 'bg-gray-500 hover:bg-gray-600 text-white'
+                              }`
+                        }
+                      >
+                        Subscribe to {plan.name}
+                      </button>
+                    </div>
+
+                    <div className="mt-3 text-center">
+                      <p className={`text-xs ${isLuxury ? 'text-white/60' : 'text-gray-500'}`}>
+                        Valid for 30 days from date of first wash
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="mt-8 text-center">
