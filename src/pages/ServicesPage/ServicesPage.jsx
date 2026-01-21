@@ -24,38 +24,38 @@ const testimonials = [
   {
     name: "Michael brown",
     img: "https://randomuser.me/api/portraits/men/32.jpg",
-    stars: 4,
-    text: "Really impressed with the car wash service at Bubble Flash Car Wash! The team was professional, friendly, and detailed in their work. My car looked spotless afterward.",
+    stars: 5,
+    text: "Really impressed with the car wash service at Bubble Flash Car Wash! The team was professional, friendly, and incredibly detailed in their work. My car looked absolutely spotless afterward, and they even cleaned areas I didn't expect. The pricing is fair and the convenience of doorstep service is unbeatable. Highly recommend!",
   },
   {
     name: "Meera goyal",
     img: "https://randomuser.me/api/portraits/women/44.jpg",
     stars: 5,
-    text: "Tried Bubble Flash Laundry for the first time and was genuinely impressed! My clothes came back fresh, neatly folded, and smelled amazing. The pickup and delivery were smooth and right on time.",
+    text: "Tried Bubble Flash Laundry for the first time and was genuinely impressed! My clothes came back fresh, neatly folded, and smelled amazing. The pickup and delivery were smooth and right on time. The staff was courteous and professional throughout. The quality of cleaning exceeded my expectations and I'll definitely be a regular customer now!",
   },
   {
     name: "Rahul Sharma",
     img: "https://randomuser.me/api/portraits/men/45.jpg",
     stars: 5,
-    text: "Excellent bike cleaning! My bike looks brand new. Fast service and very convenient.",
+    text: "Excellent bike cleaning service! My bike looks brand new after their thorough wash and detailing. The service was fast, efficient, and very convenient with doorstep availability. The team took great care of my bike and paid attention to every detail. For the price point, this is exceptional value. Will definitely use this service regularly!",
   },
   {
     name: "Priya Singh",
     img: "https://randomuser.me/api/portraits/women/65.jpg",
-    stars: 4,
-    text: "The laundry service is top-notch. Pickup and delivery were on time, and the clothes were perfectly cleaned.",
+    stars: 5,
+    text: "The laundry service is absolutely top-notch and exceeded all my expectations! Pickup and delivery were perfectly on time, and the clothes were professionally cleaned and pressed. Every item came back in pristine condition. The staff is friendly, reliable, and takes great care of your garments. This service has made my life so much easier!",
   },
   {
     name: "Amit Verma",
     img: "https://randomuser.me/api/portraits/men/77.jpg",
     stars: 5,
-    text: "Very happy with the car wash. Staff is polite and the process is hassle-free.",
+    text: "Very happy with the car wash service! The staff is incredibly polite and professional, and the entire process is completely hassle-free. They arrived on time, worked efficiently, and left my car sparkling clean. The eco-friendly products they use are a great bonus. I appreciate their attention to detail and commitment to quality service!",
   },
   {
     name: "Sneha Patel",
     img: "https://randomuser.me/api/portraits/women/32.jpg",
     stars: 5,
-    text: "Affordable and reliable laundry service. Highly recommended!",
+    text: "Affordable and reliable laundry service that I highly recommend to everyone! The quality of cleaning is outstanding, the pickup and delivery system works flawlessly, and the prices are very reasonable. My clothes always come back fresh, clean, and properly folded. This service has saved me so much time and effort. Truly excellent!",
   },
 ];
 
@@ -435,7 +435,7 @@ export default function ServicesPage() {
             }}
           />
         </div>
-        <h2 className="relative text-2xl md:text-3xl font-serif font-semibold text-center mb-8">
+        <h2 className="relative text-3xl md:text-4xl font-serif font-bold text-center mb-10">
           What client says
         </h2>
         <div className="relative overflow-hidden w-full flex justify-center">
@@ -443,24 +443,34 @@ export default function ServicesPage() {
             className="flex gap-4 sm:gap-6 md:gap-8 transition-all duration-700"
             style={{ width: "max-content" }}
           >
-            {carousel.slice(0, visibleCount).map((t, idx) => (
+            {carousel.slice(0, visibleCount).map((t, idx) => {
+              const gradients = [
+                "from-blue-50 via-blue-100 to-blue-50",
+                "from-purple-50 via-purple-100 to-purple-50",
+                "from-pink-50 via-pink-100 to-pink-50",
+                "from-green-50 via-green-100 to-green-50",
+                "from-rose-50 via-rose-100 to-rose-50",
+                "from-cyan-50 via-cyan-100 to-cyan-50",
+              ];
+              const gradient = gradients[idx % gradients.length];
+              return (
               <div
                 key={idx}
-                className="bg-gradient-to-br from-white via-orange-50 to-amber-50 rounded-xl border-2 border-amber-300 shadow-lg p-4 sm:p-5 md:p-6 min-w-[220px] sm:min-w-[280px] md:min-w-[340px] max-w-[380px] flex flex-col transition-all hover:shadow-xl hover:scale-105"
+                className={`bg-gradient-to-br ${gradient} rounded-2xl border-2 border-white shadow-xl p-5 sm:p-6 md:p-7 min-w-[240px] sm:min-w-[300px] md:min-w-[360px] max-w-[400px] flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-105 hover:-translate-y-2`}
               >
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center gap-3 mb-3">
                   <img
                     src={t.img}
                     alt={t.name}
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border"
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-white shadow-lg"
                   />
-                  <div>
-                    <div className="font-bold">{t.name}</div>
-                    <div className="text-xs text-gray-500">{t.name}</div>
+                  <div className="flex-1">
+                    <div className="font-bold text-base text-gray-900">{t.name}</div>
+                    <div className="text-xs text-gray-600 font-medium">Verified Customer</div>
                   </div>
                   <div className="flex ml-auto gap-1">
                     {[...Array(t.stars)].map((_, i) => (
-                      <span key={i} className="text-yellow-400 text-lg">
+                      <span key={i} className="text-yellow-500 text-lg drop-shadow-sm">
                         ★
                       </span>
                     ))}
@@ -468,7 +478,8 @@ export default function ServicesPage() {
                 </div>
                 <div className="text-gray-700 text-base mt-2">“{t.text}”</div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
