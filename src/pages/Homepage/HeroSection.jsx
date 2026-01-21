@@ -967,7 +967,7 @@ export default function HeroSection() {
       {/* Hero Section with Modern Design - Now includes services */}
       <section
         id="home"
-        className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden"
+        className="relative overflow-hidden"
       >
         {/* Launch Offer Top Banner */}
         <motion.div
