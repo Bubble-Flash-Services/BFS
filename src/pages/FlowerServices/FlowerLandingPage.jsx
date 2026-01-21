@@ -139,7 +139,8 @@ const FlowerLandingPage = () => {
         price: 799,
         category: "roses",
         description: "Classic red roses - 12 stems",
-        image: "https://via.placeholder.com/400x300?text=Red+Roses+Bouquet",
+        image:
+          "https://static.vecteezy.com/system/resources/thumbnails/008/848/145/small/bouquet-red-roses-flower-transparency-background-png.png",
       },
       {
         id: "rose-2",
@@ -147,7 +148,8 @@ const FlowerLandingPage = () => {
         price: 899,
         category: "roses",
         description: "Soft pink roses - 12 stems",
-        image: "https://via.placeholder.com/400x300?text=Pink+Roses+Bouquet",
+        image:
+          "https://png.pngtree.com/png-clipart/20230527/ourmid/pngtree-pink-roses-bouquet-png-image_7111549.png",
       },
       {
         id: "rose-3",
@@ -155,7 +157,8 @@ const FlowerLandingPage = () => {
         price: 849,
         category: "roses",
         description: "Pure white roses - 12 stems",
-        image: "https://via.placeholder.com/400x300?text=White+Roses+Bouquet",
+        image:
+          "https://static.vecteezy.com/system/resources/previews/054/809/535/non_2x/beautiful-bouquet-of-blooming-white-roses-isolated-on-the-transparent-background-free-png.png",
       },
       {
         id: "rose-4",
@@ -163,7 +166,8 @@ const FlowerLandingPage = () => {
         price: 799,
         category: "roses",
         description: "Cheerful yellow roses - 12 stems",
-        image: "https://via.placeholder.com/400x300?text=Yellow+Roses+Bouquet",
+        image:
+          "https://png.pngtree.com/png-clipart/20250416/original/pngtree-3d-a-yellow-rose-bouquet-on-realistic-png-image_20692540.png",
       },
       {
         id: "rose-5",
@@ -171,7 +175,8 @@ const FlowerLandingPage = () => {
         price: 949,
         category: "roses",
         description: "Vibrant orange roses - 12 stems",
-        image: "https://via.placeholder.com/400x300?text=Orange+Roses+Bouquet",
+        image:
+          "https://bloomingemotions.com/cdn/shop/products/orange-roses-25.png?v=1674665578",
       },
       {
         id: "rose-6",
@@ -179,7 +184,8 @@ const FlowerLandingPage = () => {
         price: 1499,
         category: "roses",
         description: "Luxury mixed roses - 24 stems",
-        image: "https://via.placeholder.com/400x300?text=Premium+Rose+Arrangement",
+        image:
+          "https://static.vecteezy.com/system/resources/previews/044/570/491/non_2x/vibrant-bouquet-of-mixed-flowers-wrapped-in-brown-paper-and-tied-with-blue-ribbon-on-transparent-background-png.png",
       },
     ],
     "mixed-flowers": [
@@ -189,7 +195,8 @@ const FlowerLandingPage = () => {
         price: 999,
         category: "mixed-flowers",
         description: "Colorful seasonal flowers",
-        image: "https://via.placeholder.com/400x300?text=Seasonal+Mix",
+        image:
+          "https://png.pngtree.com/png-clipart/20241112/original/pngtree-flower-bouquet-png-image_16936472.png",
       },
       {
         id: "mixed-2",
@@ -197,7 +204,8 @@ const FlowerLandingPage = () => {
         price: 1099,
         category: "mixed-flowers",
         description: "Fresh garden flowers",
-        image: "https://via.placeholder.com/400x300?text=Garden+Fresh+Mix",
+        image:
+          "https://i.pinimg.com/originals/2a/88/03/2a88036caf6b42d073d025f820376f0b.png",
       },
       {
         id: "mixed-3",
@@ -205,7 +213,8 @@ const FlowerLandingPage = () => {
         price: 1199,
         category: "mixed-flowers",
         description: "Beautiful spring blooms",
-        image: "https://via.placeholder.com/400x300?text=Spring+Collection",
+        image:
+          "https://file.aiquickdraw.com/imgcompressed/img/compressed_2af2e8878affcc56fcf01921822aa13d.webp",
       },
       {
         id: "mixed-4",
@@ -213,7 +222,8 @@ const FlowerLandingPage = () => {
         price: 1149,
         category: "mixed-flowers",
         description: "Bright summer flowers",
-        image: "https://via.placeholder.com/400x300?text=Summer+Delight",
+        image:
+          "https://static.vecteezy.com/system/resources/thumbnails/070/647/327/small/bright-sunflower-daisy-aster-and-wildflower-bouquet-with-green-leaves-vibrant-colors-and-cheerful-arrangement-perfect-for-celebration-or-festive-gift-expressing-happiness-png.png",
       },
     ],
     "premium-flowers": [
@@ -223,7 +233,8 @@ const FlowerLandingPage = () => {
         price: 1499,
         category: "premium-flowers",
         description: "Elegant orchid display",
-        image: "https://via.placeholder.com/400x300?text=Orchid+Arrangement",
+        image:
+          "https://floristbd.com/wp-content/uploads/2025/05/royal-orchid-surprise.webp",
       },
       {
         id: "premium-2",
@@ -231,7 +242,8 @@ const FlowerLandingPage = () => {
         price: 1399,
         category: "premium-flowers",
         description: "Premium lily bouquet",
-        image: "https://via.placeholder.com/400x300?text=Lily+Paradise",
+        image:
+          "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-white-flowers-bouquet-with-lilies-and-roses-png-image_14563477.png",
       },
       {
         id: "premium-3",
@@ -239,7 +251,7 @@ const FlowerLandingPage = () => {
         price: 1599,
         category: "premium-flowers",
         description: "Imported tulips",
-        image: "https://via.placeholder.com/400x300?text=Tulip+Collection",
+        image: "https://gallery.yopriceville.com/downloadfullsize/send/7693",
       },
       {
         id: "premium-4",
@@ -247,7 +259,8 @@ const FlowerLandingPage = () => {
         price: 1999,
         category: "premium-flowers",
         description: "Exclusive designer arrangement",
-        image: "https://via.placeholder.com/400x300?text=Designer+Bouquet",
+        image:
+          "https://hiddengardenflowers.com/cdn/shop/files/img_4_1.png?v=1737647552&width=800",
       },
     ],
     "exotic-flowers": [
@@ -257,7 +270,8 @@ const FlowerLandingPage = () => {
         price: 1799,
         category: "exotic-flowers",
         description: "Exotic tropical flowers",
-        image: "https://via.placeholder.com/400x300?text=Bird+of+Paradise",
+        image:
+          "https://www.kindpng.com/picc/m/157-1571294_tropical-flower-vase-png-bouquet-transparent-png.png",
       },
       {
         id: "exotic-2",
@@ -265,7 +279,8 @@ const FlowerLandingPage = () => {
         price: 1699,
         category: "exotic-flowers",
         description: "Stunning anthurium display",
-        image: "https://via.placeholder.com/400x300?text=Anthurium+Arrangement",
+        image:
+          "https://png.pngtree.com/png-clipart/20240304/original/pngtree-ginger-flower-tropical-floral-arrangements-png-image_14501261.png",
       },
       {
         id: "exotic-3",
@@ -273,7 +288,8 @@ const FlowerLandingPage = () => {
         price: 1899,
         category: "exotic-flowers",
         description: "Unique protea flowers",
-        image: "https://via.placeholder.com/400x300?text=Protea+Collection",
+        image:
+          "https://png.pngtree.com/png-clipart/20231103/original/pngtree-bouquet-of-exotic-flower-protea-and-fresh-pink-roses-with-golden-png-image_13501875.png",
       },
     ],
     "seasonal-flowers": [
@@ -283,7 +299,8 @@ const FlowerLandingPage = () => {
         price: 899,
         category: "seasonal-flowers",
         description: "Cheerful sunflowers",
-        image: "https://via.placeholder.com/400x300?text=Sunflower+Bunch",
+        image:
+          "https://png.pngtree.com/png-clipart/20240408/original/pngtree-sunflower-bouquet-png-image_14772798.png",
       },
       {
         id: "seasonal-2",
@@ -291,7 +308,8 @@ const FlowerLandingPage = () => {
         price: 749,
         category: "seasonal-flowers",
         description: "Fresh daisies",
-        image: "https://via.placeholder.com/400x300?text=Daisy+Collection",
+        image:
+          "https://static.vecteezy.com/system/resources/thumbnails/055/326/279/small_2x/a-vibrant-bouquet-of-assorted-flowers-featuring-daisies-and-gerbera-on-a-transparent-background-bouquet-flower-isolated-transparent-background-free-png.png",
       },
       {
         id: "seasonal-3",
@@ -299,7 +317,8 @@ const FlowerLandingPage = () => {
         price: 799,
         category: "seasonal-flowers",
         description: "Colorful carnations",
-        image: "https://via.placeholder.com/400x300?text=Carnation+Mix",
+        image:
+          "https://www.shutterstock.com/image-photo/beautiful-bouquet-carnations-various-colors-600nw-2530238337.jpg",
       },
       {
         id: "seasonal-4",
@@ -307,7 +326,8 @@ const FlowerLandingPage = () => {
         price: 949,
         category: "seasonal-flowers",
         description: "Vibrant gerberas",
-        image: "https://via.placeholder.com/400x300?text=Gerbera+Bouquet",
+        image:
+          "https://png.pngtree.com/png-clipart/20240310/original/pngtree-bouquet-of-flowers-gerberas-flower-isolated-png-image_14557518.png",
       },
     ],
     "birthday-decor": [
@@ -317,7 +337,8 @@ const FlowerLandingPage = () => {
         price: 2999,
         category: "birthday-decor",
         description: "Perfect birthday decoration",
-        image: "https://via.placeholder.com/400x300?text=Classic+Birthday+Setup",
+        image:
+          "https://cdn.shopify.com/s/files/1/2690/0106/files/Search__105_results_found_for__ring_decoration_0e1e6ed9-1c35-4373-890f-b9fc21a8a12d_480x480.jpg?v=1704192006",
       },
       {
         id: "bday-2",
@@ -325,7 +346,8 @@ const FlowerLandingPage = () => {
         price: 3499,
         category: "birthday-decor",
         description: "Colorful kids party setup",
-        image: "https://via.placeholder.com/400x300?text=Kids+Birthday+Special",
+        image:
+          "https://hometriangle.com/blogs/content/images/2022/11/81WkmtMqxBL._SL1500_.jpg",
       },
       {
         id: "bday-3",
@@ -333,7 +355,8 @@ const FlowerLandingPage = () => {
         price: 3999,
         category: "birthday-decor",
         description: "Luxury birthday decoration",
-        image: "https://via.placeholder.com/400x300?text=Premium+Birthday+Theme",
+        image:
+          "https://m.media-amazon.com/images/I/812xXoJuoML._AC_SL1500_.jpg",
       },
       {
         id: "bday-4",
@@ -341,7 +364,8 @@ const FlowerLandingPage = () => {
         price: 3199,
         category: "birthday-decor",
         description: "Elegant adult party",
-        image: "https://via.placeholder.com/400x300?text=Adult+Birthday+Decor",
+        image:
+          "https://m.media-amazon.com/images/I/81b6B0gtZWL._AC_UF1000,1000_QL80_.jpg",
       },
     ],
     "anniversary-decor": [
@@ -351,7 +375,8 @@ const FlowerLandingPage = () => {
         price: 3799,
         category: "anniversary-decor",
         description: "Rose petals & candles",
-        image: "https://via.placeholder.com/400x300?text=Romantic+Anniversary",
+        image:
+          "https://freepixel-prod.s3.amazonaws.com/preview/free-photos-happy-valentines-day-honeymoon-and-anniversary-decoration-interior-photo-of-romantic-setting-with-re-preview-1004151873.jpg",
       },
       {
         id: "anni-2",
@@ -359,7 +384,7 @@ const FlowerLandingPage = () => {
         price: 4899,
         category: "anniversary-decor",
         description: "Elegant gold theme",
-        image: "https://via.placeholder.com/400x300?text=Golden+Anniversary",
+        image: "https://m.media-amazon.com/images/I/910lBjKcNXL.jpg",
       },
       {
         id: "anni-3",
@@ -367,7 +392,7 @@ const FlowerLandingPage = () => {
         price: 4299,
         category: "anniversary-decor",
         description: "Luxury celebration setup",
-        image: "https://via.placeholder.com/400x300?text=Premium+Anniversary",
+        image: "https://cdn.balloondekor.com/29/1734686669347.webp",
       },
     ],
     "baby-celebration": [
@@ -377,7 +402,8 @@ const FlowerLandingPage = () => {
         price: 3499,
         category: "baby-celebration",
         description: "Beautiful blue theme",
-        image: "https://via.placeholder.com/400x300?text=Baby+Shower+Blue",
+        image:
+          "https://images-cdn.ubuy.co.in/693fcf33e67badb1c1094e50-baby-shower-decorations-for-boy.jpg",
       },
       {
         id: "baby-2",
@@ -385,7 +411,7 @@ const FlowerLandingPage = () => {
         price: 3499,
         category: "baby-celebration",
         description: "Lovely pink theme",
-        image: "https://via.placeholder.com/400x300?text=Baby+Shower+Pink",
+        image: "https://m.media-amazon.com/images/I/71waNmk0JZL.jpg",
       },
       {
         id: "baby-3",
@@ -393,7 +419,7 @@ const FlowerLandingPage = () => {
         price: 2999,
         category: "baby-celebration",
         description: "Welcome decoration",
-        image: "https://via.placeholder.com/400x300?text=Baby+Welcome+Home",
+        image: "https://cheetah.cherishx.com/uploads/1709969564_original.jpg",
       },
       {
         id: "baby-4",
@@ -401,7 +427,8 @@ const FlowerLandingPage = () => {
         price: 3299,
         category: "baby-celebration",
         description: "Yellow & white setup",
-        image: "https://via.placeholder.com/400x300?text=Gender+Neutral+Theme",
+        image:
+          "https://i.pinimg.com/736x/72/d1/ab/72d1ab7d14e55228167dfc9128455bfb.jpg",
       },
     ],
     "romantic-decor": [
@@ -411,7 +438,8 @@ const FlowerLandingPage = () => {
         price: 3999,
         category: "romantic-decor",
         description: "Perfect proposal decoration",
-        image: "https://via.placeholder.com/400x300?text=Proposal+Setup",
+        image:
+          "https://i0.wp.com/twogirlsandsomeflowers.com/wp-content/uploads/2025/08/74232e4c9e65880ba582e86a99af9e0c.jpg?fit=1200%2C1200&ssl=1",
       },
       {
         id: "romantic-2",
@@ -419,7 +447,8 @@ const FlowerLandingPage = () => {
         price: 2999,
         category: "romantic-decor",
         description: "Romantic room setup",
-        image: "https://via.placeholder.com/400x300?text=Romantic+Room+Decor",
+        image:
+          "https://res.cloudinary.com/hgchxeahe/image/upload/v1725002716/rog2ssc7zkn1iuqqvhuc.jpg",
       },
       {
         id: "romantic-3",
@@ -427,7 +456,8 @@ const FlowerLandingPage = () => {
         price: 4999,
         category: "romantic-decor",
         description: "Luxury proposal with lights",
-        image: "https://via.placeholder.com/400x300?text=Premium+Proposal",
+        image:
+          "https://surpriseplanner.in/assets/timthumb.php?src=https://surpriseplanner.in/assets/photo/product/product_other_3977_1745842971.jpeg&w=580&h=630&zc=1&q=90",
       },
       {
         id: "romantic-4",
@@ -435,7 +465,8 @@ const FlowerLandingPage = () => {
         price: 2499,
         category: "romantic-decor",
         description: "Beautiful surprise room",
-        image: "https://via.placeholder.com/400x300?text=Surprise+Room+Setup",
+        image:
+          "https://www.partyone.in/suploads/2025/Dec/13/40014/1765610887room-decorations-7_MoreDetail-v3_4K_4096x4096.webp",
       },
     ],
     "party-decor": [
@@ -445,7 +476,8 @@ const FlowerLandingPage = () => {
         price: 2999,
         category: "party-decor",
         description: "Clean party setup",
-        image: "https://via.placeholder.com/400x300?text=Simple+Party+Hall",
+        image:
+          "https://5.imimg.com/data5/OW/WI/NF/SELLER-50583371/party-hall-decoration-500x500-500x500.jpg",
       },
       {
         id: "party-2",
@@ -453,7 +485,8 @@ const FlowerLandingPage = () => {
         price: 3999,
         category: "party-decor",
         description: "Luxury party decoration",
-        image: "https://via.placeholder.com/400x300?text=Premium+Party+Theme",
+        image:
+          "https://m.media-amazon.com/images/I/71qRfKLZ0EL._AC_UF1000,1000_QL80_.jpg",
       },
       {
         id: "party-3",
@@ -461,7 +494,8 @@ const FlowerLandingPage = () => {
         price: 1999,
         category: "party-decor",
         description: "Colorful balloon setup",
-        image: "https://via.placeholder.com/400x300?text=Balloon+Decoration",
+        image:
+          "https://m.media-amazon.com/images/I/71zgvf+uQwL._AC_UF1000,1000_QL80_.jpg",
       },
       {
         id: "party-4",
@@ -469,7 +503,8 @@ const FlowerLandingPage = () => {
         price: 4999,
         category: "party-decor",
         description: "Complete hall decoration",
-        image: "https://via.placeholder.com/400x300?text=Event+Hall+Decor",
+        image:
+          "https://5.imimg.com/data5/OW/WI/NF/SELLER-50583371/party-hall-decoration-500x500.jpg",
       },
     ],
   };
@@ -848,14 +883,14 @@ const FlowerLandingPage = () => {
                         }}
                       />
                     ) : null}
-                    <div className="text-center p-4 absolute">
+                    {/* <div className="text-center p-4 absolute">
                       <div className="text-4xl md:text-6xl mb-2">
                         {getProductEmoji(product.category)}
                       </div>
                       <p className="text-xs text-gray-500 font-medium">
                         {product.name}
                       </p>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="p-3 md:p-4">
                     <h4 className="font-bold text-gray-900 mb-1 text-sm md:text-base line-clamp-2">
