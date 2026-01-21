@@ -845,29 +845,17 @@ const FlowerLandingPage = () => {
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.target.style.display = "none";
-                          const emojiDiv = document.createElement("div");
-                          emojiDiv.className = "text-center p-4";
-                          emojiDiv.innerHTML = `
-                            <div class="text-4xl md:text-6xl mb-2">
-                              ${getProductEmoji(product.category)}
-                            </div>
-                            <p class="text-xs text-gray-500 font-medium">
-                              ${product.name}
-                            </p>
-                          `;
-                          e.target.parentElement.appendChild(emojiDiv);
                         }}
                       />
-                    ) : (
-                      <div className="text-center p-4">
-                        <div className="text-4xl md:text-6xl mb-2">
-                          {getProductEmoji(product.category)}
-                        </div>
-                        <p className="text-xs text-gray-500 font-medium">
-                          {product.name}
-                        </p>
+                    ) : null}
+                    <div className="text-center p-4 absolute">
+                      <div className="text-4xl md:text-6xl mb-2">
+                        {getProductEmoji(product.category)}
                       </div>
-                    )}
+                      <p className="text-xs text-gray-500 font-medium">
+                        {product.name}
+                      </p>
+                    </div>
                   </div>
                   <div className="p-3 md:p-4">
                     <h4 className="font-bold text-gray-900 mb-1 text-sm md:text-base line-clamp-2">
