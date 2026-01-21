@@ -1,540 +1,679 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 import {
   Flower2,
   Heart,
+  Phone,
+  ShoppingCart,
+  PartyPopper,
+  Plus,
+  Minus,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
   Gift,
   Cake,
-  Sparkles,
-  TrendingUp,
-  Search,
-  Filter,
-  Clock,
-  Truck,
-  Award,
-  Phone,
-  MapPin,
 } from "lucide-react";
-
-// Occasions data
-const occasions = [
-  { id: "birthday", name: "Birthday", icon: Cake, color: "bg-pink-500" },
-  { id: "anniversary", name: "Anniversary", icon: Heart, color: "bg-red-500" },
-  { id: "love", name: "Love & Romance", icon: Heart, color: "bg-rose-500" },
-  { id: "congratulations", name: "Congratulations", icon: Award, color: "bg-green-500" },
-  { id: "get-well-soon", name: "Get Well Soon", icon: Sparkles, color: "bg-blue-500" },
-  { id: "thank-you", name: "Thank You", icon: Gift, color: "bg-purple-500" },
-];
-
-// Featured products - Best sellers
-const featuredProducts = [
-  {
-    id: 1,
-    name: "Red Roses Bouquet - Classic Love",
-    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
-    price: 799,
-    originalPrice: 999,
-    rating: 4.8,
-    reviews: 234,
-    occasion: "Love & Romance",
-    deliveryTime: "Same Day",
-    tag: "Bestseller",
-  },
-  {
-    id: 2,
-    name: "Premium Red Roses - Love Special",
-    image: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=800",
-    price: 1499,
-    originalPrice: 1999,
-    rating: 4.9,
-    reviews: 456,
-    occasion: "Anniversary",
-    deliveryTime: "Same Day",
-    tag: "Premium",
-  },
-  {
-    id: 8,
-    name: "White Orchids in Vase",
-    image: "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=800",
-    price: 1299,
-    originalPrice: 1699,
-    rating: 4.9,
-    reviews: 312,
-    occasion: "Congratulations",
-    deliveryTime: "Same Day",
-    tag: "Bestseller",
-  },
-  {
-    id: 11,
-    name: "Pink Lilies Bouquet",
-    image: "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=800",
-    price: 999,
-    originalPrice: 1299,
-    rating: 4.8,
-    reviews: 234,
-    occasion: "Birthday",
-    deliveryTime: "2 Hours",
-    tag: "Bestseller",
-  },
-  {
-    id: 15,
-    name: "Love Combo - Flowers & Cake",
-    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
-    price: 1299,
-    originalPrice: 1699,
-    rating: 4.9,
-    reviews: 567,
-    occasion: "Anniversary",
-    deliveryTime: "Same Day",
-    tag: "Combo",
-  },
-  {
-    id: 13,
-    name: "Mixed Flowers Celebration",
-    image: "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=800",
-    price: 1099,
-    originalPrice: 1399,
-    rating: 4.8,
-    reviews: 276,
-    occasion: "Celebration",
-    deliveryTime: "Same Day",
-    tag: "Bestseller",
-  },
-];
-
-// Flower categories with better images
-const flowerCategories = [
-  {
-    id: "roses",
-    name: "Roses",
-    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400",
-    count: "50+ Options",
-  },
-  {
-    id: "orchids",
-    name: "Orchids",
-    image: "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=400",
-    count: "25+ Options",
-  },
-  {
-    id: "carnations",
-    name: "Carnations",
-    image: "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=400",
-    count: "30+ Options",
-  },
-  {
-    id: "lilies",
-    name: "Lilies",
-    image: "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=400",
-    count: "35+ Options",
-  },
-  {
-    id: "gerberas",
-    name: "Gerberas",
-    image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400",
-    count: "40+ Options",
-  },
-  {
-    id: "mixed",
-    name: "Mixed Flowers",
-    image: "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=400",
-    count: "60+ Options",
-  },
-];
+import { useAuth } from "../../components/AuthContext";
+import { useCart } from "../../components/CartContext";
 
 const FlowerLandingPage = () => {
+  const { user } = useAuth();
+  const { addToCart, cartItems } = useCart();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleOccasionClick = (occasion) => {
-    navigate(`/flower-products?occasion=${occasion}`);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Constants
+  const PRODUCTS_SECTION_OFFSET = 650;
+
+  // Helper function to get emoji for product category
+  const getProductEmoji = (category) => {
+    if (category.includes('rose') || category.includes('flower')) return '💐';
+    if (category.includes('birthday')) return '🎂';
+    if (category.includes('anniversary') || category.includes('romantic')) return '❤️';
+    if (category.includes('baby')) return '👶';
+    if (category.includes('party')) return '🎉';
+    return '🎈';
   };
 
-  const handleCategoryClick = (category) => {
-    navigate(`/flower-products?category=${category}`);
+  // Flower Categories (5)
+  const flowerCategories = [
+    { 
+      id: "roses", 
+      name: "Roses", 
+      icon: "🌹",
+      image: "/services/flowers/bouquet.webp",
+      description: "Fresh rose bouquets"
+    },
+    { 
+      id: "mixed-flowers", 
+      name: "Mixed Flowers", 
+      icon: "💐",
+      image: "/services/flowers/bouquet.webp",
+      description: "Colorful flower arrangements"
+    },
+    { 
+      id: "premium-flowers", 
+      name: "Premium Flowers", 
+      icon: "🌺",
+      image: "/services/flowers/bouquet.webp",
+      description: "Luxury flower collections"
+    },
+    { 
+      id: "exotic-flowers", 
+      name: "Exotic Flowers", 
+      icon: "🌸",
+      image: "/services/flowers/bouquet.webp",
+      description: "Rare and beautiful blooms"
+    },
+    { 
+      id: "seasonal-flowers", 
+      name: "Seasonal Flowers", 
+      icon: "🌻",
+      image: "/services/flowers/bouquet.webp",
+      description: "Fresh seasonal picks"
+    },
+  ];
+
+  // Decoration Categories (5)
+  const decorationCategories = [
+    { 
+      id: "birthday-decor", 
+      name: "Birthday", 
+      icon: "🎂",
+      image: "/services/flowers/decoration.avif",
+      description: "Birthday party decorations"
+    },
+    { 
+      id: "anniversary-decor", 
+      name: "Anniversary", 
+      icon: "❤️",
+      image: "/services/flowers/decoration.avif",
+      description: "Romantic anniversary setups"
+    },
+    { 
+      id: "baby-celebration", 
+      name: "Baby Celebration", 
+      icon: "👶",
+      image: "/services/flowers/decoration.avif",
+      description: "Baby shower & welcome"
+    },
+    { 
+      id: "romantic-decor", 
+      name: "Romantic Decor", 
+      icon: "💕",
+      image: "/services/flowers/decoration.avif",
+      description: "Romantic surprises"
+    },
+    { 
+      id: "party-decor", 
+      name: "Party Decor", 
+      icon: "🎉",
+      image: "/services/flowers/decoration.avif",
+      description: "General party themes"
+    },
+  ];
+
+  // Product data
+  const productsByCategory = {
+    "roses": [
+      { id: "rose-1", name: "Red Roses Bouquet", price: 799, category: "roses", description: "Classic red roses - 12 stems" },
+      { id: "rose-2", name: "Pink Roses Bouquet", price: 899, category: "roses", description: "Soft pink roses - 12 stems" },
+      { id: "rose-3", name: "White Roses Bouquet", price: 849, category: "roses", description: "Pure white roses - 12 stems" },
+      { id: "rose-4", name: "Yellow Roses Bouquet", price: 799, category: "roses", description: "Cheerful yellow roses - 12 stems" },
+      { id: "rose-5", name: "Orange Roses Bouquet", price: 949, category: "roses", description: "Vibrant orange roses - 12 stems" },
+      { id: "rose-6", name: "Premium Rose Arrangement", price: 1499, category: "roses", description: "Luxury mixed roses - 24 stems" },
+    ],
+    "mixed-flowers": [
+      { id: "mixed-1", name: "Seasonal Mix", price: 999, category: "mixed-flowers", description: "Colorful seasonal flowers" },
+      { id: "mixed-2", name: "Garden Fresh Mix", price: 1099, category: "mixed-flowers", description: "Fresh garden flowers" },
+      { id: "mixed-3", name: "Spring Collection", price: 1199, category: "mixed-flowers", description: "Beautiful spring blooms" },
+      { id: "mixed-4", name: "Summer Delight", price: 1149, category: "mixed-flowers", description: "Bright summer flowers" },
+    ],
+    "premium-flowers": [
+      { id: "premium-1", name: "Orchid Arrangement", price: 1499, category: "premium-flowers", description: "Elegant orchid display" },
+      { id: "premium-2", name: "Lily Paradise", price: 1399, category: "premium-flowers", description: "Premium lily bouquet" },
+      { id: "premium-3", name: "Tulip Collection", price: 1599, category: "premium-flowers", description: "Imported tulips" },
+      { id: "premium-4", name: "Designer Bouquet", price: 1999, category: "premium-flowers", description: "Exclusive designer arrangement" },
+    ],
+    "exotic-flowers": [
+      { id: "exotic-1", name: "Bird of Paradise", price: 1799, category: "exotic-flowers", description: "Exotic tropical flowers" },
+      { id: "exotic-2", name: "Anthurium Arrangement", price: 1699, category: "exotic-flowers", description: "Stunning anthurium display" },
+      { id: "exotic-3", name: "Protea Collection", price: 1899, category: "exotic-flowers", description: "Unique protea flowers" },
+    ],
+    "seasonal-flowers": [
+      { id: "seasonal-1", name: "Sunflower Bunch", price: 899, category: "seasonal-flowers", description: "Cheerful sunflowers" },
+      { id: "seasonal-2", name: "Daisy Collection", price: 749, category: "seasonal-flowers", description: "Fresh daisies" },
+      { id: "seasonal-3", name: "Carnation Mix", price: 799, category: "seasonal-flowers", description: "Colorful carnations" },
+      { id: "seasonal-4", name: "Gerbera Bouquet", price: 949, category: "seasonal-flowers", description: "Vibrant gerberas" },
+    ],
+    "birthday-decor": [
+      { id: "bday-1", name: "Classic Birthday Setup", price: 2999, category: "birthday-decor", description: "Perfect birthday decoration" },
+      { id: "bday-2", name: "Kids Birthday Special", price: 3499, category: "birthday-decor", description: "Colorful kids party setup" },
+      { id: "bday-3", name: "Premium Birthday Theme", price: 3999, category: "birthday-decor", description: "Luxury birthday decoration" },
+      { id: "bday-4", name: "Adult Birthday Decor", price: 3199, category: "birthday-decor", description: "Elegant adult party" },
+    ],
+    "anniversary-decor": [
+      { id: "anni-1", name: "Romantic Anniversary", price: 3799, category: "anniversary-decor", description: "Rose petals & candles" },
+      { id: "anni-2", name: "Golden Anniversary", price: 4899, category: "anniversary-decor", description: "Elegant gold theme" },
+      { id: "anni-3", name: "Premium Anniversary", price: 4299, category: "anniversary-decor", description: "Luxury celebration setup" },
+    ],
+    "baby-celebration": [
+      { id: "baby-1", name: "Baby Shower Blue", price: 3499, category: "baby-celebration", description: "Beautiful blue theme" },
+      { id: "baby-2", name: "Baby Shower Pink", price: 3499, category: "baby-celebration", description: "Lovely pink theme" },
+      { id: "baby-3", name: "Baby Welcome Home", price: 2999, category: "baby-celebration", description: "Welcome decoration" },
+      { id: "baby-4", name: "Gender Neutral Theme", price: 3299, category: "baby-celebration", description: "Yellow & white setup" },
+    ],
+    "romantic-decor": [
+      { id: "romantic-1", name: "Proposal Setup", price: 3999, category: "romantic-decor", description: "Perfect proposal decoration" },
+      { id: "romantic-2", name: "Romantic Room Decor", price: 2999, category: "romantic-decor", description: "Romantic room setup" },
+      { id: "romantic-3", name: "Premium Proposal", price: 4999, category: "romantic-decor", description: "Luxury proposal with lights" },
+      { id: "romantic-4", name: "Surprise Room Setup", price: 2499, category: "romantic-decor", description: "Beautiful surprise room" },
+    ],
+    "party-decor": [
+      { id: "party-1", name: "Simple Party Hall", price: 2999, category: "party-decor", description: "Clean party setup" },
+      { id: "party-2", name: "Premium Party Theme", price: 3999, category: "party-decor", description: "Luxury party decoration" },
+      { id: "party-3", name: "Balloon Decoration", price: 1999, category: "party-decor", description: "Colorful balloon setup" },
+      { id: "party-4", name: "Event Hall Decor", price: 4999, category: "party-decor", description: "Complete hall decoration" },
+    ],
   };
 
-  const handleProductClick = (productId) => {
-    navigate(`/flower-product/${productId}`);
-  };
+  // Get all products
+  const allProducts = Object.values(productsByCategory).flat();
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/flower-products?search=${searchQuery}`);
+  // Featured carousel items
+  const featuredItems = [
+    {
+      title: "Beautiful Flower Bouquets",
+      subtitle: "Fresh flowers delivered to your door",
+      image: "/services/flowers/bouquet.webp",
+      gradient: "from-pink-500 to-rose-500",
+      categoryId: "roses"
+    },
+    {
+      title: "Stunning Decorations",
+      subtitle: "Make every celebration memorable",
+      image: "/services/flowers/decoration.avif",
+      gradient: "from-purple-500 to-indigo-500",
+      categoryId: "birthday-decor"
+    },
+    {
+      title: "Gift Combos",
+      subtitle: "Perfect gifts for loved ones",
+      image: "/services/flowers/gift-box.png",
+      gradient: "from-amber-500 to-orange-500",
+      categoryId: "roses"
     }
+  ];
+
+  const getFilteredProducts = () => {
+    if (activeCategory === "all") {
+      return allProducts;
+    }
+    return productsByCategory[activeCategory] || [];
+  };
+
+  const filteredProducts = getFilteredProducts();
+
+  const handleAddToCart = () => {
+    if (!user) {
+      toast.error("Please sign in to book a service");
+      return;
+    }
+    if (!selectedItem) {
+      toast.error("Please select a service");
+      return;
+    }
+
+    const product = allProducts.find(p => p.id === selectedItem);
+    if (!product) {
+      toast.error("Service not found");
+      return;
+    }
+
+    const isFirstTimeBooking = !user?.totalOrders || user.totalOrders === 0;
+    const firstTimeDiscount = isFirstTimeBooking ? 0.15 : 0;
+    const discountAmount = Math.round(product.price * firstTimeDiscount);
+    const finalPrice = product.price - discountAmount;
+
+    const cartItem = {
+      id: `flowers-${selectedItem}-${Date.now()}`,
+      type: "flower-services",
+      category: product.category,
+      name: product.name,
+      serviceName: "flowers",
+      image: "/services/flowers/bouquet.webp",
+      price: finalPrice,
+      basePrice: product.price,
+      originalPrice: product.price,
+      discount: discountAmount,
+      isFirstTimeBooking: isFirstTimeBooking,
+      quantity: quantity,
+      features: [product.description],
+      serviceCategory: product.category,
+      metadata: {
+        serviceType: product.category,
+        itemId: selectedItem,
+      },
+    };
+
+    addToCart(cartItem);
+
+    let successMessage = `${product.name} added to cart!`;
+    if (isFirstTimeBooking) {
+      successMessage += ` 🎉 15% First-Time Discount Applied!`;
+    }
+
+    toast.success(successMessage, {
+      icon: "💐",
+      duration: 3000,
+    });
+
+    setTimeout(() => navigate("/cart"), 500);
+  };
+
+  const getCartItemCount = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % featuredItems.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + featuredItems.length) % featuredItems.length);
+  };
+
+  // Auto-rotate carousel
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % featuredItems.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [featuredItems.length]);
+
+  const handleCategoryClick = (categoryId) => {
+    setActiveCategory(categoryId);
+    setSelectedItem(null);
+    window.scrollTo({ top: PRODUCTS_SECTION_OFFSET, behavior: "smooth" });
+  };
+
+  const getCategoryName = () => {
+    if (activeCategory === "all") return "All Products";
+    const flowerCat = flowerCategories.find(c => c.id === activeCategory);
+    if (flowerCat) return flowerCat.name;
+    const decorCat = decorationCategories.find(c => c.id === activeCategory);
+    if (decorCat) return decorCat.name;
+    return "Products";
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 text-white py-20 px-4">
-        <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+      {/* Hero Carousel */}
+      <div className="relative h-[400px] md:h-[500px] overflow-hidden">
+        <AnimatePresence mode="wait">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
+            key={currentSlide}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.5 }}
+            className={`absolute inset-0 bg-gradient-to-r ${featuredItems[currentSlide].gradient}`}
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-4 flex items-center justify-center gap-3">
-              <Flower2 className="w-12 h-12" />
-              BFS Flowers
-            </h1>
-            <p className="text-xl md:text-2xl mb-8">
-              Fresh Flowers Delivered to Your Doorstep in Bangalore
-            </p>
-
-            {/* Search Bar */}
-            <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
-              <div className="flex gap-2 bg-white rounded-full p-2 shadow-xl">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for flowers, occasions, or gifts..."
-                  className="flex-1 px-6 py-3 text-gray-900 rounded-full outline-none"
-                />
-                <button
-                  type="submit"
-                  className="bg-pink-600 text-white px-8 py-3 rounded-full hover:bg-pink-700 transition-colors flex items-center gap-2"
-                >
-                  <Search className="w-5 h-5" />
-                  Search
-                </button>
-              </div>
-            </form>
-          </motion.div>
-
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-            {[
-              { icon: Truck, text: "Same Day Delivery", subtext: "2-4 Hours" },
-              { icon: Flower2, text: "Fresh Flowers", subtext: "100% Quality" },
-              { icon: Award, text: "5000+ Happy Customers", subtext: "Trusted Service" },
-              { icon: Clock, text: "24/7 Support", subtext: "Always Available" },
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center"
-              >
-                <stat.icon className="w-8 h-8 mx-auto mb-2" />
-                <p className="font-semibold">{stat.text}</p>
-                <p className="text-sm opacity-90">{stat.subtext}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Shop by Occasion */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Shop by Occasion
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Find the perfect flowers for every special moment
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {occasions.map((occasion, index) => (
-              <motion.div
-                key={occasion.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => handleOccasionClick(occasion.id)}
-                className="cursor-pointer group"
-              >
-                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all group-hover:scale-105">
-                  <div
-                    className={`${occasion.color} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}
+            <div className="max-w-7xl mx-auto px-4 h-full flex items-center">
+              <div className="grid md:grid-cols-2 gap-8 items-center w-full">
+                <div className="text-white">
+                  <motion.h1
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-4xl md:text-6xl font-bold mb-4"
                   >
-                    <occasion.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-center font-semibold text-gray-900">
-                    {occasion.name}
-                  </h3>
+                    {featuredItems[currentSlide].title}
+                  </motion.h1>
+                  <motion.p
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-xl md:text-2xl mb-8 text-white/90"
+                  >
+                    {featuredItems[currentSlide].subtitle}
+                  </motion.p>
+                  <motion.button
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    onClick={() => window.scrollTo({ top: PRODUCTS_SECTION_OFFSET, behavior: "smooth" })}
+                    className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all shadow-xl"
+                  >
+                    Shop Now
+                  </motion.button>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Products */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <TrendingUp className="w-8 h-8 text-pink-600" />
-              <h2 className="text-4xl font-bold text-gray-900">
-                Trending Flowers
-              </h2>
-            </div>
-            <p className="text-gray-600 text-lg">
-              Most loved flowers by our customers
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProducts.map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => handleProductClick(product.id)}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer group hover:shadow-2xl transition-all"
-              >
-                <div className="relative overflow-hidden">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="hidden md:block"
+                >
                   <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                    src={featuredItems[currentSlide].image}
+                    alt={featuredItems[currentSlide].title}
+                    className="w-full h-80 object-contain drop-shadow-2xl"
                     onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/400x300?text=Flower";
+                      e.target.style.display = 'none';
                     }}
                   />
-                  <div className="absolute top-4 right-4 bg-pink-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    {Math.round(
-                      ((product.originalPrice - product.price) /
-                        product.originalPrice) *
-                        100
-                    )}
-                    % OFF
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {featuredItems.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                index === currentSlide ? "bg-white w-8" : "bg-white/50"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+        {/* Flowers Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12"
+        >
+          <div className="flex items-center gap-2 mb-6">
+            <Flower2 className="w-8 h-8 text-pink-600" />
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Flower Categories</h2>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+            {flowerCategories.map((cat) => (
+              <motion.button
+                key={cat.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleCategoryClick(cat.id)}
+                className={`group relative overflow-hidden rounded-2xl transition-all ${
+                  activeCategory === cat.id
+                    ? "ring-4 ring-pink-500 shadow-2xl"
+                    : "hover:shadow-xl"
+                }`}
+              >
+                <div className="aspect-square relative">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML += `<div class="w-full h-full bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center text-6xl">${cat.icon}</div>`;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <h3 className="font-bold text-lg mb-1">{cat.name}</h3>
+                    <p className="text-xs opacity-90">{cat.description}</p>
                   </div>
-                  <div className="absolute top-4 left-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {product.deliveryTime}
-                  </div>
-                  {product.tag && (
-                    <div className="absolute bottom-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                      {product.tag}
-                    </div>
-                  )}
                 </div>
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
 
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-xl font-bold text-gray-900 flex-1">
+        {/* Decorations Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="flex items-center gap-2 mb-6">
+            <PartyPopper className="w-8 h-8 text-purple-600" />
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Decoration Categories</h2>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+            {decorationCategories.map((cat) => (
+              <motion.button
+                key={cat.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleCategoryClick(cat.id)}
+                className={`group relative overflow-hidden rounded-2xl transition-all ${
+                  activeCategory === cat.id
+                    ? "ring-4 ring-purple-500 shadow-2xl"
+                    : "hover:shadow-xl"
+                }`}
+              >
+                <div className="aspect-square relative">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML += `<div class="w-full h-full bg-gradient-to-br from-purple-200 to-blue-200 flex items-center justify-center text-6xl">${cat.icon}</div>`;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <h3 className="font-bold text-lg mb-1">{cat.name}</h3>
+                    <p className="text-xs opacity-90">{cat.description}</p>
+                  </div>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* View All Button */}
+        {activeCategory !== "all" && (
+          <div className="flex justify-center mb-8">
+            <button
+              onClick={() => handleCategoryClick("all")}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-full font-semibold hover:from-pink-600 hover:to-purple-600 transition-all shadow-lg"
+            >
+              View All Products
+            </button>
+          </div>
+        )}
+
+        {/* Products Grid */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mb-12"
+        >
+          <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+            {getCategoryName()}
+            <span className="text-gray-500 text-lg ml-2">({filteredProducts.length} items)</span>
+          </h3>
+          
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {filteredProducts.map((product) => (
+                <motion.div
+                  key={product.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  whileHover={{ y: -5 }}
+                  onClick={() => setSelectedItem(product.id)}
+                  className={`bg-white rounded-xl md:rounded-2xl shadow-lg overflow-hidden cursor-pointer transition-all ${
+                    selectedItem === product.id
+                      ? "ring-4 ring-pink-500"
+                      : "hover:shadow-2xl"
+                  }`}
+                >
+                  <div className="aspect-square overflow-hidden bg-gray-100 flex items-center justify-center p-4">
+                    <div className="text-center">
+                      <div className="text-4xl md:text-6xl mb-2">
+                        {getProductEmoji(product.category)}
+                      </div>
+                      <p className="text-xs text-gray-500 font-medium">{product.name}</p>
+                    </div>
+                  </div>
+                  <div className="p-3 md:p-4">
+                    <h4 className="font-bold text-gray-900 mb-1 text-sm md:text-base line-clamp-2">
                       {product.name}
-                    </h3>
-                  </div>
-
-                  <p className="text-sm text-gray-600 mb-3">
-                    {product.occasion}
-                  </p>
-
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <span
-                          key={i}
-                          className={`text-sm ${
-                            i < Math.floor(product.rating)
-                              ? "text-yellow-500"
-                              : "text-gray-300"
-                          }`}
-                        >
-                          ★
-                        </span>
-                      ))}
+                    </h4>
+                    <p className="text-xs text-gray-600 mb-3 line-clamp-2">{product.description}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-pink-600 font-bold text-base md:text-lg">₹{product.price}</p>
+                      {selectedItem === product.id && (
+                        <div className="w-6 h-6 md:w-8 md:h-8 bg-pink-500 rounded-full flex items-center justify-center">
+                          <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                          </svg>
+                        </div>
+                      )}
                     </div>
-                    <span className="text-sm text-gray-600">
-                      {product.rating} ({product.reviews})
-                    </span>
                   </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-gray-500 text-lg">No products available</p>
+            </div>
+          )}
+        </motion.div>
 
-                  <div className="flex items-center justify-between">
+        {/* Add to Cart Section */}
+        <AnimatePresence>
+          {selectedItem && (
+            <motion.div
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 100 }}
+              className="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-pink-500 shadow-2xl p-4 md:p-6 z-50"
+            >
+              <div className="max-w-7xl mx-auto">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 w-full md:w-auto">
+                    <div className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-3xl md:text-4xl bg-gray-100 rounded-lg">
+                      {getProductEmoji(allProducts.find(p => p.id === selectedItem)?.category || '')}
+                    </div>
                     <div>
-                      <span className="text-2xl font-bold text-pink-600">
-                        ₹{product.price}
-                      </span>
-                      <span className="text-sm text-gray-500 line-through ml-2">
-                        ₹{product.originalPrice}
-                      </span>
+                      <h3 className="font-bold text-gray-900 text-base md:text-lg">
+                        {allProducts.find(p => p.id === selectedItem)?.name}
+                      </h3>
+                      <p className="text-pink-600 font-bold text-lg md:text-xl">
+                        ₹{quantity * (allProducts.find(p => p.id === selectedItem)?.price || 0)}
+                      </p>
                     </div>
-                    <button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-2 rounded-full hover:from-pink-600 hover:to-purple-600 transition-all font-semibold">
-                      View
+                  </div>
+
+                  <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
+                    <div className="flex items-center gap-2 md:gap-3 bg-gray-100 rounded-full px-3 md:px-4 py-2">
+                      <button
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="w-7 h-7 md:w-8 md:h-8 bg-white hover:bg-gray-200 rounded-full flex items-center justify-center transition-all"
+                      >
+                        <Minus className="h-3 w-3 md:h-4 md:w-4 text-gray-600" />
+                      </button>
+                      <span className="w-8 md:w-12 text-center font-semibold text-base md:text-lg">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="w-7 h-7 md:w-8 md:h-8 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all"
+                      >
+                        <Plus className="h-3 w-3 md:h-4 md:w-4 text-white" />
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={handleAddToCart}
+                      className="flex-1 md:flex-initial bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 md:px-8 py-3 rounded-full font-semibold text-base md:text-lg hover:from-pink-600 hover:to-purple-600 transition-all flex items-center justify-center gap-2 shadow-lg"
+                    >
+                      <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
+                      Add to Cart
+                    </button>
+
+                    <button
+                      onClick={() => setSelectedItem(null)}
+                      className="text-gray-500 hover:text-gray-700 p-2"
+                    >
+                      ✕
                     </button>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-          <div className="text-center mt-12">
-            <button
-              onClick={() => navigate("/flower-products")}
-              className="bg-pink-600 text-white px-8 py-4 rounded-full hover:bg-pink-700 transition-colors text-lg font-semibold"
-            >
-              View All Flowers
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Shop by Flower Type */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="text-center bg-gradient-to-r from-pink-500 to-purple-500 rounded-2xl md:rounded-3xl p-8 md:p-12 text-white"
+        >
+          <h3 className="text-2xl md:text-3xl font-bold mb-4">
+            Need Help Choosing?
+          </h3>
+          <p className="text-lg md:text-xl mb-6 md:mb-8 text-white/90">
+            Our team is ready to assist you!
+          </p>
+          <a
+            href="https://wa.me/919591572775"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-green-500 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg hover:bg-green-600 transition-all shadow-xl"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Shop by Flower Type
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Explore our wide collection of beautiful flowers
-            </p>
-          </motion.div>
+            <Phone className="w-4 h-4 md:w-5 md:h-5" />
+            WhatsApp Us
+          </a>
+        </motion.div>
+      </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {flowerCategories.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => handleCategoryClick(category.id)}
-                className="cursor-pointer group"
-              >
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all group-hover:scale-105">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-40 object-cover"
-                    onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/200x160?text=" + category.name;
-                    }}
-                  />
-                  <div className="p-4 text-center">
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm text-gray-600">{category.count}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+      {/* Floating Cart Button */}
+      {getCartItemCount() > 0 && !selectedItem && (
+        <motion.button
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          onClick={() => navigate("/cart")}
+          className="fixed bottom-6 right-6 bg-pink-600 text-white p-4 rounded-full shadow-2xl hover:bg-pink-700 transition-all z-40"
+        >
+          <div className="relative">
+            <ShoppingCart className="w-6 h-6" />
+            <span className="absolute -top-2 -right-2 bg-white text-pink-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+              {getCartItemCount()}
+            </span>
           </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Why Choose BFS Flowers?
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Flower2,
-                title: "Fresh & Quality",
-                description: "100% fresh flowers sourced daily from the best farms",
-              },
-              {
-                icon: Truck,
-                title: "Fast Delivery",
-                description: "Same-day and express delivery across Bangalore",
-              },
-              {
-                icon: Gift,
-                title: "Custom Arrangements",
-                description: "Personalized bouquets for your special moments",
-              },
-              {
-                icon: Award,
-                title: "Trusted Service",
-                description: "5000+ happy customers and counting",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center p-6 bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl"
-              >
-                <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Service Area */}
-      <section className="py-16 px-4 bg-gradient-to-r from-pink-600 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <MapPin className="w-12 h-12 mx-auto mb-4" />
-            <h2 className="text-4xl font-bold mb-4">
-              Delivering Across Bangalore
-            </h2>
-            <p className="text-xl mb-8 opacity-90">
-              Fast and reliable flower delivery to your doorstep
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <button
-                onClick={() => navigate("/flower-products")}
-                className="bg-white text-pink-600 px-8 py-4 rounded-full hover:bg-gray-100 transition-colors text-lg font-semibold"
-              >
-                Order Now
-              </button>
-              <a
-                href="https://wa.me/919591572775"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-green-500 text-white px-8 py-4 rounded-full hover:bg-green-600 transition-colors text-lg font-semibold flex items-center gap-2"
-              >
-                <Phone className="w-5 h-5" />
-                WhatsApp Us
-              </a>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+        </motion.button>
+      )}
     </div>
   );
 };
