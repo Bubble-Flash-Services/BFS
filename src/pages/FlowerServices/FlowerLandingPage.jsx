@@ -35,6 +35,19 @@ const FlowerLandingPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // Constants
+  const PRODUCTS_SECTION_OFFSET = 650;
+
+  // Helper function to get emoji for product category
+  const getProductEmoji = (category) => {
+    if (category.includes('flower')) return '💐';
+    if (category.includes('cake')) return '🎂';
+    if (category.includes('plant')) return '🌿';
+    if (category === 'chocolates') return '🍫';
+    if (category.includes('gift')) return '🎁';
+    return '🎈';
+  };
+
   // All categories from templates
   const allCategories = [
     // Decorations from Template 2
@@ -302,12 +315,12 @@ const FlowerLandingPage = () => {
     setActiveCategory(categoryId);
     setSelectedItem(null);
     // Scroll to products section
-    window.scrollTo({ top: 650, behavior: "smooth" });
+    window.scrollTo({ top: PRODUCTS_SECTION_OFFSET, behavior: "smooth" });
   };
 
   const handleCarouselCTA = (categoryId) => {
     setActiveCategory(categoryId);
-    window.scrollTo({ top: 650, behavior: "smooth" });
+    window.scrollTo({ top: PRODUCTS_SECTION_OFFSET, behavior: "smooth" });
   };
 
   return (
@@ -364,7 +377,10 @@ const FlowerLandingPage = () => {
                     className="w-full h-80 object-contain drop-shadow-2xl"
                     onError={(e) => {
                       e.target.style.display = 'none';
-                      e.target.parentElement.innerHTML = `<div class="w-full h-80 flex items-center justify-center text-white text-2xl font-bold">${featuredItems[currentSlide].title}</div>`;
+                      const fallback = document.createElement('div');
+                      fallback.className = 'w-full h-80 flex items-center justify-center text-white text-2xl font-bold';
+                      fallback.textContent = featuredItems[currentSlide].title;
+                      e.target.parentElement.appendChild(fallback);
                     }}
                   />
                 </motion.div>
@@ -472,11 +488,7 @@ const FlowerLandingPage = () => {
                   <div className="aspect-square overflow-hidden bg-gray-100 flex items-center justify-center p-4">
                     <div className="text-center">
                       <div className="text-4xl md:text-6xl mb-2">
-                        {product.category.includes('flower') ? '💐' : 
-                         product.category.includes('cake') ? '🎂' : 
-                         product.category.includes('plant') ? '🌿' : 
-                         product.category === 'chocolates' ? '🍫' : 
-                         product.category.includes('gift') ? '🎁' : '🎈'}
+                        {getProductEmoji(product.category)}
                       </div>
                       <p className="text-xs text-gray-500 font-medium">{product.name}</p>
                     </div>
@@ -526,11 +538,7 @@ const FlowerLandingPage = () => {
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-4 w-full md:w-auto">
                     <div className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-3xl md:text-4xl bg-gray-100 rounded-lg">
-                      {allProducts.find(p => p.id === selectedItem)?.category.includes('flower') ? '💐' : 
-                       allProducts.find(p => p.id === selectedItem)?.category.includes('cake') ? '🎂' : 
-                       allProducts.find(p => p.id === selectedItem)?.category.includes('plant') ? '🌿' : 
-                       allProducts.find(p => p.id === selectedItem)?.category === 'chocolates' ? '🍫' : 
-                       allProducts.find(p => p.id === selectedItem)?.category.includes('gift') ? '🎁' : '🎈'}
+                      {getProductEmoji(allProducts.find(p => p.id === selectedItem)?.category || '')}
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900 text-base md:text-lg">
