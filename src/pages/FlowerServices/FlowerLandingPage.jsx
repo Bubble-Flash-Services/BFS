@@ -139,6 +139,7 @@ const FlowerLandingPage = () => {
         price: 799,
         category: "roses",
         description: "Classic red roses - 12 stems",
+        image: "https://via.placeholder.com/400x300?text=Red+Roses+Bouquet",
       },
       {
         id: "rose-2",
@@ -146,6 +147,7 @@ const FlowerLandingPage = () => {
         price: 899,
         category: "roses",
         description: "Soft pink roses - 12 stems",
+        image: "https://via.placeholder.com/400x300?text=Pink+Roses+Bouquet",
       },
       {
         id: "rose-3",
@@ -153,6 +155,7 @@ const FlowerLandingPage = () => {
         price: 849,
         category: "roses",
         description: "Pure white roses - 12 stems",
+        image: "https://via.placeholder.com/400x300?text=White+Roses+Bouquet",
       },
       {
         id: "rose-4",
@@ -160,6 +163,7 @@ const FlowerLandingPage = () => {
         price: 799,
         category: "roses",
         description: "Cheerful yellow roses - 12 stems",
+        image: "https://via.placeholder.com/400x300?text=Yellow+Roses+Bouquet",
       },
       {
         id: "rose-5",
@@ -167,6 +171,7 @@ const FlowerLandingPage = () => {
         price: 949,
         category: "roses",
         description: "Vibrant orange roses - 12 stems",
+        image: "https://via.placeholder.com/400x300?text=Orange+Roses+Bouquet",
       },
       {
         id: "rose-6",
@@ -174,6 +179,7 @@ const FlowerLandingPage = () => {
         price: 1499,
         category: "roses",
         description: "Luxury mixed roses - 24 stems",
+        image: "https://via.placeholder.com/400x300?text=Premium+Rose+Arrangement",
       },
     ],
     "mixed-flowers": [
@@ -183,6 +189,7 @@ const FlowerLandingPage = () => {
         price: 999,
         category: "mixed-flowers",
         description: "Colorful seasonal flowers",
+        image: "https://via.placeholder.com/400x300?text=Seasonal+Mix",
       },
       {
         id: "mixed-2",
@@ -190,6 +197,7 @@ const FlowerLandingPage = () => {
         price: 1099,
         category: "mixed-flowers",
         description: "Fresh garden flowers",
+        image: "https://via.placeholder.com/400x300?text=Garden+Fresh+Mix",
       },
       {
         id: "mixed-3",
@@ -197,6 +205,7 @@ const FlowerLandingPage = () => {
         price: 1199,
         category: "mixed-flowers",
         description: "Beautiful spring blooms",
+        image: "https://via.placeholder.com/400x300?text=Spring+Collection",
       },
       {
         id: "mixed-4",
@@ -204,6 +213,7 @@ const FlowerLandingPage = () => {
         price: 1149,
         category: "mixed-flowers",
         description: "Bright summer flowers",
+        image: "https://via.placeholder.com/400x300?text=Summer+Delight",
       },
     ],
     "premium-flowers": [
@@ -213,6 +223,7 @@ const FlowerLandingPage = () => {
         price: 1499,
         category: "premium-flowers",
         description: "Elegant orchid display",
+        image: "https://via.placeholder.com/400x300?text=Orchid+Arrangement",
       },
       {
         id: "premium-2",
@@ -220,6 +231,7 @@ const FlowerLandingPage = () => {
         price: 1399,
         category: "premium-flowers",
         description: "Premium lily bouquet",
+        image: "https://via.placeholder.com/400x300?text=Lily+Paradise",
       },
       {
         id: "premium-3",
@@ -227,6 +239,7 @@ const FlowerLandingPage = () => {
         price: 1599,
         category: "premium-flowers",
         description: "Imported tulips",
+        image: "https://via.placeholder.com/400x300?text=Tulip+Collection",
       },
       {
         id: "premium-4",
@@ -234,6 +247,7 @@ const FlowerLandingPage = () => {
         price: 1999,
         category: "premium-flowers",
         description: "Exclusive designer arrangement",
+        image: "https://via.placeholder.com/400x300?text=Designer+Bouquet",
       },
     ],
     "exotic-flowers": [
@@ -243,6 +257,7 @@ const FlowerLandingPage = () => {
         price: 1799,
         category: "exotic-flowers",
         description: "Exotic tropical flowers",
+        image: "https://via.placeholder.com/400x300?text=Bird+of+Paradise",
       },
       {
         id: "exotic-2",
@@ -250,6 +265,7 @@ const FlowerLandingPage = () => {
         price: 1699,
         category: "exotic-flowers",
         description: "Stunning anthurium display",
+        image: "https://via.placeholder.com/400x300?text=Anthurium+Arrangement",
       },
       {
         id: "exotic-3",
@@ -257,6 +273,7 @@ const FlowerLandingPage = () => {
         price: 1899,
         category: "exotic-flowers",
         description: "Unique protea flowers",
+        image: "https://via.placeholder.com/400x300?text=Protea+Collection",
       },
     ],
     "seasonal-flowers": [
@@ -266,6 +283,7 @@ const FlowerLandingPage = () => {
         price: 899,
         category: "seasonal-flowers",
         description: "Cheerful sunflowers",
+        image: "https://via.placeholder.com/400x300?text=Sunflower+Bunch",
       },
       {
         id: "seasonal-2",
@@ -273,6 +291,7 @@ const FlowerLandingPage = () => {
         price: 749,
         category: "seasonal-flowers",
         description: "Fresh daisies",
+        image: "https://via.placeholder.com/400x300?text=Daisy+Collection",
       },
       {
         id: "seasonal-3",
@@ -280,6 +299,7 @@ const FlowerLandingPage = () => {
         price: 799,
         category: "seasonal-flowers",
         description: "Colorful carnations",
+        image: "https://via.placeholder.com/400x300?text=Carnation+Mix",
       },
       {
         id: "seasonal-4",
@@ -287,6 +307,7 @@ const FlowerLandingPage = () => {
         price: 949,
         category: "seasonal-flowers",
         description: "Vibrant gerberas",
+        image: "https://via.placeholder.com/400x300?text=Gerbera+Bouquet",
       },
     ],
     "birthday-decor": [
@@ -296,6 +317,7 @@ const FlowerLandingPage = () => {
         price: 2999,
         category: "birthday-decor",
         description: "Perfect birthday decoration",
+        image: "https://via.placeholder.com/400x300?text=Classic+Birthday+Setup",
       },
       {
         id: "bday-2",
@@ -303,6 +325,7 @@ const FlowerLandingPage = () => {
         price: 3499,
         category: "birthday-decor",
         description: "Colorful kids party setup",
+        image: "https://via.placeholder.com/400x300?text=Kids+Birthday+Special",
       },
       {
         id: "bday-3",
@@ -310,6 +333,7 @@ const FlowerLandingPage = () => {
         price: 3999,
         category: "birthday-decor",
         description: "Luxury birthday decoration",
+        image: "https://via.placeholder.com/400x300?text=Premium+Birthday+Theme",
       },
       {
         id: "bday-4",
@@ -317,6 +341,7 @@ const FlowerLandingPage = () => {
         price: 3199,
         category: "birthday-decor",
         description: "Elegant adult party",
+        image: "https://via.placeholder.com/400x300?text=Adult+Birthday+Decor",
       },
     ],
     "anniversary-decor": [
@@ -326,6 +351,7 @@ const FlowerLandingPage = () => {
         price: 3799,
         category: "anniversary-decor",
         description: "Rose petals & candles",
+        image: "https://via.placeholder.com/400x300?text=Romantic+Anniversary",
       },
       {
         id: "anni-2",
@@ -333,6 +359,7 @@ const FlowerLandingPage = () => {
         price: 4899,
         category: "anniversary-decor",
         description: "Elegant gold theme",
+        image: "https://via.placeholder.com/400x300?text=Golden+Anniversary",
       },
       {
         id: "anni-3",
@@ -340,6 +367,7 @@ const FlowerLandingPage = () => {
         price: 4299,
         category: "anniversary-decor",
         description: "Luxury celebration setup",
+        image: "https://via.placeholder.com/400x300?text=Premium+Anniversary",
       },
     ],
     "baby-celebration": [
@@ -349,6 +377,7 @@ const FlowerLandingPage = () => {
         price: 3499,
         category: "baby-celebration",
         description: "Beautiful blue theme",
+        image: "https://via.placeholder.com/400x300?text=Baby+Shower+Blue",
       },
       {
         id: "baby-2",
@@ -356,6 +385,7 @@ const FlowerLandingPage = () => {
         price: 3499,
         category: "baby-celebration",
         description: "Lovely pink theme",
+        image: "https://via.placeholder.com/400x300?text=Baby+Shower+Pink",
       },
       {
         id: "baby-3",
@@ -363,6 +393,7 @@ const FlowerLandingPage = () => {
         price: 2999,
         category: "baby-celebration",
         description: "Welcome decoration",
+        image: "https://via.placeholder.com/400x300?text=Baby+Welcome+Home",
       },
       {
         id: "baby-4",
@@ -370,6 +401,7 @@ const FlowerLandingPage = () => {
         price: 3299,
         category: "baby-celebration",
         description: "Yellow & white setup",
+        image: "https://via.placeholder.com/400x300?text=Gender+Neutral+Theme",
       },
     ],
     "romantic-decor": [
@@ -379,6 +411,7 @@ const FlowerLandingPage = () => {
         price: 3999,
         category: "romantic-decor",
         description: "Perfect proposal decoration",
+        image: "https://via.placeholder.com/400x300?text=Proposal+Setup",
       },
       {
         id: "romantic-2",
@@ -386,6 +419,7 @@ const FlowerLandingPage = () => {
         price: 2999,
         category: "romantic-decor",
         description: "Romantic room setup",
+        image: "https://via.placeholder.com/400x300?text=Romantic+Room+Decor",
       },
       {
         id: "romantic-3",
@@ -393,6 +427,7 @@ const FlowerLandingPage = () => {
         price: 4999,
         category: "romantic-decor",
         description: "Luxury proposal with lights",
+        image: "https://via.placeholder.com/400x300?text=Premium+Proposal",
       },
       {
         id: "romantic-4",
@@ -400,6 +435,7 @@ const FlowerLandingPage = () => {
         price: 2499,
         category: "romantic-decor",
         description: "Beautiful surprise room",
+        image: "https://via.placeholder.com/400x300?text=Surprise+Room+Setup",
       },
     ],
     "party-decor": [
@@ -409,6 +445,7 @@ const FlowerLandingPage = () => {
         price: 2999,
         category: "party-decor",
         description: "Clean party setup",
+        image: "https://via.placeholder.com/400x300?text=Simple+Party+Hall",
       },
       {
         id: "party-2",
@@ -416,6 +453,7 @@ const FlowerLandingPage = () => {
         price: 3999,
         category: "party-decor",
         description: "Luxury party decoration",
+        image: "https://via.placeholder.com/400x300?text=Premium+Party+Theme",
       },
       {
         id: "party-3",
@@ -423,6 +461,7 @@ const FlowerLandingPage = () => {
         price: 1999,
         category: "party-decor",
         description: "Colorful balloon setup",
+        image: "https://via.placeholder.com/400x300?text=Balloon+Decoration",
       },
       {
         id: "party-4",
@@ -430,6 +469,7 @@ const FlowerLandingPage = () => {
         price: 4999,
         category: "party-decor",
         description: "Complete hall decoration",
+        image: "https://via.placeholder.com/400x300?text=Event+Hall+Decor",
       },
     ],
   };
@@ -797,8 +837,18 @@ const FlowerLandingPage = () => {
                       : "hover:shadow-2xl"
                   }`}
                 >
-                  <div className="aspect-square overflow-hidden bg-gray-100 flex items-center justify-center p-4">
-                    <div className="text-center">
+                  <div className="aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
+                    {product.image ? (
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    ) : null}
+                    <div className="text-center p-4 absolute">
                       <div className="text-4xl md:text-6xl mb-2">
                         {getProductEmoji(product.category)}
                       </div>
