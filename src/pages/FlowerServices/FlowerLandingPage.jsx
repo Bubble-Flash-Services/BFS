@@ -434,9 +434,11 @@ const FlowerLandingPage = () => {
 
   // Auto-rotate carousel
   React.useEffect(() => {
-    const timer = setInterval(nextSlide, 5000);
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % featuredItems.length);
+    }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [featuredItems.length]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
@@ -474,7 +476,7 @@ const FlowerLandingPage = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    onClick={() => window.scrollTo({ top: 600, behavior: "smooth" })}
+                    onClick={() => window.scrollTo({ top: 650, behavior: "smooth" })}
                     className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all shadow-xl"
                   >
                     {featuredItems[currentSlide].cta}
@@ -490,6 +492,9 @@ const FlowerLandingPage = () => {
                     src={featuredItems[currentSlide].image}
                     alt={featuredItems[currentSlide].title}
                     className="w-full h-80 object-contain drop-shadow-2xl"
+                    onError={(e) => {
+                      e.target.src = "/logo.png";
+                    }}
                   />
                 </motion.div>
               </div>
