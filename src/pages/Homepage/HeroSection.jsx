@@ -5,6 +5,8 @@ import {
   Phone,
   MapPin,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ArrowRight,
   Star,
   Shield,
@@ -1085,12 +1087,12 @@ export default function HeroSection() {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.4 }}
-                        onClick={() =>
-                          window.scrollTo({
-                            top: 800,
-                            behavior: "smooth",
-                          })
-                        }
+                        onClick={() => {
+                          const servicesSection = document.getElementById('services');
+                          if (servicesSection) {
+                            servicesSection.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }}
                         className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all shadow-xl"
                       >
                         Book Now
@@ -1106,9 +1108,6 @@ export default function HeroSection() {
                         src={heroSlides[heroSlide].image}
                         alt={heroSlides[heroSlide].alt}
                         className="w-full h-80 object-contain drop-shadow-2xl"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                        }}
                       />
                     </motion.div>
                   </div>
@@ -1122,7 +1121,7 @@ export default function HeroSection() {
               className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
               aria-label="Previous slide"
             >
-              <ChevronDown className="w-6 h-6 rotate-90" />
+              <ChevronLeft className="w-6 h-6" />
             </button>
             
             {/* Right Navigation Arrow */}
@@ -1131,7 +1130,7 @@ export default function HeroSection() {
               className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
               aria-label="Next slide"
             >
-              <ChevronDown className="w-6 h-6 -rotate-90" />
+              <ChevronRight className="w-6 h-6" />
             </button>
 
             {/* Carousel Navigation Dots */}
