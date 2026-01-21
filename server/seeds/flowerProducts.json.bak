@@ -4,42 +4,42 @@
       "id": "roses",
       "name": "Roses",
       "description": "Symbol of love and passion",
-      "image": "https://via.placeholder.com/400x300?text=Roses",
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400",
       "count": "50+ Options"
     },
     {
       "id": "carnations",
       "name": "Carnations",
       "description": "Elegant and long-lasting flowers",
-      "image": "https://via.placeholder.com/400x300?text=Carnations",
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=400",
       "count": "30+ Options"
     },
     {
       "id": "orchids",
       "name": "Orchids",
       "description": "Exotic and sophisticated blooms",
-      "image": "https://via.placeholder.com/400x300?text=Orchids",
+      "image": "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=400",
       "count": "25+ Options"
     },
     {
       "id": "lilies",
       "name": "Lilies",
       "description": "Pure and elegant flowers",
-      "image": "https://via.placeholder.com/400x300?text=Lilies",
+      "image": "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=400",
       "count": "35+ Options"
     },
     {
       "id": "gerberas",
       "name": "Gerberas",
       "description": "Bright and cheerful flowers",
-      "image": "https://via.placeholder.com/400x300?text=Gerberas",
+      "image": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400",
       "count": "40+ Options"
     },
     {
       "id": "mixed",
       "name": "Mixed Flowers",
       "description": "Beautiful combinations",
-      "image": "https://via.placeholder.com/400x300?text=Mixed%20Flowers",
+      "image": "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=400",
       "count": "60+ Options"
     }
   ],
@@ -109,17 +109,11 @@
       "description": "A timeless expression of love with 12 fresh red roses beautifully arranged with seasonal fillers and green leaves",
       "price": 799,
       "originalPrice": 999,
-      "image": "https://via.placeholder.com/800x600?text=Red%20Roses%20Classic",
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
       "rating": 4.8,
       "reviews": 234,
-      "occasions": [
-        "love",
-        "anniversary",
-        "valentine"
-      ],
-      "flowerTypes": [
-        "roses"
-      ],
+      "occasions": ["love", "anniversary", "valentine"],
+      "flowerTypes": ["roses"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": true,
@@ -137,17 +131,11 @@
       "description": "Stunning arrangement of 24 premium red roses with exotic fillers, perfect for expressing deep love",
       "price": 1499,
       "originalPrice": 1999,
-      "image": "https://via.placeholder.com/800x600?text=Premium%20Red%20Roses",
+      "image": "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=800",
       "rating": 4.9,
       "reviews": 456,
-      "occasions": [
-        "love",
-        "anniversary",
-        "proposal"
-      ],
-      "flowerTypes": [
-        "roses"
-      ],
+      "occasions": ["love", "anniversary", "proposal"],
+      "flowerTypes": ["roses"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": true,
@@ -165,17 +153,11 @@
       "description": "Delicate combination of 6 pink and 6 white roses with baby's breath",
       "price": 899,
       "originalPrice": 1199,
-      "image": "https://via.placeholder.com/800x600?text=Pink%20White%20Roses",
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=800",
       "rating": 4.7,
       "reviews": 189,
-      "occasions": [
-        "birthday",
-        "thank-you",
-        "appreciation"
-      ],
-      "flowerTypes": [
-        "roses"
-      ],
+      "occasions": ["birthday", "thank-you", "appreciation"],
+      "flowerTypes": ["roses"],
       "deliveryTime": "2-hours",
       "inStock": true,
       "isBestseller": false,
@@ -193,17 +175,11 @@
       "description": "Cheerful yellow roses bouquet bringing warmth and happiness",
       "price": 749,
       "originalPrice": 949,
-      "image": "https://via.placeholder.com/800x600?text=Yellow%20Roses",
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=800",
       "rating": 4.6,
       "reviews": 167,
-      "occasions": [
-        "friendship",
-        "congratulations",
-        "get-well-soon"
-      ],
-      "flowerTypes": [
-        "roses"
-      ],
+      "occasions": ["friendship", "congratulations", "get-well-soon"],
+      "flowerTypes": ["roses"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": false,
@@ -221,17 +197,11 @@
       "description": "Vibrant mix of colorful roses creating a rainbow effect",
       "price": 1099,
       "originalPrice": 1399,
-      "image": "https://via.placeholder.com/800x600?text=Mixed%20Roses",
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
       "rating": 4.8,
       "reviews": 298,
-      "occasions": [
-        "birthday",
-        "congratulations",
-        "celebration"
-      ],
-      "flowerTypes": [
-        "roses"
-      ],
+      "occasions": ["birthday", "congratulations", "celebration"],
+      "flowerTypes": ["roses"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": true,
@@ -249,17 +219,11 @@
       "description": "Beautiful arrangement of fresh red carnations symbolizing deep love",
       "price": 649,
       "originalPrice": 849,
-      "image": "https://via.placeholder.com/800x600?text=Red%20Carnations",
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=800",
       "rating": 4.5,
       "reviews": 145,
-      "occasions": [
-        "love",
-        "mother-day",
-        "appreciation"
-      ],
-      "flowerTypes": [
-        "carnations"
-      ],
+      "occasions": ["love", "mother-day", "appreciation"],
+      "flowerTypes": ["carnations"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": false,
@@ -277,17 +241,11 @@
       "description": "Soft pink carnations perfect for expressing admiration",
       "price": 699,
       "originalPrice": 899,
-      "image": "https://via.placeholder.com/800x600?text=Pink%20Carnations",
+      "image": "https://images.unsplash.com/photo-1563241424-64c2604073ee?w=800",
       "rating": 4.6,
       "reviews": 178,
-      "occasions": [
-        "birthday",
-        "mother-day",
-        "gratitude"
-      ],
-      "flowerTypes": [
-        "carnations"
-      ],
+      "occasions": ["birthday", "mother-day", "gratitude"],
+      "flowerTypes": ["carnations"],
       "deliveryTime": "4-hours",
       "inStock": true,
       "isBestseller": false,
@@ -305,17 +263,11 @@
       "description": "Elegant white orchid plant in decorative ceramic vase",
       "price": 1299,
       "originalPrice": 1699,
-      "image": "https://via.placeholder.com/800x600?text=White%20Orchids",
+      "image": "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=800",
       "rating": 4.9,
       "reviews": 312,
-      "occasions": [
-        "anniversary",
-        "congratulations",
-        "corporate"
-      ],
-      "flowerTypes": [
-        "orchids"
-      ],
+      "occasions": ["anniversary", "congratulations", "corporate"],
+      "flowerTypes": ["orchids"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": true,
@@ -333,17 +285,11 @@
       "description": "Exotic purple orchids in elegant pot arrangement",
       "price": 1399,
       "originalPrice": 1799,
-      "image": "https://via.placeholder.com/800x600?text=Purple%20Orchids",
+      "image": "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=800",
       "rating": 4.8,
       "reviews": 267,
-      "occasions": [
-        "birthday",
-        "anniversary",
-        "luxury"
-      ],
-      "flowerTypes": [
-        "orchids"
-      ],
+      "occasions": ["birthday", "anniversary", "luxury"],
+      "flowerTypes": ["orchids"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": false,
@@ -361,17 +307,11 @@
       "description": "Pure white lilies symbolizing peace and purity",
       "price": 899,
       "originalPrice": 1199,
-      "image": "https://via.placeholder.com/800x600?text=White%20Lilies",
+      "image": "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=800",
       "rating": 4.7,
       "reviews": 201,
-      "occasions": [
-        "sympathy",
-        "get-well-soon",
-        "peace"
-      ],
-      "flowerTypes": [
-        "lilies"
-      ],
+      "occasions": ["sympathy", "get-well-soon", "peace"],
+      "flowerTypes": ["lilies"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": false,
@@ -389,17 +329,11 @@
       "description": "Beautiful pink lilies with complementing green fillers",
       "price": 999,
       "originalPrice": 1299,
-      "image": "https://via.placeholder.com/800x600?text=Pink%20Lilies",
+      "image": "https://images.unsplash.com/photo-1563241412-b80d234e6f3f?w=800",
       "rating": 4.8,
       "reviews": 234,
-      "occasions": [
-        "birthday",
-        "appreciation",
-        "celebration"
-      ],
-      "flowerTypes": [
-        "lilies"
-      ],
+      "occasions": ["birthday", "appreciation", "celebration"],
+      "flowerTypes": ["lilies"],
       "deliveryTime": "2-hours",
       "inStock": true,
       "isBestseller": true,
@@ -417,17 +351,11 @@
       "description": "Cheerful mix of colorful gerberas bringing joy",
       "price": 749,
       "originalPrice": 949,
-      "image": "https://via.placeholder.com/800x600?text=Gerbera%20Mix",
+      "image": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800",
       "rating": 4.6,
       "reviews": 189,
-      "occasions": [
-        "birthday",
-        "get-well-soon",
-        "cheerful"
-      ],
-      "flowerTypes": [
-        "gerberas"
-      ],
+      "occasions": ["birthday", "get-well-soon", "cheerful"],
+      "flowerTypes": ["gerberas"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": false,
@@ -445,17 +373,11 @@
       "description": "Vibrant mix of roses, carnations, and gerberas",
       "price": 1099,
       "originalPrice": 1399,
-      "image": "https://via.placeholder.com/800x600?text=Mixed%20Celebration",
+      "image": "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=800",
       "rating": 4.8,
       "reviews": 276,
-      "occasions": [
-        "birthday",
-        "congratulations",
-        "celebration"
-      ],
-      "flowerTypes": [
-        "mixed"
-      ],
+      "occasions": ["birthday", "congratulations", "celebration"],
+      "flowerTypes": ["mixed"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": true,
@@ -473,17 +395,11 @@
       "description": "Luxurious basket arrangement with exotic flowers",
       "price": 1799,
       "originalPrice": 2299,
-      "image": "https://via.placeholder.com/800x600?text=Premium%20Basket",
+      "image": "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=800",
       "rating": 4.9,
       "reviews": 401,
-      "occasions": [
-        "corporate",
-        "grand-opening",
-        "luxury"
-      ],
-      "flowerTypes": [
-        "mixed"
-      ],
+      "occasions": ["corporate", "grand-opening", "luxury"],
+      "flowerTypes": ["mixed"],
       "deliveryTime": "4-hours",
       "inStock": true,
       "isBestseller": true,
@@ -501,17 +417,11 @@
       "description": "12 red roses with 500gm chocolate cake",
       "price": 1299,
       "originalPrice": 1699,
-      "image": "https://via.placeholder.com/800x600?text=Love%20Combo",
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
       "rating": 4.9,
       "reviews": 567,
-      "occasions": [
-        "birthday",
-        "anniversary",
-        "love"
-      ],
-      "flowerTypes": [
-        "roses"
-      ],
+      "occasions": ["birthday", "anniversary", "love"],
+      "flowerTypes": ["roses"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": true,
@@ -531,15 +441,11 @@
       "description": "Mixed flowers with 500gm cake and greeting card",
       "price": 1399,
       "originalPrice": 1799,
-      "image": "https://via.placeholder.com/800x600?text=Birthday%20Combo",
+      "image": "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=800",
       "rating": 4.8,
       "reviews": 432,
-      "occasions": [
-        "birthday"
-      ],
-      "flowerTypes": [
-        "mixed"
-      ],
+      "occasions": ["birthday"],
+      "flowerTypes": ["mixed"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": true,
@@ -559,17 +465,11 @@
       "description": "12 red roses with cute teddy bear and chocolates",
       "price": 1499,
       "originalPrice": 1899,
-      "image": "https://via.placeholder.com/800x600?text=Teddy%20Roses",
+      "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800",
       "rating": 4.8,
       "reviews": 389,
-      "occasions": [
-        "love",
-        "anniversary",
-        "valentine"
-      ],
-      "flowerTypes": [
-        "roses"
-      ],
+      "occasions": ["love", "anniversary", "valentine"],
+      "flowerTypes": ["roses"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": true,
@@ -589,17 +489,11 @@
       "description": "Spectacular arrangement of 50 premium red roses",
       "price": 2999,
       "originalPrice": 3999,
-      "image": "https://via.placeholder.com/800x600?text=Grand%2050%20Roses",
-      "rating": 5,
+      "image": "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=800",
+      "rating": 5.0,
       "reviews": 234,
-      "occasions": [
-        "proposal",
-        "grand-gesture",
-        "luxury"
-      ],
-      "flowerTypes": [
-        "roses"
-      ],
+      "occasions": ["proposal", "grand-gesture", "luxury"],
+      "flowerTypes": ["roses"],
       "deliveryTime": "4-hours",
       "inStock": true,
       "isBestseller": true,
@@ -618,17 +512,11 @@
       "description": "The ultimate expression of love with 100 premium red roses",
       "price": 4999,
       "originalPrice": 6999,
-      "image": "https://via.placeholder.com/800x600?text=100%20Roses%20Ultimate",
-      "rating": 5,
+      "image": "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=800",
+      "rating": 5.0,
       "reviews": 156,
-      "occasions": [
-        "proposal",
-        "grand-gesture",
-        "luxury"
-      ],
-      "flowerTypes": [
-        "roses"
-      ],
+      "occasions": ["proposal", "grand-gesture", "luxury"],
+      "flowerTypes": ["roses"],
       "deliveryTime": "6-hours",
       "inStock": true,
       "isBestseller": false,
@@ -647,17 +535,11 @@
       "description": "Bright sunflowers bringing warmth and positivity",
       "price": 799,
       "originalPrice": 999,
-      "image": "https://via.placeholder.com/800x600?text=Sunflowers",
+      "image": "https://images.unsplash.com/photo-1597848212624-e530854ad7f6?w=800",
       "rating": 4.7,
       "reviews": 198,
-      "occasions": [
-        "birthday",
-        "get-well-soon",
-        "cheerful"
-      ],
-      "flowerTypes": [
-        "mixed"
-      ],
+      "occasions": ["birthday", "get-well-soon", "cheerful"],
+      "flowerTypes": ["mixed"],
       "deliveryTime": "same-day",
       "inStock": true,
       "isBestseller": false,
