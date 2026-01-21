@@ -5,22 +5,16 @@ import toast from "react-hot-toast";
 import {
   Flower2,
   Heart,
-  MapPin,
   Phone,
   ShoppingCart,
   PartyPopper,
   Plus,
   Minus,
-  Star,
   ChevronLeft,
   ChevronRight,
   Sparkles,
   Gift,
   Cake,
-  Home as HomeIcon,
-  Package,
-  Users,
-  Building,
 } from "lucide-react";
 import { useAuth } from "../../components/AuthContext";
 import { useCart } from "../../components/CartContext";
@@ -40,157 +34,153 @@ const FlowerLandingPage = () => {
 
   // Helper function to get emoji for product category
   const getProductEmoji = (category) => {
-    if (category.includes('flower')) return '💐';
-    if (category.includes('cake')) return '🎂';
-    if (category.includes('plant')) return '🌿';
-    if (category === 'chocolates') return '🍫';
-    if (category.includes('gift')) return '🎁';
+    if (category.includes('rose') || category.includes('flower')) return '💐';
+    if (category.includes('birthday')) return '🎂';
+    if (category.includes('anniversary') || category.includes('romantic')) return '❤️';
+    if (category.includes('baby')) return '👶';
+    if (category.includes('party')) return '🎉';
     return '🎈';
   };
 
-  // All categories from templates
-  const allCategories = [
-    // Decorations from Template 2
-    { id: "all", name: "All Products", icon: Sparkles, type: "all" },
-    { id: "birthday-decor", name: "Birthday", icon: Cake, type: "decoration" },
-    { id: "anniversary-decor", name: "Anniversary", icon: Heart, type: "decoration" },
-    { id: "baby-shower", name: "Baby Shower", icon: Heart, type: "decoration" },
-    { id: "baby-welcome", name: "Baby Welcome", icon: Heart, type: "decoration" },
-    { id: "bachelorette", name: "Bachelorette", icon: PartyPopper, type: "decoration" },
-    { id: "canopy-decor", name: "Canopy Decor", icon: HomeIcon, type: "decoration" },
-    { id: "car-boot-decor", name: "Car Boot Decor", icon: PartyPopper, type: "decoration" },
-    { id: "ceremony-decor", name: "Ceremony Decor", icon: Sparkles, type: "decoration" },
-    { id: "corporate-events", name: "Corporate Events", icon: Building, type: "decoration" },
-    { id: "kids-special", name: "Kids Special", icon: PartyPopper, type: "decoration" },
-    { id: "proposal-decor", name: "Proposal Decor", icon: Heart, type: "decoration" },
-    { id: "room-decor", name: "Room Decor", icon: HomeIcon, type: "decoration" },
-    
-    // From Template 4
-    { id: "flowers", name: "Flowers", icon: Flower2, type: "flower" },
-    { id: "cakes", name: "Cakes", icon: Cake, type: "gift" },
-    { id: "combos", name: "Combos", icon: Gift, type: "gift" },
-    { id: "plants", name: "Plants", icon: Flower2, type: "gift" },
-    { id: "hampers", name: "Hampers", icon: Package, type: "gift" },
-    { id: "personalised", name: "Personalised", icon: Heart, type: "gift" },
-    { id: "chocolates", name: "Chocolates", icon: Gift, type: "gift" },
-    { id: "international", name: "International", icon: Sparkles, type: "gift" },
-    { id: "birthday-gifts", name: "Birthday Gifts", icon: Gift, type: "gift" },
-    { id: "anniversary-gifts", name: "Anniversary Gifts", icon: Heart, type: "gift" },
-    { id: "gifts-for-him", name: "Gifts for Him", icon: Users, type: "gift" },
-    { id: "gifts-for-her", name: "Gifts for Her", icon: Users, type: "gift" },
+  // Flower Categories (5)
+  const flowerCategories = [
+    { 
+      id: "roses", 
+      name: "Roses", 
+      icon: "🌹",
+      image: "/services/flowers/bouquet.webp",
+      description: "Fresh rose bouquets"
+    },
+    { 
+      id: "mixed-flowers", 
+      name: "Mixed Flowers", 
+      icon: "💐",
+      image: "/services/flowers/bouquet.webp",
+      description: "Colorful flower arrangements"
+    },
+    { 
+      id: "premium-flowers", 
+      name: "Premium Flowers", 
+      icon: "🌺",
+      image: "/services/flowers/bouquet.webp",
+      description: "Luxury flower collections"
+    },
+    { 
+      id: "exotic-flowers", 
+      name: "Exotic Flowers", 
+      icon: "🌸",
+      image: "/services/flowers/bouquet.webp",
+      description: "Rare and beautiful blooms"
+    },
+    { 
+      id: "seasonal-flowers", 
+      name: "Seasonal Flowers", 
+      icon: "🌻",
+      image: "/services/flowers/bouquet.webp",
+      description: "Fresh seasonal picks"
+    },
   ];
 
-  // Product data organized by category
+  // Decoration Categories (5)
+  const decorationCategories = [
+    { 
+      id: "birthday-decor", 
+      name: "Birthday", 
+      icon: "🎂",
+      image: "/services/flowers/decoration.avif",
+      description: "Birthday party decorations"
+    },
+    { 
+      id: "anniversary-decor", 
+      name: "Anniversary", 
+      icon: "❤️",
+      image: "/services/flowers/decoration.avif",
+      description: "Romantic anniversary setups"
+    },
+    { 
+      id: "baby-celebration", 
+      name: "Baby Celebration", 
+      icon: "👶",
+      image: "/services/flowers/decoration.avif",
+      description: "Baby shower & welcome"
+    },
+    { 
+      id: "romantic-decor", 
+      name: "Romantic Decor", 
+      icon: "💕",
+      image: "/services/flowers/decoration.avif",
+      description: "Romantic surprises"
+    },
+    { 
+      id: "party-decor", 
+      name: "Party Decor", 
+      icon: "🎉",
+      image: "/services/flowers/decoration.avif",
+      description: "General party themes"
+    },
+  ];
+
+  // Product data
   const productsByCategory = {
+    "roses": [
+      { id: "rose-1", name: "Red Roses Bouquet", price: 799, category: "roses", description: "Classic red roses - 12 stems" },
+      { id: "rose-2", name: "Pink Roses Bouquet", price: 899, category: "roses", description: "Soft pink roses - 12 stems" },
+      { id: "rose-3", name: "White Roses Bouquet", price: 849, category: "roses", description: "Pure white roses - 12 stems" },
+      { id: "rose-4", name: "Yellow Roses Bouquet", price: 799, category: "roses", description: "Cheerful yellow roses - 12 stems" },
+      { id: "rose-5", name: "Orange Roses Bouquet", price: 949, category: "roses", description: "Vibrant orange roses - 12 stems" },
+      { id: "rose-6", name: "Premium Rose Arrangement", price: 1499, category: "roses", description: "Luxury mixed roses - 24 stems" },
+    ],
+    "mixed-flowers": [
+      { id: "mixed-1", name: "Seasonal Mix", price: 999, category: "mixed-flowers", description: "Colorful seasonal flowers" },
+      { id: "mixed-2", name: "Garden Fresh Mix", price: 1099, category: "mixed-flowers", description: "Fresh garden flowers" },
+      { id: "mixed-3", name: "Spring Collection", price: 1199, category: "mixed-flowers", description: "Beautiful spring blooms" },
+      { id: "mixed-4", name: "Summer Delight", price: 1149, category: "mixed-flowers", description: "Bright summer flowers" },
+    ],
+    "premium-flowers": [
+      { id: "premium-1", name: "Orchid Arrangement", price: 1499, category: "premium-flowers", description: "Elegant orchid display" },
+      { id: "premium-2", name: "Lily Paradise", price: 1399, category: "premium-flowers", description: "Premium lily bouquet" },
+      { id: "premium-3", name: "Tulip Collection", price: 1599, category: "premium-flowers", description: "Imported tulips" },
+      { id: "premium-4", name: "Designer Bouquet", price: 1999, category: "premium-flowers", description: "Exclusive designer arrangement" },
+    ],
+    "exotic-flowers": [
+      { id: "exotic-1", name: "Bird of Paradise", price: 1799, category: "exotic-flowers", description: "Exotic tropical flowers" },
+      { id: "exotic-2", name: "Anthurium Arrangement", price: 1699, category: "exotic-flowers", description: "Stunning anthurium display" },
+      { id: "exotic-3", name: "Protea Collection", price: 1899, category: "exotic-flowers", description: "Unique protea flowers" },
+    ],
+    "seasonal-flowers": [
+      { id: "seasonal-1", name: "Sunflower Bunch", price: 899, category: "seasonal-flowers", description: "Cheerful sunflowers" },
+      { id: "seasonal-2", name: "Daisy Collection", price: 749, category: "seasonal-flowers", description: "Fresh daisies" },
+      { id: "seasonal-3", name: "Carnation Mix", price: 799, category: "seasonal-flowers", description: "Colorful carnations" },
+      { id: "seasonal-4", name: "Gerbera Bouquet", price: 949, category: "seasonal-flowers", description: "Vibrant gerberas" },
+    ],
     "birthday-decor": [
-      { id: "bday-1", name: "Classic Birthday Decoration", price: 2999, category: "birthday-decor", description: "Perfect birthday setup with balloons" },
-      { id: "bday-2", name: "Premium Birthday Theme", price: 3999, category: "birthday-decor", description: "Luxury birthday decoration" },
-      { id: "bday-3", name: "Kids Birthday Special", price: 3499, category: "birthday-decor", description: "Colorful kids birthday setup" },
-      { id: "bday-4", name: "Adult Birthday Decor", price: 3199, category: "birthday-decor", description: "Elegant adult birthday theme" },
+      { id: "bday-1", name: "Classic Birthday Setup", price: 2999, category: "birthday-decor", description: "Perfect birthday decoration" },
+      { id: "bday-2", name: "Kids Birthday Special", price: 3499, category: "birthday-decor", description: "Colorful kids party setup" },
+      { id: "bday-3", name: "Premium Birthday Theme", price: 3999, category: "birthday-decor", description: "Luxury birthday decoration" },
+      { id: "bday-4", name: "Adult Birthday Decor", price: 3199, category: "birthday-decor", description: "Elegant adult party" },
     ],
     "anniversary-decor": [
-      { id: "anni-1", name: "Romantic Anniversary Setup", price: 3799, category: "anniversary-decor", description: "Romantic anniversary decoration with roses and candles" },
-      { id: "anni-2", name: "Premium Anniversary Theme", price: 4299, category: "anniversary-decor", description: "Luxury anniversary celebration" },
-      { id: "anni-3", name: "Golden Anniversary Decor", price: 4899, category: "anniversary-decor", description: "Elegant gold themed setup" },
+      { id: "anni-1", name: "Romantic Anniversary", price: 3799, category: "anniversary-decor", description: "Rose petals & candles" },
+      { id: "anni-2", name: "Golden Anniversary", price: 4899, category: "anniversary-decor", description: "Elegant gold theme" },
+      { id: "anni-3", name: "Premium Anniversary", price: 4299, category: "anniversary-decor", description: "Luxury celebration setup" },
     ],
-    "baby-shower": [
-      { id: "baby-shower-1", name: "Baby Shower Blue Theme", price: 3499, category: "baby-shower", description: "Beautiful blue baby shower decoration" },
-      { id: "baby-shower-2", name: "Baby Shower Pink Theme", price: 3499, category: "baby-shower", description: "Lovely pink baby shower setup" },
-      { id: "baby-shower-3", name: "Gender Neutral Baby Shower", price: 3299, category: "baby-shower", description: "Yellow and white theme" },
+    "baby-celebration": [
+      { id: "baby-1", name: "Baby Shower Blue", price: 3499, category: "baby-celebration", description: "Beautiful blue theme" },
+      { id: "baby-2", name: "Baby Shower Pink", price: 3499, category: "baby-celebration", description: "Lovely pink theme" },
+      { id: "baby-3", name: "Baby Welcome Home", price: 2999, category: "baby-celebration", description: "Welcome decoration" },
+      { id: "baby-4", name: "Gender Neutral Theme", price: 3299, category: "baby-celebration", description: "Yellow & white setup" },
     ],
-    "baby-welcome": [
-      { id: "baby-welcome-1", name: "Baby Welcome Home Decor", price: 2999, category: "baby-welcome", description: "Welcome home decoration for newborn" },
-      { id: "baby-welcome-2", name: "Premium Baby Welcome", price: 3499, category: "baby-welcome", description: "Luxury welcome setup" },
+    "romantic-decor": [
+      { id: "romantic-1", name: "Proposal Setup", price: 3999, category: "romantic-decor", description: "Perfect proposal decoration" },
+      { id: "romantic-2", name: "Romantic Room Decor", price: 2999, category: "romantic-decor", description: "Romantic room setup" },
+      { id: "romantic-3", name: "Premium Proposal", price: 4999, category: "romantic-decor", description: "Luxury proposal with lights" },
+      { id: "romantic-4", name: "Surprise Room Setup", price: 2499, category: "romantic-decor", description: "Beautiful surprise room" },
     ],
-    "bachelorette": [
-      { id: "bach-1", name: "Bachelorette Party Decor", price: 3999, category: "bachelorette", description: "Fun bachelorette party setup" },
-      { id: "bach-2", name: "Premium Bachelorette Theme", price: 4499, category: "bachelorette", description: "Luxury bachelorette decoration" },
-    ],
-    "canopy-decor": [
-      { id: "canopy-1", name: "Elegant Canopy Setup", price: 4299, category: "canopy-decor", description: "Beautiful canopy decoration" },
-      { id: "canopy-2", name: "Premium Canopy Decor", price: 4899, category: "canopy-decor", description: "Luxury canopy with drapes" },
-    ],
-    "car-boot-decor": [
-      { id: "car-1", name: "Car Boot Surprise Decor", price: 1999, category: "car-boot-decor", description: "Perfect car boot decoration" },
-      { id: "car-2", name: "Premium Car Boot Setup", price: 2499, category: "car-boot-decor", description: "Luxury car boot surprise" },
-    ],
-    "ceremony-decor": [
-      { id: "ceremony-1", name: "Ceremony Hall Decoration", price: 4999, category: "ceremony-decor", description: "Grand ceremony decoration" },
-      { id: "ceremony-2", name: "Premium Ceremony Setup", price: 5999, category: "ceremony-decor", description: "Luxury ceremony theme" },
-    ],
-    "corporate-events": [
-      { id: "corp-1", name: "Corporate Event Decor", price: 5999, category: "corporate-events", description: "Professional corporate setup" },
-      { id: "corp-2", name: "Premium Corporate Theme", price: 7999, category: "corporate-events", description: "Luxury corporate decoration" },
-    ],
-    "kids-special": [
-      { id: "kids-1", name: "Cartoon Theme Decor", price: 3499, category: "kids-special", description: "Popular cartoon characters theme" },
-      { id: "kids-2", name: "Superhero Theme", price: 3999, category: "kids-special", description: "Superhero party decoration" },
-      { id: "kids-3", name: "Princess Theme", price: 3799, category: "kids-special", description: "Magical princess decoration" },
-    ],
-    "proposal-decor": [
-      { id: "prop-1", name: "Romantic Proposal Setup", price: 3999, category: "proposal-decor", description: "Perfect proposal decoration" },
-      { id: "prop-2", name: "Premium Proposal Theme", price: 4999, category: "proposal-decor", description: "Luxury proposal setup with lights" },
-    ],
-    "room-decor": [
-      { id: "room-1", name: "Surprise Room Decoration", price: 2499, category: "room-decor", description: "Beautiful room decoration" },
-      { id: "room-2", name: "Romantic Room Setup", price: 2999, category: "room-decor", description: "Romantic room decoration" },
-      { id: "room-3", name: "Premium Room Decor", price: 3499, category: "room-decor", description: "Luxury room decoration" },
-    ],
-    "flowers": [
-      { id: "flower-1", name: "Red Roses Bouquet", price: 799, category: "flowers", description: "Fresh red roses in elegant wrapping" },
-      { id: "flower-2", name: "Mixed Flowers Bouquet", price: 999, category: "flowers", description: "Colorful mix of fresh seasonal flowers" },
-      { id: "flower-3", name: "Pink Roses Bouquet", price: 899, category: "flowers", description: "Soft pink roses with beautiful packaging" },
-      { id: "flower-4", name: "White Lilies", price: 949, category: "flowers", description: "Elegant white lilies" },
-      { id: "flower-5", name: "Orchids Arrangement", price: 1299, category: "flowers", description: "Exotic orchids arrangement" },
-      { id: "flower-6", name: "Sunflowers Bouquet", price: 849, category: "flowers", description: "Cheerful sunflowers" },
-    ],
-    "cakes": [
-      { id: "cake-1", name: "Chocolate Cake", price: 699, category: "cakes", description: "Delicious chocolate cake" },
-      { id: "cake-2", name: "Vanilla Cake", price: 599, category: "cakes", description: "Classic vanilla cake" },
-      { id: "cake-3", name: "Black Forest Cake", price: 799, category: "cakes", description: "Premium black forest" },
-      { id: "cake-4", name: "Fruit Cake", price: 749, category: "cakes", description: "Fresh fruit cake" },
-    ],
-    "combos": [
-      { id: "combo-1", name: "Flowers with Cake", price: 1499, category: "combos", description: "Beautiful flowers with delicious cake" },
-      { id: "combo-2", name: "Flowers with Chocolates", price: 1299, category: "combos", description: "Fresh flowers with premium chocolates" },
-      { id: "combo-3", name: "Flowers & Teddy Bear", price: 1199, category: "combos", description: "Lovely flowers with cute teddy bear" },
-    ],
-    "plants": [
-      { id: "plant-1", name: "Indoor Plant", price: 499, category: "plants", description: "Beautiful indoor plant" },
-      { id: "plant-2", name: "Lucky Bamboo", price: 399, category: "plants", description: "Lucky bamboo plant" },
-      { id: "plant-3", name: "Money Plant", price: 349, category: "plants", description: "Money plant in pot" },
-    ],
-    "hampers": [
-      { id: "hamper-1", name: "Premium Gift Hamper", price: 1999, category: "hampers", description: "Complete gift hamper" },
-      { id: "hamper-2", name: "Chocolate Hamper", price: 1499, category: "hampers", description: "Assorted chocolates hamper" },
-    ],
-    "personalised": [
-      { id: "pers-1", name: "Personalised Photo Frame", price: 799, category: "personalised", description: "Custom photo frame" },
-      { id: "pers-2", name: "Personalised Mug", price: 499, category: "personalised", description: "Custom printed mug" },
-    ],
-    "chocolates": [
-      { id: "choc-1", name: "Ferrero Rocher Box", price: 699, category: "chocolates", description: "Premium chocolates" },
-      { id: "choc-2", name: "Assorted Chocolates", price: 599, category: "chocolates", description: "Mixed chocolates box" },
-    ],
-    "international": [
-      { id: "intl-1", name: "International Flowers", price: 1999, category: "international", description: "Exotic international flowers" },
-      { id: "intl-2", name: "International Gifts", price: 2499, category: "international", description: "Premium international gifts" },
-    ],
-    "birthday-gifts": [
-      { id: "bgift-1", name: "Birthday Special Gift", price: 1299, category: "birthday-gifts", description: "Perfect birthday gift" },
-      { id: "bgift-2", name: "Birthday Hamper", price: 1599, category: "birthday-gifts", description: "Complete birthday hamper" },
-    ],
-    "anniversary-gifts": [
-      { id: "agift-1", name: "Anniversary Special", price: 1499, category: "anniversary-gifts", description: "Perfect anniversary gift" },
-      { id: "agift-2", name: "Anniversary Combo", price: 1799, category: "anniversary-gifts", description: "Anniversary gift combo" },
-    ],
-    "gifts-for-him": [
-      { id: "him-1", name: "Grooming Kit", price: 1299, category: "gifts-for-him", description: "Premium grooming kit" },
-      { id: "him-2", name: "Wallet & Belt Set", price: 1499, category: "gifts-for-him", description: "Leather wallet and belt" },
-    ],
-    "gifts-for-her": [
-      { id: "her-1", name: "Jewellery Set", price: 1999, category: "gifts-for-her", description: "Beautiful jewellery set" },
-      { id: "her-2", name: "Perfume Gift Set", price: 1799, category: "gifts-for-her", description: "Premium perfume set" },
+    "party-decor": [
+      { id: "party-1", name: "Simple Party Hall", price: 2999, category: "party-decor", description: "Clean party setup" },
+      { id: "party-2", name: "Premium Party Theme", price: 3999, category: "party-decor", description: "Luxury party decoration" },
+      { id: "party-3", name: "Balloon Decoration", price: 1999, category: "party-decor", description: "Colorful balloon setup" },
+      { id: "party-4", name: "Event Hall Decor", price: 4999, category: "party-decor", description: "Complete hall decoration" },
     ],
   };
 
@@ -200,28 +190,25 @@ const FlowerLandingPage = () => {
   // Featured carousel items
   const featuredItems = [
     {
-      title: "Premium Flower Collection",
-      subtitle: "Handpicked fresh flowers delivered to your door",
+      title: "Beautiful Flower Bouquets",
+      subtitle: "Fresh flowers delivered to your door",
       image: "/services/flowers/bouquet.webp",
-      cta: "Shop Flowers",
       gradient: "from-pink-500 to-rose-500",
-      categoryId: "flowers"
+      categoryId: "roses"
     },
     {
-      title: "Balloon Decorations",
+      title: "Stunning Decorations",
       subtitle: "Make every celebration memorable",
       image: "/services/flowers/decoration.avif",
-      cta: "View Decorations",
       gradient: "from-purple-500 to-indigo-500",
       categoryId: "birthday-decor"
     },
     {
       title: "Gift Combos",
-      subtitle: "Perfect gifts for your loved ones",
+      subtitle: "Perfect gifts for loved ones",
       image: "/services/flowers/gift-box.png",
-      cta: "Explore Gifts",
       gradient: "from-amber-500 to-orange-500",
-      categoryId: "combos"
+      categoryId: "roses"
     }
   ];
 
@@ -314,13 +301,16 @@ const FlowerLandingPage = () => {
   const handleCategoryClick = (categoryId) => {
     setActiveCategory(categoryId);
     setSelectedItem(null);
-    // Scroll to products section
     window.scrollTo({ top: PRODUCTS_SECTION_OFFSET, behavior: "smooth" });
   };
 
-  const handleCarouselCTA = (categoryId) => {
-    setActiveCategory(categoryId);
-    window.scrollTo({ top: PRODUCTS_SECTION_OFFSET, behavior: "smooth" });
+  const getCategoryName = () => {
+    if (activeCategory === "all") return "All Products";
+    const flowerCat = flowerCategories.find(c => c.id === activeCategory);
+    if (flowerCat) return flowerCat.name;
+    const decorCat = decorationCategories.find(c => c.id === activeCategory);
+    if (decorCat) return decorCat.name;
+    return "Products";
   };
 
   return (
@@ -359,10 +349,10 @@ const FlowerLandingPage = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    onClick={() => handleCarouselCTA(featuredItems[currentSlide].categoryId)}
+                    onClick={() => window.scrollTo({ top: PRODUCTS_SECTION_OFFSET, behavior: "smooth" })}
                     className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all shadow-xl"
                   >
-                    {featuredItems[currentSlide].cta}
+                    Shop Now
                   </motion.button>
                 </div>
                 <motion.div
@@ -377,10 +367,6 @@ const FlowerLandingPage = () => {
                     className="w-full h-80 object-contain drop-shadow-2xl"
                     onError={(e) => {
                       e.target.style.display = 'none';
-                      const fallback = document.createElement('div');
-                      fallback.className = 'w-full h-80 flex items-center justify-center text-white text-2xl font-bold';
-                      fallback.textContent = featuredItems[currentSlide].title;
-                      e.target.parentElement.appendChild(fallback);
                     }}
                   />
                 </motion.div>
@@ -389,7 +375,6 @@ const FlowerLandingPage = () => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Carousel Controls */}
         <button
           onClick={prevSlide}
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
@@ -403,7 +388,6 @@ const FlowerLandingPage = () => {
           <ChevronRight className="w-6 h-6" />
         </button>
 
-        {/* Carousel Indicators */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {featuredItems.map((_, index) => (
             <button
@@ -418,53 +402,118 @@ const FlowerLandingPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        {/* Categories Section */}
+        {/* Flowers Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 md:mb-12"
+          className="mb-12"
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 text-center">
-            Explore Our Categories
-          </h2>
+          <div className="flex items-center gap-2 mb-6">
+            <Flower2 className="w-8 h-8 text-pink-600" />
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Flower Categories</h2>
+          </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-            {allCategories.map((cat) => {
-              const Icon = cat.icon;
-              const productCount = cat.id === "all" ? allProducts.length : (productsByCategory[cat.id]?.length || 0);
-              
-              return (
-                <motion.button
-                  key={cat.id}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleCategoryClick(cat.id)}
-                  className={`p-4 md:p-6 rounded-xl md:rounded-2xl border-2 transition-all text-center ${
-                    activeCategory === cat.id
-                      ? "border-pink-500 bg-pink-50 shadow-lg"
-                      : "border-gray-200 bg-white hover:border-pink-300"
-                  }`}
-                >
-                  <Icon className={`w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 md:mb-3 ${
-                    activeCategory === cat.id ? "text-pink-600" : "text-gray-600"
-                  }`} />
-                  <h3 className="font-semibold text-gray-900 text-xs md:text-sm">{cat.name}</h3>
-                  <p className="text-xs text-gray-500 mt-1">{productCount} items</p>
-                </motion.button>
-              );
-            })}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+            {flowerCategories.map((cat) => (
+              <motion.button
+                key={cat.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleCategoryClick(cat.id)}
+                className={`group relative overflow-hidden rounded-2xl transition-all ${
+                  activeCategory === cat.id
+                    ? "ring-4 ring-pink-500 shadow-2xl"
+                    : "hover:shadow-xl"
+                }`}
+              >
+                <div className="aspect-square relative">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML += `<div class="w-full h-full bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center text-6xl">${cat.icon}</div>`;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <h3 className="font-bold text-lg mb-1">{cat.name}</h3>
+                    <p className="text-xs opacity-90">{cat.description}</p>
+                  </div>
+                </div>
+              </motion.button>
+            ))}
           </div>
         </motion.div>
+
+        {/* Decorations Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="flex items-center gap-2 mb-6">
+            <PartyPopper className="w-8 h-8 text-purple-600" />
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Decoration Categories</h2>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+            {decorationCategories.map((cat) => (
+              <motion.button
+                key={cat.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleCategoryClick(cat.id)}
+                className={`group relative overflow-hidden rounded-2xl transition-all ${
+                  activeCategory === cat.id
+                    ? "ring-4 ring-purple-500 shadow-2xl"
+                    : "hover:shadow-xl"
+                }`}
+              >
+                <div className="aspect-square relative">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML += `<div class="w-full h-full bg-gradient-to-br from-purple-200 to-blue-200 flex items-center justify-center text-6xl">${cat.icon}</div>`;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <h3 className="font-bold text-lg mb-1">{cat.name}</h3>
+                    <p className="text-xs opacity-90">{cat.description}</p>
+                  </div>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* View All Button */}
+        {activeCategory !== "all" && (
+          <div className="flex justify-center mb-8">
+            <button
+              onClick={() => handleCategoryClick("all")}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-full font-semibold hover:from-pink-600 hover:to-purple-600 transition-all shadow-lg"
+            >
+              View All Products
+            </button>
+          </div>
+        )}
 
         {/* Products Grid */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.4 }}
           className="mb-12"
         >
           <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-            {activeCategory === "all" ? "All Products" : allCategories.find(c => c.id === activeCategory)?.name || "Products"}
+            {getCategoryName()}
             <span className="text-gray-500 text-lg ml-2">({filteredProducts.length} items)</span>
           </h3>
           
@@ -514,13 +563,7 @@ const FlowerLandingPage = () => {
             </div>
           ) : (
             <div className="text-center py-16">
-              <p className="text-gray-500 text-lg">No products available in this category</p>
-              <button
-                onClick={() => handleCategoryClick("all")}
-                className="mt-4 text-pink-600 hover:text-pink-700 font-semibold"
-              >
-                View All Products
-              </button>
+              <p className="text-gray-500 text-lg">No products available</p>
             </div>
           )}
         </motion.div>
@@ -594,32 +637,24 @@ const FlowerLandingPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
+          transition={{ delay: 0.6 }}
           className="text-center bg-gradient-to-r from-pink-500 to-purple-500 rounded-2xl md:rounded-3xl p-8 md:p-12 text-white"
         >
           <h3 className="text-2xl md:text-3xl font-bold mb-4">
-            Need Help Choosing the Perfect Gift?
+            Need Help Choosing?
           </h3>
           <p className="text-lg md:text-xl mb-6 md:mb-8 text-white/90">
             Our team is ready to assist you!
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="bg-white text-pink-600 px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg hover:bg-gray-100 transition-all shadow-xl"
-            >
-              Browse More
-            </button>
-            <a
-              href="https://wa.me/919591572775"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-green-500 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg hover:bg-green-600 transition-all flex items-center justify-center gap-2 shadow-xl"
-            >
-              <Phone className="w-4 h-4 md:w-5 md:h-5" />
-              WhatsApp Us
-            </a>
-          </div>
+          <a
+            href="https://wa.me/919591572775"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-green-500 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg hover:bg-green-600 transition-all shadow-xl"
+          >
+            <Phone className="w-4 h-4 md:w-5 md:h-5" />
+            WhatsApp Us
+          </a>
         </motion.div>
       </div>
 
