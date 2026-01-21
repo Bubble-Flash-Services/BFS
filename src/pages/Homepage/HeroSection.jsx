@@ -418,10 +418,21 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, []);
 
+  // Navigation functions for hero carousel
+  const nextHeroSlide = () => {
+    setHeroSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevHeroSlide = () => {
+    setHeroSlide(
+      (prev) => (prev - 1 + heroSlides.length) % heroSlides.length,
+    );
+  };
+
   // Hero carousel auto-slide
   useEffect(() => {
     const interval = setInterval(() => {
-      setHeroSlide((prev) => (prev + 1) % 3); // 3 hero slides
+      setHeroSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -429,19 +440,35 @@ export default function HeroSection() {
   const categories = ["Car Wash", "Bike Wash", "Laundry Service", "Helmet"];
   const locations = [fullAddress || "", ""];
 
-  // Hero carousel slides data - now with images
+  // Hero carousel slides data - now with images, titles, subtitles, and gradients
   const heroSlides = [
     {
-      image: "/home/carousel 1.png",
-      alt: "Bubble Flash Services - Professional Car Wash",
+      title: "Premium Car Wash Services",
+      subtitle: "Doorstep cleaning with eco-friendly products",
+      image: "/car/home.png",
+      gradient: "from-blue-500 to-cyan-500",
+      alt: "Professional Car Wash Service",
     },
     {
-      image: "/home/carousel 2.png",
-      alt: "BFS doorstep vehicle cleaning service",
+      title: "Expert Bike Wash",
+      subtitle: "Keep your ride sparkling clean",
+      image: "/bike/home.png",
+      gradient: "from-green-500 to-emerald-500",
+      alt: "Professional Bike Wash Service",
     },
     {
-      image: "/home/carousel 3.png",
-      alt: "BFS eco-friendly vehicle cleaning products",
+      title: "Home Cleaning Solutions",
+      subtitle: "Fresh and clean living spaces",
+      image: "/clean-home.jpg",
+      gradient: "from-purple-500 to-pink-500",
+      alt: "Home Cleaning Service",
+    },
+    {
+      title: "Beautiful Decorations",
+      subtitle: "Make every celebration memorable",
+      image: "/services/flowers/decoration.avif",
+      gradient: "from-amber-500 to-orange-500",
+      alt: "Event Decoration Service",
     },
   ];
 
@@ -1022,10 +1049,10 @@ export default function HeroSection() {
           />
         </div>
 
-        {/* Full-width carousel container - no padding or max-width constraints */}
-        <div className="w-full">
-          {/* Hero Content - Image Carousel */}
-          <div className="text-white w-full relative">
+        {/* Full-width carousel container - Enhanced design similar to flowers page */}
+        <div className="w-full relative">
+          {/* Hero Content - Enhanced Carousel */}
+          <div className="w-full relative h-[400px] md:h-[500px] overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={heroSlide}
@@ -1033,30 +1060,90 @@ export default function HeroSection() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.5 }}
-                className="w-full"
+                className={`absolute inset-0 bg-gradient-to-r ${heroSlides[heroSlide].gradient}`}
               >
-                {/* Hero Image - Full width with complete image display */}
-                <motion.img
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  src={heroSlides[heroSlide].image}
-                  alt={heroSlides[heroSlide].alt}
-                  className="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] "
-                />
+                <div className="max-w-7xl mx-auto px-4 h-full flex items-center">
+                  <div className="grid md:grid-cols-2 gap-8 items-center w-full">
+                    <div className="text-white">
+                      <motion.h1
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-4xl md:text-6xl font-bold mb-4"
+                      >
+                        {heroSlides[heroSlide].title}
+                      </motion.h1>
+                      <motion.p
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="text-xl md:text-2xl mb-8 text-white/90"
+                      >
+                        {heroSlides[heroSlide].subtitle}
+                      </motion.p>
+                      <motion.button
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        onClick={() =>
+                          window.scrollTo({
+                            top: 800,
+                            behavior: "smooth",
+                          })
+                        }
+                        className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all shadow-xl"
+                      >
+                        Book Now
+                      </motion.button>
+                    </div>
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="hidden md:block"
+                    >
+                      <img
+                        src={heroSlides[heroSlide].image}
+                        alt={heroSlides[heroSlide].alt}
+                        className="w-full h-80 object-contain drop-shadow-2xl"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    </motion.div>
+                  </div>
+                </div>
               </motion.div>
             </AnimatePresence>
 
+            {/* Left Navigation Arrow */}
+            <button
+              onClick={prevHeroSlide}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+              aria-label="Previous slide"
+            >
+              <ChevronDown className="w-6 h-6 rotate-90" />
+            </button>
+            
+            {/* Right Navigation Arrow */}
+            <button
+              onClick={nextHeroSlide}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+              aria-label="Next slide"
+            >
+              <ChevronDown className="w-6 h-6 -rotate-90" />
+            </button>
+
             {/* Carousel Navigation Dots */}
-            <div className="flex justify-center gap-2 mt-6">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
               {heroSlides.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setHeroSlide(idx)}
                   className={`transition-all duration-300 rounded-full ${
                     heroSlide === idx
-                      ? "w-8 h-2 bg-[#FFB400]"
-                      : "w-2 h-2 bg-white bg-opacity-40 hover:bg-opacity-60"
+                      ? "w-8 h-3 bg-white"
+                      : "w-3 h-3 bg-white/50 hover:bg-white/70"
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
