@@ -127,7 +127,7 @@ router.get(
     let redirectUrl;
     if (isAndroid) {
       console.log('🤖 Android device detected, using custom scheme for direct app redirect');
-      redirectUrl = `com.bubbleflashservices.bfsapp://google-success?token=${token}&name=${encodeURIComponent(
+      redirectUrl = `com.bubbleflashservices.bfsapp://google-success?token=${encodeURIComponent(token)}&name=${encodeURIComponent(
         user.name
       )}&email=${encodeURIComponent(user.email)}&image=${encodeURIComponent(
         user.image || ""
@@ -136,7 +136,7 @@ router.get(
       // For non-Android devices, use HTTPS URL
       redirectUrl = `${
         process.env.BASE_URL
-      }/google-success?token=${token}&name=${encodeURIComponent(
+      }/google-success?token=${encodeURIComponent(token)}&name=${encodeURIComponent(
         user.name
       )}&email=${encodeURIComponent(user.email)}&image=${encodeURIComponent(
         user.image || ""

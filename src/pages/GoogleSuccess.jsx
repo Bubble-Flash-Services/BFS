@@ -45,7 +45,7 @@ export default function GoogleSuccess() {
             
             // Allow Google users to proceed without phone/address
             // They can provide these details later when needed (e.g., placing an order)
-            updateAuth(token, fullProfile);
+            await updateAuth(token, fullProfile);
           } else {
             console.log('⚠️ Profile fetch did not return data; proceeding to home');
           }

@@ -18,10 +18,27 @@ This document explains the setup required to enable automatic app opening for OA
 - Detects Android devices via User-Agent
 - Redirects Android users directly to custom scheme (`com.bubbleflashservices.bfsapp://`)
 - This bypasses the Chrome "Open with..." dialog
+- **Note**: Token is passed as URL parameter for OAuth callback compatibility. The token is immediately stored in secure native storage (Capacitor Preferences) upon app launch, minimizing exposure time. For production, consider implementing a one-time-use authorization code flow with token exchange on the backend.
 
 ### 4. **Digital Asset Links** (`public/.well-known/assetlinks.json`)
 - Created template for Android App Links verification
 - **REQUIRES CONFIGURATION** (see below)
+
+## Security Considerations
+
+The current implementation passes the JWT token as a URL parameter in the OAuth redirect. While this is a common pattern for OAuth callbacks:
+
+**Mitigations in place:**
+- Token is immediately stored in secure Capacitor Preferences upon app launch
+- Token has a 30-day expiration configured in JWT generation
+- Custom scheme URLs (`com.bubbleflashservices.bfsapp://`) are not typically logged by browsers
+- Token is URL-encoded to prevent character issues
+
+**Future improvements:**
+- Implement authorization code flow with backend token exchange
+- Use one-time-use authorization codes instead of tokens
+- Add token binding to device fingerprint
+- Implement refresh token rotation
 
 ## Required Configuration Steps
 
@@ -44,11 +61,23 @@ keytool -list -v -keystore path/to/your/keystore.jks -alias bfsapp-key
 
 This will show you the certificate fingerprint. Copy the SHA-256 value.
 
+**Important Note on Fingerprint Format:**
+- The keytool output format can vary by version (may include colons, spaces, or no separators)
+- Required format for assetlinks.json: **colon-separated uppercase hexadecimal**
+- Example output from keytool: `14 6D E9 83 C5 73...` (space-separated)
+- Converted format needed: `14:6D:E9:83:C5:73:...` (colon-separated)
+
+**Quick conversion command (Linux/Mac):**
+```bash
+# If your fingerprint has spaces, replace them with colons:
+echo "14 6D E9 83 C5 73 06 50 D8 EE B9 95 2F 34 FC 64 16 A0 83 42 E6 1D BE A8 8A 04 96 B2 3F CF 44 E5" | sed 's/ /:/g'
+```
+
 ### Step 2: Update assetlinks.json
 
 1. Open `public/.well-known/assetlinks.json`
 2. Replace `REPLACE_WITH_YOUR_RELEASE_CERTIFICATE_SHA256_FINGERPRINT` with your actual SHA-256 fingerprint
-3. Format: `"AB:CD:EF:12:34:56:..."`  (colon-separated uppercase hex)
+3. **Required format**: `"AB:CD:EF:12:34:56:..."`  (colon-separated uppercase hex, 64 hex characters = 32 bytes)
 
 Example:
 ```json
@@ -73,9 +102,47 @@ The file **MUST** be accessible at:
 https://bubbleflashservices.in/.well-known/assetlinks.json
 ```
 
-- Ensure your web server serves this file with correct MIME type: `application/json`
-- The file must be publicly accessible (no authentication required)
-- HTTPS is required (not HTTP)
+#### For Vite/React Apps (This Project)
+
+This project uses Vite as the build tool. The `public/` directory contents are automatically copied to the root of the `dist/` directory during build. Since we've placed the file at `public/.well-known/assetlinks.json`, it will be served at `/.well-known/assetlinks.json` after deployment.
+
+**Build and Deploy Process:**
+1. Run `npm run build` - This creates the `dist/` directory with the `.well-known/` folder included
+2. Deploy the `dist/` directory to your web server
+3. The file will be accessible at the correct URL automatically
+
+#### Server Configuration
+
+Ensure your web server is configured to:
+- Serve the file with correct MIME type: `application/json`
+- Allow public access (no authentication required)
+- Use HTTPS (not HTTP)
+
+**For Nginx:**
+```nginx
+location /.well-known/ {
+    add_header Content-Type application/json;
+    add_header Access-Control-Allow-Origin *;
+}
+```
+
+**For Apache (`.htaccess`):**
+```apache
+<FilesMatch "assetlinks\.json$">
+    Header set Content-Type "application/json"
+    Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
+```
+
+**Verification After Deployment:**
+```bash
+# Check if file is accessible
+curl -I https://bubbleflashservices.in/.well-known/assetlinks.json
+
+# Should return:
+# HTTP/2 200
+# content-type: application/json
+```
 
 ### Step 4: Verify Configuration
 
