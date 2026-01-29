@@ -99,11 +99,25 @@ function AppContent() {
       return;
     }
 
-    const handleAppUrlOpen = (event) => {
-      console.log('Deep link received:', event.url);
+    // Handle cold start (app opened via deep link when not running)
+    const checkInitialUrl = async () => {
+      try {
+        const result = await CapacitorApp.getLaunchUrl();
+        if (result?.url) {
+          console.log('App launched with deep link:', result.url);
+          handleDeepLink(result.url);
+        }
+      } catch (error) {
+        console.error('Error getting launch URL:', error);
+      }
+    };
+
+    // Handle deep link URL
+    const handleDeepLink = (urlString) => {
+      console.log('Deep link received:', urlString);
       
       try {
-        const url = new URL(event.url);
+        const url = new URL(urlString);
         
         // Handle both custom scheme and HTTPS URLs
         // Custom scheme: com.bubbleflashservices.bfsapp://...
@@ -114,10 +128,20 @@ function AppContent() {
         // For custom scheme URLs, the path might be in the host or pathname
         if (url.protocol === 'com.bubbleflashservices.bfsapp:') {
           // Custom scheme format: com.bubbleflashservices.bfsapp://google-success?token=...
-          path = url.host || url.pathname;
+          path = url.host || url.pathname || '';
           if (path.startsWith('//')) {
             path = path.substring(2);
           }
+        }
+        
+        // Ensure path starts with /
+        if (path && !path.startsWith('/')) {
+          path = '/' + path;
+        }
+        
+        // If no path found, default to home
+        if (!path || path === '/') {
+          path = '/';
         }
         
         // Construct the full path with query params
@@ -130,6 +154,14 @@ function AppContent() {
         console.error('Error handling deep link:', error);
       }
     };
+
+    // Handle warm start (app in background)
+    const handleAppUrlOpen = (event) => {
+      handleDeepLink(event.url);
+    };
+
+    // Check for initial URL on mount
+    checkInitialUrl();
 
     // Listen for app URL open events
     const listener = CapacitorApp.addListener('appUrlOpen', handleAppUrlOpen);
