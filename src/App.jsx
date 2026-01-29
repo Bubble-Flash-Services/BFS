@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AuthProvider, useAuth } from "./components/AuthContext";
 import { CartProvider } from "./components/CartContext";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate, useNavigate } from "react-router-dom";
+import { App as CapacitorApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import Header from "./components/Header";
 import ScrollToTop from "./components/ScrollToTop";
 import GlobalBackButton from "./components/GlobalBackButton";
@@ -86,8 +88,57 @@ import FlowerProductDetailPage from "./pages/FlowerServices/FlowerProductDetailP
 import MobileFixPage from "./pages/MobileFix/MobileFixPage";
 function AppContent() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isEmployeeRoute = location.pathname.startsWith("/employee");
+
+  // Handle deep links for OAuth callbacks (Android)
+  useEffect(() => {
+    // Only set up listener on native platforms
+    if (!Capacitor.isNativePlatform()) {
+      return;
+    }
+
+    const handleAppUrlOpen = (event) => {
+      console.log('Deep link received:', event.url);
+      
+      try {
+        const url = new URL(event.url);
+        
+        // Handle both custom scheme and HTTPS URLs
+        // Custom scheme: com.bubbleflashservices.bfsapp://...
+        // HTTPS: https://bubbleflashservices.in/google-success?...
+        let path = url.pathname;
+        let search = url.search;
+        
+        // For custom scheme URLs, the path might be in the host or pathname
+        if (url.protocol === 'com.bubbleflashservices.bfsapp:') {
+          // Custom scheme format: com.bubbleflashservices.bfsapp://google-success?token=...
+          path = url.host || url.pathname;
+          if (path.startsWith('//')) {
+            path = path.substring(2);
+          }
+        }
+        
+        // Construct the full path with query params
+        const fullPath = path + search;
+        console.log('Navigating to:', fullPath);
+        
+        // Navigate to the path within the app
+        navigate(fullPath, { replace: true });
+      } catch (error) {
+        console.error('Error handling deep link:', error);
+      }
+    };
+
+    // Listen for app URL open events
+    const listener = CapacitorApp.addListener('appUrlOpen', handleAppUrlOpen);
+
+    // Cleanup listener on unmount
+    return () => {
+      listener.remove();
+    };
+  }, [navigate]);
 
   return (
     <div>
