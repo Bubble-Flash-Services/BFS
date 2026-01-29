@@ -1,0 +1,29 @@
+{
+  "appId": "com.bubbleflashservices.bfsapp",
+  "appName": "BFSApp",
+  "webDir": "dist",
+  "server": {
+    "url": "https://my-bfs-backend.com",
+    "cleartext": true,
+    "androidScheme": "https"
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "path/to/your/keystore.jks",
+      "keystoreAlias": "bfsapp-key"
+    },
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#ffffff",
+      "showSpinner": true,
+      "androidSpinnerStyle": "large",
+      "spinnerColor": "#3880ff"
+    }
+  }
+}
