@@ -116,16 +116,35 @@ router.get(
     // Successful Google login
     const user = req.user;
     const token = generateToken(user);
-    // Redirect to frontend with token and user info as query params
-    res.redirect(
-      `${
-        process.env.BASE_URL
-      }/google-success?token=${token}&name=${encodeURIComponent(
+    
+    // Detect if request is from Android device
+    const userAgent = req.headers['user-agent'] || '';
+    const isAndroid = /android/i.test(userAgent);
+    const isChrome = /chrome/i.test(userAgent) && !/edg/i.test(userAgent);
+    
+    // If Android device, use custom scheme to open directly in app
+    // This bypasses the "Open with..." dialog in Chrome
+    let redirectUrl;
+    if (isAndroid) {
+      console.log('🤖 Android device detected, using custom scheme for direct app redirect');
+      redirectUrl = `com.bubbleflashservices.bfsapp://google-success?token=${encodeURIComponent(token)}&name=${encodeURIComponent(
         user.name
       )}&email=${encodeURIComponent(user.email)}&image=${encodeURIComponent(
         user.image || ""
-      )}`
-    );
+      )}`;
+    } else {
+      // For non-Android devices, use HTTPS URL
+      redirectUrl = `${
+        process.env.BASE_URL
+      }/google-success?token=${encodeURIComponent(token)}&name=${encodeURIComponent(
+        user.name
+      )}&email=${encodeURIComponent(user.email)}&image=${encodeURIComponent(
+        user.image || ""
+      )}`;
+    }
+    
+    console.log(`Redirecting to: ${redirectUrl.substring(0, 100)}...`);
+    res.redirect(redirectUrl);
   }
 );
 
