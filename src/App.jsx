@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AuthProvider, useAuth } from "./components/AuthContext";
 import { CartProvider } from "./components/CartContext";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate, useNavigate } from "react-router-dom";
+import { App as CapacitorApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import Header from "./components/Header";
 import ScrollToTop from "./components/ScrollToTop";
 import GlobalBackButton from "./components/GlobalBackButton";
@@ -86,8 +88,125 @@ import FlowerProductDetailPage from "./pages/FlowerServices/FlowerProductDetailP
 import MobileFixPage from "./pages/MobileFix/MobileFixPage";
 function AppContent() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isEmployeeRoute = location.pathname.startsWith("/employee");
+
+  // Handle deep links for OAuth callbacks (Android)
+  useEffect(() => {
+    // Only set up listener on native platforms
+    if (!Capacitor.isNativePlatform()) {
+      return;
+    }
+
+    let initialUrlHandled = false;
+
+    // Handle cold start (app opened via deep link when not running)
+    const checkInitialUrl = async () => {
+      if (initialUrlHandled) return;
+      
+      try {
+        const result = await CapacitorApp.getLaunchUrl();
+        if (result?.url) {
+          console.log('App launched with deep link:', result.url);
+          initialUrlHandled = true;
+          handleDeepLink(result.url);
+        }
+      } catch (error) {
+        console.error('Error getting launch URL:', error);
+      }
+    };
+
+    // Validate path against allowed routes
+    const isValidPath = (path) => {
+      const allowedPaths = [
+        '/google-success',
+        '/apple-success', // For future Apple Sign-In
+        '/',
+      ];
+      return allowedPaths.some(allowed => path.startsWith(allowed));
+    };
+
+    // Handle deep link URL
+    const handleDeepLink = (urlString) => {
+      console.log('Deep link received:', urlString);
+      
+      try {
+        const url = new URL(urlString);
+        
+        // Handle both custom scheme and HTTPS URLs
+        // Custom scheme: com.bubbleflashservices.bfsapp://google-success?token=...
+        // HTTPS: https://bubbleflashservices.in/google-success?...
+        let path = url.pathname;
+        let search = url.search;
+        
+        // For custom scheme URLs, the path might be in the host or pathname
+        if (url.protocol === 'com.bubbleflashservices.bfsapp:') {
+          // Parse custom scheme URL
+          // Format: com.bubbleflashservices.bfsapp://google-success?token=...
+          path = url.host || url.pathname || '';
+          
+          // Remove leading // if present
+          if (path.startsWith('//')) {
+            path = path.substring(2);
+          }
+          
+          // Get search params from custom scheme URL
+          if (url.search) {
+            search = url.search;
+          } else if (urlString.includes('?')) {
+            // Fallback: extract query string manually if URL parser doesn't catch it
+            const queryStart = urlString.indexOf('?');
+            search = urlString.substring(queryStart);
+          }
+        }
+        
+        // Ensure path starts with /
+        if (path && !path.startsWith('/')) {
+          path = '/' + path;
+        }
+        
+        // Default to home if no valid path
+        if (!path) {
+          path = '/';
+        }
+        
+        // Validate path for security
+        if (!isValidPath(path)) {
+          console.warn('Invalid deep link path:', path, '- redirecting to home');
+          path = '/';
+          search = ''; // Clear potentially malicious query params
+        }
+        
+        // Construct the full path with query params
+        const fullPath = path + search;
+        console.log('Navigating to:', fullPath);
+        
+        // Navigate to the path within the app
+        navigate(fullPath, { replace: true });
+      } catch (error) {
+        console.error('Error handling deep link:', error);
+        // On error, navigate to home safely
+        navigate('/', { replace: true });
+      }
+    };
+
+    // Handle warm start (app in background)
+    const handleAppUrlOpen = (event) => {
+      handleDeepLink(event.url);
+    };
+
+    // Check for initial URL on mount
+    checkInitialUrl();
+
+    // Listen for app URL open events
+    const listener = CapacitorApp.addListener('appUrlOpen', handleAppUrlOpen);
+
+    // Cleanup listener on unmount
+    return () => {
+      listener.remove();
+    };
+  }, [navigate]);
 
   return (
     <div>
