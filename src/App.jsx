@@ -99,17 +99,32 @@ function AppContent() {
       return;
     }
 
+    let initialUrlHandled = false;
+
     // Handle cold start (app opened via deep link when not running)
     const checkInitialUrl = async () => {
+      if (initialUrlHandled) return;
+      
       try {
         const result = await CapacitorApp.getLaunchUrl();
         if (result?.url) {
           console.log('App launched with deep link:', result.url);
+          initialUrlHandled = true;
           handleDeepLink(result.url);
         }
       } catch (error) {
         console.error('Error getting launch URL:', error);
       }
+    };
+
+    // Validate path against allowed routes
+    const isValidPath = (path) => {
+      const allowedPaths = [
+        '/google-success',
+        '/apple-success', // For future Apple Sign-In
+        '/',
+      ];
+      return allowedPaths.some(allowed => path.startsWith(allowed));
     };
 
     // Handle deep link URL
@@ -120,17 +135,29 @@ function AppContent() {
         const url = new URL(urlString);
         
         // Handle both custom scheme and HTTPS URLs
-        // Custom scheme: com.bubbleflashservices.bfsapp://...
+        // Custom scheme: com.bubbleflashservices.bfsapp://google-success?token=...
         // HTTPS: https://bubbleflashservices.in/google-success?...
         let path = url.pathname;
         let search = url.search;
         
         // For custom scheme URLs, the path might be in the host or pathname
         if (url.protocol === 'com.bubbleflashservices.bfsapp:') {
-          // Custom scheme format: com.bubbleflashservices.bfsapp://google-success?token=...
+          // Parse custom scheme URL
+          // Format: com.bubbleflashservices.bfsapp://google-success?token=...
           path = url.host || url.pathname || '';
+          
+          // Remove leading // if present
           if (path.startsWith('//')) {
             path = path.substring(2);
+          }
+          
+          // Get search params from custom scheme URL
+          if (url.search) {
+            search = url.search;
+          } else if (urlString.includes('?')) {
+            // Fallback: extract query string manually if URL parser doesn't catch it
+            const queryStart = urlString.indexOf('?');
+            search = urlString.substring(queryStart);
           }
         }
         
@@ -139,9 +166,16 @@ function AppContent() {
           path = '/' + path;
         }
         
-        // If no path found, default to home
-        if (!path || path === '/') {
+        // Default to home if no valid path
+        if (!path) {
           path = '/';
+        }
+        
+        // Validate path for security
+        if (!isValidPath(path)) {
+          console.warn('Invalid deep link path:', path, '- redirecting to home');
+          path = '/';
+          search = ''; // Clear potentially malicious query params
         }
         
         // Construct the full path with query params
@@ -152,6 +186,8 @@ function AppContent() {
         navigate(fullPath, { replace: true });
       } catch (error) {
         console.error('Error handling deep link:', error);
+        // On error, navigate to home safely
+        navigate('/', { replace: true });
       }
     };
 
