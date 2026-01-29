@@ -14,10 +14,11 @@ The `.java` files in `android/app/src/main/java/` are **automatically generated 
 ### What are splash.png Images?
 The `splash.png` files in `android/app/src/main/res/drawable-*/` are:
 
-- **Auto-generated splash screens** (loading screen when app starts)
+- **Splash screens with BFS logo** (loading screen when app starts)
+- Generated from `public/logo.jpg` in multiple sizes for different screen densities
 - Multiple sizes for different screen densities (hdpi, xhdpi, xxhdpi, xxxhdpi)
 - Different orientations (portrait and landscape)
-- **You can replace these with your BFS logo** but don't delete them
+- **Custom branded** with your BFS logo centered on white background
 
 ---
 

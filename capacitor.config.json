@@ -3,9 +3,9 @@
   "appName": "BFSApp",
   "webDir": "dist",
   "server": {
-    "url": "https://my-bfs-backend.com",
+    "url": "https://bubbleflashservices.in",
     "cleartext": true,
-    "androidScheme": "https"
+    "androidScheme": "com.bubbleflashservices.bfsapp"
   },
   "android": {
     "buildOptions": {
