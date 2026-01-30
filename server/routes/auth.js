@@ -108,9 +108,10 @@ router.get(
   "/google",
   (req, res, next) => {
     // Store the source parameter in session to preserve it through OAuth flow
-    if (req.query.source) {
+    // Validate source parameter to prevent session pollution
+    if (req.query.source === 'app') {
       req.session = req.session || {};
-      req.session.oauthSource = req.query.source;
+      req.session.oauthSource = 'app';
     }
     next();
   },
@@ -134,15 +135,17 @@ router.get(
       delete req.session.oauthSource;
     }
     
-    // Detect if request is from Android device
+    // Detect if request is from Android or iOS device
     const userAgent = req.headers['user-agent'] || '';
     const isAndroid = /android/i.test(userAgent);
+    const isIOS = /iphone|ipad|ipod/i.test(userAgent);
+    const isMobile = isAndroid || isIOS;
     
-    // Use custom scheme ONLY if explicitly from the app (source=app)
-    // Otherwise, use HTTPS URL even on Android devices (for mobile web browsers)
+    // Use custom scheme ONLY if explicitly from the app (source=app) and on a mobile platform
+    // Otherwise, use HTTPS URL even on mobile devices (for mobile web browsers)
     let redirectUrl;
-    if (source === 'app' && isAndroid) {
-      console.log('🤖 App-initiated OAuth detected, using custom scheme for direct app redirect');
+    if (source === 'app' && isMobile) {
+      console.log('📱 App-initiated OAuth detected, using custom scheme for direct app redirect');
       redirectUrl = `com.bubbleflashservices.bfsapp://google-success?token=${encodeURIComponent(token)}&name=${encodeURIComponent(
         user.name
       )}&email=${encodeURIComponent(user.email)}&image=${encodeURIComponent(
