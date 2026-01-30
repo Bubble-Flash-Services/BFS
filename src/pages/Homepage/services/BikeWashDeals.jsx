@@ -675,100 +675,55 @@ export default function BikeWashDeals() {
           ))}
         </div>
 
-        {/* Mobile Slider Layout */}
-        <div className="md:hidden relative">
-          {/* Left Arrow */}
-          <button
-            onClick={goToPrevious}
-            disabled={currentSlide === 0}
-            className={`absolute left-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
-              currentSlide === 0 
-                ? 'opacity-50 cursor-not-allowed' 
-                : 'hover:bg-gray-50 hover:shadow-xl'
-            }`}
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          {/* Right Arrow */}
-          <button
-            onClick={goToNext}
-            disabled={currentSlide === dealData.packages.length - 1}
-            className={`absolute right-2 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
-              currentSlide === dealData.packages.length - 1 
-                ? 'opacity-50 cursor-not-allowed' 
-                : 'hover:bg-gray-50 hover:shadow-xl'
-            }`}
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          <div className="overflow-hidden px-12">
+        {/* Mobile Vertical Layout */}
+        <div className="md:hidden space-y-6">
+          {dealData.packages.map((pkg, index) => (
             <div
-              ref={sliderRef}
-              className="flex transition-transform duration-300 ease-in-out"
-              style={{
-                transform: `translateX(-${currentSlide * 100}%)`,
-              }}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
+              key={pkg.id}
+              className={`${isLuxury ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]' : 'bg-white shadow-lg'} rounded-2xl overflow-hidden`}
             >
-              {dealData.packages.map((pkg, index) => (
-                <div
-                  key={pkg.id}
-                  className="flex-shrink-0 w-full px-4"
-                >
-                  <div className={`${isLuxury ? 'bg-black/60 border border-[#d4af37]/40 shadow-[0_0_20px_rgba(212,175,55,0.15)]' : 'bg-white shadow-lg'} rounded-2xl overflow-hidden max-w-sm mx-auto h-full`}>
-                    <div className="p-6 h-full flex flex-col">
-                      <div className={`${isLuxury ? 'w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden ring-1 ring-[#d4af37]/30 bg-black/30' : 'w-full h-48 bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden'}`}>
-                        <img 
-                          src={pkg.image} 
-                          alt={pkg.name} 
-                          className="max-w-full max-h-full object-contain"
-                        />
-                      </div>
-                      <h3 className={`text-xl font-bold mb-3 min-h-[3rem] ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
-                        {pkg.name}
-                      </h3>
-                      {pkg.description && (
-                        <p className={`${isLuxury ? 'text-white/80 italic' : 'text-gray-600'} text-sm mb-4 italic`}>
-                          {pkg.description}
-                        </p>
-                      )}
-                      <ul className="space-y-2 mb-6 flex-grow">
-                        {pkg.features.map((feature, index) => (
-                          <li key={index} className="flex items-start">
-                            <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-lg leading-none`}>•</span>
-                            <span className={`${isLuxury ? 'text-white/90' : 'text-gray-600'} text-sm`}>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="text-center mt-auto">
-                        <div className={`text-2xl font-bold mb-4 ${isLuxury ? 'text-[#d4af37]' : 'text-green-500'}`}>
-                          {pkg.price}
-                        </div>
-                        <button 
-                          className={
-                            isLuxury
-                              ? "w-full bg-black border border-[#d4af37] text-[#d4af37] font-semibold py-3 px-6 rounded-lg hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition"
-                              : "w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-                          }
-                          onClick={() => handleBookNow(pkg)}
-                        >
-                          Book Now
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+              <div className="p-6">
+                <div className={`${isLuxury ? 'w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden ring-1 ring-[#d4af37]/30 bg-black/30' : 'w-full h-48 bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden'}`}>
+                  <img 
+                    src={pkg.image} 
+                    alt={pkg.name} 
+                    className="max-w-full max-h-full object-contain"
+                  />
                 </div>
-              ))}
+                <h3 className={`text-xl font-bold mb-3 ${isLuxury ? "text-[#d4af37] font-['Playfair Display',serif]" : 'text-gray-800'}`}>
+                  {pkg.name}
+                </h3>
+                {pkg.description && (
+                  <p className={`${isLuxury ? 'text-white/80 italic' : 'text-gray-600'} text-sm mb-4`}>
+                    {pkg.description}
+                  </p>
+                )}
+                <ul className="space-y-2 mb-6">
+                  {pkg.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <span className={`${isLuxury ? 'text-[#d4af37]' : 'text-green-500'} mr-2 text-lg leading-none`}>•</span>
+                      <span className={`${isLuxury ? 'text-white/90' : 'text-gray-600'} text-sm`}>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="text-center">
+                  <div className={`text-2xl font-bold mb-4 ${isLuxury ? 'text-[#d4af37]' : 'text-green-500'}`}>
+                    {pkg.price}
+                  </div>
+                  <button 
+                    className={
+                      isLuxury
+                        ? "w-full bg-black border border-[#d4af37] text-[#d4af37] font-semibold py-3 px-6 rounded-lg hover:bg-[#0f0f0f] hover:shadow-[0_0_10px_rgba(212,175,55,0.4)] transition"
+                        : "w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                    }
+                    onClick={() => handleBookNow(pkg)}
+                  >
+                    Book Now
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
 
         {/* Booking Modal */}

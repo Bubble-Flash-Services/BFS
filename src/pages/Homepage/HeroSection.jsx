@@ -5,6 +5,8 @@ import {
   Phone,
   MapPin,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ArrowRight,
   Star,
   Shield,
@@ -46,55 +48,55 @@ const FAQS = [
 const testimonials = [
   {
     name: "Keerthana N M",
-    text: "I recently had my bike washed at my doorstep and was thoroughly impressed! Quick, efficient and sparkling clean. Friendly staff made the whole experience smooth.",
+    text: "I recently had my bike washed at my doorstep and was thoroughly impressed! The service was incredibly quick and efficient, leaving my bike sparkling clean. The staff was friendly, professional, and made the whole experience smooth and hassle-free. I highly recommend their doorstep bike wash service to anyone looking for convenience and quality.",
   },
   {
     name: "Ankitha N Raj",
-    text: "Deluxe Car Wash + Bike Wash – both done meticulously. Sparkling results and very reasonable pricing.",
+    text: "I opted for the Deluxe Car Wash along with a Bike Wash, and both were done meticulously with great attention to detail. The sparkling results exceeded my expectations, and the pricing was very reasonable for the quality of service provided. The team was professional and ensured everything was cleaned to perfection. Definitely worth every penny!",
   },
   {
     name: "Anusha HG",
-    text: "Took the ₹249 Basic Car Wash – great experience, clean finish and super value for money.",
+    text: "I tried the ₹249 Basic Car Wash package and had a great experience from start to finish. The car came out with a spotless, clean finish that made it look almost brand new. The service was prompt, the staff was courteous, and it offered super value for money. I will definitely be using their services again!",
   },
   {
     name: "Nurayne Raja",
-    text: "Fantastic bike wash! Quick, efficient and spotless for just ₹99. Great value.",
+    text: "Fantastic bike wash experience! The service was incredibly quick and efficient, leaving my bike absolutely spotless. For just ₹99, this is exceptional value for money. The staff was professional and thorough in their work. I'm extremely satisfied and will be recommending this service to all my friends and family.",
   },
   {
     name: "Mehta Vidhan",
-    text: "These guys cleaned my car just like new. Very affordable car & bike washing in Bangalore.",
+    text: "These guys cleaned my car just like new and I couldn't be happier with the results! The attention to detail was impressive, and they made sure every corner was spotless. Very affordable car and bike washing services in Bangalore with professional staff who take pride in their work. Highly recommend for anyone looking for quality cleaning services.",
   },
   {
     name: "Raghu Narasimhan",
-    text: "Excellent and neat work by the staff. I book them regularly every 2 months.",
+    text: "Excellent and neat work by the staff every single time I use their service. The consistency and quality are remarkable, which is why I book them regularly every 2 months without fail. They're always punctual, professional, and deliver outstanding results. Truly a reliable and trustworthy service that I wholeheartedly recommend.",
   },
   {
     name: "Ali Yawar Hayat",
-    text: "Very good and professional doorstep service.",
+    text: "Very good and professional doorstep service that exceeded my expectations. The convenience of having my vehicle cleaned at home without any hassle is amazing. The staff is well-trained, courteous, and ensures everything is done to perfection. The quality of work and professionalism displayed is truly commendable. Will definitely use again!",
   },
   {
     name: "Chhotu Kumar",
-    text: "Mind‑blowing car wash! Convenient, affordable (₹199) and my car looks brand new.",
+    text: "Mind-blowing car wash experience! The service is incredibly convenient with doorstep availability, very affordable at just ₹199, and the results are outstanding - my car looks absolutely brand new. The team was professional, friendly, and took great care of my vehicle. This is exactly the kind of service I was looking for!",
   },
   {
     name: "Sudhir S Kamath",
-    text: "Excellent wash. Neat, clean and very cooperative staff (special mention: Chetan).",
+    text: "Excellent wash with exceptional attention to detail. The car was neat, clean, and spotless after the service. The staff was very cooperative and went above and beyond to ensure satisfaction. Special mention to Chetan who was particularly helpful and did an outstanding job. I'm extremely happy with the service quality!",
   },
   {
     name: "Mohammed Parveez",
-    text: "Chetan cleaned the vehicle professionally and was very polite.",
+    text: "Chetan cleaned my vehicle professionally with great attention to detail and was very polite throughout the entire process. His dedication to providing excellent service was evident in the quality of work. The vehicle looked fantastic after the wash, and the overall experience was very pleasant. Highly recommend their services!",
   },
   {
     name: "Jyothika Reddy",
-    text: "Great job on my car wash. Definitely give them a chance.",
+    text: "Great job on my car wash - the results were impressive and exactly what I was looking for. The team was professional, thorough, and ensured my car was cleaned to perfection. I would definitely give them a chance if you're looking for quality car wash services. The value for money is excellent!",
   },
   {
     name: "Shankar Shani",
-    text: "Excellent service. Just ₹199 and my car looks new. Already referred friends.",
+    text: "Excellent service that truly delivers on its promises. Just ₹199 and my car looks completely new and refreshed. The quality of work is so good that I've already referred several friends and family members to use their services. Everyone I've recommended them to has been equally satisfied. A fantastic service!",
   },
   {
     name: "Nathalia Helen Lobo",
-    text: "Wonderful, simple service – sparkling car. Very satisfied.",
+    text: "Wonderful and simple service that delivers exceptional results. My car was left sparkling clean and looking absolutely fantastic. The process was straightforward, the staff was friendly and professional, and I'm very satisfied with the overall experience. This is definitely a service I'll be using regularly going forward!",
   },
   {
     name: "Imran Pasha",
@@ -418,10 +420,21 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, []);
 
+  // Navigation functions for hero carousel
+  const nextHeroSlide = () => {
+    setHeroSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevHeroSlide = () => {
+    setHeroSlide(
+      (prev) => (prev - 1 + heroSlides.length) % heroSlides.length,
+    );
+  };
+
   // Hero carousel auto-slide
   useEffect(() => {
     const interval = setInterval(() => {
-      setHeroSlide((prev) => (prev + 1) % 3); // 3 hero slides
+      setHeroSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -429,19 +442,35 @@ export default function HeroSection() {
   const categories = ["Car Wash", "Bike Wash", "Laundry Service", "Helmet"];
   const locations = [fullAddress || "", ""];
 
-  // Hero carousel slides data - now with images
+  // Hero carousel slides data - now with images, titles, subtitles, and gradients
   const heroSlides = [
     {
-      image: "/home/carousel 1.png",
-      alt: "Bubble Flash Services - Professional Car Wash",
+      title: "Premium Car Wash Services",
+      subtitle: "Professional doorstep cleaning with eco-friendly products and expert care for your vehicle",
+      image: "/car/home.png",
+      gradient: "from-blue-600 via-blue-500 to-cyan-500",
+      alt: "Professional Car Wash Service",
     },
     {
-      image: "/home/carousel 2.png",
-      alt: "BFS doorstep vehicle cleaning service",
+      title: "Expert Bike Wash",
+      subtitle: "Keep your ride sparkling clean with our specialized bike cleaning and detailing services",
+      image: "/bike/home.png",
+      gradient: "from-green-600 via-green-500 to-emerald-500",
+      alt: "Professional Bike Wash Service",
     },
     {
-      image: "/home/carousel 3.png",
-      alt: "BFS eco-friendly vehicle cleaning products",
+      title: "Home Cleaning Solutions",
+      subtitle: "Experience fresh and clean living spaces with our comprehensive home cleaning services",
+      image: "/clean-home.jpg",
+      gradient: "from-purple-600 via-purple-500 to-pink-500",
+      alt: "Home Cleaning Service",
+    },
+    {
+      title: "Beautiful Decorations",
+      subtitle: "Transform your events into unforgettable celebrations with our stunning decoration services",
+      image: "/services/flowers/decoration.avif",
+      gradient: "from-amber-600 via-amber-500 to-orange-500",
+      alt: "Event Decoration Service",
     },
   ];
 
@@ -938,7 +967,7 @@ export default function HeroSection() {
       {/* Hero Section with Modern Design - Now includes services */}
       <section
         id="home"
-        className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden"
+        className="relative overflow-hidden"
       >
         {/* Launch Offer Top Banner */}
         <motion.div
@@ -1022,10 +1051,10 @@ export default function HeroSection() {
           />
         </div>
 
-        {/* Full-width carousel container - no padding or max-width constraints */}
-        <div className="w-full">
-          {/* Hero Content - Image Carousel */}
-          <div className="text-white w-full relative">
+        {/* Full-width carousel container - Enhanced design similar to flowers page */}
+        <div className="w-full relative">
+          {/* Hero Content - Enhanced Carousel */}
+          <div className="w-full relative h-[400px] md:h-[500px] overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={heroSlide}
@@ -1033,30 +1062,87 @@ export default function HeroSection() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.5 }}
-                className="w-full"
+                className={`absolute inset-0 bg-gradient-to-r ${heroSlides[heroSlide].gradient}`}
               >
-                {/* Hero Image - Full width with complete image display */}
-                <motion.img
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  src={heroSlides[heroSlide].image}
-                  alt={heroSlides[heroSlide].alt}
-                  className="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] "
-                />
+                <div className="max-w-7xl mx-auto px-4 h-full flex items-center">
+                  <div className="grid md:grid-cols-2 gap-8 items-center w-full">
+                    <div className="text-white">
+                      <motion.h1
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-4xl md:text-6xl font-bold mb-4"
+                      >
+                        {heroSlides[heroSlide].title}
+                      </motion.h1>
+                      <motion.p
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="text-xl md:text-2xl mb-8 text-white/90"
+                      >
+                        {heroSlides[heroSlide].subtitle}
+                      </motion.p>
+                      <motion.button
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        onClick={() => {
+                          const servicesSection = document.getElementById('services');
+                          if (servicesSection) {
+                            servicesSection.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }}
+                        className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all shadow-xl"
+                      >
+                        Book Now
+                      </motion.button>
+                    </div>
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="hidden md:block"
+                    >
+                      <img
+                        src={heroSlides[heroSlide].image}
+                        alt={heroSlides[heroSlide].alt}
+                        className="w-full h-80 object-contain drop-shadow-2xl"
+                      />
+                    </motion.div>
+                  </div>
+                </div>
               </motion.div>
             </AnimatePresence>
 
+            {/* Left Navigation Arrow */}
+            <button
+              onClick={prevHeroSlide}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            
+            {/* Right Navigation Arrow */}
+            <button
+              onClick={nextHeroSlide}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+
             {/* Carousel Navigation Dots */}
-            <div className="flex justify-center gap-2 mt-6">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
               {heroSlides.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setHeroSlide(idx)}
                   className={`transition-all duration-300 rounded-full ${
                     heroSlide === idx
-                      ? "w-8 h-2 bg-[#FFB400]"
-                      : "w-2 h-2 bg-white bg-opacity-40 hover:bg-opacity-60"
+                      ? "w-8 h-3 bg-white"
+                      : "w-3 h-3 bg-white/50 hover:bg-white/70"
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
@@ -2546,48 +2632,70 @@ export default function HeroSection() {
           </div>
         </div> */}
         {/* What client says - true carousel */}
-        <div className="mt-12 mb-8 py-8 bg-white">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-900">
+        <div className="mt-12 mb-8 py-12 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative">
+          {/* Background overlay */}
+          <div className="absolute inset-0 opacity-20">
+            <div
+              className="absolute top-0 left-0 w-full h-full"
+              style={{
+                backgroundImage: "url(/home-bg.jpg)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            />
+          </div>
+          <h2 className="relative text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900 drop-shadow-sm">
             What Our Clients Say
           </h2>
-          <div className="overflow-hidden w-full flex justify-center">
+          <div className="relative overflow-hidden w-full flex justify-center">
             <div
               className="flex gap-4 sm:gap-6 md:gap-8 transition-all duration-700"
               style={{ width: "max-content" }}
             >
               {carousel.slice(0, visibleCount).map((t, idx) => {
                 const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+                const gradients = [
+                  "from-blue-50 via-blue-100 to-blue-50",
+                  "from-purple-50 via-purple-100 to-purple-50",
+                  "from-pink-50 via-pink-100 to-pink-50",
+                  "from-green-50 via-green-100 to-green-50",
+                  "from-amber-50 via-amber-100 to-amber-50",
+                  "from-cyan-50 via-cyan-100 to-cyan-50",
+                  "from-rose-50 via-rose-100 to-rose-50",
+                ];
+                const gradient = gradients[idx % gradients.length];
                 return (
                   <div
                     key={idx}
-                    className="bg-white rounded-xl border shadow-sm p-4 sm:p-5 min-w-[220px] sm:min-w-[260px] md:min-w-[300px] max-w-[340px] flex flex-col"
+                    className={`bg-gradient-to-br ${gradient} rounded-2xl border-2 border-white shadow-xl p-5 sm:p-6 min-w-[240px] sm:min-w-[280px] md:min-w-[320px] max-w-[360px] flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-105 hover:-translate-y-2`}
                   >
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3 mb-3">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${color}`}
+                        className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ${color}`}
                       >
                         {getInitial(t.name)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div
-                          className="font-bold text-sm leading-snug truncate"
+                          className="font-bold text-base leading-snug truncate text-gray-900"
                           title={t.name}
                         >
                           {t.name}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-600 font-medium">
                           Verified Customer
                         </div>
                       </div>
                       <div className="flex gap-0.5">
                         {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-yellow-400 text-base">
+                          <span key={i} className="text-yellow-500 text-lg drop-shadow-sm">
                             ★
                           </span>
                         ))}
                       </div>
                     </div>
-                    <div className="text-gray-700 text-sm mt-2 leading-relaxed line-clamp-4">
+                    <div className="text-gray-800 text-sm mt-2 leading-relaxed">
                       “{t.text}”
                     </div>
                   </div>

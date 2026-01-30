@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BFSApp</string>
+    <string name="title_activity_main">BFSApp</string>
+    <string name="package_name">com.bubbleflashservices.bfsapp</string>
+    <string name="custom_url_scheme">com.bubbleflashservices.bfsapp</string>
+</resources>
