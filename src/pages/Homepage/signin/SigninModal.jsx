@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { login, getProfile } from '../../../api/auth';
 import { useAuth } from '../../../components/AuthContext';
 import ForgotPasswordModal from '../../../components/ForgotPasswordModal';
+import { Capacitor } from '@capacitor/core';
 
 export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
   const { updateAuth } = useAuth();
@@ -102,7 +103,7 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
             </button>
           </form>
         <a
-          href={(import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/google'}
+          href={(import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/google' + (Capacitor.isNativePlatform() ? '?source=app' : '')}
           className="flex items-center gap-2 border border-black rounded-lg px-3 sm:px-4 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center"
         >
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6" />

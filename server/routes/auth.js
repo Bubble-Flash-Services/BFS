@@ -106,6 +106,15 @@ router.post("/login", async (req, res) => {
 // Google OAuth
 router.get(
   "/google",
+  (req, res, next) => {
+    // Store the source parameter in session to preserve it through OAuth flow
+    // Validate source parameter to prevent session pollution
+    if (req.query.source === 'app') {
+      req.session = req.session || {};
+      req.session.oauthSource = 'app';
+    }
+    next();
+  },
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
@@ -117,23 +126,34 @@ router.get(
     const user = req.user;
     const token = generateToken(user);
     
-    // Detect if request is from Android device
+    // Check if the request came from the native app
+    // The app adds ?source=app to the initial OAuth request
+    const source = req.query.source || req.session?.oauthSource;
+    
+    // Clean up session
+    if (req.session?.oauthSource) {
+      delete req.session.oauthSource;
+    }
+    
+    // Detect if request is from Android or iOS device
     const userAgent = req.headers['user-agent'] || '';
     const isAndroid = /android/i.test(userAgent);
-    const isChrome = /chrome/i.test(userAgent) && !/edg/i.test(userAgent);
+    const isIOS = /iphone|ipad|ipod/i.test(userAgent);
+    const isMobile = isAndroid || isIOS;
     
-    // If Android device, use custom scheme to open directly in app
-    // This bypasses the "Open with..." dialog in Chrome
+    // Use custom scheme ONLY if explicitly from the app (source=app) and on a mobile platform
+    // Otherwise, use HTTPS URL even on mobile devices (for mobile web browsers)
     let redirectUrl;
-    if (isAndroid) {
-      console.log('🤖 Android device detected, using custom scheme for direct app redirect');
+    if (source === 'app' && isMobile) {
+      console.log('📱 App-initiated OAuth detected, using custom scheme for direct app redirect');
       redirectUrl = `com.bubbleflashservices.bfsapp://google-success?token=${encodeURIComponent(token)}&name=${encodeURIComponent(
         user.name
       )}&email=${encodeURIComponent(user.email)}&image=${encodeURIComponent(
         user.image || ""
       )}`;
     } else {
-      // For non-Android devices, use HTTPS URL
+      // For web browsers (desktop or mobile), use HTTPS URL
+      console.log('🌐 Web-initiated OAuth detected, using HTTPS redirect');
       redirectUrl = `${
         process.env.BASE_URL
       }/google-success?token=${encodeURIComponent(token)}&name=${encodeURIComponent(
