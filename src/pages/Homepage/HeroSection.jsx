@@ -27,14 +27,14 @@ const API = import.meta.env.VITE_API_URL || window.location.origin;
 
 const FAQS = [
   {
-    question: "How do I request a laundry pickup?",
+    question: "How do I book a service?",
     answer:
-      "You can request a laundry pickup by filling out the callback form on this page or by contacting us via WhatsApp. Our team will schedule a convenient pickup time for you.",
+      "You can book any service by selecting it from our homepage, logging in, and following the booking steps. Our team will confirm and schedule your service.",
   },
   {
     question: "What services does Bubble Flash offer?",
     answer:
-      "Bubble Flash offers laundry, car cleaning, and bike cleaning services. You can book any of these services online or by contacting our support team.",
+      "Bubble Flash offers car washing, bike detailing, helmet care, and vehicle services, all under one roof – because we believe convenience should never compromise quality.",
   },
   {
     question: "What are your operating hours?",
@@ -397,7 +397,7 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, []);
 
-  const categories = ["Car Wash", "Bike Wash", "Laundry Service", "Helmet"];
+  const categories = ["Car Wash", "Bike Wash", "Helmet"];
   const locations = [fullAddress || "", ""];
 
   // Hero carousel slides data - now with images, titles, subtitles, and gradients
@@ -742,9 +742,6 @@ export default function HeroSection() {
       case "Bike Wash":
         navigate("/bikes");
         break;
-      case "Laundry Service":
-        navigate("/laundry");
-        break;
       case "Helmet":
         navigate("/helmets");
         break;
@@ -985,7 +982,7 @@ export default function HeroSection() {
                   >
                     At Bubble Flash, we’re passionate about making your vehicles
                     and wardrobe shine! Based in the heart of Bengaluru, we
-                    provide top-tier car washing, bike detailing, and laundry
+                    provide top-tier car washing, bike detailing, and vehicle
                     care services, all under one roof – because we believe
                     convenience should never compromise quality.
                   </motion.p>

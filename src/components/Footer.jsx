@@ -138,14 +138,6 @@ const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => handlePageNavigation('/laundry')} 
-                  className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
-                >
-                  Laundry
-                </button>
-              </li>
-              <li>
-                <button 
                   onClick={() => handleNavigation('services')} 
                   className="hover:text-[#1F3C88] transition-colors duration-300 bg-transparent border-none cursor-pointer text-left"
                 >

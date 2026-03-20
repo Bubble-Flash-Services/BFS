@@ -9,14 +9,11 @@ import {
   Menu,
   X,
   LogOut,
-  Truck,
-  Leaf,
   ShieldCheck,
   Shield,
   ClipboardCheck,
   Wrench,
   ShoppingBag,
-  Shirt,
   Car,
 } from 'lucide-react';
 
@@ -78,24 +75,6 @@ const AdminLayout = ({ children }) => {
       href: "/admin/employees",
       icon: UserCheck,
       active: location.pathname === "/admin/employees",
-    },
-    {
-      name: "Movers & Packers",
-      href: "/admin/movers-packers",
-      icon: Truck,
-      active: location.pathname === "/admin/movers-packers",
-    },
-    {
-      name: "Green & Clean",
-      href: "/admin/green-clean",
-      icon: Leaf,
-      active: location.pathname === "/admin/green-clean",
-    },
-    {
-      name: "Laundry Services",
-      href: "/admin/laundry",
-      icon: Shirt,
-      active: location.pathname === "/admin/laundry",
     },
     {
       name: "AutoFix Pro",

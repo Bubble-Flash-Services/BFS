@@ -15,11 +15,9 @@ import FloatingWhatsApp from "./components/FloatingWhatsApp";
 // Placeholder imports for new pages
 import CarsPage from "./pages/Homepage/services/CarsPage";
 import BikesPage from "./pages/Homepage/services/BikesPage";
-import LaundryPage from "./pages/Homepage/services/LaundryPageNew";
 import HelmetPage from "./pages/Homepage/services/HelmetPage";
 import CarWashDeals from "./pages/Homepage/services/CarWashDeals";
 import BikeWashDeals from "./pages/Homepage/services/BikeWashDeals";
-import LaundryDeals from "./pages/Homepage/services/LaundryDeals";
 import ComingSoon from "./pages/ComingSoon";
 import HelmetWashDeals from "./pages/Homepage/services/HelmetWashDeals";
 import CartPage from "./pages/CartPage";
@@ -36,7 +34,6 @@ import GoogleSuccess from "./pages/GoogleSuccess";
 import Impersonate from "./pages/Impersonate";
 import ContactPage from "./pages/contact/ContactPage";
 import TeamPage from "./pages/team/TeamPage";
-import GreenCleanCart from "./pages/GreenCleanCart";
 import ProfilePage from "./pages/ProfilePage";
 import OrdersPage from "./pages/OrdersPage";
 import AddressesPage from "./pages/AddressesPage";
@@ -48,11 +45,8 @@ import PUCBookingManagement from "./pages/admin/PUCBookingManagement";
 import InsuranceBookingManagement from "./pages/admin/InsuranceBookingManagement";
 import CouponManagement from "./pages/admin/CouponManagement";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
-import MoversPackersManagement from "./pages/admin/MoversPackersManagement";
-import GreenCleanManagement from "./pages/admin/GreenCleanManagement";
 import VehicleCheckupManagement from "./pages/admin/VehicleCheckupManagement";
 import VehicleAccessoriesManagement from "./pages/admin/VehicleAccessoriesManagement";
-import LaundryManagement from "./pages/admin/LaundryManagement";
 import AutoFixManagement from "./pages/admin/AutoFixManagement";
 import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import EmployeeAssignments from "./pages/employee/EmployeeAssignments";
@@ -65,11 +59,6 @@ import EmployeeLogin from "./pages/employee/EmployeeLogin";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import ProtectedEmployeeRoute from "./components/ProtectedEmployeeRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { CartProviderForGreenandClean } from "./context/CartContext";
-import GreenandClean from "./pages/green&clean/Green&Clean";
-import ServicePage from "./pages/green&clean/ServicePage";
-import ServiceByCategory from "./pages/green&clean/ServiceByCategory";
-import MoversPackersPage from "./pages/MoversPackersPage";
 import PUCCertificatePage from "./pages/PUCCertificate/PUCCertificatePage";
 import InsuranceAssistancePage from "./pages/InsuranceAssistance/InsuranceAssistancePage";
 import VehicleCheckupPage from "./pages/VehicleCheckup/VehicleCheckupPage";
@@ -214,8 +203,7 @@ function AppContent() {
       <ScrollToTop />
       <GlobalBackButton />
       {!isAdminRoute && !isEmployeeRoute && <Header />}
-      <CartProviderForGreenandClean>
-        <Routes>
+      <Routes>
           <Route
             path="/"
             element={
@@ -240,16 +228,7 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/laundry"
-            element={
-              // <ComingSoon
-              //   title="Laundry Service Coming Soon"
-              //   message="We’re working hard to bring laundry services to you. Stay tuned!"
-              // />
-              <LaundryPage />
-            }
-          />
+
           <Route
             path="/helmets"
             element={
@@ -274,24 +253,7 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
-            path="/laundry-deals/:category"
-            element={
-              <ComingSoon
-                title="Laundry Service Coming Soon"
-                message="We’re working hard to bring laundry services to you. Stay tuned!"
-              />
-            }
-          /> */}
 
-          <Route
-            path="/laundry-deals/:category"
-            element={
-              <ProtectedRoute>
-                <LaundryDeals />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/helmet-wash-deals/:category"
             element={
@@ -377,14 +339,7 @@ function AppContent() {
           <Route path="/impersonate" element={<Impersonate />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/team" element={<TeamPage />} />
-          <Route
-            path="/green&clean"
-            element={
-              <ProtectedRoute>
-                <GreenCleanCart />
-              </ProtectedRoute>
-            }
-          />
+
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin"
@@ -398,38 +353,9 @@ function AppContent() {
               </ProtectedAdminRoute>
             }
           />
-          <Route
-            path="green"
-            element={
-              <ProtectedRoute>
-                <GreenandClean />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/services/:categoryName"
-            element={
-              <ProtectedRoute>
-                <ServicePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/services/category/:categoryName"
-            element={
-              <ProtectedRoute>
-                <ServiceByCategory />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/movers-packers"
-            element={
-              <ProtectedRoute>
-                <MoversPackersPage />
-              </ProtectedRoute>
-            }
-          />
+
+
+
           <Route
             path="/autofix"
             element={
@@ -502,30 +428,9 @@ function AppContent() {
               </ProtectedAdminRoute>
             }
           />
-          <Route
-            path="/admin/movers-packers"
-            element={
-              <ProtectedAdminRoute>
-                <MoversPackersManagement />
-              </ProtectedAdminRoute>
-            }
-          />
-          <Route
-            path="/admin/laundry"
-            element={
-              <ProtectedAdminRoute>
-                <LaundryManagement />
-              </ProtectedAdminRoute>
-            }
-          />
-          <Route
-            path="/admin/green-clean"
-            element={
-              <ProtectedAdminRoute>
-                <GreenCleanManagement />
-              </ProtectedAdminRoute>
-            }
-          />
+
+
+
           <Route
             path="/admin/vehicle-accessories"
             element={
@@ -595,8 +500,7 @@ function AppContent() {
               </ProtectedEmployeeRoute>
             }
           />
-        </Routes>
-      </CartProviderForGreenandClean>
+      </Routes>
 
       {!isAdminRoute && !isEmployeeRoute && <Footer />}
       {!isAdminRoute && !isEmployeeRoute && <FloatingWhatsApp />}
