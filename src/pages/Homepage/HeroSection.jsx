@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import Confetti from "react-confetti";
 import ServiceCategories from "./services/ServiceCategories";
 import SigninModal from "./signin/SigninModal";
 import SignupModal from "./signup/SignupModal";
@@ -293,43 +292,7 @@ export default function HeroSection() {
   const accessorySliderRef = useRef(null);
   const [heroSlide, setHeroSlide] = useState(0);
 
-  // Launch Advertisement Modal State
-  const [showLaunchAd, setShowLaunchAd] = useState(false);
-  const [windowDimensions, setWindowDimensions] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 1200,
-    height: typeof window !== "undefined" ? window.innerHeight : 800,
-  });
-
-  // Handle window resize for confetti
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Show launch advertisement on component mount
-  useEffect(() => {
-    // Check if user has already seen the ad today
-    const lastAdShown = localStorage.getItem("launchAdShown");
-    const today = new Date().toDateString();
-
-    if (lastAdShown !== today) {
-      // Show ad after a short delay
-      const timer = setTimeout(() => {
-        setShowLaunchAd(true);
-      }, 2000); // Show after 2 seconds
-
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  // If user just logged in and we have a stored redirect, navigate there
+    // If user just logged in and we have a stored redirect, navigate there
   useEffect(() => {
     if (!user) return;
     try {
@@ -344,11 +307,6 @@ export default function HeroSection() {
     } catch {}
   }, [user, navigate]);
 
-  // Close launch ad and remember user has seen it
-  const closeLaunchAd = () => {
-    setShowLaunchAd(false);
-    localStorage.setItem("launchAdShown", new Date().toDateString());
-  };
   const startX = useRef(0);
   const isDragging = useRef(false);
 
@@ -804,224 +762,12 @@ export default function HeroSection() {
 
   return (
     <>
-      {/* Launch Advertisement Modal */}
-      <AnimatePresence>
-        {showLaunchAd && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-            onClick={closeLaunchAd}
-          >
-            <motion.div
-              initial={{ scale: 0.5, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.5, y: 50 }}
-              className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 max-w-lg mx-4 relative overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close Button */}
-              <button
-                onClick={closeLaunchAd}
-                className="absolute top-4 right-4 text-white hover:text-gray-200 text-2xl font-bold z-10"
-              >
-                ×
-              </button>
-
-              {/* Animated Background Pattern */}
-              <div className="absolute inset-0">
-                {/* Continuous Confetti Animation */}
-                <Confetti
-                  width={Math.min(500, windowDimensions.width * 0.9)}
-                  height={Math.min(600, windowDimensions.height * 0.8)}
-                  numberOfPieces={isMobile ? 100 : 150}
-                  recycle={true}
-                  colors={[
-                    "#FFD700",
-                    "#FF6B6B",
-                    "#4ECDC4",
-                    "#45B7D1",
-                    "#96CEB4",
-                    "#FFEAA7",
-                    "#DDA0DD",
-                    "#98D8C8",
-                  ]}
-                  gravity={0.1}
-                  wind={0.02}
-                  opacity={0.8}
-                  className="absolute inset-0"
-                />
-                <motion.div
-                  animate={{
-                    rotate: [0, 360],
-                  }}
-                  transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                  className="absolute -top-20 -right-20 w-40 h-40 border-4 border-white border-opacity-20 rounded-full"
-                />
-                <motion.div
-                  animate={{
-                    rotate: [360, 0],
-                  }}
-                  transition={{
-                    duration: 15,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                  className="absolute -bottom-16 -left-16 w-32 h-32 border-4 border-white border-opacity-10 rounded-full"
-                />
-              </div>
-
-              {/* Content */}
-              <div className="relative z-10 text-center text-white">
-                {/* Launch Badge */}
-                <motion.div
-                  animate={{
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="inline-flex items-center bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2 mb-4"
-                >
-                  <span className="text-sm font-semibold">
-                    🚀 WEBSITE LAUNCH
-                  </span>
-                </motion.div>
-
-                {/* Main Heading */}
-                <h2 className="text-3xl font-bold mb-2">Grand Opening</h2>
-                <h3 className="text-xl font-semibold mb-4">
-                  Special Launch Offers!
-                </h3>
-
-                {/* Offers Grid */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-3">
-                    <div className="text-2xl font-bold text-yellow-300">
-                      10%
-                    </div>
-                    <div className="text-sm">OFF First Order</div>
-                  </div>
-                  <div className="bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-3">
-                    <div className="text-2xl font-bold text-green-300">
-                      FREE
-                    </div>
-                    <div className="text-sm">Pickup & Delivery</div>
-                  </div>
-                </div>
-
-                {/* Service Icons */}
-                <div className="flex justify-center space-x-4 mb-6">
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-2 mx-auto">
-                      🚗
-                    </div>
-                    <div className="text-xs">Car Wash</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-2 mx-auto">
-                      🏍️
-                    </div>
-                    <div className="text-xs">Bike Wash</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-2 mx-auto">
-                      👕
-                    </div>
-                    <div className="text-xs">Laundry</div>
-                  </div>
-                </div>
-
-                {/* Call to Action */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    closeLaunchAd();
-                    document
-                      .getElementById("services")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="w-full bg-white text-blue-600 font-bold py-3 px-6 rounded-xl hover:bg-gray-100 transition-colors duration-200 mb-4"
-                >
-                  Book Now & Save 10%!
-                </motion.button>
-
-                {/* Validity */}
-                <p className="text-sm text-white text-opacity-80">
-                  • Limited time offer
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Hero Section with Modern Design - Now includes services */}
       <section
         id="home"
         className="relative overflow-hidden"
       >
-        {/* Launch Offer Top Banner */}
-        <motion.div
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="relative z-20 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-white py-3 px-4 overflow-hidden"
-        >
-          {/* Subtle Confetti for Banner */}
-          <Confetti
-            width={windowDimensions.width}
-            height={100}
-            numberOfPieces={30}
-            recycle={true}
-            colors={["#FFD700", "#FFA500", "#FF4500", "#FFFFFF"]}
-            gravity={0.05}
-            wind={0.01}
-            opacity={0.6}
-            className="absolute inset-0 pointer-events-none"
-          />
-          <div className="container mx-auto text-center relative z-10">
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="flex items-center space-x-2"
-              >
-                <span className="text-lg">🎉</span>
-                <span className="font-bold text-sm sm:text-base">
-                  WEBSITE LAUNCH SPECIAL
-                </span>
-                <span className="text-lg">🎉</span>
-              </motion.div>
-              <div className="flex items-center space-x-4 text-sm sm:text-base">
-                <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full font-semibold">
-                  10% OFF First Order
-                </span>
-                <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full font-semibold">
-                  FREE Delivery
-                </span>
-                <button
-                  onClick={() =>
-                    document
-                      .getElementById("services")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="bg-white text-orange-600 px-4 py-1 rounded-full font-bold hover:bg-gray-100 transition-colors"
-                >
-                  Book Now!
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
 
         {/* Animated Background Elements */}
         <div className="absolute inset-0">

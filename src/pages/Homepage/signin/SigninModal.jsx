@@ -3,6 +3,7 @@ import { login, getProfile } from '../../../api/auth';
 import { useAuth } from '../../../components/AuthContext';
 import ForgotPasswordModal from '../../../components/ForgotPasswordModal';
 import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 
 export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
   const { updateAuth } = useAuth();
@@ -102,13 +103,21 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
               Forgot password?
             </button>
           </form>
-        <a
-          href={(import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/google' + (Capacitor.isNativePlatform() ? '?source=app' : '')}
+        <button
+          type="button"
           className="flex items-center gap-2 border border-black rounded-lg px-3 sm:px-4 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center"
+          onClick={async () => {
+            const oauthUrl = (import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/google' + (Capacitor.isNativePlatform() ? '?source=app' : '');
+            if (Capacitor.isNativePlatform()) {
+              await Browser.open({ url: oauthUrl, presentationStyle: 'popover' });
+            } else {
+              window.location.href = oauthUrl;
+            }
+          }}
         >
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6" />
           <span className="text-sm sm:text-base md:text-lg">Continue with Google</span>
-        </a>
+        </button>
         <div className="text-center text-gray-600 text-xs sm:text-sm mt-2">
           New user?{' '}
           <button className="text-blue-500 hover:underline" onClick={() => {
