@@ -4,6 +4,8 @@ import { CartProvider } from "./components/CartContext";
 import { Routes, Route, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import Header from "./components/Header";
 import ScrollToTop from "./components/ScrollToTop";
 import GlobalBackButton from "./components/GlobalBackButton";
@@ -92,7 +94,16 @@ function AppContent() {
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isEmployeeRoute = location.pathname.startsWith("/employee");
 
-  // Handle deep links for OAuth callbacks (Android)
+  // Configure StatusBar on native platforms to avoid overlap with the device status bar
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      StatusBar.setOverlaysWebView({ overlay: false }).catch((e) => console.warn('StatusBar.setOverlaysWebView failed:', e));
+      StatusBar.setStyle({ style: Style.Light }).catch((e) => console.warn('StatusBar.setStyle failed:', e));
+      StatusBar.setBackgroundColor({ color: '#ffffff' }).catch((e) => console.warn('StatusBar.setBackgroundColor failed:', e));
+    }
+  }, []);
+
+  // Handle deep links for OAuth callbacks (native platforms)
   useEffect(() => {
     // Only set up listener on native platforms
     if (!Capacitor.isNativePlatform()) {
@@ -184,6 +195,9 @@ function AppContent() {
         
         // Navigate to the path within the app
         navigate(fullPath, { replace: true });
+
+        // Close the in-app browser if it is open (after OAuth redirect)
+        Browser.close().catch(() => {});
       } catch (error) {
         console.error('Error handling deep link:', error);
         // On error, navigate to home safely
