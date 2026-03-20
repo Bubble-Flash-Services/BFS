@@ -104,66 +104,71 @@ router.post("/login", async (req, res) => {
 });
 
 // Google OAuth
-router.get(
-  "/google",
-  (req, res, next) => {
-    // Store the source parameter in session to preserve it through OAuth flow
-    // Validate source parameter to prevent session pollution
-    if (req.query.source === 'app') {
-      req.session = req.session || {};
-      req.session.oauthSource = 'app';
-    }
-    next();
-  },
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+// The `source` query param ('web' or 'app') is forwarded through the OAuth
+// `state` parameter so it survives the round-trip through Google's servers.
+// We deliberately avoid storing it in the session because server-side session
+// state is unreliable across OAuth redirects (proxy hops, cross-origin cookies).
+router.get("/google", googleOAuthRateLimit, (req, res, next) => {
+  // Accept 'app' or 'web' as the source value.  Any other value (including
+  // undefined) is treated as 'web' so that the flow degrades gracefully.
+  // Only 'app' triggers the native deep-link redirect in the callback.
+  const source = req.query.source === 'app' ? 'app' : 'web';
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    // Pass source through OAuth state so the callback knows where to redirect
+    state: source,
+  })(req, res, next);
+});
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
+  passport.authenticate("google", {
+    failureRedirect: `${process.env.WEB_URL || process.env.BASE_URL || '/'}/login?error=auth_failed`,
+    session: false,
+  }),
   (req, res) => {
     // Successful Google login
     const user = req.user;
+    if (!user) {
+      const webUrl = process.env.WEB_URL || process.env.BASE_URL || '/';
+      return res.redirect(`${webUrl}/login?error=user_not_found`);
+    }
+
     const token = generateToken(user);
-    
-    // Check if the request came from the native app
-    // The app adds ?source=app to the initial OAuth request
-    const source = req.query.source || req.session?.oauthSource;
-    
-    // Clean up session
-    if (req.session?.oauthSource) {
-      delete req.session.oauthSource;
-    }
-    
-    // Detect if request is from Android or iOS device
-    const userAgent = req.headers['user-agent'] || '';
-    const isAndroid = /android/i.test(userAgent);
-    const isIOS = /iphone|ipad|ipod/i.test(userAgent);
-    const isMobile = isAndroid || isIOS;
-    
-    // Use custom scheme ONLY if explicitly from the app (source=app) and on a mobile platform
-    // Otherwise, use HTTPS URL even on mobile devices (for mobile web browsers)
+
+    // Extract the source from the OAuth state parameter that was set when the
+    // login was initiated.  This is more reliable than session or user-agent
+    // detection because it is carried by Google back to us in the callback URL.
+    const source = req.query.state;
+
     let redirectUrl;
-    if (source === 'app' && isMobile) {
-      console.log('📱 App-initiated OAuth detected, using custom scheme for direct app redirect');
-      redirectUrl = `com.bubbleflashservices.bfsapp://google-success?token=${encodeURIComponent(token)}&name=${encodeURIComponent(
-        user.name
-      )}&email=${encodeURIComponent(user.email)}&image=${encodeURIComponent(
-        user.image || ""
-      )}`;
+    if (source === 'app') {
+      // Redirect into the native Capacitor app via a custom deep-link scheme.
+      // IMPORTANT: we never redirect Google directly to the app deep link –
+      // the backend always handles the callback first, generates the JWT, and
+      // only then forwards the user to the app.
+      const appDeepLink =
+        process.env.APP_DEEP_LINK ||
+        'com.bubbleflashservices.bfsapp://google-success';
+      redirectUrl = `${appDeepLink}?token=${encodeURIComponent(
+        token
+      )}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(
+        user.email
+      )}&image=${encodeURIComponent(user.image || '')}`;
+      console.log('📱 App-initiated OAuth: redirecting via deep link');
     } else {
-      // For web browsers (desktop or mobile), use HTTPS URL
-      console.log('🌐 Web-initiated OAuth detected, using HTTPS redirect');
-      redirectUrl = `${
-        process.env.BASE_URL
-      }/google-success?token=${encodeURIComponent(token)}&name=${encodeURIComponent(
-        user.name
-      )}&email=${encodeURIComponent(user.email)}&image=${encodeURIComponent(
-        user.image || ""
-      )}`;
+      // Redirect to the web app's success page so it can store the JWT and
+      // update the UI without exposing the token in the Authorization header.
+      const webUrl =
+        process.env.WEB_URL || process.env.BASE_URL || 'http://localhost:3000';
+      redirectUrl = `${webUrl}/google-success?token=${encodeURIComponent(
+        token
+      )}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(
+        user.email
+      )}&image=${encodeURIComponent(user.image || '')}`;
+      console.log('🌐 Web-initiated OAuth: redirecting to web success page');
     }
-    
-    console.log(`Redirecting to: ${redirectUrl.substring(0, 100)}...`);
+
     res.redirect(redirectUrl);
   }
 );
@@ -195,6 +200,27 @@ function googleTokenRateLimit(req, res, next) {
     entry.count += 1;
   }
   googleTokenRateMap.set(ip, entry);
+  if (entry.count > maxRequests) {
+    return res.status(429).json({ message: "Too many requests, please try again later." });
+  }
+  next();
+}
+
+// Simple in-memory rate limiter for the Google OAuth redirect (20 requests/minute per IP)
+const googleOAuthRateMap = new Map();
+function googleOAuthRateLimit(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 60 * 1000;
+  const maxRequests = 20;
+  const entry = googleOAuthRateMap.get(ip) || { count: 0, start: now };
+  if (now - entry.start > windowMs) {
+    entry.count = 1;
+    entry.start = now;
+  } else {
+    entry.count += 1;
+  }
+  googleOAuthRateMap.set(ip, entry);
   if (entry.count > maxRequests) {
     return res.status(429).json({ message: "Too many requests, please try again later." });
   }

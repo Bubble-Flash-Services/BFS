@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
-import './passport.js';
+import './config/passport.js';
 import authRoutes from './routes/auth.js';
 import authAdminRoutes from './routes/authAdmin.js';
 import userRoutes from './routes/user.js';
