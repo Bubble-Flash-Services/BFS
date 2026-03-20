@@ -80,19 +80,6 @@ export default function ServiceCategories({ onLoginRequired }) {
       hoverColor: "hover:bg-orange-100",
     },
     {
-      name: "Green and Clean Service",
-      image: "/clean-home.jpg",
-      category: "green",
-      description: "Eco-friendly home & office cleaning services",
-      fallbackIcon: HomeOutlined,
-      gradient: "from-green-600 to-teal-600",
-      bgColor: "bg-green-50",
-      hoverColor: "hover:bg-green-100",
-      // price: "From ₹599",
-      isNew: true,
-      isPopular: true,
-    },
-    {
       name: "Vehicle Check-up",
       image:
         "https://media.istockphoto.com/id/1165665234/photo/car-maintenance-and-repair-mechanic-writing-checklist-paper-on-clipboard.jpg?s=612x612&w=0&k=20&c=yjR4V79WTKf6rO00v0ZqCzAoM8AZTdIlA4lP7T_dctg=",
