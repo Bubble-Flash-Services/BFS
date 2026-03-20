@@ -423,13 +423,6 @@ export default function HeroSection() {
       gradient: "from-purple-600 via-purple-500 to-pink-500",
       alt: "Home Cleaning Service",
     },
-    {
-      title: "Beautiful Decorations",
-      subtitle: "Transform your events into unforgettable celebrations with our stunning decoration services",
-      image: "/services/flowers/decoration.avif",
-      gradient: "from-amber-600 via-amber-500 to-orange-500",
-      alt: "Event Decoration Service",
-    },
   ];
 
   // Car wash accessories data

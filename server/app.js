@@ -27,17 +27,9 @@ import moversPackersAdminRoutes from './routes/moversPackersAdmin.js';
 import vehicleCheckupRoutes from './routes/vehicleCheckup.js';
 import vehicleAccessoriesRoutes from './routes/vehicleAccessories.js';
 import vehicleAccessoriesAdminRoutes from './routes/vehicleAccessoriesAdmin.js';
-import paintingQuotesRoutes from './routes/paintingQuotes.js';
-import paintingQuotesAdminRoutes from './routes/paintingQuotesAdmin.js';
-import keyServicesRoutes from './routes/keyServices.js';
-import keyServicesAdminRoutes from './routes/keyServicesAdmin.js';
 import laundryAdminRoutes from './routes/laundryAdmin.js';
 import autofixRoutes from './routes/autofix.js';
 import autofixAdminRoutes from './routes/autofixAdmin.js';
-import flowerServicesRoutes from './routes/flowerServices.js';
-import flowerServicesAdminRoutes from './routes/flowerServicesAdmin.js';
-import mobilefixRoutes from './routes/mobilefix.js';
-import mobilefixAdminRoutes from './routes/mobilefixAdmin.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import { configureCloudinary } from './services/cloudinary.js';
@@ -100,27 +92,12 @@ app.use('/api/vehicle-checkup', vehicleCheckupRoutes);
 app.use('/api/vehicle-accessories', vehicleAccessoriesRoutes);
 app.use('/api/admin/vehicle-accessories', vehicleAccessoriesAdminRoutes);
 
-// Painting Services routes
-app.use('/api/painting', paintingQuotesRoutes);
-app.use('/api/admin/painting-quotes', paintingQuotesAdminRoutes);
-
-// Key Services routes
-app.use('/api/key-services', keyServicesRoutes);
-app.use('/api/admin/key-services', keyServicesAdminRoutes);
-
 // Laundry Services routes
 app.use('/api/admin/laundry', laundryAdminRoutes);
 
 // AutoFix Pro routes
 app.use('/api/autofix', autofixRoutes);
 app.use('/api/admin/autofix', autofixAdminRoutes);
-
-// Flower Services routes
-app.use('/api/flower-services', flowerServicesRoutes);
-app.use('/api/admin/flower-services', flowerServicesAdminRoutes);
-// MobileFix Pro routes
-app.use('/api/mobilefix', mobilefixRoutes);
-app.use('/api/admin/mobilefix', mobilefixAdminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
