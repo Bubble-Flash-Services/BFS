@@ -40,12 +40,10 @@ const AdminDashboard = () => {
     helmetWash: 0,
     greenClean: 0,
     moversPackers: 0,
-    painting: 0,
     laundry: 0,
     vehicleCheckup: 0,
     insurance: 0,
     puc: 0,
-    keyServices: 0,
     vehicleAccessories: 0,
   });
 
@@ -104,12 +102,10 @@ const AdminDashboard = () => {
           helmetWash: serviceBreakdown?.helmetWash ?? 0,
           greenClean: serviceBreakdown?.greenClean ?? 0,
           moversPackers: serviceBreakdown?.moversPackers ?? 0,
-          painting: serviceBreakdown?.painting ?? 0,
           laundry: serviceBreakdown?.laundry ?? 0,
           vehicleCheckup: serviceBreakdown?.vehicleCheckup ?? 0,
           insurance: serviceBreakdown?.insurance ?? 0,
           puc: serviceBreakdown?.puc ?? 0,
-          keyServices: serviceBreakdown?.keyServices ?? 0,
           vehicleAccessories: serviceBreakdown?.vehicleAccessories ?? 0,
         });
 
@@ -492,44 +488,6 @@ const AdminDashboard = () => {
                   </p>
                 </div>
                 <div className="text-4xl opacity-80">📋</div>
-              </div>
-            </div>
-
-            <div
-              onClick={() => navigate("/admin/orders?serviceType=key-services")}
-              className="bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
-            >
-              <div className="flex items-center justify-between text-white">
-                <div>
-                  <p className="text-sm font-medium opacity-90">Key Services</p>
-                  <p className="text-3xl font-bold mt-2">
-                    {serviceBreakdown.keyServices}
-                  </p>
-                  <p className="text-xs mt-2 opacity-75">
-                    Click to view orders
-                  </p>
-                </div>
-                <div className="text-4xl opacity-80">🔑</div>
-              </div>
-            </div>
-
-            <div
-              onClick={() => navigate("/admin/painting-services")}
-              className="bg-gradient-to-br from-rose-500 to-rose-600 rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
-            >
-              <div className="flex items-center justify-between text-white">
-                <div>
-                  <p className="text-sm font-medium opacity-90">
-                    Painting Quotes
-                  </p>
-                  <p className="text-3xl font-bold mt-2">
-                    {serviceBreakdown.painting}
-                  </p>
-                  <p className="text-xs mt-2 opacity-75">
-                    Click to view quotes
-                  </p>
-                </div>
-                <div className="text-4xl opacity-80">🎨</div>
               </div>
             </div>
 
