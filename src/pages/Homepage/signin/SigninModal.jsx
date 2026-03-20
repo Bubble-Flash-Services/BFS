@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { login, getProfile } from '../../../api/auth';
+import { login, getProfile, googleTokenLogin } from '../../../api/auth';
 import { useAuth } from '../../../components/AuthContext';
 import ForgotPasswordModal from '../../../components/ForgotPasswordModal';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
+import { useGoogleLogin } from '@react-oauth/google';
 
 export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
   const { updateAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [showForgot, setShowForgot] = useState(false);
 
@@ -49,6 +51,46 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
       setError('Login failed');
     }
   };
+
+  // In-app Google Sign-In using @react-oauth/google — no external browser opened
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setGoogleLoading(true);
+      setError("");
+      try {
+        const res = await googleTokenLogin(tokenResponse.access_token);
+        if (res.token && res.user) {
+          console.log('✅ Google in-app login successful');
+          try {
+            const fullProfile = await getProfile(res.token);
+            updateAuth(res.token, fullProfile && !fullProfile.error ? fullProfile : res.user);
+          } catch {
+            updateAuth(res.token, res.user);
+          }
+          onLogin && onLogin(res.user);
+          onClose();
+        } else {
+          setError(res.message || 'Google sign-in failed');
+        }
+      } catch (err) {
+        console.error('Google token exchange error:', err);
+        setError('Google sign-in failed. Please try again.');
+      } finally {
+        setGoogleLoading(false);
+      }
+    },
+    onError: (errorResponse) => {
+      console.error('Google login error:', errorResponse);
+      // Fallback to browser-based OAuth for native platforms when in-app flow fails
+      if (Capacitor.isNativePlatform()) {
+        const oauthUrl = (import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/google?source=app';
+        Browser.open({ url: oauthUrl, presentationStyle: 'popover' });
+      } else {
+        setError('Google sign-in failed. Please try again.');
+      }
+    },
+    flow: 'implicit',
+  });
 
   if (!open) return null;
   return (
@@ -106,17 +148,11 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
         <button
           type="button"
           className="flex items-center gap-2 border border-black rounded-lg px-3 sm:px-4 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center"
-          onClick={async () => {
-            const oauthUrl = (import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/google' + (Capacitor.isNativePlatform() ? '?source=app' : '');
-            if (Capacitor.isNativePlatform()) {
-              await Browser.open({ url: oauthUrl, presentationStyle: 'popover' });
-            } else {
-              window.location.href = oauthUrl;
-            }
-          }}
+          onClick={() => handleGoogleLogin()}
+          disabled={googleLoading}
         >
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6" />
-          <span className="text-sm sm:text-base md:text-lg">Continue with Google</span>
+          <span className="text-sm sm:text-base md:text-lg">{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
         </button>
         <div className="text-center text-gray-600 text-xs sm:text-sm mt-2">
           New user?{' '}

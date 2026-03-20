@@ -180,6 +180,86 @@ router.post("/forgot-password", forgotPassword);
 // Reset password
 router.post("/reset-password", resetPassword);
 
+// Simple in-memory rate limiter for the Google token endpoint (10 requests/minute per IP)
+const googleTokenRateMap = new Map();
+function googleTokenRateLimit(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 60 * 1000;
+  const maxRequests = 10;
+  const entry = googleTokenRateMap.get(ip) || { count: 0, start: now };
+  if (now - entry.start > windowMs) {
+    entry.count = 1;
+    entry.start = now;
+  } else {
+    entry.count += 1;
+  }
+  googleTokenRateMap.set(ip, entry);
+  if (entry.count > maxRequests) {
+    return res.status(429).json({ message: "Too many requests, please try again later." });
+  }
+  next();
+}
+
+// In-app Google OAuth: verify access_token from @react-oauth/google
+router.post("/google-token", googleTokenRateLimit, async (req, res) => {
+  try {
+    const { access_token } = req.body;
+    if (!access_token) {
+      return res.status(400).json({ message: "Access token required" });
+    }
+
+    // Verify token and fetch user profile from Google
+    const googleRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+
+    if (!googleRes.ok) {
+      return res.status(401).json({ message: "Invalid Google access token" });
+    }
+
+    const profile = await googleRes.json();
+
+    if (!profile.email || !profile.sub) {
+      return res.status(401).json({ message: "Could not retrieve Google profile" });
+    }
+
+    // Find user by googleId, fall back to email
+    let user = await User.findOne({ googleId: profile.sub });
+    if (!user) {
+      user = await User.findOne({ email: profile.email });
+    }
+    if (!user) {
+      user = await User.create({
+        name: profile.name,
+        email: profile.email,
+        image: profile.picture,
+        provider: "google",
+        googleId: profile.sub,
+      });
+    } else if (!user.googleId) {
+      user.googleId = profile.sub;
+      if (!user.image) user.image = profile.picture;
+      await user.save();
+    }
+
+    const token = generateToken(user);
+    res.json({
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+        image: user.image || profile.picture,
+        phone: user.phone,
+        address: user.address,
+      },
+    });
+  } catch (error) {
+    console.error("Google token auth error:", error);
+    res.status(500).json({ message: "Authentication failed" });
+  }
+});
+
 // Profile endpoints (for frontend compatibility)
 router.get("/me", authenticateToken, getProfile);
 router.put("/me", authenticateToken, updateProfile);
