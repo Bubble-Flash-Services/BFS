@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Brand colour palette ─────────────────────────────────────────────────── */
+:root {
+  --color-navy:       #1F3C88;
+  --color-navy-mid:   #2952A3;
+  --color-gold:       #FFB400;
+  --color-gold-dark:  #e0a000;
+  --color-navy-light: #EEF2FF;
+  --color-gold-light: #FFF8E1;
+}
+
 /* Mobile-first responsive utilities */
 @layer utilities {
   /* Touch-friendly minimum sizes for mobile buttons */

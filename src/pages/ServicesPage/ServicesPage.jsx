@@ -137,7 +137,7 @@ export default function ServicesPage() {
   }, []);
 
   return (
-    <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 min-h-screen pb-16 relative">
+    <div className="bg-gradient-to-br from-[#EEF2FF] via-white to-[#EEF2FF] min-h-screen pb-16 relative">
       {/* Background Image */}
       <div className="absolute inset-0 opacity-20">
         <div
@@ -153,7 +153,7 @@ export default function ServicesPage() {
 
       <div className="relative max-w-6xl mx-auto pt-12 px-4 flex flex-col md:flex-row gap-8">
         {/* Left: Callback Form */}
-        <div className="bg-gradient-to-br from-white via-orange-50 to-amber-50 rounded-xl border-2 border-amber-300 p-8 w-full md:w-[350px] flex flex-col items-center shadow-xl">
+        <div className="bg-gradient-to-br from-white to-[#EEF2FF] rounded-xl border-2 border-[#1F3C88]/20 p-8 w-full md:w-[350px] flex flex-col items-center shadow-xl">
           <div className="flex items-center gap-2 mb-4">
             <img
               src="/services/callback.svg"
@@ -166,7 +166,7 @@ export default function ServicesPage() {
             className="w-full flex flex-col gap-4"
             onSubmit={handleCallbackSubmit}
           >
-            <div className="flex items-center gap-2 border-2 border-amber-400 rounded-xl px-3 py-2 bg-white/80 hover:bg-white transition-colors">
+            <div className="flex items-center gap-2 border-2 border-[#1F3C88]/30 rounded-xl px-3 py-2 bg-white/80 hover:bg-white transition-colors">
               <span className="text-lg">
                 <img
                   src="/services/name.svg"
@@ -182,7 +182,7 @@ export default function ServicesPage() {
                 required
               />
             </div>
-            <div className="flex items-center gap-2 border-2 border-amber-400 rounded-xl px-3 py-2 bg-white/80 hover:bg-white transition-colors">
+            <div className="flex items-center gap-2 border-2 border-[#1F3C88]/30 rounded-xl px-3 py-2 bg-white/80 hover:bg-white transition-colors">
               <span className="text-lg">
                 <img
                   src="/services/phoneno.svg"
@@ -199,7 +199,7 @@ export default function ServicesPage() {
                 required
               />
             </div>
-            <div className="flex items-center gap-2 border-2 border-amber-400 rounded-xl px-3 py-2 bg-white/80 hover:bg-white transition-colors">
+            <div className="flex items-center gap-2 border-2 border-[#1F3C88]/30 rounded-xl px-3 py-2 bg-white/80 hover:bg-white transition-colors">
               <span className="text-lg">
                 <img
                   src="/services/envelope.svg"
@@ -216,17 +216,17 @@ export default function ServicesPage() {
               />
             </div>
             <textarea
-              className="border-2 border-amber-400 rounded-xl px-3 py-2 bg-white/80 min-h-[60px] outline-none hover:bg-white transition-colors"
+              className="border-2 border-[#1F3C88]/30 rounded-xl px-3 py-2 bg-white/80 min-h-[60px] outline-none hover:bg-white transition-colors"
               placeholder="Enter your message......"
               value={cbMessage}
               onChange={(e) => setCbMessage(e.target.value)}
             />
-            <div className="text-pink-600 text-sm">
+            <div className="text-gray-500 text-sm">
               We are operating between 9 AM - 8 PM
             </div>
             <button
               type="submit"
-              className="bg-[#d14fff] text-white rounded-xl px-2 py-2 font-semibold mt-2 disabled:opacity-60"
+              className="bg-[#1F3C88] text-white rounded-xl px-2 py-2 font-semibold mt-2 disabled:opacity-60 hover:bg-[#2952A3] transition-colors"
               disabled={cbSending}
             >
               {cbSending ? "Sending..." : "Call me"}
@@ -237,7 +237,7 @@ export default function ServicesPage() {
         <div className="flex-1 flex flex-col gap-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div
-              className="bg-gradient-to-br from-white via-green-50 to-emerald-50 rounded-xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-green-300 transition-all duration-200 hover:shadow-2xl hover:border-green-400 hover:-translate-y-1"
+              className="bg-gradient-to-br from-white to-[#EEF2FF] rounded-xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-[#1F3C88]/20 transition-all duration-200 hover:shadow-2xl hover:border-[#1F3C88]/40 hover:-translate-y-1"
               onClick={() => {
                 window.open("https://wa.me/919591572775", "_blank");
               }}
@@ -260,7 +260,7 @@ export default function ServicesPage() {
               </div>
             </div>
             <div
-              className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-blue-300 transition-all duration-200 hover:shadow-2xl hover:border-blue-400 hover:-translate-y-1"
+              className="bg-gradient-to-br from-white to-[#EEF2FF] rounded-xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-[#1F3C88]/20 transition-all duration-200 hover:shadow-2xl hover:border-[#1F3C88]/40 hover:-translate-y-1"
               onClick={() => {
                 const faqSection = document.getElementById("faq-section");
                 if (faqSection)
@@ -285,7 +285,7 @@ export default function ServicesPage() {
               </div>
             </div>
             <div
-              className="bg-gradient-to-br from-white via-purple-50 to-violet-50 rounded-xl p-6 flex flex-col gap-2 shadow-lg col-span-1 md:col-span-2 cursor-pointer border-2 border-purple-300 transition-all duration-200 hover:shadow-2xl hover:border-purple-400 hover:-translate-y-1"
+              className="bg-gradient-to-br from-white to-[#EEF2FF] rounded-xl p-6 flex flex-col gap-2 shadow-lg col-span-1 md:col-span-2 cursor-pointer border-2 border-[#1F3C88]/20 transition-all duration-200 hover:shadow-2xl hover:border-[#1F3C88]/40 hover:-translate-y-1"
               onClick={() => {
                 window.open(
                   "https://maps.app.goo.gl/mqVWff6HjLuDCcrD9",
@@ -344,7 +344,7 @@ export default function ServicesPage() {
         </div>
       </div>
       {/* Choose your package Section */}
-      <div className="py-16 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative">
+      <div className="py-16 bg-white relative">
         {/* Background overlay */}
         <div className="absolute inset-0 opacity-10">
           <div
@@ -362,7 +362,7 @@ export default function ServicesPage() {
         </h2>
         <div className="relative max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
           {/* Quick shine car */}
-          <div className="bg-gradient-to-br from-white via-blue-50 to-blue-100 rounded-xl border-2 border-blue-300 shadow-lg p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:scale-105 hover:border-blue-400 relative">
+          <div className="bg-gradient-to-br from-white to-[#EEF2FF] rounded-xl border-2 border-[#1F3C88]/20 shadow-lg p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:scale-105 hover:border-[#1F3C88]/40 relative">
             <div className="w-full flex-1 flex flex-col items-center gap-6">
               <div className="text-4xl font-serif font-bold mb-2 text-center">
                 Quick shine car
@@ -382,7 +382,7 @@ export default function ServicesPage() {
             </button>
           </div>
           {/* Bike wash */}
-          <div className="bg-gradient-to-br from-white via-green-50 to-green-100 rounded-xl border-2 border-green-300 shadow-lg p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:scale-105 hover:border-green-400 relative">
+          <div className="bg-gradient-to-br from-white to-[#EEF2FF] rounded-xl border-2 border-[#1F3C88]/20 shadow-lg p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:scale-105 hover:border-[#1F3C88]/40 relative">
             <div className="w-full flex-1 flex flex-col items-center gap-6">
               <div className="text-4xl font-serif font-bold mb-2 text-center">
                 Shine Bike wash
@@ -401,7 +401,7 @@ export default function ServicesPage() {
             </button>
           </div>
           {/* Laundry wash */}
-          <div className="bg-gradient-to-br from-white via-purple-50 to-purple-100 rounded-xl border-2 border-purple-300 shadow-lg p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:scale-105 hover:border-purple-400 relative">
+          <div className="bg-gradient-to-br from-white to-[#FFF8E1] rounded-xl border-2 border-[#FFB400]/30 shadow-lg p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-200 hover:shadow-2xl hover:scale-105 hover:border-[#FFB400]/50 relative">
             <div className="w-full flex-1 flex flex-col items-center gap-6">
               <div className="text-4xl font-serif font-bold mb-2 text-center">
                 Laundry wash
@@ -422,7 +422,7 @@ export default function ServicesPage() {
         </div>
       </div>
       {/* What client says - true carousel */}
-      <div className="mt-20 mb-8 py-8 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative">
+      <div className="mt-20 mb-8 py-8 bg-[#EEF2FF] relative">
         {/* Background overlay */}
         <div className="absolute inset-0 opacity-15">
           <div
@@ -445,12 +445,12 @@ export default function ServicesPage() {
           >
             {carousel.slice(0, visibleCount).map((t, idx) => {
               const gradients = [
-                "from-blue-50 via-blue-100 to-blue-50",
-                "from-purple-50 via-purple-100 to-purple-50",
-                "from-pink-50 via-pink-100 to-pink-50",
-                "from-green-50 via-green-100 to-green-50",
-                "from-rose-50 via-rose-100 to-rose-50",
-                "from-cyan-50 via-cyan-100 to-cyan-50",
+                "from-white via-[#EEF2FF] to-white",
+                "from-white via-[#FFF8E1] to-white",
+                "from-white via-[#EEF2FF] to-white",
+                "from-white via-[#FFF8E1] to-white",
+                "from-white via-[#EEF2FF] to-white",
+                "from-white via-[#FFF8E1] to-white",
               ];
               const gradient = gradients[idx % gradients.length];
               return (
