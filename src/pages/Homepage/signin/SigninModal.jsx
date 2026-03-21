@@ -1,9 +1,70 @@
 import React, { useState } from "react";
-import { login, getProfile } from '../../../api/auth';
+import { login, getProfile, googleTokenLogin } from '../../../api/auth';
 import { useAuth } from '../../../components/AuthContext';
 import ForgotPasswordModal from '../../../components/ForgotPasswordModal';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
+import { useGoogleLogin } from '@react-oauth/google';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+function GoogleSigninButton({ onSuccess, onError }) {
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  // On native Capacitor platforms the @react-oauth/google popup cannot open, so
+  // we open the backend OAuth flow in the Capacitor Browser plugin instead.
+  // The backend will redirect back into the app via the registered deep-link
+  // scheme (APP_DEEP_LINK) after a successful sign-in.
+  const handleNativeGoogleLogin = () => {
+    // VITE_BACKEND_URL is the preferred env var; fall back to stripping '/api'
+    // from VITE_API_URL only when that URL ends exactly with '/api'.
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    const backendUrl =
+      import.meta.env.VITE_BACKEND_URL ||
+      (apiUrl.endsWith('/api') ? apiUrl.slice(0, -4) : apiUrl) ||
+      window.location.origin;
+    // source=app tells the backend callback to redirect via deep link
+    const oauthUrl = `${backendUrl}/api/auth/google?source=app`;
+    Browser.open({ url: oauthUrl, presentationStyle: 'popover' });
+  };
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setGoogleLoading(true);
+      try {
+        await onSuccess(tokenResponse);
+      } finally {
+        setGoogleLoading(false);
+      }
+    },
+    onError: (errorResponse) => {
+      console.error('Google login error:', errorResponse);
+      onError('Google sign-in failed. Please try again.');
+    },
+    flow: 'implicit',
+  });
+
+  // Choose the right flow based on platform
+  const handleClick = () => {
+    if (Capacitor.isNativePlatform()) {
+      handleNativeGoogleLogin();
+    } else {
+      handleGoogleLogin();
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className="flex items-center gap-2 border border-black rounded-lg px-3 sm:px-4 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center"
+      onClick={() => handleClick()}
+      disabled={googleLoading}
+    >
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6" />
+      <span className="text-sm sm:text-base md:text-lg">{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
+    </button>
+  );
+}
 
 export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
   const { updateAuth } = useAuth();
@@ -47,6 +108,29 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
     } catch (err) {
       setLoading(false);
       setError('Login failed');
+    }
+  };
+
+  const handleGoogleSuccess = async (tokenResponse) => {
+    setError("");
+    try {
+      const res = await googleTokenLogin(tokenResponse.access_token);
+      if (res.token && res.user) {
+        console.log('✅ Google in-app login successful');
+        try {
+          const fullProfile = await getProfile(res.token);
+          updateAuth(res.token, fullProfile && !fullProfile.error ? fullProfile : res.user);
+        } catch {
+          updateAuth(res.token, res.user);
+        }
+        onLogin && onLogin(res.user);
+        onClose();
+      } else {
+        setError(res.message || 'Google sign-in failed');
+      }
+    } catch (err) {
+      console.error('Google token exchange error:', err);
+      setError('Google sign-in failed. Please try again.');
     }
   };
 
@@ -103,21 +187,12 @@ export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
               Forgot password?
             </button>
           </form>
-        <button
-          type="button"
-          className="flex items-center gap-2 border border-black rounded-lg px-3 sm:px-4 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center"
-          onClick={async () => {
-            const oauthUrl = (import.meta.env.VITE_API_URL || window.location.origin) + '/api/auth/google' + (Capacitor.isNativePlatform() ? '?source=app' : '');
-            if (Capacitor.isNativePlatform()) {
-              await Browser.open({ url: oauthUrl, presentationStyle: 'popover' });
-            } else {
-              window.location.href = oauthUrl;
-            }
-          }}
-        >
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6" />
-          <span className="text-sm sm:text-base md:text-lg">Continue with Google</span>
-        </button>
+        {GOOGLE_CLIENT_ID && (
+          <GoogleSigninButton
+            onSuccess={handleGoogleSuccess}
+            onError={(msg) => setError(msg)}
+          />
+        )}
         <div className="text-center text-gray-600 text-xs sm:text-sm mt-2">
           New user?{' '}
           <button className="text-blue-500 hover:underline" onClick={() => {

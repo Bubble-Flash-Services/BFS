@@ -79,3 +79,13 @@ export async function signinOtp(data) {
   });
   return res.json();
 }
+
+// In-app Google OAuth: exchange Google access_token for app JWT
+export async function googleTokenLogin(accessToken) {
+  const res = await fetch(`${API}/api/auth/google-token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ access_token: accessToken }),
+  });
+  return res.json();
+}

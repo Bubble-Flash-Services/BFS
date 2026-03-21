@@ -46,7 +46,6 @@ const AdvertisementManagement = () => {
     'car_wash',
     'bike_wash', 
     'helmet_wash',
-    'laundry',
     'general'
   ];
 

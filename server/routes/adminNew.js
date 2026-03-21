@@ -6,10 +6,8 @@ import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Address from '../models/Address.js';
 import Coupon from '../models/Coupon.js';
-import PaintingQuote from '../models/PaintingQuote.js';
 import MoversPackers from '../models/MoversPackers.js';
 import VehicleCheckupBooking from '../models/VehicleCheckupBooking.js';
-import KeyServiceBooking from '../models/KeyServiceBooking.js';
 import GreenBooking from '../models/GreenBooking.js';
 import { authenticateAdmin, requirePermission } from '../middleware/authAdmin.js';
 import { searchByFolder } from '../services/cloudinary.js';
@@ -106,14 +104,11 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       greenCleanCartOrders,
       greenCleanDirectBookings,
       moversPackersOrders,
-      paintingOrders,
       laundryOrders,
       vehicleCheckupCartOrders,
       vehicleCheckupDirectBookings,
       insuranceOrders,
       pucOrders,
-      keyServicesCartOrders,
-      keyServicesDirectBookings,
       vehicleAccessoriesOrders
     ] = await Promise.all([
       Order.countDocuments({ 
@@ -137,7 +132,6 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       Order.countDocuments({ 'items.category': { $regex: 'Green.*Clean', $options: 'i' } }),
       GreenBooking.countDocuments(),
       MoversPackers.countDocuments(),
-      PaintingQuote.countDocuments(),
       Order.countDocuments({ 
         $or: [
           { 'items.category': { $regex: 'Laundry', $options: 'i' } },
@@ -150,13 +144,6 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       VehicleCheckupBooking.countDocuments(),
       Order.countDocuments({ 'items.category': 'Insurance' }),
       Order.countDocuments({ 'items.category': 'PUC Certificate' }),
-      Order.countDocuments({ 
-        $or: [
-          { 'items.type': 'key-services' },
-          { 'items.serviceName': 'key' }
-        ]
-      }),
-      KeyServiceBooking.countDocuments(),
       // Match accessories by type field - exact match for 'accessory' or by category field
       Order.countDocuments({ 
         $or: [
@@ -166,8 +153,7 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       })
     ]);
 
-    // Total key services, green clean, and vehicle checkup include both cart orders and direct bookings
-    const keyServicesOrders = keyServicesCartOrders + keyServicesDirectBookings;
+    // Total green clean and vehicle checkup include both cart orders and direct bookings
     const greenCleanOrders = greenCleanCartOrders + greenCleanDirectBookings;
     const vehicleCheckupOrders = vehicleCheckupCartOrders + vehicleCheckupDirectBookings;
 
@@ -190,12 +176,10 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
           helmetWash: helmetWashOrders,
           greenClean: greenCleanOrders,
           moversPackers: moversPackersOrders,
-          painting: paintingOrders,
           laundry: laundryOrders,
           vehicleCheckup: vehicleCheckupOrders,
           insurance: insuranceOrders,
           puc: pucOrders,
-          keyServices: keyServicesOrders,
           vehicleAccessories: vehicleAccessoriesOrders
         },
         monthlyRevenue: monthlyRevenue.map(item => ({

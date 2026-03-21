@@ -9,18 +9,12 @@ import {
   Menu,
   X,
   LogOut,
-  Truck,
-  Leaf,
   ShieldCheck,
   Shield,
   ClipboardCheck,
   Wrench,
   ShoppingBag,
-  Key,
-  Shirt,
   Car,
-  Smartphone,
-  DollarSign
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -83,46 +77,10 @@ const AdminLayout = ({ children }) => {
       active: location.pathname === "/admin/employees",
     },
     {
-      name: "Movers & Packers",
-      href: "/admin/movers-packers",
-      icon: Truck,
-      active: location.pathname === "/admin/movers-packers",
-    },
-    {
-      name: "Green & Clean",
-      href: "/admin/green-clean",
-      icon: Leaf,
-      active: location.pathname === "/admin/green-clean",
-    },
-    {
-      name: "Key Services",
-      href: "/admin/key-services",
-      icon: Key,
-      active: location.pathname === "/admin/key-services",
-    },
-    {
-      name: "Laundry Services",
-      href: "/admin/laundry",
-      icon: Shirt,
-      active: location.pathname === "/admin/laundry",
-    },
-    {
       name: "AutoFix Pro",
       href: "/admin/autofix",
       icon: Car,
       active: location.pathname === "/admin/autofix",
-    },
-    {
-      name: "MobileFix Pro",
-      href: "/admin/mobilefix",
-      icon: Smartphone,
-      active: location.pathname === "/admin/mobilefix",
-    },
-    {
-      name: "Mobile Pricing",
-      href: "/admin/mobile-pricing",
-      icon: DollarSign,
-      active: location.pathname === "/admin/mobile-pricing",
     },
     {
       name: "Coupons",

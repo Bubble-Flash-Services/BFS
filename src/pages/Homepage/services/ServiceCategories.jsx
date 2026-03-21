@@ -5,17 +5,11 @@ import { ArrowRight } from "lucide-react";
 import {
   CarOutlined,
   SafetyOutlined,
-  ShopOutlined,
   ToolOutlined,
-  MobileOutlined,
   HomeOutlined,
-  KeyOutlined,
   ExperimentOutlined,
   SafetyCertificateOutlined,
-  BgColorsOutlined,
-  TruckOutlined,
   ShoppingOutlined,
-  SettingOutlined,
 } from "@ant-design/icons";
 
 export default function ServiceCategories({ onLoginRequired }) {
@@ -37,7 +31,7 @@ export default function ServiceCategories({ onLoginRequired }) {
     // Check if user is logged in
     if (!user) {
       // Store the intended destination for post-login redirect
-      const destination = category === "laundry" ? "/laundry" : `/${category}`;
+      const destination = `/${category}`;
       localStorage.setItem(
         "postLoginRedirect",
         JSON.stringify({ path: destination, ts: Date.now() })
@@ -51,10 +45,6 @@ export default function ServiceCategories({ onLoginRequired }) {
     }
 
     // User is logged in, proceed with navigation
-    if (category === "laundry") {
-      navigate("/laundry");
-      return;
-    }
     navigate(`/${category}`);
   };
 
@@ -88,42 +78,6 @@ export default function ServiceCategories({ onLoginRequired }) {
       gradient: "from-orange-500 to-red-500",
       bgColor: "bg-orange-50",
       hoverColor: "hover:bg-orange-100",
-    },
-    {
-      name: "Laundry Service",
-      image: "/laundry/home.png",
-      category: "laundry",
-      description: "Fresh & clean laundry solutions",
-      fallbackIcon: ShopOutlined,
-      gradient: "from-purple-500 to-pink-500",
-      bgColor: "bg-purple-50",
-      hoverColor: "hover:bg-purple-100",
-    },
-    {
-      name: "Green and Clean Service",
-      image: "/clean-home.jpg",
-      category: "green",
-      description: "Eco-friendly home & office cleaning services",
-      fallbackIcon: HomeOutlined,
-      gradient: "from-green-600 to-teal-600",
-      bgColor: "bg-green-50",
-      hoverColor: "hover:bg-green-100",
-      // price: "From ₹599",
-      isNew: true,
-      isPopular: true,
-    },
-    {
-      name: "Doorstep Key Services",
-      image: "https://miro.medium.com/0*CfTIR5Aba91zLR9b.",
-      category: "key-services",
-      description: "Professional key duplication & lock services at doorstep",
-      fallbackIcon: KeyOutlined,
-      gradient: "from-amber-500 to-yellow-500",
-      bgColor: "bg-amber-50",
-      hoverColor: "hover:bg-amber-100",
-      // price: "From ₹49",
-      isNew: true,
-      isPopular: true,
     },
     {
       name: "Vehicle Check-up",
@@ -167,31 +121,6 @@ export default function ServiceCategories({ onLoginRequired }) {
       isPopular: true,
     },
     {
-      name: "Painting Services",
-      image: "https://5.imimg.com/data5/TR/QI/MY-4746650/painting-services.jpg",
-      category: "painting-services",
-      description: "Professional painting services for home & office",
-      fallbackIcon: BgColorsOutlined,
-      gradient: "from-indigo-500 to-purple-500",
-      bgColor: "bg-indigo-50",
-      hoverColor: "hover:bg-indigo-100",
-      // price: "From ₹14/sq.ft",
-      isNew: true,
-      isPopular: true,
-    },
-    {
-      name: "Movers & Packers",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrf-d-jS-tvWNRw5c3qUW51ArKXgFmFXZqpw&s",
-      category: "movers-packers",
-      description: "Professional relocation services",
-      fallbackIcon: TruckOutlined,
-      gradient: "from-yellow-500 to-amber-500",
-      bgColor: "bg-yellow-50",
-      hoverColor: "hover:bg-yellow-100",
-      isNew: true,
-    },
-    {
       name: "Vehicle Accessories Store",
       image: "/car accessories/car cover.jpg",
       category: "vehicle-accessories",
@@ -215,34 +144,6 @@ export default function ServiceCategories({ onLoginRequired }) {
       // price: "From ₹799",
       bgColor: "bg-orange-50",
       hoverColor: "hover:bg-orange-100",
-      isNew: true,
-      isPopular: true,
-    },
-    {
-      name: "Doorstep Mobile Repair",
-      image:
-        "https://www.fixma.in/storage/phonfix/img/blog/VQoN7ihOmvQldxdEqsVulqSCVQBJz254uF2j7Iwv.jpg",
-      category: "mobilefix",
-      description: "Professional mobile repair at your doorstep",
-      fallbackIcon: MobileOutlined,
-      gradient: "from-purple-500 to-indigo-500",
-      // price: "From ₹299",
-      bgColor: "bg-purple-50",
-      hoverColor: "hover:bg-purple-100",
-      isNew: true,
-      isPopular: true,
-    },
-    {
-      name: "BFS Flowers",
-      image:
-        "https://monsoonflowers.com/cdn/shop/articles/feature_image_1417065f-302c-49d7-8922-b7f884e3d8f5.webp?v=1735856265",
-      category: "flowers",
-      description: "Fresh flowers & bouquets for every occasion",
-      fallbackIcon: ShopOutlined,
-      gradient: "from-pink-500 to-rose-500",
-      // price: "From ₹199",
-      bgColor: "bg-pink-50",
-      hoverColor: "hover:bg-pink-100",
       isNew: true,
       isPopular: true,
     },

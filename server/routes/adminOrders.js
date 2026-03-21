@@ -1,6 +1,5 @@
 import express from "express";
 import Order from "../models/Order.js";
-import PaintingQuote from "../models/PaintingQuote.js";
 import MoversPackers from "../models/MoversPackers.js";
 import VehicleCheckupBooking from "../models/VehicleCheckupBooking.js";
 import { authenticateAdmin } from "../middleware/authAdmin.js";
@@ -24,31 +23,6 @@ router.get("/", authenticateAdmin, async (req, res) => {
       let serviceOrders = [];
 
       switch (serviceType) {
-        case "painting":
-          const paintingFilter = status && status !== "all" ? { status } : {};
-          const paintingQuotes = await PaintingQuote.find(paintingFilter)
-            .populate("userId", "name email phone")
-            .sort({ createdAt: -1 })
-            .limit(1000);
-          serviceOrders = paintingQuotes.map((q) => ({
-            _id: q._id,
-            orderNumber: `PNT-${q._id.toString().slice(-8)}`,
-            userId: q.userId,
-            items: [
-              {
-                serviceName: `${q.serviceType} - ${q.propertyType}`,
-                name: "Painting Service",
-                category: "Painting Services",
-              },
-            ],
-            totalAmount: q.quotedAmount || 0,
-            orderStatus: q.status,
-            paymentStatus: q.paymentStatus,
-            createdAt: q.createdAt,
-            serviceAddress: { fullAddress: q.address },
-          }));
-          break;
-
         case "movers-packers":
           const moversFilter = status && status !== "all" ? { status } : {};
           const moversBookings = await MoversPackers.find(moversFilter)
@@ -158,21 +132,6 @@ router.get("/", authenticateAdmin, async (req, res) => {
           };
           if (status && status !== "all") washingFilter.orderStatus = status;
           serviceOrders = await Order.find(washingFilter)
-            .populate("userId", "name email phone")
-            .sort({ createdAt: -1 })
-            .limit(1000);
-          break;
-
-        case "key-services":
-          // Key services from orders - check both type and serviceName
-          const keyServicesFilter = {
-            $or: [
-              { "items.type": "key-services" },
-              { "items.serviceName": "key" },
-            ],
-          };
-          if (status && status !== "all") keyServicesFilter.orderStatus = status;
-          serviceOrders = await Order.find(keyServicesFilter)
             .populate("userId", "name email phone")
             .sort({ createdAt: -1 })
             .limit(1000);
