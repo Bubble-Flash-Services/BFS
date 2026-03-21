@@ -133,13 +133,13 @@ const testimonials = [
 ].map((r) => ({ ...r, stars: 5 }));
 
 const AVATAR_COLORS = [
-  "bg-blue-600",
-  "bg-indigo-600",
-  "bg-rose-600",
-  "bg-emerald-600",
-  "bg-amber-600",
-  "bg-purple-600",
-  "bg-cyan-600",
+  "bg-[#1F3C88]",
+  "bg-[#2952A3]",
+  "bg-[#FFB400]",
+  "bg-[#1F3C88]",
+  "bg-[#2952A3]",
+  "bg-[#FFB400]",
+  "bg-[#1F3C88]",
 ];
 
 const getInitial = (name = "?") => name.trim()[0]?.toUpperCase() || "?";
@@ -410,21 +410,21 @@ export default function HeroSection() {
       title: "Premium Car Wash Services",
       subtitle: "Professional doorstep cleaning with eco-friendly products and expert care for your vehicle",
       image: "/car/home.png",
-      gradient: "from-blue-600 via-blue-500 to-cyan-500",
+      gradient: "from-[#1F3C88] via-[#2952A3] to-[#1F3C88]",
       alt: "Professional Car Wash Service",
     },
     {
       title: "Expert Bike Wash",
       subtitle: "Keep your ride sparkling clean with our specialized bike cleaning and detailing services",
       image: "/bike/home.png",
-      gradient: "from-green-600 via-green-500 to-emerald-500",
+      gradient: "from-[#2952A3] via-[#1F3C88] to-[#2952A3]",
       alt: "Professional Bike Wash Service",
     },
     {
       title: "Helmet Cleaning & Care",
       subtitle: "Restore your helmet's shine with our professional deep-cleaning and sanitisation service",
       image: "/helmet/helmethome.png",
-      gradient: "from-orange-600 via-red-500 to-rose-500",
+      gradient: "from-[#1F3C88] via-[#2952A3] to-[#1A3580]",
       alt: "Professional Helmet Cleaning Service",
     },
   ];
@@ -1284,13 +1284,13 @@ export default function HeroSection() {
       <section className="py-20 bg-white relative overflow-hidden">
         {/* Background Images for Carousel Feel */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 blur-3xl animate-pulse" />
+          <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-gradient-to-br from-[#1F3C88] to-[#2952A3] blur-3xl animate-pulse" />
           <div
-            className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 blur-3xl animate-pulse"
+            className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-gradient-to-br from-[#2952A3] to-[#1F3C88] blur-3xl animate-pulse"
             style={{ animationDelay: "1s" }}
           />
           <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 blur-3xl animate-pulse"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-[#FFB400] to-[#e0a000] blur-3xl animate-pulse"
             style={{ animationDelay: "2s" }}
           />
         </div>
@@ -1438,7 +1438,7 @@ export default function HeroSection() {
                                   initial={{ opacity: 0 }}
                                   whileHover={{ opacity: 0.1 }}
                                   transition={{ duration: 0.3 }}
-                                  className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-3xl"
+                                  className="absolute inset-0 bg-gradient-to-br from-[#1F3C88] to-[#2952A3] rounded-3xl"
                                 />
 
                                 {/* Content */}
@@ -1459,7 +1459,7 @@ export default function HeroSection() {
                                     viewport={{ once: true }}
                                     className="relative w-20 h-20 md:w-24 md:h-24 mx-auto mb-4"
                                   >
-                                    <div className="w-full h-full bg-blue-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <div className="w-full h-full bg-[#EEF2FF] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                       <img
                                         src={item.img}
                                         alt={item.title}
@@ -2303,7 +2303,7 @@ export default function HeroSection() {
           </div>
         </div> */}
         {/* What client says - true carousel */}
-        <div className="mt-12 mb-8 py-12 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative">
+        <div className="mt-12 mb-8 py-12 bg-[#EEF2FF] relative">
           {/* Background overlay */}
           <div className="absolute inset-0 opacity-20">
             <div
@@ -2327,13 +2327,13 @@ export default function HeroSection() {
               {carousel.slice(0, visibleCount).map((t, idx) => {
                 const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
                 const gradients = [
-                  "from-blue-50 via-blue-100 to-blue-50",
-                  "from-purple-50 via-purple-100 to-purple-50",
-                  "from-pink-50 via-pink-100 to-pink-50",
-                  "from-green-50 via-green-100 to-green-50",
-                  "from-amber-50 via-amber-100 to-amber-50",
-                  "from-cyan-50 via-cyan-100 to-cyan-50",
-                  "from-rose-50 via-rose-100 to-rose-50",
+                  "from-white via-[#EEF2FF] to-white",
+                  "from-white via-[#FFF8E1] to-white",
+                  "from-white via-[#EEF2FF] to-white",
+                  "from-white via-[#FFF8E1] to-white",
+                  "from-white via-[#EEF2FF] to-white",
+                  "from-white via-[#FFF8E1] to-white",
+                  "from-white via-[#EEF2FF] to-white",
                 ];
                 const gradient = gradients[idx % gradients.length];
                 return (
@@ -2406,9 +2406,9 @@ export default function HeroSection() {
                         {faq.question}
                       </span>
                       <div className="flex-shrink-0">
-                        <div className="w-8 h-8 rounded-full bg-pink-100 border border-pink-200 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-[#EEF2FF] border border-[#1F3C88]/20 flex items-center justify-center">
                           <svg
-                            className={`w-4 h-4 text-pink-500 transition-transform duration-300 ${
+                            className={`w-4 h-4 text-[#1F3C88] transition-transform duration-300 ${
                               openIdx === i ? "rotate-180" : "rotate-0"
                             }`}
                             fill="none"
