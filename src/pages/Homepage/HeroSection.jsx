@@ -401,8 +401,12 @@ export default function HeroSection() {
   const locations = [fullAddress || "", ""];
 
   // Hero carousel slides data - now with images, titles, subtitles, and gradients
-  const heroSlides = [
-    {
+  const CAROUSEL_DOT_PATTERN = {
+    backgroundImage:
+      'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)',
+    backgroundSize: '60px 60px',
+  };
+  const heroSlides = [    {
       title: "Premium Car Wash Services",
       subtitle: "Professional doorstep cleaning with eco-friendly products and expert care for your vehicle",
       image: "/car/home.png",
@@ -417,11 +421,11 @@ export default function HeroSection() {
       alt: "Professional Bike Wash Service",
     },
     {
-      title: "Home Cleaning Solutions",
-      subtitle: "Experience fresh and clean living spaces with our comprehensive home cleaning services",
-      image: "/clean-home.jpg",
-      gradient: "from-purple-600 via-purple-500 to-pink-500",
-      alt: "Home Cleaning Service",
+      title: "Helmet Cleaning & Care",
+      subtitle: "Restore your helmet's shine with our professional deep-cleaning and sanitisation service",
+      image: "/helmet/helmethome.png",
+      gradient: "from-orange-600 via-red-500 to-rose-500",
+      alt: "Professional Helmet Cleaning Service",
     },
   ];
 
@@ -790,7 +794,7 @@ export default function HeroSection() {
         {/* Full-width carousel container - Enhanced design similar to flowers page */}
         <div className="w-full relative">
           {/* Hero Content - Enhanced Carousel */}
-          <div className="w-full relative h-[400px] md:h-[500px] overflow-hidden">
+          <div className="w-full relative h-[480px] md:h-[580px] overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={heroSlide}
@@ -800,14 +804,25 @@ export default function HeroSection() {
                 transition={{ duration: 0.5 }}
                 className={`absolute inset-0 bg-gradient-to-r ${heroSlides[heroSlide].gradient}`}
               >
+                {/* Decorative overlay pattern */}
+                <div className="absolute inset-0 opacity-10" style={CAROUSEL_DOT_PATTERN} />
                 <div className="max-w-7xl mx-auto px-4 h-full flex items-center">
                   <div className="grid md:grid-cols-2 gap-8 items-center w-full">
                     <div className="text-white">
+                      <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-1.5 mb-4"
+                      >
+                        <Star className="w-4 h-4 fill-yellow-300 text-yellow-300" />
+                        <span className="text-sm font-semibold text-white">Trusted by 10,000+ Customers</span>
+                      </motion.div>
                       <motion.h1
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2 }}
-                        className="text-4xl md:text-6xl font-bold mb-4"
+                        className="text-4xl md:text-6xl font-bold mb-4 leading-tight drop-shadow-lg"
                       >
                         {heroSlides[heroSlide].title}
                       </motion.h1>
@@ -815,35 +830,51 @@ export default function HeroSection() {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="text-xl md:text-2xl mb-8 text-white/90"
+                        className="text-xl md:text-2xl mb-8 text-white/90 leading-relaxed"
                       >
                         {heroSlides[heroSlide].subtitle}
                       </motion.p>
-                      <motion.button
+                      <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.4 }}
-                        onClick={() => {
-                          const servicesSection = document.getElementById('services');
-                          if (servicesSection) {
-                            servicesSection.scrollIntoView({ behavior: 'smooth' });
-                          }
-                        }}
-                        className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all shadow-xl"
+                        className="flex flex-wrap gap-4"
                       >
-                        Book Now
-                      </motion.button>
+                        <button
+                          onClick={() => {
+                            const servicesSection = document.getElementById('services');
+                            if (servicesSection) {
+                              servicesSection.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }}
+                          className="bg-white text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all shadow-2xl hover:shadow-white/30 hover:scale-105 active:scale-95"
+                        >
+                          Book Now →
+                        </button>
+                        <button
+                          onClick={() => {
+                            const aboutSection = document.getElementById('aboutus');
+                            if (aboutSection) {
+                              aboutSection.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }}
+                          className="border-2 border-white/70 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all"
+                        >
+                          Learn More
+                        </button>
+                      </motion.div>
                     </div>
                     <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.3 }}
-                      className="hidden md:block"
+                      className="hidden md:flex justify-center items-center relative"
                     >
+                      <div className="absolute inset-0 bg-white/10 rounded-full blur-3xl scale-75" />
                       <img
                         src={heroSlides[heroSlide].image}
                         alt={heroSlides[heroSlide].alt}
-                        className="w-full h-80 object-contain drop-shadow-2xl"
+                        className="w-full h-80 object-contain drop-shadow-2xl relative z-10 hover:scale-105 transition-transform duration-500"
                       />
                     </motion.div>
                   </div>
@@ -854,31 +885,31 @@ export default function HeroSection() {
             {/* Left Navigation Arrow */}
             <button
               onClick={prevHeroSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/30 p-3 rounded-full shadow-lg transition-all z-10 hover:scale-110"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-6 h-6 text-white" />
             </button>
             
             {/* Right Navigation Arrow */}
             <button
               onClick={nextHeroSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/30 p-3 rounded-full shadow-lg transition-all z-10 hover:scale-110"
               aria-label="Next slide"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-6 h-6 text-white" />
             </button>
 
             {/* Carousel Navigation Dots */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
               {heroSlides.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setHeroSlide(idx)}
-                  className={`transition-all duration-300 rounded-full ${
+                  className={`transition-all duration-300 rounded-full shadow-md ${
                     heroSlide === idx
-                      ? "w-8 h-3 bg-white"
-                      : "w-3 h-3 bg-white/50 hover:bg-white/70"
+                      ? "w-10 h-3 bg-white"
+                      : "w-3 h-3 bg-white/40 hover:bg-white/70"
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
