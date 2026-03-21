@@ -6,9 +6,7 @@ import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Address from '../models/Address.js';
 import Coupon from '../models/Coupon.js';
-import MoversPackers from '../models/MoversPackers.js';
 import VehicleCheckupBooking from '../models/VehicleCheckupBooking.js';
-import GreenBooking from '../models/GreenBooking.js';
 import { authenticateAdmin, requirePermission } from '../middleware/authAdmin.js';
 import { searchByFolder } from '../services/cloudinary.js';
 import jwt from 'jsonwebtoken';
@@ -102,8 +100,6 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       bikeWashOrders,
       helmetWashOrders,
       greenCleanCartOrders,
-      greenCleanDirectBookings,
-      moversPackersOrders,
       laundryOrders,
       vehicleCheckupCartOrders,
       vehicleCheckupDirectBookings,
@@ -130,8 +126,6 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
         ]
       }),
       Order.countDocuments({ 'items.category': { $regex: 'Green.*Clean', $options: 'i' } }),
-      GreenBooking.countDocuments(),
-      MoversPackers.countDocuments(),
       Order.countDocuments({ 
         $or: [
           { 'items.category': { $regex: 'Laundry', $options: 'i' } },
@@ -154,7 +148,7 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
     ]);
 
     // Total green clean and vehicle checkup include both cart orders and direct bookings
-    const greenCleanOrders = greenCleanCartOrders + greenCleanDirectBookings;
+    const greenCleanOrders = greenCleanCartOrders;
     const vehicleCheckupOrders = vehicleCheckupCartOrders + vehicleCheckupDirectBookings;
 
     res.json({
@@ -175,7 +169,6 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
           bikeWash: bikeWashOrders,
           helmetWash: helmetWashOrders,
           greenClean: greenCleanOrders,
-          moversPackers: moversPackersOrders,
           laundry: laundryOrders,
           vehicleCheckup: vehicleCheckupOrders,
           insurance: insuranceOrders,

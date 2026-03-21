@@ -1,6 +1,5 @@
 import express from "express";
 import Order from "../models/Order.js";
-import MoversPackers from "../models/MoversPackers.js";
 import VehicleCheckupBooking from "../models/VehicleCheckupBooking.js";
 import { authenticateAdmin } from "../middleware/authAdmin.js";
 
@@ -23,31 +22,6 @@ router.get("/", authenticateAdmin, async (req, res) => {
       let serviceOrders = [];
 
       switch (serviceType) {
-        case "movers-packers":
-          const moversFilter = status && status !== "all" ? { status } : {};
-          const moversBookings = await MoversPackers.find(moversFilter)
-            .populate("userId", "name email phone")
-            .sort({ createdAt: -1 })
-            .limit(1000);
-          serviceOrders = moversBookings.map((m) => ({
-            _id: m._id,
-            orderNumber: `MP-${m._id.toString().slice(-8)}`,
-            userId: m.userId,
-            items: [
-              {
-                serviceName: `${m.moveType} - ${m.homeSize}`,
-                name: "Movers & Packers",
-                category: "Movers & Packers",
-              },
-            ],
-            totalAmount: m.estimatedPrice?.totalPrice || 0,
-            orderStatus: m.status,
-            paymentStatus: m.paymentStatus,
-            createdAt: m.createdAt,
-            serviceAddress: { fullAddress: m.sourceCity?.fullAddress || "N/A" },
-          }));
-          break;
-
         case "vehicle-checkup":
           const vehicleFilter = status && status !== "all" ? { status } : {};
           const vehicleBookings = await VehicleCheckupBooking.find(
