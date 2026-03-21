@@ -18,16 +18,11 @@ import callbackRoutes from './routes/callback.js';
 import adminRoutes from './routes/admin.js';
 import adminNewRoutes from './routes/adminNew.js';
 import employeeRoutes from './routes/employee.js';
-import greenServicesRoutes from './routes/greenServices.js';
-import greenBookingsRoutes from './routes/greenBookings.js';
-import greenProvidersRoutes from './routes/greenProviders.js';
-import greenAdminRoutes from './routes/greenAdmin.js';
-import moversPackersRoutes from './routes/moversPackers.js';
-import moversPackersAdminRoutes from './routes/moversPackersAdmin.js';
+
 import vehicleCheckupRoutes from './routes/vehicleCheckup.js';
 import vehicleAccessoriesRoutes from './routes/vehicleAccessories.js';
 import vehicleAccessoriesAdminRoutes from './routes/vehicleAccessoriesAdmin.js';
-import laundryAdminRoutes from './routes/laundryAdmin.js';
+
 import autofixRoutes from './routes/autofix.js';
 import autofixAdminRoutes from './routes/autofixAdmin.js';
 import dotenv from 'dotenv';
@@ -75,25 +70,12 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/adminNew', adminNewRoutes);
 app.use('/api/employee', employeeRoutes);
 
-// Green & Clean routes
-app.use('/api/green/services', greenServicesRoutes);
-app.use('/api/green/booking', greenBookingsRoutes);
-app.use('/api/green/providers', greenProvidersRoutes);
-app.use('/api/green/admin', greenAdminRoutes);
-
-// Movers & Packers routes
-app.use('/api/movers-packers', moversPackersRoutes);
-app.use('/api/admin/movers-packers', moversPackersAdminRoutes);
-
 // Vehicle Checkup routes
 app.use('/api/vehicle-checkup', vehicleCheckupRoutes);
 
 // Vehicle Accessories routes
 app.use('/api/vehicle-accessories', vehicleAccessoriesRoutes);
 app.use('/api/admin/vehicle-accessories', vehicleAccessoriesAdminRoutes);
-
-// Laundry Services routes
-app.use('/api/admin/laundry', laundryAdminRoutes);
 
 // AutoFix Pro routes
 app.use('/api/autofix', autofixRoutes);

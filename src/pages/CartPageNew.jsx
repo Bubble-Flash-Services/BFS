@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useCart } from '../components/CartContext';
 import { useAuth } from '../components/AuthContext';
 import { Trash2, Plus, Minus, ShoppingBag, X, MapPin, Phone, Calendar, CreditCard, Star, Clock, Sparkles, ArrowRight, CheckCircle, Heart } from 'lucide-react';
-import { convertSelectedItemsToArray } from '../data/laundryData';
 
 export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal } = useCart();
@@ -278,37 +277,6 @@ export default function CartPage() {
                             ))}
                           </div>
                         )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Laundry Details */}
-                  {item.laundryDetails && (
-                    <div className="mb-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
-                      <h4 className="text-sm font-semibold text-gray-800 mb-2 flex items-center">
-                        <CheckCircle className="h-4 w-4 text-purple-500 mr-2" />
-                        Laundry Items ({item.laundryDetails.totalItems})
-                      </h4>
-                      <div className="max-h-24 overflow-y-auto space-y-1">
-                        {item.laundryDetails.selectedItems ? (
-                          // Handle selectedItems format (from LaundryPageNew)
-                          convertSelectedItemsToArray(item.laundryDetails.selectedItems).map((laundryItem, idx) => (
-                          <div key={idx} className="flex justify-between text-xs">
-                            <span className="text-gray-600">
-                              {laundryItem.name} × {laundryItem.quantity}
-                            </span>
-                            <span className="font-medium">₹{laundryItem.totalPrice}</span>
-                          </div>
-                        ))) : item.laundryDetails.items ? (
-                          // Handle items array format (from LaundryDeals)
-                          item.laundryDetails.items.map((laundryItem, idx) => (
-                          <div key={idx} className="flex justify-between text-xs">
-                            <span className="text-gray-600">
-                              {laundryItem.name} × {laundryItem.quantity}
-                            </span>
-                            <span className="font-medium">₹{laundryItem.totalPrice}</span>
-                          </div>
-                        ))) : null}
                       </div>
                     </div>
                   )}

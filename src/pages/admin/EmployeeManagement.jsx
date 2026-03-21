@@ -19,8 +19,7 @@ const EmployeeManagement = () => {
     totalEmployees: 0,
     activeEmployees: 0,
     carSpecialists: 0,
-    bikeSpecialists: 0,
-    laundrySpecialists: 0
+    bikeSpecialists: 0
   });
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -316,7 +315,6 @@ const EmployeeManagement = () => {
     switch (specialization) {
       case 'car': return 'bg-blue-100 text-blue-800';
       case 'bike': return 'bg-green-100 text-green-800';
-      case 'laundry': return 'bg-purple-100 text-purple-800';
       case 'all': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -651,10 +649,6 @@ const EmployeeManagement = () => {
             <h3 className="text-sm font-medium text-gray-500">Bike Specialists</h3>
             <p className="text-2xl font-bold text-green-600">{stats.bikeSpecialists}</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500">Laundry Specialists</h3>
-            <p className="text-2xl font-bold text-purple-600">{stats.laundrySpecialists}</p>
-          </div>
         </div>
 
         {/* Unassigned Bookings Section */}
@@ -898,7 +892,6 @@ const EmployeeManagement = () => {
                     >
                       <option value="car">Car Wash</option>
                       <option value="bike">Bike Wash</option>
-                      <option value="laundry">Laundry</option>
                       <option value="all">All Services</option>
                     </select>
                   </div>

@@ -25,7 +25,6 @@ import RazorpayPayment from "../components/RazorpayPayment";
 import { addressAPI } from "../api/address";
 import { createOrder } from "../api/orders";
 import toast from "react-hot-toast";
-import { convertSelectedItemsToArray } from "../data/laundryData";
 
 // API base for all requests in this module
 const API =

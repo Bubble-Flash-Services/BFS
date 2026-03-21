@@ -300,10 +300,7 @@ const OrdersManagement = () => {
               <option value="car-wash">Car Wash</option>
               <option value="bike-wash">Bike Wash</option>
               <option value="helmet-wash">Helmet Wash</option>
-              <option value="green-clean">Green & Clean</option>
-              <option value="movers-packers">Movers & Packers</option>
               <option value="painting">Painting Services</option>
-              <option value="laundry">Laundry</option>
               <option value="vehicle-checkup">Vehicle Checkup</option>
               <option value="insurance">Insurance</option>
               <option value="key-services">Key Services</option>

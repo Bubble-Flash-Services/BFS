@@ -5,12 +5,10 @@ import { ArrowRight } from "lucide-react";
 import {
   CarOutlined,
   SafetyOutlined,
-  ShopOutlined,
   ToolOutlined,
   HomeOutlined,
   ExperimentOutlined,
   SafetyCertificateOutlined,
-  TruckOutlined,
   ShoppingOutlined,
 } from "@ant-design/icons";
 
@@ -33,7 +31,7 @@ export default function ServiceCategories({ onLoginRequired }) {
     // Check if user is logged in
     if (!user) {
       // Store the intended destination for post-login redirect
-      const destination = category === "laundry" ? "/laundry" : `/${category}`;
+      const destination = `/${category}`;
       localStorage.setItem(
         "postLoginRedirect",
         JSON.stringify({ path: destination, ts: Date.now() })
@@ -47,10 +45,6 @@ export default function ServiceCategories({ onLoginRequired }) {
     }
 
     // User is logged in, proceed with navigation
-    if (category === "laundry") {
-      navigate("/laundry");
-      return;
-    }
     navigate(`/${category}`);
   };
 
@@ -84,29 +78,6 @@ export default function ServiceCategories({ onLoginRequired }) {
       gradient: "from-orange-500 to-red-500",
       bgColor: "bg-orange-50",
       hoverColor: "hover:bg-orange-100",
-    },
-    {
-      name: "Laundry Service",
-      image: "/laundry/home.png",
-      category: "laundry",
-      description: "Fresh & clean laundry solutions",
-      fallbackIcon: ShopOutlined,
-      gradient: "from-purple-500 to-pink-500",
-      bgColor: "bg-purple-50",
-      hoverColor: "hover:bg-purple-100",
-    },
-    {
-      name: "Green and Clean Service",
-      image: "/clean-home.jpg",
-      category: "green",
-      description: "Eco-friendly home & office cleaning services",
-      fallbackIcon: HomeOutlined,
-      gradient: "from-green-600 to-teal-600",
-      bgColor: "bg-green-50",
-      hoverColor: "hover:bg-green-100",
-      // price: "From ₹599",
-      isNew: true,
-      isPopular: true,
     },
     {
       name: "Vehicle Check-up",
@@ -148,18 +119,6 @@ export default function ServiceCategories({ onLoginRequired }) {
       // price: "From ₹199",
       isNew: true,
       isPopular: true,
-    },
-    {
-      name: "Movers & Packers",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrf-d-jS-tvWNRw5c3qUW51ArKXgFmFXZqpw&s",
-      category: "movers-packers",
-      description: "Professional relocation services",
-      fallbackIcon: TruckOutlined,
-      gradient: "from-yellow-500 to-amber-500",
-      bgColor: "bg-yellow-50",
-      hoverColor: "hover:bg-yellow-100",
-      isNew: true,
     },
     {
       name: "Vehicle Accessories Store",
