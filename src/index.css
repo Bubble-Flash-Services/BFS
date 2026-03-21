@@ -24,6 +24,11 @@
     padding-right: env(safe-area-inset-right);
   }
 
+  /* Safe top padding for sticky header on native apps */
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
   /* Smooth scrolling for mobile */
   .smooth-scroll {
     -webkit-overflow-scrolling: touch;
@@ -41,6 +46,14 @@
   .animate-fadeIn {
     animation: fadeIn 0.3s ease-in-out;
   }
+
+  /* Glossy card effect */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
 }
 
 @keyframes fadeIn {
@@ -57,15 +70,6 @@
 /* Global overrides for interactive elements */
 button, .btn {
 	transition: all 0.2s ease;
-}
-
-/* Remove aggressive hover effects that don't work well on mobile */
-@media (hover: hover) and (pointer: fine) {
-  button:hover:not(:disabled), .btn:hover:not(:disabled) {
-    background-color: #2563eb;
-    color: #ffffff;
-    transform: scale(1.03);
-  }
 }
 
 button:active:not(:disabled), .btn:active:not(:disabled) {
