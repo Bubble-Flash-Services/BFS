@@ -58,9 +58,9 @@ Bubble Flash is a comprehensive cleaning service platform based in Bengaluru, of
 - **Vite** - Fast build tool and dev server
 - **ESLint** - Code linting and formatting
 
-## 📱 Mobile App
+## 📱 Mobile App (Capacitor — Web)
 
-This project includes a native Android mobile app built with Capacitor.
+This project includes a native Android mobile app built with Capacitor wrapping the web app.
 
 ### Quick Start
 ```bash
@@ -80,3 +80,59 @@ npm run build:android
 - **What are splash.png?** - Loading screen images (auto-generated, can customize)
 
 See the guides above for detailed explanations and instructions.
+
+---
+
+## 📲 React Native Mobile App
+
+A fully native React Native mobile app lives in the `mobile-app/` directory. It is a production-quality, Pronto-style app built from scratch.
+
+### Tech Stack
+- **React Native** 0.73 — truly native iOS & Android
+- **React Navigation** — stack + bottom tabs
+- **Axios** — HTTP client with auth interceptors
+- **AsyncStorage** — token persistence
+- **react-native-vector-icons** — MaterialCommunityIcons
+- **react-native-gesture-handler** + **reanimated** — smooth gestures
+
+### Features
+| Screen | Description |
+|--------|-------------|
+| Splash | Animated logo fade-in |
+| Onboarding | 3-slide swipeable walkthrough |
+| Auth | Mobile OTP login flow |
+| Home | Header, search, category grid, auto-banner carousel, horizontal service lists |
+| Service Listing | Filter by category, sort by price/rating |
+| Service Detail | Package selection (Basic/Standard/Premium) |
+| Booking | Date picker, time slots, vehicle type, address |
+| My Bookings | Status tabs, cancel booking |
+| Profile | Stats, settings menu, logout |
+| Explore | Search + browse all services |
+
+### Quick Start
+
+```bash
+cd mobile-app
+
+# Install dependencies
+npm install
+
+# iOS only
+cd ios && pod install && cd ..
+
+# Run on Android
+npm run android
+
+# Run on iOS
+npm run ios
+```
+
+Full setup instructions: **[mobile-app/MOBILE_APP_SETUP.md](mobile-app/MOBILE_APP_SETUP.md)**
+
+### Brand Colors
+| Color | Hex |
+|-------|-----|
+| Primary (Deep Blue) | `#0A1F44` |
+| Secondary (Cyan) | `#00D4FF` |
+| Accent (Orange) | `#FF7A00` |
+| Background | `#F7F9FC` |

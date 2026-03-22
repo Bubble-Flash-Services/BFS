@@ -1,0 +1,2483 @@
+import React, { useState, useEffect, useRef } from "react";
+import toast from "react-hot-toast";
+import {
+  Calendar,
+  Phone,
+  MapPin,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ArrowRight,
+  Star,
+  Shield,
+  Clock,
+  Award,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import ServiceCategories from "./services/ServiceCategories";
+import SigninModal from "./signin/SigninModal";
+import SignupModal from "./signup/SignupModal";
+import AddressAutocomplete from "../../components/AddressAutocomplete";
+import { useAuth } from "../../components/AuthContext";
+import { useCart } from "../../components/CartContext";
+import { addressAPI } from "../../api/address";
+
+const API = import.meta.env.VITE_API_URL || window.location.origin;
+
+const FAQS = [
+  {
+    question: "How do I book a service?",
+    answer:
+      "You can book any service by selecting it from our homepage, logging in, and following the booking steps. Our team will confirm and schedule your service.",
+  },
+  {
+    question: "What services does Bubble Flash offer?",
+    answer:
+      "Bubble Flash offers car washing, bike detailing, helmet care, and vehicle services, all under one roof – because we believe convenience should never compromise quality.",
+  },
+  {
+    question: "What are your operating hours?",
+    answer:
+      "We operate between 9 AM and 8 PM from Monday to Saturday, and 10 AM to 6 PM on Sundays.",
+  },
+];
+
+// Updated real client reviews (all 5 stars) – avatar shows first letter of name
+const testimonials = [
+  {
+    name: "Keerthana N M",
+    text: "I recently had my bike washed at my doorstep and was thoroughly impressed! The service was incredibly quick and efficient, leaving my bike sparkling clean. The staff was friendly, professional, and made the whole experience smooth and hassle-free. I highly recommend their doorstep bike wash service to anyone looking for convenience and quality.",
+  },
+  {
+    name: "Ankitha N Raj",
+    text: "I opted for the Deluxe Car Wash along with a Bike Wash, and both were done meticulously with great attention to detail. The sparkling results exceeded my expectations, and the pricing was very reasonable for the quality of service provided. The team was professional and ensured everything was cleaned to perfection. Definitely worth every penny!",
+  },
+  {
+    name: "Anusha HG",
+    text: "I tried the ₹249 Basic Car Wash package and had a great experience from start to finish. The car came out with a spotless, clean finish that made it look almost brand new. The service was prompt, the staff was courteous, and it offered super value for money. I will definitely be using their services again!",
+  },
+  {
+    name: "Nurayne Raja",
+    text: "Fantastic bike wash experience! The service was incredibly quick and efficient, leaving my bike absolutely spotless. For just ₹99, this is exceptional value for money. The staff was professional and thorough in their work. I'm extremely satisfied and will be recommending this service to all my friends and family.",
+  },
+  {
+    name: "Mehta Vidhan",
+    text: "These guys cleaned my car just like new and I couldn't be happier with the results! The attention to detail was impressive, and they made sure every corner was spotless. Very affordable car and bike washing services in Bangalore with professional staff who take pride in their work. Highly recommend for anyone looking for quality cleaning services.",
+  },
+  {
+    name: "Raghu Narasimhan",
+    text: "Excellent and neat work by the staff every single time I use their service. The consistency and quality are remarkable, which is why I book them regularly every 2 months without fail. They're always punctual, professional, and deliver outstanding results. Truly a reliable and trustworthy service that I wholeheartedly recommend.",
+  },
+  {
+    name: "Ali Yawar Hayat",
+    text: "Very good and professional doorstep service that exceeded my expectations. The convenience of having my vehicle cleaned at home without any hassle is amazing. The staff is well-trained, courteous, and ensures everything is done to perfection. The quality of work and professionalism displayed is truly commendable. Will definitely use again!",
+  },
+  {
+    name: "Chhotu Kumar",
+    text: "Mind-blowing car wash experience! The service is incredibly convenient with doorstep availability, very affordable at just ₹199, and the results are outstanding - my car looks absolutely brand new. The team was professional, friendly, and took great care of my vehicle. This is exactly the kind of service I was looking for!",
+  },
+  {
+    name: "Sudhir S Kamath",
+    text: "Excellent wash with exceptional attention to detail. The car was neat, clean, and spotless after the service. The staff was very cooperative and went above and beyond to ensure satisfaction. Special mention to Chetan who was particularly helpful and did an outstanding job. I'm extremely happy with the service quality!",
+  },
+  {
+    name: "Mohammed Parveez",
+    text: "Chetan cleaned my vehicle professionally with great attention to detail and was very polite throughout the entire process. His dedication to providing excellent service was evident in the quality of work. The vehicle looked fantastic after the wash, and the overall experience was very pleasant. Highly recommend their services!",
+  },
+  {
+    name: "Jyothika Reddy",
+    text: "Great job on my car wash - the results were impressive and exactly what I was looking for. The team was professional, thorough, and ensured my car was cleaned to perfection. I would definitely give them a chance if you're looking for quality car wash services. The value for money is excellent!",
+  },
+  {
+    name: "Shankar Shani",
+    text: "Excellent service that truly delivers on its promises. Just ₹199 and my car looks completely new and refreshed. The quality of work is so good that I've already referred several friends and family members to use their services. Everyone I've recommended them to has been equally satisfied. A fantastic service!",
+  },
+  {
+    name: "Nathalia Helen Lobo",
+    text: "Wonderful and simple service that delivers exceptional results. My car was left sparkling clean and looking absolutely fantastic. The process was straightforward, the staff was friendly and professional, and I'm very satisfied with the overall experience. This is definitely a service I'll be using regularly going forward!",
+  },
+  {
+    name: "Imran Pasha",
+    text: "Best doorstep service. Very reasonable and they covered every part. Got 3 bikes serviced.",
+  },
+  {
+    name: "Global Traders",
+    text: "Just ₹99 for bike wash at home – unbelievable. Highly recommend. Friendly staff.",
+  },
+  {
+    name: "Zabeeulla Baig",
+    text: "Tried twice – excellent service, loved it.",
+  },
+  {
+    name: "H B",
+    text: "Excellent service. Polite staff & reasonable charges.",
+  },
+  {
+    name: "Srinidhi",
+    text: "Mind‑blowing bike wash! Affordable (₹89) and results are amazing.",
+  },
+  {
+    name: "Kiran Kumar K",
+    text: "Very good experience. They arrived on time and did excellent work.",
+  },
+  { name: "S Wazarat Ali", text: "Very good." },
+  { name: "Parsu Nadhan", text: "Wonderful service." },
+  { name: "Karthik C", text: "Best service." },
+  { name: "Sivasankar Sankar", text: "Best service." },
+  {
+    name: "Kutti Reddy",
+    text: "Highly recommend. Excellent work. Fully satisfied.",
+  },
+  { name: "Muralidharan Reddy", text: "Excellent work. Value for money." },
+].map((r) => ({ ...r, stars: 5 }));
+
+const AVATAR_COLORS = [
+  "bg-[#1F3C88]",
+  "bg-[#2952A3]",
+  "bg-[#FFB400]",
+  "bg-[#1F3C88]",
+  "bg-[#2952A3]",
+  "bg-[#FFB400]",
+  "bg-[#1F3C88]",
+];
+
+const getInitial = (name = "?") => name.trim()[0]?.toUpperCase() || "?";
+
+// Helper: Category options per service for the 2-step booking
+function getCategoriesForService(service) {
+  switch (service) {
+    case "Car":
+      return [
+        { value: "hatchbacks", label: "Hatchback", icon: "/car/car1.png" },
+        { value: "sedans", label: "Sedan", icon: "/car/car2.png" },
+        {
+          value: "midsuv",
+          label: "Mid-SUV",
+          icon: "/car/suv/pexels-eng_hk-2153621871-33018219.png",
+        },
+        { value: "suv", label: "SUV", icon: "/car/car3.png" },
+        { value: "luxuries", label: "Luxury", icon: "/car/suv/luxury_suv.png" },
+      ];
+    case "Bike":
+      return [
+        {
+          value: "commuter",
+          label: "Commuter",
+          icon: "/bike/commuter/tvs-ntorq-125-race-edition-matte-white-175501476-vc4uk (1).png",
+        },
+        {
+          value: "cruiser",
+          label: "Cruiser",
+          icon: "/bike/cruiser/pexels-sahil-dethe-590388386-17266142.png",
+        },
+        {
+          value: "sports",
+          label: "Sports",
+          icon: "/bike/sports/pexels-shrinidhi-holla-30444780.png",
+        },
+      ];
+    case "Helmet":
+      return [
+        {
+          value: "commuter",
+          label: "Commuter Helmets",
+          icon: "/helmet/commuter & midsize/DeWatermark.ai_1755851377971.jpeg",
+        },
+        {
+          value: "midsize",
+          label: "Mid-Size Helmets",
+          icon: "/helmet/midsize/midsize2.jpg",
+        },
+        {
+          value: "sports-touring",
+          label: "Sports / Touring Helmets",
+          icon: "/helmet/sports/DeWatermark.ai_1755851442324.jpeg",
+        },
+        {
+          value: "premium",
+          label: "Premium Helmets",
+          icon: "/helmet/helmethome.png",
+        },
+      ];
+    default:
+      return [];
+  }
+}
+
+export default function HeroSection() {
+  const { user } = useAuth();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState("");
+  // New minimal 2-step booking state
+  const [bookingService, setBookingService] = useState(""); // Car | Bike | Laundry | Helmet
+  const [bookingCategory, setBookingCategory] = useState(""); // e.g., Sedan, SUV, etc.
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [pickupDate, setPickupDate] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [fullAddress, setFullAddress] = useState("");
+  const [addressData, setAddressData] = useState(null); // Store complete address data
+
+  // Auth modals control
+  const [openSignin, setOpenSignin] = useState(false);
+  const [openSignup, setOpenSignup] = useState(false);
+
+  // Callback form state
+  const [cbName, setCbName] = useState("");
+  const [cbPhone, setCbPhone] = useState("");
+  const [cbEmail, setCbEmail] = useState("");
+  const [cbMessage, setCbMessage] = useState("");
+  const [cbSending, setCbSending] = useState(false);
+
+  const handleCallbackSubmit = async (e) => {
+    e.preventDefault();
+    if (!cbName.trim() || !cbPhone.trim()) {
+      alert("Please enter your name and phone number");
+      return;
+    }
+    try {
+      setCbSending(true);
+      const res = await fetch(`${API}/api/callback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: cbName,
+          phone: cbPhone,
+          email: cbEmail,
+          message: cbMessage,
+          source: "homepage",
+        }),
+      });
+      const result = await res.json().catch(() => ({ success: false }));
+      if (res.ok && result?.success) {
+        alert("Thanks! We'll call you back shortly.");
+        setCbName("");
+        setCbPhone("");
+        setCbEmail("");
+        setCbMessage("");
+      } else {
+        alert(
+          result?.message || "Failed to send request. Please try WhatsApp."
+        );
+      }
+    } catch (err) {
+      console.error("callback submit failed:", err);
+      alert("Network error. Please try again.");
+    } finally {
+      setCbSending(false);
+    }
+  };
+
+  // Auto-populate form fields from user profile
+  useEffect(() => {
+    if (user) {
+      // Set phone number from user profile if available
+      if (user.phone && !phoneNumber) {
+        setPhoneNumber(user.phone);
+      }
+      // Set address from user profile if available and no current location is set
+      if (user.address && !fullAddress) {
+        setFullAddress(user.address);
+      }
+    }
+  }, [user, phoneNumber, fullAddress]);
+
+  // Add state for FAQ and testimonials carousel
+  const [openIdx, setOpenIdx] = useState(-1); // Changed from 0 to -1 so no FAQ is open by default
+  const [visibleCount, setVisibleCount] = useState(4);
+  const [carousel, setCarousel] = useState(testimonials);
+  const [accessorySlide, setAccessorySlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const accessorySliderRef = useRef(null);
+  const [heroSlide, setHeroSlide] = useState(0);
+
+    // If user just logged in and we have a stored redirect, navigate there
+  useEffect(() => {
+    if (!user) return;
+    try {
+      const raw = localStorage.getItem("postLoginRedirect");
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      // Optional: Expire after 15 minutes
+      if (data?.path && (!data.ts || Date.now() - data.ts < 15 * 60 * 1000)) {
+        navigate(data.path, { replace: true });
+        localStorage.removeItem("postLoginRedirect");
+      }
+    } catch {}
+  }, [user, navigate]);
+
+  const startX = useRef(0);
+  const isDragging = useRef(false);
+
+  useEffect(() => {
+    // Get current location using the new address API
+    const getCurrentLocation = async () => {
+      try {
+        // Check if geolocation is available
+        if (!navigator.geolocation) {
+          console.warn("Geolocation is not supported by this browser");
+          // Don't prefill any default address
+          return;
+        }
+
+        // Check if we're on HTTPS (required for geolocation in production)
+        if (
+          location.protocol !== "https:" &&
+          location.hostname !== "localhost"
+        ) {
+          console.warn("Geolocation requires HTTPS");
+          // Don't prefill any default address
+          return;
+        }
+
+        const result = await addressAPI.getCurrentAddress();
+        if (result.success) {
+          setFullAddress(result.data.fullAddress);
+          setSelectedLocation(result.data.fullAddress);
+          setAddressData(result.data);
+        } else {
+          // Silently handle location errors and do not set a default address
+        }
+      } catch (error) {
+        // Silently handle errors and do not set a default address
+      }
+    };
+
+    getCurrentLocation();
+  }, []);
+
+  // Responsive visibleCount for testimonials
+  useEffect(() => {
+    function handleResize() {
+      const isMobileView = window.innerWidth < 768;
+      setIsMobile(isMobileView);
+
+      if (window.innerWidth < 640) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(2);
+      } else {
+        setVisibleCount(4);
+      }
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Auto-slide functionality for accessories slider
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCarousel((prev) => {
+        const [first, ...rest] = prev;
+        return [...rest, first];
+      });
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Navigation functions for hero carousel
+  const nextHeroSlide = () => {
+    setHeroSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevHeroSlide = () => {
+    setHeroSlide(
+      (prev) => (prev - 1 + heroSlides.length) % heroSlides.length,
+    );
+  };
+
+  // Hero carousel auto-slide
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const categories = ["Car Wash", "Bike Wash", "Helmet"];
+  const locations = [fullAddress || "", ""];
+
+  // Hero carousel slides data - now with images, titles, subtitles, and gradients
+  const CAROUSEL_DOT_PATTERN = {
+    backgroundImage:
+      'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)',
+    backgroundSize: '60px 60px',
+  };
+  const heroSlides = [    {
+      title: "Premium Car Wash Services",
+      subtitle: "Professional doorstep cleaning with eco-friendly products and expert care for your vehicle",
+      image: "/car/home.png",
+      gradient: "from-[#1F3C88] via-[#2952A3] to-[#1F3C88]",
+      alt: "Professional Car Wash Service",
+    },
+    {
+      title: "Expert Bike Wash",
+      subtitle: "Keep your ride sparkling clean with our specialized bike cleaning and detailing services",
+      image: "/bike/home.png",
+      gradient: "from-[#2952A3] via-[#1F3C88] to-[#2952A3]",
+      alt: "Professional Bike Wash Service",
+    },
+    {
+      title: "Helmet Cleaning & Care",
+      subtitle: "Restore your helmet's shine with our professional deep-cleaning and sanitisation service",
+      image: "/helmet/helmethome.png",
+      gradient: "from-[#1F3C88] via-[#2952A3] to-[#1A3580]",
+      alt: "Professional Helmet Cleaning Service",
+    },
+  ];
+
+  // Car wash accessories data
+  const accessories = [
+    {
+      img: "/car accessories/air freshner.jpg",
+      title: "Air Freshener",
+      price: 149,
+      oldPrice: 199,
+      offer: "25%off",
+      stars: 4,
+      tag: "₹ 149 only",
+    },
+    // Car Cover split into three variants (same image)
+    {
+      img: "/car accessories/car cover.jpg",
+      title: "Car Cover (Basic)",
+      price: 999,
+      oldPrice: 1299,
+      offer: "23%off",
+      stars: 4,
+      tag: "₹ 999 only",
+    },
+    {
+      img: "/car accessories/car cover.jpg",
+      title: "Car Cover (Premium)",
+      price: 1699,
+      oldPrice: 1999,
+      offer: "15%off",
+      stars: 4,
+      tag: "₹ 1699 only",
+    },
+    {
+      img: "/car accessories/car cover.jpg",
+      title: "Car Cover (Luxury)",
+      price: 2229,
+      oldPrice: 2599,
+      offer: "14%off",
+      stars: 4,
+      tag: "₹ 2229 only",
+    },
+    {
+      img: "/car accessories/car washing gloves.jpg",
+      title: "Washing Gloves",
+      price: 199,
+      oldPrice: 299,
+      offer: "33%off",
+      stars: 4,
+      tag: "₹ 199 only",
+    },
+    {
+      img: "/car accessories/degreasers.jpg",
+      title: "Degreaser",
+      price: 249,
+      oldPrice: 349,
+      offer: "28%off",
+      stars: 4,
+      tag: "₹ 249 only",
+    },
+    {
+      img: "/car accessories/drying towel.jpg",
+      title: "Drying Towels",
+      price: 1399,
+      oldPrice: 1599,
+      offer: "13%off",
+      stars: 4,
+      tag: "₹ 1399 only",
+    },
+    {
+      img: "/car accessories/foot paper.jpg",
+      title: "Paper Mat (each)",
+      price: 5,
+      oldPrice: 10,
+      offer: "50%off",
+      stars: 3,
+      tag: "₹ 5 only",
+    },
+    // Mobile Holder split (same image)
+    {
+      img: "/car accessories/mobile stand.jpg",
+      title: "Mobile Holder (Basic)",
+      price: 249,
+      oldPrice: 299,
+      offer: "17%off",
+      stars: 4,
+      tag: "₹ 249 only",
+    },
+    {
+      img: "/car accessories/mobile stand.jpg",
+      title: "Mobile Holder (Premium)",
+      price: 369,
+      oldPrice: 449,
+      offer: "18%off",
+      stars: 4,
+      tag: "₹ 369 only",
+    },
+    {
+      img: "/car accessories/Sprays.jpg",
+      title: "Spray Bottle",
+      price: 129,
+      oldPrice: 199,
+      offer: "35%off",
+      stars: 4,
+      tag: "₹ 129 only",
+    },
+    {
+      img: "/car accessories/tissue box.jpg",
+      title: "Tissue Box",
+      price: 159,
+      oldPrice: 220,
+      offer: "28%off",
+      stars: 4,
+      tag: "₹ 159 only",
+    },
+    // Add Microfiber Cloth
+    {
+      img: "/car accessories/towels.jpg",
+      title: "Microfiber Cloth",
+      price: 120,
+      oldPrice: 149,
+      offer: "19%off",
+      stars: 4,
+      tag: "₹ 120 only",
+    },
+    // Bike Cover split into three variants (same image)
+    {
+      img: "/car accessories/bike cover.jpg",
+      title: "Bike Cover (Basic)",
+      price: 299,
+      oldPrice: 349,
+      offer: "14%off",
+      stars: 4,
+      tag: "₹ 299 only",
+    },
+    {
+      img: "/car accessories/bike cover.jpg",
+      title: "Bike Cover (Premium)",
+      price: 399,
+      oldPrice: 469,
+      offer: "15%off",
+      stars: 4,
+      tag: "₹ 399 only",
+    },
+    {
+      img: "/car accessories/bike cover.jpg",
+      title: "Bike Cover (Luxury)",
+      price: 699,
+      oldPrice: 799,
+      offer: "13%off",
+      stars: 4,
+      tag: "₹ 699 only",
+    },
+  ];
+
+  // Navigation for accessories slider: use car-wash style sliding
+  // Desktop shows 3 products per slide; Mobile shows 1 per slide
+  const cardsPerSlide = isMobile ? 1 : 3;
+  const totalSlides = Math.ceil(accessories.length / cardsPerSlide); // number of slide groups
+
+  const handleDotClick = (idx) =>
+    setAccessorySlide(Math.max(0, Math.min(totalSlides - 1, idx)));
+  const handlePrev = () => setAccessorySlide((s) => Math.max(0, s - 1));
+  const handleNext = () =>
+    setAccessorySlide((s) => Math.min(totalSlides - 1, s + 1));
+
+  // Touch handlers for mobile dragging (match BikeWashDeals mobile behavior)
+  const handleTouchStart = (e) => {
+    if (!isMobile) return;
+    isDragging.current = true;
+    startX.current = e.touches[0].pageX;
+  };
+
+  // Helper to build stable IDs for accessories (prevents merging into first item on some devices)
+  const accessorySlug = (title = "") =>
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+  const handleTouchMove = (e) => {
+    if (!isMobile || !isDragging.current) return;
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!isMobile || !isDragging.current) return;
+    isDragging.current = false;
+
+    const endX = e.changedTouches[0].pageX;
+    const diffX = startX.current - endX;
+    const threshold = 50;
+
+    if (Math.abs(diffX) > threshold) {
+      if (diffX > 0 && accessorySlide < totalSlides - 1) {
+        setAccessorySlide((s) => Math.min(totalSlides - 1, s + 1));
+      } else if (diffX < 0 && accessorySlide > 0) {
+        setAccessorySlide((s) => Math.max(0, s - 1));
+      }
+    }
+  };
+
+  const handleAddToCart = (itemOrEvent) => {
+    // Support being called with event (from delegated click) or direct item
+    let item = itemOrEvent;
+    if (itemOrEvent?.currentTarget && !itemOrEvent.title) {
+      const el = itemOrEvent.currentTarget;
+      const slugAttr = el.getAttribute("data-slug");
+      if (slugAttr) {
+        item =
+          accessories.find((a) => accessorySlug(a.title) === slugAttr) ||
+          accessories[0];
+      }
+    }
+    if (!item) return;
+    if (!user) {
+      toast.error("Please login to add items to cart");
+      return;
+    }
+    const slug = accessorySlug(item.title);
+    const baseId = `accessory-${slug}`;
+    const cartItem = {
+      id: `${baseId}-${Date.now()}`,
+      serviceId: baseId,
+      name: item.title,
+      serviceName: `Accessory: ${item.title}`,
+      price: item.price,
+      oldPrice: item.oldPrice,
+      offer: item.offer,
+      img: item.img,
+      image: item.img,
+      type: "accessory",
+      category: "Car Accessories",
+      // UI display fields so cart shows details
+      packageName: item.title,
+      packageDetails: { basePrice: item.price, addons: [], features: [] },
+      includedFeatures: [],
+      uiAddOns: [],
+    };
+    addToCart(cartItem);
+    toast.success(`${item.title} added to cart`);
+  };
+
+  // Handle address selection from autocomplete
+  const handleAddressSelect = (selectedAddress) => {
+    setFullAddress(selectedAddress.fullAddress);
+    setSelectedLocation(selectedAddress.fullAddress);
+    setAddressData(selectedAddress);
+  };
+
+  const handleBookService = async () => {
+    // Validate all required fields
+    if (!selectedCategory) {
+      alert("Please select a service category");
+      return;
+    }
+    if (!pickupDate) {
+      alert("Please select a pickup date");
+      return;
+    }
+    if (!phoneNumber) {
+      alert("Please enter your phone number");
+      return;
+    }
+    if (!fullAddress || !selectedLocation) {
+      alert("Please enter your location");
+      return;
+    }
+
+    // Optional: Check Bangalore service availability using pincode when possible
+    try {
+      let pinToCheck = null;
+      if (addressData?.pincode) {
+        pinToCheck = addressData.pincode;
+      } else if (typeof fullAddress === "string") {
+        const match = fullAddress.match(/\b\d{6}\b/);
+        if (match) pinToCheck = match[0];
+      }
+
+      if (pinToCheck && /^\d{6}$/.test(pinToCheck)) {
+        const availability = await addressAPI.checkServiceAvailability(
+          pinToCheck
+        );
+        if (
+          availability &&
+          availability.success &&
+          availability.available === false
+        ) {
+          alert(
+            availability.message ||
+              "We currently serve only Bangalore pincodes — coming soon to your area!"
+          );
+          return;
+        }
+      }
+    } catch (err) {
+      console.error("Availability check failed:", err);
+      // Fail open to not block booking UI — server validates again during order/address
+    }
+
+    // Store booking data in localStorage for the service page to use
+    const bookingData = {
+      category: selectedCategory,
+      pickupDate,
+      phoneNumber,
+      address: fullAddress,
+      location: selectedLocation,
+      addressData: addressData, // Include complete address data
+      timestamp: Date.now(),
+    };
+    localStorage.setItem("pendingBooking", JSON.stringify(bookingData));
+
+    // Navigate based on selected category
+    switch (selectedCategory) {
+      case "Car Wash":
+        navigate("/cars");
+        break;
+      case "Bike Wash":
+        navigate("/bikes");
+        break;
+      case "Helmet":
+        navigate("/helmets");
+        break;
+      default:
+        alert("Please select a valid service category");
+    }
+  };
+
+  return (
+    <>
+
+      {/* Hero Section with Modern Design - Now includes services */}
+      <section
+        id="home"
+        className="relative overflow-hidden"
+      >
+
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+              rotate: [0, 5, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute top-10 right-10 w-72 h-72 bg-[#FFB400] rounded-full opacity-10 blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1.1, 1, 1.1],
+              rotate: [0, -5, 0],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute bottom-10 left-10 w-96 h-96 bg-[#FFB400] rounded-full opacity-5 blur-3xl"
+          />
+        </div>
+
+        {/* Full-width carousel container - Enhanced design similar to flowers page */}
+        <div className="w-full relative">
+          {/* Hero Content - Enhanced Carousel */}
+          <div className="w-full relative h-[480px] md:h-[580px] overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={heroSlide}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+                className={`absolute inset-0 bg-gradient-to-r ${heroSlides[heroSlide].gradient}`}
+              >
+                {/* Decorative overlay pattern */}
+                <div className="absolute inset-0 opacity-10" style={CAROUSEL_DOT_PATTERN} />
+                <div className="max-w-7xl mx-auto px-4 h-full flex items-center">
+                  <div className="grid md:grid-cols-2 gap-8 items-center w-full">
+                    <div className="text-white">
+                      <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-1.5 mb-4"
+                      >
+                        <Star className="w-4 h-4 fill-yellow-300 text-yellow-300" />
+                        <span className="text-sm font-semibold text-white">Trusted by 10,000+ Customers</span>
+                      </motion.div>
+                      <motion.h1
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-4xl md:text-6xl font-bold mb-4 leading-tight drop-shadow-lg"
+                      >
+                        {heroSlides[heroSlide].title}
+                      </motion.h1>
+                      <motion.p
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="text-xl md:text-2xl mb-8 text-white/90 leading-relaxed"
+                      >
+                        {heroSlides[heroSlide].subtitle}
+                      </motion.p>
+                      <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="flex flex-wrap gap-4"
+                      >
+                        <button
+                          onClick={() => {
+                            const servicesSection = document.getElementById('services');
+                            if (servicesSection) {
+                              servicesSection.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }}
+                          className="bg-white text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all shadow-2xl hover:shadow-white/30 hover:scale-105 active:scale-95"
+                        >
+                          Book Now →
+                        </button>
+                        <button
+                          onClick={() => {
+                            const aboutSection = document.getElementById('aboutus');
+                            if (aboutSection) {
+                              aboutSection.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }}
+                          className="border-2 border-white/70 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all"
+                        >
+                          Learn More
+                        </button>
+                      </motion.div>
+                    </div>
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="hidden md:flex justify-center items-center relative"
+                    >
+                      <div className="absolute inset-0 bg-white/10 rounded-full blur-3xl scale-75" />
+                      <img
+                        src={heroSlides[heroSlide].image}
+                        alt={heroSlides[heroSlide].alt}
+                        className="w-full h-80 object-contain drop-shadow-2xl relative z-10 hover:scale-105 transition-transform duration-500"
+                      />
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Left Navigation Arrow */}
+            <button
+              onClick={prevHeroSlide}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/30 p-3 rounded-full shadow-lg transition-all z-10 hover:scale-110"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </button>
+            
+            {/* Right Navigation Arrow */}
+            <button
+              onClick={nextHeroSlide}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/30 p-3 rounded-full shadow-lg transition-all z-10 hover:scale-110"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="w-6 h-6 text-white" />
+            </button>
+
+            {/* Carousel Navigation Dots */}
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+              {heroSlides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setHeroSlide(idx)}
+                  className={`transition-all duration-300 rounded-full shadow-md ${
+                    heroSlide === idx
+                      ? "w-10 h-3 bg-white"
+                      : "w-3 h-3 bg-white/40 hover:bg-white/70"
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Hero Image and Video - COMMENTED OUT AS PER REQUIREMENT
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="flex-1 lg:flex-[1.5] w-full"
+            >
+              <video
+                src="/car/home.mp4"
+                className="rounded-2xl shadow-2xl w-full h-[400px] object-cover"
+                controls
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+            </motion.div>
+            <motion.img
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              src="/bfsHero.jpeg"
+              alt="About Bubble Flash Services"
+              className="w-full h-auto max-h-[540px] lg:flex-1 object-cover shadow-2xl rounded-3xl"
+            />
+            END OF COMMENTED OUT SECTION */}
+
+          {/* Service Categories - Moved after Hero Content */}
+        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          className="mt-0"
+        >
+          <div id="services" className="w-full">
+            <ServiceCategories onLoginRequired={() => setOpenSignin(true)} />
+          </div>
+        </motion.div>
+      </section>
+
+      {/* About Us Section with Blue Theme */}
+      <div className="bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88]">
+        <section id="aboutus" className="py-16">
+          {/* AboutPage content start */}
+          <div>
+            <div className="max-w-6xl mx-auto px-4">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="flex flex-col md:flex-row gap-8 items-start"
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="flex-1 lg:flex-[1.5]" // give more flex space
+                >
+                  <video
+                    src="/car/home.mp4"
+                    className="rounded-2xl shadow-2xl w-full h-[400px] object-cover" // larger height
+                    controls
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="flex-1"
+                >
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.6, duration: 0.6 }}
+                    className="text-2xl font-bold text-white mb-2"
+                  >
+                    About us
+                  </motion.h2>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                    className="text-lg text-gray-200 mb-4 leading-relaxed"
+                  >
+                    At Bubble Flash, we’re passionate about making your vehicles
+                    and wardrobe shine! Based in the heart of Bengaluru, we
+                    provide top-tier car washing, bike detailing, and vehicle
+                    care services, all under one roof – because we believe
+                    convenience should never compromise quality.
+                  </motion.p>
+                  <motion.ul
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 1, duration: 0.6 }}
+                    className="text-base text-gray-200 mb-2 space-y-2"
+                  >
+                    <motion.li
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 1.2, duration: 0.4 }}
+                      className="flex items-center"
+                    >
+                      <img
+                        src="/aboutus/circle-check.png"
+                        alt="check"
+                        className="inline w-4 h-4 mr-3 align-middle"
+                      />
+                      Over 2,000 cleans
+                    </motion.li>
+                    <motion.li
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 1.4, duration: 0.4 }}
+                      className="flex items-center"
+                    >
+                      <img
+                        src="/aboutus/circle-check.png"
+                        alt="check"
+                        className="inline w-4 h-4 mr-3 align-middle"
+                      />
+                      Combo plans & special program plans offered
+                    </motion.li>
+                    <motion.li
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 1.6, duration: 0.4 }}
+                      className="flex items-center"
+                    >
+                      <img
+                        src="/aboutus/circle-check.png"
+                        alt="check"
+                        className="inline w-4 h-4 mr-3 align-middle"
+                      />
+                      100 % Customer satisfaction
+                    </motion.li>
+                    <motion.li
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 1.8, duration: 0.4 }}
+                      className="flex items-center"
+                    >
+                      <img
+                        src="/aboutus/circle-check.png"
+                        alt="check"
+                        className="inline w-4 h-4 mr-3 align-middle"
+                      />
+                      Doorstep services available
+                    </motion.li>
+                  </motion.ul>
+                </motion.div>
+              </motion.div>
+              {/* HOW IT WORKS SECTION - COMMENTED OUT AS PER REQUIREMENT
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="flex justify-center mt-8 mb-6"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-[#FFB400] bg-opacity-20 backdrop-blur-sm border border-[#FFB400] border-opacity-30 text-xs text-[#FFB400] px-6 py-2 rounded-full font-semibold tracking-wide hover:bg-opacity-30 transition-all"
+                >
+                  HOW IT WORK
+                </motion.button>
+              </motion.div>
+              <motion.h3
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="text-2xl font-bold text-[#1F3C88] text-center mb-8"
+              >
+                Book with following 3 working steps
+              </motion.h3>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1, duration: 0.8 }}
+                className="flex flex-row w-full mb-12"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.2, duration: 0.6 }}
+                  className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3 shadow-lg"
+                  >
+                    <img
+                      src="/aboutus/location.png"
+                      alt="Choose location"
+                      className="w-7 h-7 md:w-10 md:h-10"
+                    />
+                  </motion.div>
+                  <div className="font-semibold text-xs md:text-base text-center text-[#1F3C88]">
+                    Choose location
+                  </div>
+                  <div className="text-[10px] md:text-xs text-gray-600 text-center">
+                    Choose your and find your best car
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.4, duration: 0.6 }}
+                  className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3 shadow-lg"
+                  >
+                    <img
+                      src="/aboutus/pickup-date.png"
+                      alt="Pick-up date"
+                      className="w-7 h-7 md:w-10 md:h-10"
+                    />
+                  </motion.div>
+                  <div className="font-semibold text-xs md:text-base text-center text-[#1F3C88]">
+                    Pick-up date
+                  </div>
+                  <div className="text-[10px] md:text-xs text-gray-600 text-center">
+                    Select your pick up date and time to book your car
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.6, duration: 0.6 }}
+                  className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3 shadow-lg"
+                  >
+                    <img
+                      src="/aboutus/bookyourwash.png"
+                      alt="Book your wash"
+                      className="w-7 h-7 md:w-10 md:h-10"
+                    />
+                  </motion.div>
+                  <div className="font-semibold text-xs md:text-base text-center text-[#1F3C88]">
+                    Book your wash
+                  </div>
+                  <div className="text-[10px] md:text-xs text-gray-600 text-center">
+                    Book your car for doorstep service
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.8, duration: 0.6 }}
+                  className="flex flex-col items-center flex-shrink-0 w-1/4 min-w-0 px-1"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="bg-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-2 md:mb-3 shadow-lg"
+                  >
+                    <img
+                      src="/aboutus/expierencewash.png"
+                      alt="Experience wash"
+                      className="w-7 h-7 md:w-10 md:h-10"
+                    />
+                  </motion.div>
+                  <div className="font-semibold text-xs md:text-base text-center text-[#1F3C88]">
+                    Experience wash
+                  </div>
+                  <div className="text-[10px] md:text-xs text-gray-600 text-center">
+                    Don't worry, we have many experienced professionals
+                  </div>
+                </motion.div>
+              </motion.div>
+              END OF HOW IT WORKS SECTION */}
+              {/* <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1.2, duration: 0.8 }}
+                className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.4, duration: 0.6 }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="flex flex-col items-center"
+                >
+                  <motion.img
+                    whileHover={{ scale: 1.05 }}
+                    src="/laundry/laundry.gif"
+                    alt="Laundry"
+                    className="rounded-xl w-full h-[170px] object-cover mb-4 shadow-lg"
+                  />
+                  <div className="text-xl font-bold text-center text-[#1F3C88]">
+                    Wash & Fold
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.6, duration: 0.6 }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="flex flex-col items-center"
+                >
+                  <motion.img
+                    whileHover={{ scale: 1.05 }}
+                    src="/bike/bikewash.gif"
+                    alt="Bike"
+                    className="rounded-xl w-full h-[170px] object-cover mb-4 shadow-lg"
+                  />
+                  <div className="text-xl font-bold text-center text-[#1F3C88]">
+                    Bring Back the Shine
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.8, duration: 0.6 }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="flex flex-col items-center"
+                >
+                  <motion.img
+                    whileHover={{ scale: 1.05 }}
+                    src="/car/carwash.gif"
+                    alt="Car"
+                    className="rounded-xl w-full h-[170px] object-cover mb-4 shadow-lg"
+                  />
+                  <div className="text-xl font-bold text-center text-[#1F3C88]">
+                    Car Clean
+                  </div>
+                </motion.div>
+              </motion.div> */}
+            </div>
+          </div>
+          {/* AboutPage content end */}
+        </section>
+      </div>
+      {/* Car wash Accessories Section - White Background with Images */}
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Background Images for Carousel Feel */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-gradient-to-br from-[#1F3C88] to-[#2952A3] blur-3xl animate-pulse" />
+          <div
+            className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-gradient-to-br from-[#2952A3] to-[#1F3C88] blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          />
+          <div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-[#FFB400] to-[#e0a000] blur-3xl animate-pulse"
+            style={{ animationDelay: "2s" }}
+          />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="inline-flex items-center px-6 py-3 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30 mb-6"
+            >
+              <span className="text-[#FFB400] font-semibold text-sm">
+                Our Products
+              </span>
+            </motion.div>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+            >
+              Car wash <span className="text-[#FFB400]">Accessories</span>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="text-xl text-gray-700 max-w-2xl mx-auto"
+            >
+              Premium car care accessories for the perfect wash
+            </motion.p>
+          </motion.div>
+
+          {/* Desktop and Mobile Slider Layout with Arrows */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.1,
+              },
+            }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            {/* Slider Container */}
+            <div className="relative flex items-center justify-center gap-4 max-w-7xl mx-auto">
+              {/* Left Arrow (car-wash style) */}
+              <button
+                onClick={handlePrev}
+                disabled={accessorySlide === 0}
+                className={`absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
+                  accessorySlide === 0
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-gray-50 hover:shadow-xl"
+                }`}
+                aria-label="Previous"
+              >
+                <svg
+                  className="w-5 h-5 text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+
+              {/* Cards Container */}
+              <div className="overflow-hidden flex-1 max-w-5xl">
+                <motion.div
+                  className={`flex slider-container transition-transform duration-300 ease-in-out`}
+                  style={{
+                    transform: `translateX(-${
+                      accessorySlide * (isMobile ? 85 : 100)
+                    }%)`,
+                    touchAction: "pan-y pinch-zoom",
+                  }}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  {Array.from({ length: totalSlides }, (_, slideIndex) => {
+                    const group = accessories.slice(
+                      slideIndex * cardsPerSlide,
+                      slideIndex * cardsPerSlide + cardsPerSlide
+                    );
+                    return (
+                      <div
+                        key={`slide-${slideIndex}`}
+                        className="flex-shrink-0 w-[85%] md:w-full"
+                      >
+                        <div className="flex gap-0 md:gap-4">
+                          {group.map((item, idx) => {
+                            const globalIdx = slideIndex * cardsPerSlide + idx;
+                            return (
+                              <motion.div
+                                key={`${slideIndex}-${idx}`}
+                                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                                whileInView={{
+                                  opacity: 1,
+                                  y: 0,
+                                  scale: 1,
+                                  transition: {
+                                    type: "spring",
+                                    stiffness: 100,
+                                    damping: 15,
+                                    delay: globalIdx * 0.05,
+                                  },
+                                }}
+                                viewport={{ once: true }}
+                                whileHover={{
+                                  scale: 1.05,
+                                  y: -10,
+                                  transition: {
+                                    type: "spring",
+                                    stiffness: 300,
+                                    damping: 20,
+                                  },
+                                }}
+                                whileTap={{ scale: 0.95 }}
+                                className="relative bg-white rounded-2xl p-4 md:p-6 cursor-pointer shadow-lg backdrop-blur-sm border border-gray-200 hover:shadow-xl transition-all duration-300 group overflow-hidden w-full md:w-1/3 lg:w-1/3"
+                              >
+                                {/* Gradient Overlay on Hover */}
+                                <motion.div
+                                  initial={{ opacity: 0 }}
+                                  whileHover={{ opacity: 0.1 }}
+                                  transition={{ duration: 0.3 }}
+                                  className="absolute inset-0 bg-gradient-to-br from-[#1F3C88] to-[#2952A3] rounded-3xl"
+                                />
+
+                                {/* Content */}
+                                <div className="relative z-10">
+                                  {/* Icon/Image Container - Smaller */}
+                                  <motion.div
+                                    initial={{ scale: 0, rotate: -180 }}
+                                    whileInView={{
+                                      scale: 1,
+                                      rotate: 0,
+                                      transition: {
+                                        type: "spring",
+                                        stiffness: 200,
+                                        damping: 10,
+                                        delay: 0.3 + globalIdx * 0.05,
+                                      },
+                                    }}
+                                    viewport={{ once: true }}
+                                    className="relative w-20 h-20 md:w-24 md:h-24 mx-auto mb-4"
+                                  >
+                                    <div className="w-full h-full bg-[#EEF2FF] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                      <img
+                                        src={item.img}
+                                        alt={item.title}
+                                        className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                                      />
+                                    </div>
+
+                                    {/* Floating Animation Ring */}
+                                    <motion.div
+                                      animate={{
+                                        rotate: 360,
+                                      }}
+                                      whileHover={{ scale: 1.2 }}
+                                      transition={{
+                                        rotate: {
+                                          duration: 8,
+                                          repeat: Infinity,
+                                          ease: "linear",
+                                        },
+                                        scale: { duration: 0.3 },
+                                      }}
+                                      className="absolute inset-0 border-2 border-dashed border-[#FFB400] border-opacity-30 rounded-xl"
+                                    />
+                                  </motion.div>
+
+                                  {/* Title */}
+                                  <motion.h3
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{
+                                      delay: 0.4 + globalIdx * 0.05,
+                                    }}
+                                    className="text-base md:text-lg font-bold text-gray-900 mb-2 text-center group-hover:text-[#FFB400] transition-colors duration-300"
+                                  >
+                                    {item.title}
+                                  </motion.h3>
+
+                                  {/* Price */}
+                                  <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{
+                                      delay: 0.5 + globalIdx * 0.05,
+                                    }}
+                                    className="text-center mb-4"
+                                  >
+                                    <div className="text-gray-400 line-through text-xs mb-1">
+                                      MRP: ₹{item.oldPrice}
+                                    </div>
+                                    <div className="text-red-600 text-base md:text-lg font-bold mb-2">
+                                      {item.tag}
+                                    </div>
+                                    <div className="bg-red-400 text-white px-2 py-1 rounded-full text-xs font-semibold inline-block">
+                                      {item.offer}
+                                    </div>
+                                  </motion.div>
+
+                                  {/* CTA Button */}
+                                  <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{
+                                      delay: 0.6 + globalIdx * 0.05,
+                                    }}
+                                    className="text-center"
+                                  >
+                                    <motion.button
+                                      whileHover={{ scale: 1.05 }}
+                                      whileTap={{ scale: 0.95 }}
+                                      data-slug={accessorySlug(item.title)}
+                                      className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-3 md:px-4 py-2 md:py-3 rounded-lg font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-md hover:shadow-lg text-xs md:text-sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAddToCart(e);
+                                      }}
+                                    >
+                                      Add to Cart
+                                      <motion.div
+                                        whileHover={{ x: 5 }}
+                                        transition={{ duration: 0.3 }}
+                                      >
+                                        <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
+                                      </motion.div>
+                                    </motion.button>
+                                  </motion.div>
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </motion.div>
+              </div>
+
+              {/* Right Arrow (car-wash style) */}
+              <button
+                onClick={handleNext}
+                disabled={accessorySlide === totalSlides - 1}
+                className={`absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
+                  accessorySlide === totalSlides - 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-gray-50 hover:shadow-xl"
+                }`}
+                aria-label="Next"
+              >
+                <svg
+                  className="w-5 h-5 text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+      <section
+        id="callback-services"
+        className="bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88] relative overflow-hidden py-16"
+      >
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+              rotate: [0, 5, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute top-10 right-10 w-72 h-72 bg-[#FFB400] rounded-full opacity-5 blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1.1, 1, 1.1],
+              rotate: [0, -5, 0],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute bottom-10 left-10 w-96 h-96  rounded-full opacity-3 blur-3xl"
+          />
+        </div>
+
+        {/* Contact Us Section Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="inline-flex items-center px-6 py-3 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30 mb-4"
+          >
+            <span className="text-[#FFB400] font-semibold text-sm">
+              Get In Touch
+            </span>
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="text-4xl md:text-5xl font-bold mb-4 text-white"
+          >
+            Contact <span className="text-[#FFB400]">Us</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="text-lg text-gray-200 max-w-2xl mx-auto"
+          >
+            Have questions or need assistance? We're here to help you with all
+            your service needs.
+          </motion.p>
+        </motion.div>
+
+        {/* ServicesPage content start */}
+        <div className="relative mx-auto px-4 flex flex-col md:flex-row gap-8 max-w-6xl">
+          {/* Left: Callback Form */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="bg-gradient-to-br from-white via-blue-50 to-purple-50 rounded-2xl border-2 border-[#FFB400] border-opacity-30 p-8 w-full md:w-[350px] flex flex-col items-center shadow-xl backdrop-blur-sm hover:shadow-2xl transition-all duration-300"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="flex items-center gap-2 mb-4"
+            >
+              <motion.img
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                src="/services/callback.svg"
+                alt="Callback"
+                className="w-4 h-4"
+              />
+              <span className="text-lg font-semibold bg-gradient-to-r from-[#1F3C88] to-[#FFB400] bg-clip-text text-transparent">
+                Request a callback
+              </span>
+            </motion.div>
+            <form
+              className="w-full flex flex-col gap-4"
+              onSubmit={handleCallbackSubmit}
+            >
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="flex items-center gap-2 border-2 border-[#FFB400] border-opacity-30 rounded-xl px-3 py-2 bg-white hover:border-opacity-60 focus-within:border-opacity-80 transition-all duration-300"
+              >
+                <span className="text-lg">
+                  <motion.img
+                    whileHover={{ scale: 1.1 }}
+                    src="/services/name.svg"
+                    alt="Name"
+                    className="w-4 h-4"
+                  />
+                </span>
+                <input
+                  className="bg-transparent outline-none flex-1 placeholder:text-gray-400"
+                  placeholder="Enter your name"
+                  value={cbName}
+                  onChange={(e) => setCbName(e.target.value)}
+                  required
+                />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+                className="flex items-center gap-2 border-2 border-[#FFB400] border-opacity-30 rounded-xl px-3 py-2 bg-white hover:border-opacity-60 focus-within:border-opacity-80 transition-all duration-300"
+              >
+                <span className="text-lg">
+                  <motion.img
+                    whileHover={{ scale: 1.1 }}
+                    src="/services/phoneno.svg"
+                    alt="Phone"
+                    className="w-4 h-4"
+                  />
+                </span>
+                <input
+                  className="bg-transparent outline-none flex-1 placeholder:text-gray-400"
+                  placeholder="Enter your mobile no"
+                  value={cbPhone}
+                  onChange={(e) => setCbPhone(e.target.value)}
+                  pattern="[0-9+\-\s]{8,15}"
+                  required
+                />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+                className="flex items-center gap-2 border-2 border-[#FFB400] border-opacity-30 rounded-xl px-3 py-2 bg-white hover:border-opacity-60 focus-within:border-opacity-80 transition-all duration-300"
+              >
+                <span className="text-lg">
+                  <motion.img
+                    whileHover={{ scale: 1.1 }}
+                    src="/services/envelope.svg"
+                    alt="Email"
+                    className="w-4 h-4"
+                  />
+                </span>
+                <input
+                  className="bg-transparent outline-none flex-1 placeholder:text-gray-400"
+                  placeholder="Enter your email"
+                  type="email"
+                  value={cbEmail}
+                  onChange={(e) => setCbEmail(e.target.value)}
+                />
+              </motion.div>
+              <motion.textarea
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7, duration: 0.6 }}
+                className="border-2 border-[#FFB400] border-opacity-30 rounded-xl px-3 py-2 bg-white min-h-[60px] outline-none placeholder:text-gray-400 hover:border-opacity-60 focus:border-opacity-80 transition-all duration-300"
+                placeholder="Enter your message......"
+                value={cbMessage}
+                onChange={(e) => setCbMessage(e.target.value)}
+              />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="text-pink-600 text-sm"
+              >
+                We are operating between 9 AM - 8 PM
+              </motion.div>
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.9, duration: 0.6 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 30px rgba(209, 79, 255, 0.3)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                type="submit"
+                className="bg-gradient-to-r from-[#d14fff] to-[#9333ea] text-white rounded-xl px-2 py-2 font-semibold mt-2 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60"
+                disabled={cbSending}
+              >
+                {cbSending ? "Sending..." : "Call me"}
+              </motion.button>
+            </form>
+          </motion.div>
+          {/* Right: Info Cards */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="flex-1 flex flex-col gap-6"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                whileHover={{
+                  y: -5,
+                  scale: 1.02,
+                  boxShadow: "0 20px 40px rgba(37, 211, 102, 0.2)",
+                }}
+                className="bg-gradient-to-br from-white via-green-50 to-emerald-50 rounded-2xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-green-200 border-opacity-50 transition-all duration-300 hover:border-opacity-80"
+                onClick={() => {
+                  window.open(
+                    "https://wa.me/919591572775?text=Hello! I would like to know more about your services.",
+                    "_blank"
+                  );
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                  className="flex items-center gap-2 font-serif font-bold text-lg"
+                >
+                  <span className="text-lg">
+                    <motion.img
+                      whileHover={{ scale: 1.2, rotate: 5 }}
+                      src="/services/whatsapp.svg"
+                      alt="WhatsApp"
+                      className="w-4 h-4"
+                    />
+                  </span>
+                  <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                    Ask us on Whatsapp
+                  </span>
+                </motion.div>
+                <div className="text-gray-600 text-sm">
+                  Get instant support and updates in whatsapp for our service
+                </div>
+                <div className="flex justify-end">
+                  <motion.span
+                    whileHover={{ x: 5 }}
+                    className="text-2xl text-green-600"
+                  >
+                    &gt;
+                  </motion.span>
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                whileHover={{
+                  y: -5,
+                  scale: 1.02,
+                  boxShadow: "0 20px 40px rgba(59, 130, 246, 0.2)",
+                }}
+                className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-2xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-blue-200 border-opacity-50 transition-all duration-300 hover:border-opacity-80"
+                onClick={() => {
+                  const faqSection = document.getElementById("faq-section");
+                  if (faqSection)
+                    faqSection.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  className="flex items-center gap-2 font-bold text-lg"
+                >
+                  <span className="text-lg">
+                    <motion.img
+                      whileHover={{ scale: 1.2, rotate: 5 }}
+                      src="/services/faq.svg"
+                      alt="FAQ"
+                      className="w-4 h-4"
+                    />
+                  </span>
+                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    FAQ
+                  </span>
+                </motion.div>
+                <div className="text-gray-600 text-sm">
+                  Get instant support for our service via our FAQ section
+                </div>
+                <div className="flex justify-end">
+                  <motion.span
+                    whileHover={{ x: 5 }}
+                    className="text-2xl text-blue-600"
+                  >
+                    &gt;
+                  </motion.span>
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                whileHover={{
+                  y: -5,
+                  scale: 1.02,
+                  boxShadow: "0 20px 40px rgba(168, 85, 247, 0.2)",
+                }}
+                className="bg-gradient-to-br from-white via-purple-50 to-violet-50 rounded-2xl p-6 flex flex-col gap-2 shadow-lg col-span-1 md:col-span-2 cursor-pointer border-2 border-purple-200 border-opacity-50 transition-all duration-300 hover:border-opacity-80"
+                onClick={() => {
+                  window.open(
+                    "https://maps.app.goo.gl/mqVWff6HjLuDCcrD9",
+                    "_blank"
+                  );
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  className="flex items-center gap-2 font-bold text-lg"
+                >
+                  <span className="text-lg">
+                    <motion.img
+                      whileHover={{ scale: 1.2, rotate: 5 }}
+                      src="/services/name.svg"
+                      alt="Contact"
+                      className="w-4 h-4"
+                    />
+                  </span>
+                  <span className="bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+                    Contact Information
+                  </span>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.7, duration: 0.6 }}
+                  className="flex flex-wrap gap-8 text-xs text-gray-700 mt-2"
+                >
+                  <div>
+                    <div className="font-semibold text-purple-700">Address</div>
+                    <div>Bangalore, India</div>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-purple-700">Phone</div>
+                    <div>+91 9591572775</div>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-purple-700">Email</div>
+                    <div
+                      className="underline cursor-pointer"
+                      onClick={() =>
+                        window.open(
+                          "https://outlook.live.com/mail/0/deeplink/compose?to=web_bfsnow@oulook.com&subject=Inquiry%20from%20Bubble%20Flash%20Website",
+                          "_blank"
+                        )
+                      }
+                    >
+                      Info@bubbleflashservices.in
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-purple-700">
+                      Business Hours
+                    </div>
+                    <div>
+                      Monday - Saturday: 9:00 AM - 8:00 PM
+                      <br />
+                      Sunday: 10:00 AM - 6:00 PM
+                    </div>
+                  </div>
+                </motion.div>
+                <div className="flex justify-end mt-2">
+                  <motion.span
+                    whileHover={{ x: 5 }}
+                    className="text-2xl text-purple-600"
+                  >
+                    &gt;
+                  </motion.span>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+        {/* Choose your package Section */}
+        {/* <div className="py-16 relative bg-gradient-to-br from-gray-50 via-white to-gray-50">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-[#1F3C88] to-[#FFB400] bg-clip-text text-transparent"
+          >
+            Choose your package
+          </motion.h2>
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1, duration: 0.8 }}
+              whileHover={{
+                y: -15,
+                scale: 1.05,
+                boxShadow: "0 25px 50px rgba(59, 130, 246, 0.3)",
+                transition: { type: "spring", stiffness: 300, damping: 20 },
+              }}
+              className="bg-gradient-to-br from-blue-100 via-blue-50 to-indigo-100 rounded-2xl border-2 border-blue-300 border-opacity-50 shadow-xl p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-300 hover:border-opacity-80 relative overflow-hidden"
+            >
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute top-4 right-4 w-12 h-12 bg-blue-400 bg-opacity-20 rounded-full blur-sm"
+              />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute bottom-4 left-4 w-8 h-8 bg-indigo-400 bg-opacity-20 rounded-full blur-sm"
+              />
+
+              <div className="w-full flex-1 flex flex-col items-center gap-6 relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  className="text-4xl font-bold mb-2 text-center text-gray-800"
+                >
+                  Quick shine car
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                  className="text-3xl font-bold mb-6 text-center text-green-600"
+                >
+                  ₹249
+                </motion.div>
+                <motion.ul
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                  className="text-gray-700 text-xl mb-6 flex flex-col gap-2 text-center list-none p-0"
+                >
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.6, duration: 0.4 }}
+                  >
+                    Exterior wash with high-pressure watergun
+                  </motion.li>
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.7, duration: 0.4 }}
+                  >
+                    Soft-touch mild soap
+                  </motion.li>
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8, duration: 0.4 }}
+                  >
+                    Swirl-free clean
+                  </motion.li>
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.9, duration: 0.4 }}
+                  >
+                    Deep-cleaning of car mats
+                  </motion.li>
+                </motion.ul>
+              </div>
+              <motion.button
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1, duration: 0.6 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px rgba(255, 214, 0, 0.4)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/cars")}
+                className="bg-gradient-to-r from-[#FFD600] to-[#FFA000] text-black rounded-xl border-2 border-yellow-500 px-8 py-3 font-serif font-semibold text-lg shadow-lg transition-all duration-300 hover:border-yellow-600 mx-auto mt-6"
+              >
+                Get Services
+              </motion.button>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              whileHover={{
+                y: -15,
+                scale: 1.05,
+                boxShadow: "0 25px 50px rgba(34, 197, 94, 0.3)",
+                transition: { type: "spring", stiffness: 300, damping: 20 },
+              }}
+              className="bg-gradient-to-br from-green-100 via-emerald-50 to-green-100 rounded-2xl border-2 border-green-300 border-opacity-50 shadow-xl p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-300 hover:border-opacity-80 relative overflow-hidden"
+            >
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                className="absolute top-4 right-4 w-12 h-12 bg-green-400 bg-opacity-20 rounded-full blur-sm"
+              />
+              <motion.div
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute bottom-4 left-4 w-8 h-8 bg-emerald-400 bg-opacity-20 rounded-full blur-sm"
+              />
+
+              <div className="w-full flex-1 flex flex-col items-center gap-6 relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                  className="text-4xl font-bold mb-2 text-center text-gray-800"
+                >
+                  Shine Bike wash
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  className="text-3xl font-bold mb-6 text-center text-green-600"
+                >
+                  ₹99
+                </motion.div>
+                <motion.ul
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6, duration: 0.8 }}
+                  className="text-gray-700 text-xl mb-6 flex flex-col gap-2 text-center list-none p-0"
+                >
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.7, duration: 0.4 }}
+                  >
+                    Gentle exterior water wash
+                  </motion.li>
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8, duration: 0.4 }}
+                  >
+                    Wheel cleaning with specialized wheel cleaner
+                  </motion.li>
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.9, duration: 0.4 }}
+                  >
+                    High-pressure tyre wash for spotless finish
+                  </motion.li>
+                </motion.ul>
+              </div>
+              <motion.button
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1.1, duration: 0.6 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px rgba(34, 197, 94, 0.4)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/bikes")}
+                className="bg-gradient-to-r from-[#FFD600] to-[#FFA000] text-black rounded-xl border-2 border-green-500 px-8 py-3 font-serif font-semibold text-lg shadow-lg transition-all duration-300 hover:border-green-600 mx-auto mt-6"
+              >
+                Get Services
+              </motion.button>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              whileHover={{
+                y: -15,
+                scale: 1.05,
+                boxShadow: "0 25px 50px rgba(239, 68, 68, 0.3)",
+                transition: { type: "spring", stiffness: 300, damping: 20 },
+              }}
+              className="bg-gradient-to-br from-red-100 via-red-50 to-orange-100 rounded-2xl border-2 border-red-300 border-opacity-50 shadow-xl p-8 min-h-[500px] flex flex-col justify-between items-center h-full transition-all duration-300 hover:border-opacity-80 relative overflow-hidden"
+            >
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                className="absolute top-4 right-4 w-12 h-12 bg-red-400 bg-opacity-20 rounded-full blur-sm"
+              />
+              <motion.div
+                animate={{ scale: [1, 1.5, 1] }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute bottom-4 left-4 w-8 h-8 bg-orange-400 bg-opacity-20 rounded-full blur-sm"
+              />
+
+              <div className="w-full flex-1 flex flex-col items-center gap-6 relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  className="text-4xl font-bold mb-2 text-center text-gray-800"
+                >
+                  Helmet Deals
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.7, duration: 0.6 }}
+                  className="text-3xl font-bold mb-6 text-center text-red-600"
+                >
+                  ₹99
+                </motion.div>
+                <motion.ul
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.8, duration: 0.8 }}
+                  className="text-gray-700 text-xl mb-6 flex flex-col gap-2 text-center list-none p-0"
+                >
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.9, duration: 0.4 }}
+                  >
+                    Premium quality helmets
+                  </motion.li>
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 1.0, duration: 0.4 }}
+                  >
+                    ISI certified safety standards
+                  </motion.li>
+                  <motion.li
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 1.1, duration: 0.4 }}
+                  >
+                    Multiple styles and sizes available
+                  </motion.li>
+                </motion.ul>
+              </div>
+              <motion.button
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1.3, duration: 0.6 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px rgba(239, 68, 68, 0.4)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/helmets")}
+                className="bg-gradient-to-r from-[#FFD600] to-[#FFA000] text-black rounded-xl border-2 border-red-500 px-8 py-3 font-semibold text-lg shadow-lg transition-all duration-300 hover:border-red-600 mx-auto mt-6"
+              >
+                Get services
+              </motion.button>
+            </motion.div>
+          </div>
+        </div> */}
+        {/* What client says - true carousel */}
+        <div className="mt-12 mb-8 py-12 bg-[#EEF2FF] relative">
+          {/* Background overlay */}
+          <div className="absolute inset-0 opacity-20">
+            <div
+              className="absolute top-0 left-0 w-full h-full"
+              style={{
+                backgroundImage: "url(/home-bg.jpg)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            />
+          </div>
+          <h2 className="relative text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900 drop-shadow-sm">
+            What Our Clients Say
+          </h2>
+          <div className="relative overflow-hidden w-full flex justify-center">
+            <div
+              className="flex gap-4 sm:gap-6 md:gap-8 transition-all duration-700"
+              style={{ width: "max-content" }}
+            >
+              {carousel.slice(0, visibleCount).map((t, idx) => {
+                const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+                const gradients = [
+                  "from-white via-[#EEF2FF] to-white",
+                  "from-white via-[#FFF8E1] to-white",
+                  "from-white via-[#EEF2FF] to-white",
+                  "from-white via-[#FFF8E1] to-white",
+                  "from-white via-[#EEF2FF] to-white",
+                  "from-white via-[#FFF8E1] to-white",
+                  "from-white via-[#EEF2FF] to-white",
+                ];
+                const gradient = gradients[idx % gradients.length];
+                return (
+                  <div
+                    key={idx}
+                    className={`bg-gradient-to-br ${gradient} rounded-2xl border-2 border-white shadow-xl p-5 sm:p-6 min-w-[240px] sm:min-w-[280px] md:min-w-[320px] max-w-[360px] flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-105 hover:-translate-y-2`}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ${color}`}
+                      >
+                        {getInitial(t.name)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className="font-bold text-base leading-snug truncate text-gray-900"
+                          title={t.name}
+                        >
+                          {t.name}
+                        </div>
+                        <div className="text-xs text-gray-600 font-medium">
+                          Verified Customer
+                        </div>
+                      </div>
+                      <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="text-yellow-500 text-lg drop-shadow-sm">
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-gray-800 text-sm mt-2 leading-relaxed">
+                      “{t.text}”
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        {/* FAQ Section - Optimized and Compact */}
+        <div className="mt-12 py-12 bg-gradient-to-br from-[#1F3C88] via-[#2952A3] to-[#1F3C88]">
+          <div className="max-w-4xl mx-auto px-4">
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              id="faq-section"
+              className="text-3xl md:text-4xl font-bold text-center mb-8 text-white"
+            >
+              Frequently Asked Questions
+            </motion.h2>
+            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+              <div className="divide-y divide-gray-100">
+                {FAQS.map((faq, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.05, duration: 0.4 }}
+                  >
+                    <button
+                      className="w-full flex justify-between items-center px-6 py-4 text-left focus:outline-none hover:bg-gray-50 transition-colors duration-200"
+                      onClick={() => setOpenIdx(openIdx === i ? -1 : i)}
+                    >
+                      <span className="text-gray-500 font-medium text-base pr-4">
+                        {faq.question}
+                      </span>
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-[#EEF2FF] border border-[#1F3C88]/20 flex items-center justify-center">
+                          <svg
+                            className={`w-4 h-4 text-[#1F3C88] transition-transform duration-300 ${
+                              openIdx === i ? "rotate-180" : "rotate-0"
+                            }`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </button>
+                    {openIdx === i && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="px-6 pb-4 text-gray-500 text-sm leading-relaxed"
+                      >
+                        <div className="pt-2 border-t border-gray-500">
+                          {faq.answer}
+                        </div>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* ServicesPage content end */}
+      </section>
+      {/* Contact section removed - keeping only callback-services section as per requirement */}
+      {/* Auth Modals */}
+      <SignupModal
+        open={openSignup}
+        onClose={() => setOpenSignup(false)}
+        onSignup={() => setOpenSignup(false)}
+        onLoginNow={() => {
+          setOpenSignup(false);
+          setOpenSignin(true);
+        }}
+      />
+      <SigninModal
+        open={openSignin}
+        onClose={() => setOpenSignin(false)}
+        onSignupNow={() => {
+          setOpenSignin(false);
+          setOpenSignup(true);
+        }}
+        onLogin={() => {
+          // After a successful login from modal, perform the stored redirect if exists
+          try {
+            const raw = localStorage.getItem("postLoginRedirect");
+            if (raw) {
+              const data = JSON.parse(raw);
+              if (data?.path) {
+                navigate(data.path, { replace: true });
+                localStorage.removeItem("postLoginRedirect");
+              }
+            }
+          } catch {}
+        }}
+      />
+    </>
+  );
+}
