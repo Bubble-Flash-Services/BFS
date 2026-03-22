@@ -1,0 +1,207 @@
+import React, { useState } from "react";
+import { login, getProfile, googleTokenLogin } from '../../../api/auth';
+import { useAuth } from '../../../components/AuthContext';
+import ForgotPasswordModal from '../../../components/ForgotPasswordModal';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
+import { useGoogleLogin } from '@react-oauth/google';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+function GoogleSigninButton({ onSuccess, onError }) {
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  // On native Capacitor platforms the @react-oauth/google popup cannot open, so
+  // we open the backend OAuth flow in the Capacitor Browser plugin instead.
+  // The backend will redirect back into the app via the registered deep-link
+  // scheme (APP_DEEP_LINK) after a successful sign-in.
+  const handleNativeGoogleLogin = () => {
+    // VITE_BACKEND_URL is the preferred env var; fall back to stripping '/api'
+    // from VITE_API_URL only when that URL ends exactly with '/api'.
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    const backendUrl =
+      import.meta.env.VITE_BACKEND_URL ||
+      (apiUrl.endsWith('/api') ? apiUrl.slice(0, -4) : apiUrl) ||
+      window.location.origin;
+    // source=app tells the backend callback to redirect via deep link
+    const oauthUrl = `${backendUrl}/api/auth/google?source=app`;
+    Browser.open({ url: oauthUrl, presentationStyle: 'popover' });
+  };
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setGoogleLoading(true);
+      try {
+        await onSuccess(tokenResponse);
+      } finally {
+        setGoogleLoading(false);
+      }
+    },
+    onError: (errorResponse) => {
+      console.error('Google login error:', errorResponse);
+      onError('Google sign-in failed. Please try again.');
+    },
+    flow: 'implicit',
+  });
+
+  // Choose the right flow based on platform
+  const handleClick = () => {
+    if (Capacitor.isNativePlatform()) {
+      handleNativeGoogleLogin();
+    } else {
+      handleGoogleLogin();
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className="flex items-center gap-2 border border-black rounded-lg px-3 sm:px-4 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center"
+      onClick={() => handleClick()}
+      disabled={googleLoading}
+    >
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6" />
+      <span className="text-sm sm:text-base md:text-lg">{googleLoading ? 'Signing in...' : 'Continue with Google'}</span>
+    </button>
+  );
+}
+
+export default function SigninModal({ open, onClose, onSignupNow, onLogin }) {
+  const { updateAuth } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showForgot, setShowForgot] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await login({ email, password });
+      if (res.token && res.user) {
+        console.log('✅ Email login successful, fetching complete profile...');
+        
+        try {
+          // Fetch complete profile data
+          const fullProfile = await getProfile(res.token);
+          if (fullProfile && !fullProfile.error) {
+            console.log('✅ Complete profile data fetched:', fullProfile);
+            updateAuth(res.token, fullProfile);
+          } else {
+            console.log('⚠️ Using login response data as fallback');
+            updateAuth(res.token, res.user);
+          }
+        } catch (profileError) {
+          console.error('❌ Error fetching profile after login:', profileError);
+          updateAuth(res.token, res.user);
+        }
+        
+        setLoading(false);
+        onLogin && onLogin(res.user);
+        onClose();
+      } else {
+        setLoading(false);
+        setError(res.error || 'Login failed');
+      }
+    } catch (err) {
+      setLoading(false);
+      setError('Login failed');
+    }
+  };
+
+  const handleGoogleSuccess = async (tokenResponse) => {
+    setError("");
+    try {
+      const res = await googleTokenLogin(tokenResponse.access_token);
+      if (res.token && res.user) {
+        console.log('✅ Google in-app login successful');
+        try {
+          const fullProfile = await getProfile(res.token);
+          updateAuth(res.token, fullProfile && !fullProfile.error ? fullProfile : res.user);
+        } catch {
+          updateAuth(res.token, res.user);
+        }
+        onLogin && onLogin(res.user);
+        onClose();
+      } else {
+        setError(res.message || 'Google sign-in failed');
+      }
+    } catch (err) {
+      console.error('Google token exchange error:', err);
+      setError('Google sign-in failed. Please try again.');
+    }
+  };
+
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10">
+      <div className="relative bg-white rounded-3xl shadow-lg w-full max-w-xs sm:max-w-md md:max-w-lg max-h-screen overflow-y-auto p-4 sm:p-6 flex flex-col items-center justify-center">
+        {/* Close button */}
+        <button
+          className="absolute top-4 right-4 text-3xl sm:text-4xl text-gray-900 bg-white rounded-full border border-gray-300 shadow-lg w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center z-50 cursor-pointer hover:bg-gray-100"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          &times;
+        </button>
+        {/* Header */}
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 tracking-wide text-center break-words whitespace-normal w-full max-w-full bg-white z-10">
+          <span className="inline-block align-middle w-full overflow-visible">Log in</span>
+        </h2>
+        <div className="w-2/3 sm:w-3/4 border-t border-black mb-4 sm:mb-6 md:mb-8" />
+        {/* Form */}
+        <form className="w-full flex flex-col items-center gap-3 sm:gap-4 md:gap-8" onSubmit={handleLogin}>
+            <div className="w-full">
+              <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Email</label>
+              <input
+                type="email"
+                className="w-full rounded-2xl px-3 sm:px-4 py-2 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="Enter your email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="w-full">
+              <label className="block text-base sm:text-lg md:text-xl mb-2 text-gray-800 font-serif">Password</label>
+              <input
+                type="password"
+                className="w-full rounded-2xl px-3 sm:px-4 py-2 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="Enter your password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <div className="text-red-500 text-xs sm:text-sm">{error}</div>}
+            <button
+              type="submit"
+              className="w-24 sm:w-32 md:w-40 bg-yellow-400 text-black font-bold text-base sm:text-xl md:text-2xl rounded-full py-2 shadow-md hover:bg-yellow-500 transition mb-2"
+              disabled={loading}
+            >
+              {loading ? 'Logging in...' : 'Log In'}
+            </button>
+            <button type="button" className="text-blue-500 hover:underline text-xs mt-2" onClick={() => setShowForgot(true)}>
+              Forgot password?
+            </button>
+          </form>
+        {GOOGLE_CLIENT_ID && (
+          <GoogleSigninButton
+            onSuccess={handleGoogleSuccess}
+            onError={(msg) => setError(msg)}
+          />
+        )}
+        <div className="text-center text-gray-600 text-xs sm:text-sm mt-2">
+          New user?{' '}
+          <button className="text-blue-500 hover:underline" onClick={() => {
+            onSignupNow && onSignupNow();
+            onClose && onClose();
+          }}>Sign up now</button>
+        </div>
+      </div>
+      {showForgot && <ForgotPasswordModal onClose={()=>setShowForgot(false)} />}
+    </div>
+  );
+}
