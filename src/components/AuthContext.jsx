@@ -2,8 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProfile } from '../api/auth';
 import { jwtDecode } from 'jwt-decode';
-import { Preferences } from '@capacitor/preferences';
-import { Capacitor } from '@capacitor/core';
 
 const AuthContext = createContext();
 
@@ -17,17 +15,6 @@ export function AuthProvider({ children }) {
     setToken(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    
-    // Also clear from Capacitor Preferences on native platforms
-    if (Capacitor.isNativePlatform()) {
-      try {
-        await Preferences.remove({ key: 'auth_token' });
-        await Preferences.remove({ key: 'user_profile' });
-        console.log('✅ Cleared auth data from Capacitor Preferences');
-      } catch (error) {
-        console.error('Error clearing Capacitor Preferences:', error);
-      }
-    }
   };
 
   const updateAuth = async (newToken, newUser) => {
@@ -35,17 +22,6 @@ export function AuthProvider({ children }) {
     setUser(newUser);
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
-    
-    // Also store in Capacitor Preferences on native platforms
-    if (Capacitor.isNativePlatform()) {
-      try {
-        await Preferences.set({ key: 'auth_token', value: newToken });
-        await Preferences.set({ key: 'user_profile', value: JSON.stringify(newUser) });
-        console.log('✅ Synced auth data to Capacitor Preferences');
-      } catch (error) {
-        console.error('Error syncing to Capacitor Preferences:', error);
-      }
-    }
   };
 
   // Check if token is expired
@@ -79,15 +55,6 @@ export function AuthProvider({ children }) {
         if (response && !response.error && response.success !== false) {
           setUser(response);
           localStorage.setItem('user', JSON.stringify(response));
-          
-          // Also sync to Capacitor Preferences on native platforms
-          if (Capacitor.isNativePlatform()) {
-            try {
-              await Preferences.set({ key: 'user_profile', value: JSON.stringify(response) });
-            } catch (error) {
-              console.error('Error syncing user profile to Capacitor Preferences:', error);
-            }
-          }
         } else {
           // Token is invalid or user not found
           await logout();
@@ -106,38 +73,6 @@ export function AuthProvider({ children }) {
     async function initializeAuth() {
       let storedToken = localStorage.getItem('token');
       let storedUser = localStorage.getItem('user');
-      
-      // On native platforms, check Capacitor Preferences first (for deep link scenarios)
-      if (Capacitor.isNativePlatform()) {
-        try {
-          console.log('📱 Checking Capacitor Preferences for auth data...');
-          const prefToken = await Preferences.get({ key: 'auth_token' });
-          const prefUser = await Preferences.get({ key: 'user_profile' });
-          
-          // Bidirectional sync: sync between localStorage and Capacitor Preferences
-          if (prefToken?.value && !storedToken) {
-            // Case 1: Token in Preferences but not in localStorage (deep link scenario)
-            console.log('✅ Found token in Capacitor Preferences, syncing to localStorage');
-            storedToken = prefToken.value;
-            localStorage.setItem('token', storedToken);
-            
-            if (prefUser?.value) {
-              storedUser = prefUser.value;
-              localStorage.setItem('user', storedUser);
-            }
-          } else if (storedToken && !prefToken?.value) {
-            // Case 2: Token in localStorage but not in Preferences (web login scenario)
-            console.log('✅ Found token in localStorage, syncing to Capacitor Preferences');
-            await Preferences.set({ key: 'auth_token', value: storedToken });
-            
-            if (storedUser) {
-              await Preferences.set({ key: 'user_profile', value: storedUser });
-            }
-          }
-        } catch (error) {
-          console.error('Error syncing between localStorage and Capacitor Preferences:', error);
-        }
-      }
       
       if (storedToken) {
         // Check if token is expired
@@ -162,14 +97,6 @@ export function AuthProvider({ children }) {
             setUser(response);
             localStorage.setItem('user', JSON.stringify(response));
             
-            // Also sync to Capacitor Preferences on native platforms
-            if (Capacitor.isNativePlatform()) {
-              try {
-                await Preferences.set({ key: 'user_profile', value: JSON.stringify(response) });
-              } catch (error) {
-                console.error('Error syncing user profile to Capacitor Preferences:', error);
-              }
-            }
           } else {
             // If token is invalid, logout
             console.log('Invalid token response, logging out');
