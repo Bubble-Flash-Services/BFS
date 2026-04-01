@@ -1,31 +1,12 @@
 import React, { useState } from "react";
 import { signup, getProfile, googleTokenLogin } from '../../../api/auth';
 import { useAuth } from '../../../components/AuthContext';
-import { Capacitor } from '@capacitor/core';
-import { Browser } from '@capacitor/browser';
 import { useGoogleLogin } from '@react-oauth/google';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 function GoogleSignupButton({ onSuccess, onError }) {
   const [googleLoading, setGoogleLoading] = useState(false);
-
-  // On native Capacitor platforms the @react-oauth/google popup cannot open, so
-  // we open the backend OAuth flow in the Capacitor Browser plugin instead.
-  // The backend will redirect back into the app via the registered deep-link
-  // scheme (APP_DEEP_LINK) after a successful sign-in.
-  const handleNativeGoogleLogin = () => {
-    // VITE_BACKEND_URL is the preferred env var; fall back to stripping '/api'
-    // from VITE_API_URL only when that URL ends exactly with '/api'.
-    const apiUrl = import.meta.env.VITE_API_URL || '';
-    const backendUrl =
-      import.meta.env.VITE_BACKEND_URL ||
-      (apiUrl.endsWith('/api') ? apiUrl.slice(0, -4) : apiUrl) ||
-      window.location.origin;
-    // source=app tells the backend callback to redirect via deep link
-    const oauthUrl = `${backendUrl}/api/auth/google?source=app`;
-    Browser.open({ url: oauthUrl, presentationStyle: 'popover' });
-  };
 
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -43,20 +24,11 @@ function GoogleSignupButton({ onSuccess, onError }) {
     flow: 'implicit',
   });
 
-  // Choose the right flow based on platform
-  const handleClick = () => {
-    if (Capacitor.isNativePlatform()) {
-      handleNativeGoogleLogin();
-    } else {
-      handleGoogleLogin();
-    }
-  };
-
   return (
     <button
       type="button"
       className="flex items-center gap-2 border border-black rounded-lg px-4 sm:px-6 py-2 hover:bg-gray-100 transition mb-4 w-full justify-center mt-4"
-      onClick={() => handleClick()}
+      onClick={() => handleGoogleLogin()}
       disabled={googleLoading}
     >
       <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6" />

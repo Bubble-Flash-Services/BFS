@@ -1,9 +1,9 @@
 /**
  * Example React Component: Real-time Order Tracking
- * Demonstrates API calls and Socket.IO integration for Capacitor app
+ * Demonstrates API calls and Socket.IO integration
  */
 import React, { useState, useEffect } from 'react';
-import { api } from '../api/capacitorApiClient';
+import { getUserOrders, cancelOrder } from '../api/orders';
 import socketService, { setupBFSSocketHandlers } from '../api/socketService';
 
 const OrderTracking = () => {
@@ -59,8 +59,9 @@ const OrderTracking = () => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const response = await api.orders.getAll({ limit: 20 });
-        setOrders(response.data.orders || []);
+        const token = localStorage.getItem('token');
+        const response = await getUserOrders(token);
+        setOrders(response.orders || []);
         setError(null);
       } catch (err) {
         setError(err.message || 'Failed to fetch orders');
@@ -76,7 +77,8 @@ const OrderTracking = () => {
   // Function to cancel an order
   const handleCancelOrder = async (orderId) => {
     try {
-      await api.orders.cancel(orderId);
+      const token = localStorage.getItem('token');
+      await cancelOrder(token, orderId);
       
       // Update local state
       setOrders(prevOrders => 
