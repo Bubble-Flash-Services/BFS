@@ -150,35 +150,28 @@ export default function ServiceCategories({ onLoginRequired }) {
   ];
 
   return (
-    <section className="py-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
+    <section className="py-10 relative overflow-hidden bg-gradient-to-br from-[#EEF2FF] via-white to-[#FFF8E1]">
       {/* Decorative Background Elements */}
-      <div className="absolute inset-0 opacity-20">
-        <div
-          className="absolute top-0 left-0 w-full h-full"
-          style={{
-            backgroundImage: "url(/home-bg.jpg)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-gray-900/80 to-slate-800/90" />
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[#1F3C88]/5 blur-3xl" />
+        <div className="absolute -bottom-20 -right-20 w-96 h-96 rounded-full bg-[#FFB400]/10 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#2952A3]/5 blur-3xl" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center px-5 py-2 bg-[#FFB400]/20 backdrop-blur-sm rounded-full border border-[#FFB400]/40 mb-4">
-            <span className="text-[#FFB400] font-semibold text-sm tracking-wide">
+          <div className="inline-flex items-center px-5 py-2 bg-[#1F3C88]/10 backdrop-blur-sm rounded-full border border-[#1F3C88]/20 mb-4">
+            <span className="text-[#1F3C88] font-semibold text-sm tracking-wide">
               Our Services
             </span>
           </div>
 
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-            Choose Your <span className="text-[#FFB400]">Service</span>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+            Choose Your <span className="text-[#1F3C88]">Service</span>
           </h2>
 
-          <p className="text-sm text-gray-400 max-w-xl mx-auto">
+          <p className="text-sm text-gray-500 max-w-xl mx-auto">
             Premium cleaning services delivered with care and precision
           </p>
         </div>
