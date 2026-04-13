@@ -3,7 +3,7 @@ import React from "react";
 const FloatingWhatsApp = () => {
   const phoneNumber = "919591572775"; // WhatsApp format without + or spaces
   const message = encodeURIComponent(
-    "Hi! I would like to know more about your services."
+    "Hi! I'd like to book a Bubble Flash Service 🫧⚡\n\nMy Location 📍: \nMy Car Model 🚗: "
   );
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
