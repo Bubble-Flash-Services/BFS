@@ -25,6 +25,9 @@ import { addressAPI } from "../../api/address";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
 
+const WHATSAPP_BOOKING_URL =
+  "https://wa.me/919591572775?text=Hi!%20I%27d%20like%20to%20book%20a%20Bubble%20Flash%20Service%20%F0%9F%AB%A7%E2%9A%A1%0A%0AMy%20Location%20%F0%9F%93%8D%3A%20%0AMy%20Car%20Model%20%F0%9F%9A%97%3A%20";
+
 const FAQS = [
   {
     question: "How do I book a service?",
@@ -406,9 +409,13 @@ export default function HeroSection() {
       'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)',
     backgroundSize: '60px 60px',
   };
-  const heroSlides = [    {
-      title: "Premium Car Wash Services",
-      subtitle: "Professional doorstep cleaning with eco-friendly products and expert care for your vehicle",
+  const heroSlides = [
+    {
+      title: "Bubble Flash Services 🫧⚡",
+      subtitle: "Doorstep Car Wash | Instant Booking",
+      badges: ["📲 Book in 30 Seconds", "📍 At your door in 30 Minutes"],
+      tagline: '"The fastest way to a showroom shine."',
+      whatsappCta: WHATSAPP_BOOKING_URL,
       image: "/car/home.png",
       gradient: "from-[#1F3C88] via-[#2952A3] to-[#1F3C88]",
       alt: "Professional Car Wash Service",
@@ -830,10 +837,34 @@ export default function HeroSection() {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="text-xl md:text-2xl mb-8 text-white/90 leading-relaxed"
+                        className="text-xl md:text-2xl mb-4 text-white/90 leading-relaxed"
                       >
                         {heroSlides[heroSlide].subtitle}
                       </motion.p>
+                      {heroSlides[heroSlide].badges && (
+                        <motion.div
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ delay: 0.35 }}
+                          className="flex flex-wrap gap-2 mb-3"
+                        >
+                          {heroSlides[heroSlide].badges.map((badge, i) => (
+                            <span key={i} className="bg-white/20 backdrop-blur-sm border border-white/40 text-white text-sm font-bold px-4 py-1.5 rounded-full">
+                              {badge}
+                            </span>
+                          ))}
+                        </motion.div>
+                      )}
+                      {heroSlides[heroSlide].tagline && (
+                        <motion.p
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ delay: 0.38 }}
+                          className="text-white/80 italic text-base md:text-lg mb-5 font-medium"
+                        >
+                          {heroSlides[heroSlide].tagline}
+                        </motion.p>
+                      )}
                       <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -851,17 +882,28 @@ export default function HeroSection() {
                         >
                           Book Now →
                         </button>
-                        <button
-                          onClick={() => {
-                            const aboutSection = document.getElementById('aboutus');
-                            if (aboutSection) {
-                              aboutSection.scrollIntoView({ behavior: 'smooth' });
-                            }
-                          }}
-                          className="border-2 border-white/70 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all"
-                        >
-                          Learn More
-                        </button>
+                        {heroSlides[heroSlide].whatsappCta ? (
+                          <a
+                            href={heroSlides[heroSlide].whatsappCta}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-2xl hover:shadow-green-500/25 hover:scale-105 active:scale-95"
+                          >
+                            💬 Message us to Book!
+                          </a>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              const aboutSection = document.getElementById('aboutus');
+                              if (aboutSection) {
+                                aboutSection.scrollIntoView({ behavior: 'smooth' });
+                              }
+                            }}
+                            className="border-2 border-white/70 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all"
+                          >
+                            Learn More
+                          </button>
+                        )}
                       </motion.div>
                     </div>
                     <motion.div
@@ -946,6 +988,16 @@ export default function HeroSection() {
             END OF COMMENTED OUT SECTION */}
 
           {/* Service Categories - Moved after Hero Content */}
+        </div>
+        {/* Stats Banner */}
+        <div className="w-full bg-[#FFB400] py-3 px-4">
+          <div className="max-w-5xl mx-auto flex flex-wrap justify-center items-center gap-4 md:gap-10 text-gray-900 font-bold text-sm md:text-base">
+            <span className="flex items-center gap-2">⚡ Instant Booking — 30 Seconds</span>
+            <span className="hidden md:block text-gray-700">|</span>
+            <span className="flex items-center gap-2">🚗 Doorstep in 30 Minutes</span>
+            <span className="hidden md:block text-gray-700">|</span>
+            <span className="flex items-center gap-2">✨ Showroom Shine — Guaranteed</span>
+          </div>
         </div>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1818,10 +1870,7 @@ export default function HeroSection() {
                 }}
                 className="bg-gradient-to-br from-white via-green-50 to-emerald-50 rounded-2xl p-6 flex flex-col gap-2 shadow-lg cursor-pointer border-2 border-green-200 border-opacity-50 transition-all duration-300 hover:border-opacity-80"
                 onClick={() => {
-                  window.open(
-                    "https://wa.me/919591572775?text=Hello! I would like to know more about your services.",
-                    "_blank"
-                  );
+                  window.open(WHATSAPP_BOOKING_URL, "_blank");
                 }}
               >
                 <motion.div
@@ -1993,7 +2042,7 @@ export default function HeroSection() {
           </motion.div>
         </div>
         {/* Choose your package Section */}
-        {/* <div className="py-16 relative bg-gradient-to-br from-gray-50 via-white to-gray-50">
+        <div className="py-16 relative bg-gradient-to-br from-gray-50 via-white to-gray-50">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2003,7 +2052,7 @@ export default function HeroSection() {
           >
             Choose your package
           </motion.h2>
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
             <motion.div
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -2301,7 +2350,7 @@ export default function HeroSection() {
               </motion.button>
             </motion.div>
           </div>
-        </div> */}
+        </div>
         {/* What client says - true carousel */}
         <div className="mt-12 mb-8 py-12 bg-[#EEF2FF] relative">
           {/* Background overlay */}
