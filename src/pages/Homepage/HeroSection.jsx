@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import toast from "react-hot-toast";
+import React, { useState, useEffect } from "react";
 import {
   Calendar,
   Phone,
@@ -20,7 +19,6 @@ import SigninModal from "./signin/SigninModal";
 import SignupModal from "./signup/SignupModal";
 import AddressAutocomplete from "../../components/AddressAutocomplete";
 import { useAuth } from "../../components/AuthContext";
-import { useCart } from "../../components/CartContext";
 import { addressAPI } from "../../api/address";
 
 const API = import.meta.env.VITE_API_URL || window.location.origin;
@@ -210,7 +208,6 @@ function getCategoriesForService(service) {
 
 export default function HeroSection() {
   const { user } = useAuth();
-  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("");
   // New minimal 2-step booking state
@@ -290,9 +287,7 @@ export default function HeroSection() {
   const [openIdx, setOpenIdx] = useState(-1); // Changed from 0 to -1 so no FAQ is open by default
   const [visibleCount, setVisibleCount] = useState(4);
   const [carousel, setCarousel] = useState(testimonials);
-  const [accessorySlide, setAccessorySlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const accessorySliderRef = useRef(null);
   const [heroSlide, setHeroSlide] = useState(0);
 
     // If user just logged in and we have a stored redirect, navigate there
@@ -309,9 +304,6 @@ export default function HeroSection() {
       }
     } catch {}
   }, [user, navigate]);
-
-  const startX = useRef(0);
-  const isDragging = useRef(false);
 
   useEffect(() => {
     // Get current location using the new address API
@@ -435,246 +427,6 @@ export default function HeroSection() {
       alt: "Professional Helmet Cleaning Service",
     },
   ];
-
-  // Car wash accessories data
-  const accessories = [
-    {
-      img: "/car accessories/air freshner.jpg",
-      title: "Air Freshener",
-      price: 149,
-      oldPrice: 199,
-      offer: "25%off",
-      stars: 4,
-      tag: "₹ 149 only",
-    },
-    // Car Cover split into three variants (same image)
-    {
-      img: "/car accessories/car cover.jpg",
-      title: "Car Cover (Basic)",
-      price: 999,
-      oldPrice: 1299,
-      offer: "23%off",
-      stars: 4,
-      tag: "₹ 999 only",
-    },
-    {
-      img: "/car accessories/car cover.jpg",
-      title: "Car Cover (Premium)",
-      price: 1699,
-      oldPrice: 1999,
-      offer: "15%off",
-      stars: 4,
-      tag: "₹ 1699 only",
-    },
-    {
-      img: "/car accessories/car cover.jpg",
-      title: "Car Cover (Luxury)",
-      price: 2229,
-      oldPrice: 2599,
-      offer: "14%off",
-      stars: 4,
-      tag: "₹ 2229 only",
-    },
-    {
-      img: "/car accessories/car washing gloves.jpg",
-      title: "Washing Gloves",
-      price: 199,
-      oldPrice: 299,
-      offer: "33%off",
-      stars: 4,
-      tag: "₹ 199 only",
-    },
-    {
-      img: "/car accessories/degreasers.jpg",
-      title: "Degreaser",
-      price: 249,
-      oldPrice: 349,
-      offer: "28%off",
-      stars: 4,
-      tag: "₹ 249 only",
-    },
-    {
-      img: "/car accessories/drying towel.jpg",
-      title: "Drying Towels",
-      price: 1399,
-      oldPrice: 1599,
-      offer: "13%off",
-      stars: 4,
-      tag: "₹ 1399 only",
-    },
-    {
-      img: "/car accessories/foot paper.jpg",
-      title: "Paper Mat (each)",
-      price: 5,
-      oldPrice: 10,
-      offer: "50%off",
-      stars: 3,
-      tag: "₹ 5 only",
-    },
-    // Mobile Holder split (same image)
-    {
-      img: "/car accessories/mobile stand.jpg",
-      title: "Mobile Holder (Basic)",
-      price: 249,
-      oldPrice: 299,
-      offer: "17%off",
-      stars: 4,
-      tag: "₹ 249 only",
-    },
-    {
-      img: "/car accessories/mobile stand.jpg",
-      title: "Mobile Holder (Premium)",
-      price: 369,
-      oldPrice: 449,
-      offer: "18%off",
-      stars: 4,
-      tag: "₹ 369 only",
-    },
-    {
-      img: "/car accessories/Sprays.jpg",
-      title: "Spray Bottle",
-      price: 129,
-      oldPrice: 199,
-      offer: "35%off",
-      stars: 4,
-      tag: "₹ 129 only",
-    },
-    {
-      img: "/car accessories/tissue box.jpg",
-      title: "Tissue Box",
-      price: 159,
-      oldPrice: 220,
-      offer: "28%off",
-      stars: 4,
-      tag: "₹ 159 only",
-    },
-    // Add Microfiber Cloth
-    {
-      img: "/car accessories/towels.jpg",
-      title: "Microfiber Cloth",
-      price: 120,
-      oldPrice: 149,
-      offer: "19%off",
-      stars: 4,
-      tag: "₹ 120 only",
-    },
-    // Bike Cover split into three variants (same image)
-    {
-      img: "/car accessories/bike cover.jpg",
-      title: "Bike Cover (Basic)",
-      price: 299,
-      oldPrice: 349,
-      offer: "14%off",
-      stars: 4,
-      tag: "₹ 299 only",
-    },
-    {
-      img: "/car accessories/bike cover.jpg",
-      title: "Bike Cover (Premium)",
-      price: 399,
-      oldPrice: 469,
-      offer: "15%off",
-      stars: 4,
-      tag: "₹ 399 only",
-    },
-    {
-      img: "/car accessories/bike cover.jpg",
-      title: "Bike Cover (Luxury)",
-      price: 699,
-      oldPrice: 799,
-      offer: "13%off",
-      stars: 4,
-      tag: "₹ 699 only",
-    },
-  ];
-
-  // Navigation for accessories slider: use car-wash style sliding
-  // Desktop shows 3 products per slide; Mobile shows 1 per slide
-  const cardsPerSlide = isMobile ? 1 : 3;
-  const totalSlides = Math.ceil(accessories.length / cardsPerSlide); // number of slide groups
-
-  const handleDotClick = (idx) =>
-    setAccessorySlide(Math.max(0, Math.min(totalSlides - 1, idx)));
-  const handlePrev = () => setAccessorySlide((s) => Math.max(0, s - 1));
-  const handleNext = () =>
-    setAccessorySlide((s) => Math.min(totalSlides - 1, s + 1));
-
-  // Touch handlers for mobile dragging (match BikeWashDeals mobile behavior)
-  const handleTouchStart = (e) => {
-    if (!isMobile) return;
-    isDragging.current = true;
-    startX.current = e.touches[0].pageX;
-  };
-
-  // Helper to build stable IDs for accessories (prevents merging into first item on some devices)
-  const accessorySlug = (title = "") =>
-    title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
-
-  const handleTouchMove = (e) => {
-    if (!isMobile || !isDragging.current) return;
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = (e) => {
-    if (!isMobile || !isDragging.current) return;
-    isDragging.current = false;
-
-    const endX = e.changedTouches[0].pageX;
-    const diffX = startX.current - endX;
-    const threshold = 50;
-
-    if (Math.abs(diffX) > threshold) {
-      if (diffX > 0 && accessorySlide < totalSlides - 1) {
-        setAccessorySlide((s) => Math.min(totalSlides - 1, s + 1));
-      } else if (diffX < 0 && accessorySlide > 0) {
-        setAccessorySlide((s) => Math.max(0, s - 1));
-      }
-    }
-  };
-
-  const handleAddToCart = (itemOrEvent) => {
-    // Support being called with event (from delegated click) or direct item
-    let item = itemOrEvent;
-    if (itemOrEvent?.currentTarget && !itemOrEvent.title) {
-      const el = itemOrEvent.currentTarget;
-      const slugAttr = el.getAttribute("data-slug");
-      if (slugAttr) {
-        item =
-          accessories.find((a) => accessorySlug(a.title) === slugAttr) ||
-          accessories[0];
-      }
-    }
-    if (!item) return;
-    if (!user) {
-      toast.error("Please login to add items to cart");
-      return;
-    }
-    const slug = accessorySlug(item.title);
-    const baseId = `accessory-${slug}`;
-    const cartItem = {
-      id: `${baseId}-${Date.now()}`,
-      serviceId: baseId,
-      name: item.title,
-      serviceName: `Accessory: ${item.title}`,
-      price: item.price,
-      oldPrice: item.oldPrice,
-      offer: item.offer,
-      img: item.img,
-      image: item.img,
-      type: "accessory",
-      category: "Car Accessories",
-      // UI display fields so cart shows details
-      packageName: item.title,
-      packageDetails: { basePrice: item.price, addons: [], features: [] },
-      includedFeatures: [],
-      uiAddOns: [],
-    };
-    addToCart(cartItem);
-    toast.success(`${item.title} added to cart`);
-  };
 
   // Handle address selection from autocomplete
   const handleAddressSelect = (selectedAddress) => {
@@ -1332,19 +1084,13 @@ export default function HeroSection() {
           {/* AboutPage content end */}
         </section>
       </div>
-      {/* Car wash Accessories Section - White Background with Images */}
-      <section className="py-20 bg-white relative overflow-hidden">
-        {/* Background Images for Carousel Feel */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-gradient-to-br from-[#1F3C88] to-[#2952A3] blur-3xl animate-pulse" />
-          <div
-            className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-gradient-to-br from-[#2952A3] to-[#1F3C88] blur-3xl animate-pulse"
-            style={{ animationDelay: "1s" }}
-          />
-          <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-[#FFB400] to-[#e0a000] blur-3xl animate-pulse"
-            style={{ animationDelay: "2s" }}
-          />
+      {/* Vehicle Accessories Store Section */}
+      <section className="py-16 relative overflow-hidden bg-gradient-to-br from-[#EEF2FF] via-white to-[#FFF8E1]">
+        {/* Decorative blobs */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#1F3C88]/8 blur-3xl" />
+          <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-[#FFB400]/15 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full bg-[#2952A3]/5 blur-3xl" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1353,18 +1099,19 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            transition={{ duration: 0.7 }}
+            className="text-center mb-12"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center px-6 py-3 bg-[#FFB400] bg-opacity-20 backdrop-blur-sm rounded-full border border-[#FFB400] border-opacity-30 mb-6"
+              transition={{ delay: 0.1, duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#FFB400]/15 rounded-full border border-[#FFB400]/40 mb-5"
             >
-              <span className="text-[#FFB400] font-semibold text-sm">
-                Our Products
+              <span className="text-lg">🛒</span>
+              <span className="text-[#1F3C88] font-semibold text-sm tracking-wide">
+                Vehicle Accessories Store
               </span>
             </motion.div>
 
@@ -1372,267 +1119,208 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="text-3xl md:text-5xl font-bold text-gray-900 mb-4"
             >
-              Car wash <span className="text-[#FFB400]">Accessories</span>
+              Everything Your{" "}
+              <span className="text-[#1F3C88]">Vehicle</span>{" "}
+              <span className="text-[#FFB400]">Needs</span>
             </motion.h2>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-xl text-gray-700 max-w-2xl mx-auto"
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-gray-500 max-w-xl mx-auto text-base md:text-lg"
             >
-              Premium car care accessories for the perfect wash
+              Premium accessories for cars & bikes — handpicked for quality, delivered to your door
             </motion.p>
           </motion.div>
 
-          {/* Desktop and Mobile Slider Layout with Arrows */}
+          {/* Category Cards */}
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.1,
-              },
-            }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="relative"
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6 mb-10"
           >
-            {/* Slider Container */}
-            <div className="relative flex items-center justify-center gap-4 max-w-7xl mx-auto">
-              {/* Left Arrow (car-wash style) */}
-              <button
-                onClick={handlePrev}
-                disabled={accessorySlide === 0}
-                className={`absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
-                  accessorySlide === 0
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-gray-50 hover:shadow-xl"
-                }`}
-                aria-label="Previous"
+            {[
+              {
+                label: "Car Seat Covers",
+                desc: "Leather & fabric seat protection",
+                img: "/car accessories/car cover.jpg",
+                badge: "Best Seller",
+                badgeColor: "bg-green-500",
+                gradient: "from-[#1F3C88]/90 to-[#2952A3]/80",
+              },
+              {
+                label: "Car Floor Mats",
+                desc: "3D mats for all car models",
+                img: "/car accessories/foot paper.jpg",
+                badge: "Popular",
+                badgeColor: "bg-[#FFB400]",
+                gradient: "from-[#2952A3]/90 to-[#1F3C88]/80",
+              },
+              {
+                label: "Cleaning & Care",
+                desc: "Microfiber cloths, sprays & more",
+                img: "/car accessories/drying towel.jpg",
+                badge: "New",
+                badgeColor: "bg-emerald-500",
+                gradient: "from-[#1F3C88]/90 to-[#2952A3]/80",
+              },
+              {
+                label: "Car Fragrances",
+                desc: "Fresh scents for a pleasant drive",
+                img: "/car accessories/air freshner.jpg",
+                badge: "Trending",
+                badgeColor: "bg-pink-500",
+                gradient: "from-[#FFB400]/80 to-[#e0a000]/90",
+              },
+              {
+                label: "Bike Covers",
+                desc: "All-weather protection for your bike",
+                img: "/car accessories/bike cover.jpg",
+                badge: "Top Rated",
+                badgeColor: "bg-purple-500",
+                gradient: "from-[#2952A3]/90 to-[#1F3C88]/80",
+              },
+              {
+                label: "Mobile Holders",
+                desc: "Secure mounts for cars & bikes",
+                img: "/car accessories/mobile stand.jpg",
+                badge: "Must Have",
+                badgeColor: "bg-orange-500",
+                gradient: "from-[#1F3C88]/90 to-[#FFB400]/70",
+              },
+            ].map((cat, i) => (
+              <motion.div
+                key={cat.label}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                onClick={() => navigate("/vehicle-accessories")}
+                className="relative rounded-2xl overflow-hidden cursor-pointer group shadow-md hover:shadow-xl transition-all duration-300 h-40 md:h-52"
               >
-                <svg
-                  className="w-5 h-5 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
+                {/* Background image */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                  style={{ backgroundImage: `url('${cat.img}')` }}
+                />
+                {/* Gradient overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-t ${cat.gradient} opacity-75 group-hover:opacity-85 transition-opacity duration-300`} />
 
-              {/* Cards Container */}
-              <div className="overflow-hidden flex-1 max-w-5xl">
-                <motion.div
-                  className={`flex slider-container transition-transform duration-300 ease-in-out`}
-                  style={{
-                    transform: `translateX(-${
-                      accessorySlide * (isMobile ? 85 : 100)
-                    }%)`,
-                    touchAction: "pan-y pinch-zoom",
-                  }}
-                  onTouchStart={handleTouchStart}
-                  onTouchMove={handleTouchMove}
-                  onTouchEnd={handleTouchEnd}
-                >
-                  {Array.from({ length: totalSlides }, (_, slideIndex) => {
-                    const group = accessories.slice(
-                      slideIndex * cardsPerSlide,
-                      slideIndex * cardsPerSlide + cardsPerSlide
-                    );
-                    return (
-                      <div
-                        key={`slide-${slideIndex}`}
-                        className="flex-shrink-0 w-[85%] md:w-full"
-                      >
-                        <div className="flex gap-0 md:gap-4">
-                          {group.map((item, idx) => {
-                            const globalIdx = slideIndex * cardsPerSlide + idx;
-                            return (
-                              <motion.div
-                                key={`${slideIndex}-${idx}`}
-                                initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                                whileInView={{
-                                  opacity: 1,
-                                  y: 0,
-                                  scale: 1,
-                                  transition: {
-                                    type: "spring",
-                                    stiffness: 100,
-                                    damping: 15,
-                                    delay: globalIdx * 0.05,
-                                  },
-                                }}
-                                viewport={{ once: true }}
-                                whileHover={{
-                                  scale: 1.05,
-                                  y: -10,
-                                  transition: {
-                                    type: "spring",
-                                    stiffness: 300,
-                                    damping: 20,
-                                  },
-                                }}
-                                whileTap={{ scale: 0.95 }}
-                                className="relative bg-white rounded-2xl p-4 md:p-6 cursor-pointer shadow-lg backdrop-blur-sm border border-gray-200 hover:shadow-xl transition-all duration-300 group overflow-hidden w-full md:w-1/3 lg:w-1/3"
-                              >
-                                {/* Gradient Overlay on Hover */}
-                                <motion.div
-                                  initial={{ opacity: 0 }}
-                                  whileHover={{ opacity: 0.1 }}
-                                  transition={{ duration: 0.3 }}
-                                  className="absolute inset-0 bg-gradient-to-br from-[#1F3C88] to-[#2952A3] rounded-3xl"
-                                />
+                {/* Badge */}
+                <div className="absolute top-2.5 right-2.5 z-10">
+                  <span className={`${cat.badgeColor} text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow`}>
+                    {cat.badge}
+                  </span>
+                </div>
 
-                                {/* Content */}
-                                <div className="relative z-10">
-                                  {/* Icon/Image Container - Smaller */}
-                                  <motion.div
-                                    initial={{ scale: 0, rotate: -180 }}
-                                    whileInView={{
-                                      scale: 1,
-                                      rotate: 0,
-                                      transition: {
-                                        type: "spring",
-                                        stiffness: 200,
-                                        damping: 10,
-                                        delay: 0.3 + globalIdx * 0.05,
-                                      },
-                                    }}
-                                    viewport={{ once: true }}
-                                    className="relative w-20 h-20 md:w-24 md:h-24 mx-auto mb-4"
-                                  >
-                                    <div className="w-full h-full bg-[#EEF2FF] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                      <img
-                                        src={item.img}
-                                        alt={item.title}
-                                        className="w-16 h-16 md:w-20 md:h-20 object-contain"
-                                      />
-                                    </div>
+                {/* Content */}
+                <div className="absolute inset-0 z-10 flex flex-col justify-end p-3 md:p-4">
+                  <h3 className="text-white font-bold text-sm md:text-base leading-tight mb-0.5 group-hover:text-[#FFD960] transition-colors duration-300">
+                    {cat.label}
+                  </h3>
+                  <p className="text-white/75 text-[10px] md:text-xs leading-snug hidden sm:block">
+                    {cat.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
 
-                                    {/* Floating Animation Ring */}
-                                    <motion.div
-                                      animate={{
-                                        rotate: 360,
-                                      }}
-                                      whileHover={{ scale: 1.2 }}
-                                      transition={{
-                                        rotate: {
-                                          duration: 8,
-                                          repeat: Infinity,
-                                          ease: "linear",
-                                        },
-                                        scale: { duration: 0.3 },
-                                      }}
-                                      className="absolute inset-0 border-2 border-dashed border-[#FFB400] border-opacity-30 rounded-xl"
-                                    />
-                                  </motion.div>
-
-                                  {/* Title */}
-                                  <motion.h3
-                                    initial={{ opacity: 0, y: 10 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                      delay: 0.4 + globalIdx * 0.05,
-                                    }}
-                                    className="text-base md:text-lg font-bold text-gray-900 mb-2 text-center group-hover:text-[#FFB400] transition-colors duration-300"
-                                  >
-                                    {item.title}
-                                  </motion.h3>
-
-                                  {/* Price */}
-                                  <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                      delay: 0.5 + globalIdx * 0.05,
-                                    }}
-                                    className="text-center mb-4"
-                                  >
-                                    <div className="text-gray-400 line-through text-xs mb-1">
-                                      MRP: ₹{item.oldPrice}
-                                    </div>
-                                    <div className="text-red-600 text-base md:text-lg font-bold mb-2">
-                                      {item.tag}
-                                    </div>
-                                    <div className="bg-red-400 text-white px-2 py-1 rounded-full text-xs font-semibold inline-block">
-                                      {item.offer}
-                                    </div>
-                                  </motion.div>
-
-                                  {/* CTA Button */}
-                                  <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                      delay: 0.6 + globalIdx * 0.05,
-                                    }}
-                                    className="text-center"
-                                  >
-                                    <motion.button
-                                      whileHover={{ scale: 1.05 }}
-                                      whileTap={{ scale: 0.95 }}
-                                      data-slug={accessorySlug(item.title)}
-                                      className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1F3C88] to-[#2952A3] text-white px-3 md:px-4 py-2 md:py-3 rounded-lg font-semibold hover:from-[#FFB400] hover:to-[#e0a000] transition-all duration-300 shadow-md hover:shadow-lg text-xs md:text-sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleAddToCart(e);
-                                      }}
-                                    >
-                                      Add to Cart
-                                      <motion.div
-                                        whileHover={{ x: 5 }}
-                                        transition={{ duration: 0.3 }}
-                                      >
-                                        <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
-                                      </motion.div>
-                                    </motion.button>
-                                  </motion.div>
-                                </div>
-                              </motion.div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </motion.div>
+          {/* Featured Products Strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="bg-white rounded-3xl shadow-lg p-6 md:p-8 border border-gray-100 mb-10"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900">Featured Products</h3>
+                <p className="text-gray-400 text-sm mt-0.5">Hand-picked top deals for you</p>
               </div>
-
-              {/* Right Arrow (car-wash style) */}
               <button
-                onClick={handleNext}
-                disabled={accessorySlide === totalSlides - 1}
-                className={`absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-200 ${
-                  accessorySlide === totalSlides - 1
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-gray-50 hover:shadow-xl"
-                }`}
-                aria-label="Next"
+                onClick={() => navigate("/vehicle-accessories")}
+                className="text-[#1F3C88] font-semibold text-sm hover:text-[#FFB400] transition-colors duration-300 flex items-center gap-1"
               >
-                <svg
-                  className="w-5 h-5 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                View All <ArrowRight className="w-4 h-4" />
               </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+              {[
+                { title: "Microfiber Cloth Set", img: "/car accessories/towels.jpg", price: "₹120", oldPrice: "₹149", off: "19% off" },
+                { title: "Washing Gloves", img: "/car accessories/car washing gloves.jpg", price: "₹199", oldPrice: "₹299", off: "33% off" },
+                { title: "Degreaser Spray", img: "/car accessories/degreasers.jpg", price: "₹249", oldPrice: "₹349", off: "28% off" },
+                { title: "Tissue Box Holder", img: "/car accessories/tissue box.jpg", price: "₹159", oldPrice: "₹220", off: "28% off" },
+              ].map((product, i) => (
+                <motion.div
+                  key={product.title}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.07, duration: 0.4 }}
+                  whileHover={{ y: -4 }}
+                  onClick={() => navigate("/vehicle-accessories")}
+                  className="bg-[#F8F9FC] rounded-xl p-3 cursor-pointer hover:shadow-md transition-all duration-300 group border border-transparent hover:border-[#1F3C88]/20"
+                >
+                  <div className="w-full aspect-square rounded-lg overflow-hidden mb-2 bg-white">
+                    <img
+                      src={product.img}
+                      alt={product.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-gray-800 font-semibold text-xs md:text-sm leading-tight mb-1 line-clamp-2">
+                    {product.title}
+                  </p>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[#1F3C88] font-bold text-sm">{product.price}</span>
+                    <span className="text-gray-400 line-through text-xs">{product.oldPrice}</span>
+                    <span className="text-green-600 text-[10px] font-semibold bg-green-50 px-1.5 py-0.5 rounded-full">{product.off}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* CTA Banner */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#1F3C88] via-[#2952A3] to-[#1F3C88] p-8 md:p-10 text-center shadow-xl"
+          >
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+              <div className="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-[#FFB400] blur-2xl" />
+              <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-[#FFB400] blur-2xl" />
+            </div>
+            <div className="relative z-10">
+              <p className="text-[#FFD960] font-semibold text-sm mb-2 tracking-wide uppercase">Limited Time Deals</p>
+              <h3 className="text-white text-2xl md:text-3xl font-bold mb-2">
+                Shop Premium Vehicle Accessories
+              </h3>
+              <p className="text-blue-200 text-sm md:text-base mb-6 max-w-lg mx-auto">
+                Explore 50+ curated products for your car & bike — from interior comfort to exterior protection
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => navigate("/vehicle-accessories")}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FFB400] to-[#e0a000] text-[#1F3C88] px-7 py-3 rounded-full font-bold text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Explore Full Store
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
             </div>
           </motion.div>
         </div>

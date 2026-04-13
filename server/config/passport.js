@@ -40,15 +40,28 @@ passport.deserializeUser(async (id, done) => {
  * request object (and therefore the OAuth state) can be inspected inside the
  * verify callback.
  */
+const effectiveCallbackURL =
+  process.env.GOOGLE_CALLBACK_URL ||
+  `${process.env.BACKEND_URL || ''}/api/auth/google/callback`;
+
+if (process.env.NODE_ENV === 'production' && !process.env.GOOGLE_CALLBACK_URL && !process.env.BACKEND_URL) {
+  console.warn(
+    '[passport] WARNING: Neither GOOGLE_CALLBACK_URL nor BACKEND_URL is set in production. ' +
+    'Google OAuth will use a relative callback URL, which may cause redirect_uri_mismatch errors. ' +
+    'Set GOOGLE_CALLBACK_URL=https://<your-backend-domain>/api/auth/google/callback in your environment.'
+  );
+}
+
+console.log(`[passport] Google OAuth callback URL: ${effectiveCallbackURL || '/api/auth/google/callback (relative)'}`);
+
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       // Full backend callback URL, e.g. BACKEND_URL/api/auth/google/callback
-      callbackURL:
-        process.env.GOOGLE_CALLBACK_URL ||
-        `${process.env.BACKEND_URL || ''}/api/auth/google/callback`,
+      // Must exactly match the "Authorized redirect URI" in Google Cloud Console.
+      callbackURL: effectiveCallbackURL,
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
