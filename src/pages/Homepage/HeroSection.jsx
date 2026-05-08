@@ -403,10 +403,10 @@ export default function HeroSection() {
   };
   const heroSlides = [
     {
-      title: "Bubble Flash Services 🫧⚡",
+      title: "Doorstep Car Wash in 10 Minutes ⚡",
       subtitle: "Doorstep Car Wash | Instant Booking",
-      badges: ["📲 Book in 30 Seconds", "📍 At your door in 30 Minutes"],
-      tagline: '"The fastest way to a showroom shine."',
+      badges: ["Book in 30 Seconds", "At Your Door in 30 Minutes", "Showroom Shine Guaranteed"],
+      tagline: '"We Come. We Clean. You Relax."',
       whatsappCta: WHATSAPP_BOOKING_URL,
       image: "/car/home.png",
       gradient: "from-[#1F3C88] via-[#2952A3] to-[#1F3C88]",
@@ -641,7 +641,7 @@ export default function HeroSection() {
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-2xl hover:shadow-green-500/25 hover:scale-105 active:scale-95"
                           >
-                            💬 Message us to Book!
+                            💬 WhatsApp & Book Instantly
                           </a>
                         ) : (
                           <button

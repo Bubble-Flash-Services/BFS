@@ -442,17 +442,18 @@ const QuickViewModal = ({ accessory, onClose }) => {
     ? basePrice + (selectedVariant.priceModifier || 0)
     : (discountPrice || basePrice);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!inStock) {
       toast.error('This item is out of stock');
       return;
     }
 
-    addToCart({
+    const productName = selectedVariant ? `${name} - ${selectedVariant.name}` : name;
+    const result = await addToCart({
       id: _id,
-      serviceId: _id,
-      name: selectedVariant ? `${name} - ${selectedVariant.name}` : name,
-      serviceName: 'accessories', // Hardcoded serviceName
+      serviceId: `accessory-${_id}`,
+      name: productName,
+      serviceName: productName,
       price: displayPrice,
       image: images?.[0] || '/car/car1.png',
       img: images?.[0] || '/car/car1.png',
@@ -460,6 +461,10 @@ const QuickViewModal = ({ accessory, onClose }) => {
       type: 'accessory',
       quantity
     });
+
+    if (!result?.success) {
+      return;
+    }
 
     toast.success(`${name} added to cart!`);
     onClose();

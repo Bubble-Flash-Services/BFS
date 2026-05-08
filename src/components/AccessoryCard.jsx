@@ -32,16 +32,17 @@ const AccessoryCard = ({ accessory, onQuickView, viewMode = 'grid' }) => {
     ? Math.round(((basePrice - discountPrice) / basePrice) * 100) 
     : 0;
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = async (e) => {
     e.stopPropagation();
     if (!inStock) {
       toast.error('This item is out of stock');
       return;
     }
     
-    addToCart({
+    const result = await addToCart({
       id: _id,
-      serviceId: _id,
+      serviceId: `accessory-${_id}`,
+      serviceName: name,
       name,
       price: displayPrice,
       image: images?.[0] || '/car/car1.png',
@@ -50,8 +51,10 @@ const AccessoryCard = ({ accessory, onQuickView, viewMode = 'grid' }) => {
       type: 'accessory',
       quantity: 1
     });
-    
-    toast.success(`${name} added to cart!`);
+
+    if (!result?.success) {
+      return;
+    }
   };
 
   const handleWishlist = (e) => {
