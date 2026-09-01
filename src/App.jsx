@@ -60,6 +60,7 @@ import InsuranceAssistancePage from "./pages/InsuranceAssistance/InsuranceAssist
 import VehicleCheckupPage from "./pages/VehicleCheckup/VehicleCheckupPage";
 import VehicleAccessoriesPage from "./pages/VehicleAccessories/VehicleAccessoriesPage";
 import AutoFixPage from "./pages/AutoFix/AutoFixPage";
+import GreenCleanPage from "./pages/GreenCleanPage";
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -101,6 +102,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <HelmetPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/green-clean"
+            element={
+              <ProtectedRoute>
+                <GreenCleanPage />
               </ProtectedRoute>
             }
           />
